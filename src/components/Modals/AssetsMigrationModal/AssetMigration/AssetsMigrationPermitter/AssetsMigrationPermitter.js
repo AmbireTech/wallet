@@ -137,7 +137,7 @@ const AssetsMigrationPermitter = ({
           from: signer.address,
           to: address,
           data: sendData,
-          gasLimit: 80000,
+          gasLimit: 110000,
           gasPrice: currentGasPrice,
           chainId: network.chainId,
         })
