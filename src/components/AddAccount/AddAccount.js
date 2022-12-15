@@ -24,6 +24,7 @@ import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 
+import { ReactComponent as AmbireLogo } from 'resources/logo.svg'
 // Icons
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
 import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
@@ -412,7 +413,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
 
   if (!relayerURL) {
     return (<div className={styles.loginSignupWrapper}>
-      <div className={styles.logo}/>
+      <AmbireLogo className={styles.logo} />
       <section className={styles.addAccount}>
         <div className={styles.loginOthers}>
           <h3>Add an account</h3>
@@ -425,7 +426,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   }
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
   return (<div className={styles.loginSignupWrapper}>
-      <div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
+      <AmbireLogo className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
       {pluginData && 
       <div className={styles.pluginInfo}>
         <div className={styles.name}>{pluginData.name}</div>
