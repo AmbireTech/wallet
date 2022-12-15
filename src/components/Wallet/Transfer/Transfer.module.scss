@@ -3,6 +3,10 @@
 .panel {
     padding: 0;
     flex: 1;
+
+    &.sendOnly {
+        max-width: 750px;
+    }
 }
 
 .wrapper {

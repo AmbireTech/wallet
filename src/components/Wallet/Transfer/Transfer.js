@@ -4,6 +4,7 @@ import { withRouter } from 'react-router'
 import { useParams } from 'react-router'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { isValidAddress } from 'ambire-common/src/services/address'
+import cn from 'classnames'
 
 import { Panel, Tabs } from 'components/common'
 import Providers from 'components/Wallet/Deposit/Providers/Providers'
@@ -57,7 +58,7 @@ const Transfer = (props) => {
                     </div>
                 }
                 panelClassName={styles.panel}
-            /> : <Panel className={styles.panel}>
+            /> : <Panel className={cn(styles.panel, styles.sendOnly)}>
                 <Send
                     title={<h1 className={styles.gasTankSendTitle}>Send</h1>}
                     {...props}
