@@ -54,7 +54,7 @@ $extended-summary-height: 36px;
                     min-width: 36px;
                     min-height: 36px;
                     @include flex-center-center;
-                    background-color: theme(icon-background);
+                    background-color: theme(background-icon);
                     border-radius: 12px;
                     
                     .icon {
@@ -104,7 +104,7 @@ $extended-summary-height: 36px;
                 width: 36px;
                 height: 36px;
                 border-radius: 12px;
-                background-color: theme(icon-background);
+                background-color: theme(background-icon);
                 transition: all 0.1s ease-in-out;
                 opacity: 1;
 

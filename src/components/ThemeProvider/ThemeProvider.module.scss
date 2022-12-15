@@ -10,23 +10,21 @@
   --text-secondary: #{$secondary};
 }
 
-@mixin Icon($color) {
-  --icon-background: #{rgba($color, 0.05)};
-}
-
-@mixin Background($primary, $secondary, $terniary, $fournary, $topbar) {
+@mixin Background($primary, $secondary, $terniary, $fournary, $topbar, $icon) {
   --background-primary: #{$primary};
   --background-secondary: #{$secondary};
   --background-terniary: #{$terniary};
   --background-fournary: #{$fournary};
   // --background-highlight: #{$highlight};
   --background-topbar: #{$topbar};
+  --background-icon: #{rgba($icon, 0.05)};
 }
 
-@mixin Border($primary, $secondary, $terniary) {
+@mixin Border($primary, $secondary, $terniary, $input) {
   --border-primary: #{$primary};
   --border-secondary: #{$secondary};
   --border-terniary: #{$terniary};
+  --border-input: #{$input};
 }
 
 @mixin Highlight($primary, $secondary) {
@@ -51,10 +49,10 @@
 }
 
 .dark {
+  --theme: dark;
   @include Text($c-titan-white, $c-scampi);
-  @include Icon($c-titan-white);
-  @include Background($c-mirage, $c-martinique, $c-ebony-clay, $c-ebony-clay-light, $c-fiord);
-  @include Border($c-mirage, $c-fiord, $c-scampi);
+  @include Background($c-mirage, $c-martinique, $c-ebony-clay, $c-ebony-clay-light, $c-fiord, $c-titan-white);
+  @include Border($c-mirage, $c-fiord, $c-scampi, $c-titan-white);
   @include Highlight($c-heliotrope, $c-turquoise);
   @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
   // Other
@@ -63,12 +61,13 @@
 }
 
 .light {
+  --theme: light;
   @include Text($c-fiord, rgba($c-fiord, 0.8));
-  @include Icon($c-fiord);
-  @include Background($c-titan-white, red, #f9f9ff, red, red);
-  @include Border(red, $c-titan-white, red);
+  @include Background($c-titan-white, red, #F2F3FF, red, red, $c-fiord);
+  @include Border(red, $c-titan-white, red, $c-fiord);
   @include Highlight($c-heliotrope, $c-blue-lagoon);
-  @include Gradient(GetGradient($c-blue-lagoon, $c-turquoise), GetGradient(red, red), GetGradient(red, red));
+  // Our gradients are currently the same, but we may change them later
+  @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
   // Other
   @include BackgroundGradient(white, white);
   @include Scrollbar(rgba($c-blue-bell, 0.3), $c-blue-bell);
