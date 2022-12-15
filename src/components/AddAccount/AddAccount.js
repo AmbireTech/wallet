@@ -28,7 +28,7 @@ import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
 import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
 import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.svg'
-import { ReactComponent as MetamaskIcon } from 'resources/providers/metamask.svg'
+import { ReactComponent as MetamaskIcon } from 'resources/providers/metamask-fox.svg'
 import { ReactComponent as EmailIcon } from 'resources/icons/email.svg'
 
 TrezorConnect.manifest({
@@ -181,11 +181,25 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       throw new Error('MetaMask not available')
     }
     const ethereum = window.ethereum
-    const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
-    if (!web3Accs.length) throw new Error('No accounts connected')
-    if (web3Accs.length === 1) return onEOASelected(web3Accs[0], {type: 'Web3'})
 
-    setChooseSigners({ addresses: web3Accs, signerName: 'Web3' })
+    const permissions = await ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }],
+    })
+
+    const accountsPermission = permissions.find(
+        (permission) => permission.parentCapability === 'eth_accounts'
+    )
+
+    if (!accountsPermission) {
+      throw new Error('No accounts connected')
+    }
+
+    const addresses = accountsPermission.caveats[0].value
+
+    if (addresses.length === 1) return onEOASelected(addresses[0], {type: 'Web3'})
+
+    setChooseSigners({ addresses, signerName: 'Web3' })
   }
 
   const getAccountByAddr = useCallback(async (idAddr, signerAddr) => {
@@ -387,7 +401,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     </button>
     <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
       {/* Metamask / Browser */}
-      <MetamaskIcon className={styles.metamask} />
+      <MetamaskIcon className={styles.metamask} width={25} /> Web3 Wallet
     </button>
     <button onClick={() => wrapErr(open)}>
       <VscJson size={25} />

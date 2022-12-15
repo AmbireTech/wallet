@@ -1,6 +1,6 @@
 import "./Wallet.scss"
 
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
@@ -14,18 +14,18 @@ import SideBar from "./SideBar/SideBar"
 import { Loading } from "components/common"
 import DappsCatalog from "./DappsCatalog/DappsCatalog"
 // Pages
-const Transfer = lazy(() => import("./Transfer/Transfer"))
-const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
-const Swap = lazy(() => import("./Swap/Swap"))
-const Earn = lazy(() => import("./Earn/Earn"))
-const Security = lazy(() => import("./Security/Security"))
-const Transactions = lazy(() => import('./Transactions/Transactions'))
-const Signatures = lazy(() => import('./Signatures/Signatures'))
-const Collectible = lazy(() => import("./Collectible/Collectible"))
-const CrossChain = lazy(() => import("./CrossChain/CrossChain"))
-const OpenSea = lazy(() => import("./OpenSea/OpenSea"))
-const Deposit = lazy(() => import("./Deposit/Deposit"))
-const Gas = lazy(() => import("./Gas/Gas"))
+import Transfer from "./Transfer/Transfer"
+import Dashboard from "./Dashboard/Dashboard"
+import Swap from "./Swap/Swap"
+import Earn from "./Earn/Earn"
+import Security from "./Security/Security"
+import Transactions from './Transactions/Transactions'
+import Signatures from './Signatures/Signatures'
+import Collectible from "./Collectible/Collectible"
+import CrossChain from "./CrossChain/CrossChain"
+import OpenSea from "./OpenSea/OpenSea"
+import Deposit from "./Deposit/Deposit"
+import Gas from "./Gas/Gas"
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -190,8 +190,6 @@ export default function Wallet(props) {
         relayerURL={props.relayerURL}
         portfolio={props.portfolio}
         selectedAccount={props.selectedAcc}
-        userSorting={props.userSorting}
-        setUserSorting={props.setUserSorting}
         setGasTankState={props.setGasTankState}
         gasTankState={props.gasTankState}
       />

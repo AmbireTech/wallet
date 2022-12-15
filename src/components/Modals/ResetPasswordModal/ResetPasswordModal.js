@@ -24,7 +24,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     const [passwordsMustMatchWarning, setPasswordsMustMatchWarning] = useState(false)
     const [passwordsLengthWarning, setPasswordsLengthWarning] = useState(false)
-    
+    const [oldPasswordEmptyWarning, setOldPasswordEmptyWarning] = useState(false)
+
     const radios = useMemo(() => [
         {
             label: 'Change the password on this device and Ambire Cloud. Best if you just want to routinely change the password.',
@@ -77,6 +78,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
         setOldPassword('')
         setNewPassword('')
         setNewPasswordConfirm('')
+        setOldPasswordEmptyWarning(false)
         setPasswordsMustMatchWarning(false)
         setPasswordsLengthWarning(false)
     }
@@ -148,29 +150,33 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     const validateForm = useCallback(() => {
         const arePasswordsMatching = newPassword === newPasswordConfirm
-        let areFieldsNotEmpty = false
-        let isLengthValid = false
+        const isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
+        const areFieldsNotEmpty = newPassword.length && newPasswordConfirm.length
+        let isOldPasswordNotEmpty = false
         let areCheckboxesChecked = false
         
         if (type === 'change') {
-            areFieldsNotEmpty = oldPassword.length && newPassword.length && newPasswordConfirm.length
-            isLengthValid = oldPassword.length >= 8 && newPassword.length >= 8 && newPasswordConfirm.length >= 8
+            isOldPasswordNotEmpty = oldPassword.length
             areCheckboxesChecked = checkboxes[0].every(({ ref }) => ref.current && ref.current.checked)
         }
 
         if (type === 'reset') {
-            areFieldsNotEmpty = newPassword.length && newPasswordConfirm.length
-            isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
+            isOldPasswordNotEmpty = true // in case of Reset we don't have an Old Password, so we just skip its validation
             areCheckboxesChecked = checkboxes[1].every(({ ref }) => ref.current && ref.current.checked)
         }
 
-        setDisabled(!isLengthValid || !arePasswordsMatching || !areCheckboxesChecked)
+        setDisabled(!isLengthValid || !arePasswordsMatching || !areCheckboxesChecked || !isOldPasswordNotEmpty)
 
         if (areFieldsNotEmpty) {
+            if (isLengthValid && arePasswordsMatching) {
+                setOldPasswordEmptyWarning(!isOldPasswordNotEmpty)
+            }
+
             setPasswordsLengthWarning(!isLengthValid)
             setPasswordsMustMatchWarning(!arePasswordsMatching)
         } else {
-            setPasswordsLengthWarning(false)
+            setOldPasswordEmptyWarning(false)
+            setPasswordsMustMatchWarning(false)
             setPasswordsMustMatchWarning(false)
         }
     }, [checkboxes, type, oldPassword, newPassword, newPasswordConfirm])
@@ -220,12 +226,16 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             }
             <div id="warnings">
                 {
+                    oldPasswordEmptyWarning ?
+                        <div className="warning">Old Password must be set</div> : null
+                }
+                {
                     passwordsMustMatchWarning ?
                         <div className="warning">Passwords must match</div> : null
                 }
                 {
                     passwordsLengthWarning ?
-                        <div className="warning">Password length must be greater than 8 characters</div> : null
+                        <div className="warning">Password must be at least 8 characters</div> : null
                 }
             </div>
         </Modal>

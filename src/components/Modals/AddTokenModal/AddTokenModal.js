@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { useToasts } from 'hooks/toasts';
 import { MdOutlineAdd, MdOutlineClose, MdOutlineRemove } from 'react-icons/md';
 import { useModals } from 'hooks';
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { getTokenIcon } from 'lib/icons'
 
 const ERC20Interface = new Interface(ERC20ABI)
