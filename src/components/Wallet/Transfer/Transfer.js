@@ -6,9 +6,9 @@ import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { isValidAddress } from 'ambire-common/src/services/address'
 
 import { Panel, Tabs } from 'components/common'
+import Providers from 'components/Wallet/Deposit/Providers/Providers'
 import Send from './Send/Send'
 import Addresses from './Addresses/Addresses'
-import Providers from 'components/Wallet/Deposit/Providers/Providers'
 
 import styles from './Transfer.module.scss'
 
@@ -46,7 +46,7 @@ const Transfer = (props) => {
                 }
                 secondTab={
                     <div className={styles.sell}>
-                        <Providers
+                        <Providers 
                             walletAddress={selectedAcc} 
                             networkDetails={selectedNetwork} 
                             relayerURL={relayerURL} 
