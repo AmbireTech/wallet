@@ -8,6 +8,7 @@ import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import { useLocalStorage } from 'hooks'
 
 import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
+import { ReactComponent as AmbireLogo } from 'resources/logo.svg'
 
 import Lottie from 'lottie-react'
 import AnimationData from './assets/confirm-email.json'
@@ -147,7 +148,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
     return (
       <section className={`${styles.loginSignupWrapper} ${styles.emailLoginSection}`}>
-      <div className={styles.logo} />
+      <AmbireLogo className={styles.logo} alt="ambire-logo" />
       {inner}
     </section>
     )
