@@ -48,7 +48,7 @@ $arrow-size: 15px;
         }
     }
 
-    &:hover {
+    &:hover, &:active, &:focus {
         .tooltipLabel {
             opacity: 1;
         }
