@@ -30,18 +30,19 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             isBuyAvailable: true,
             onClick: () => openGuardarian(initMode, selectedAsset)
         },
-        {
-            logo: KRIPTOMAT_LOGO,
-            name: 'Kriptomat',
-            type: 'Credit Card',
-            fees: '2.45%',
-            limits: 'up to 5000 EUR/day',
-            currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'polygon', 'binance-smart-chain'],
-            isSellAvailable: false,
-            isBuyAvailable: true,
-            onClick: () => openKriptomat()
-        },
+        // DISABLED: Temporary until maintenance ends.
+        // {
+        //     logo: KRIPTOMAT_LOGO,
+        //     name: 'Kriptomat',
+        //     type: 'Credit Card',
+        //     fees: '2.45%',
+        //     limits: 'up to 5000 EUR/day',
+        //     currencies: 'USD, EUR, GBP',
+        //     networks: ['ethereum', 'polygon', 'binance-smart-chain'],
+        //     isSellAvailable: false,
+        //     isBuyAvailable: true,
+        //     onClick: () => openKriptomat()
+        // },
         // DISABLED: The Moonpay ready to use, but at this moment we will not release it.
         // {
         //     logo: MOONPAY_LOGO,
