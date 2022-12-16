@@ -11,7 +11,7 @@ import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/util
 import { Wallet } from 'ethers'
 import { generateAddress2 } from 'ethereumjs-util'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
-import { fetch, fetchPost } from 'lib/fetch'
+import { fetch, fetchPost, fetchGet } from 'lib/fetch'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { useToasts } from 'hooks/toasts'
 import SelectSignerAccountModal from 'components/Modals/SelectSignerAccountModal/SelectSignerAccountModal'
@@ -23,6 +23,8 @@ import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
+import Lottie from 'lottie-react'
+import AnimationData from './assets/confirm-email.json'
 
 // Icons
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
@@ -36,6 +38,8 @@ TrezorConnect.manifest({
   appUrl: 'https://wallet.ambire.com'
 })
 
+const EMAIL_VERIFICATION_RECHECK = 6000
+
 export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
@@ -43,6 +47,8 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   const [inProgress, setInProgress] = useState(false)
   const { addToast } = useToasts()
   const { showModal } = useModals()
+  const [isCreateRespCompleted, setIsCreateRespCompleted] = useState(null)
+  const [requiresEmailConfFor, setRequiresConfFor] = useState(false)
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -127,7 +133,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       return
     }
 
-    onAddAccount({
+    setIsCreateRespCompleted({
       id: identityAddr,
       email: req.email,
       primaryKeyBackup,
@@ -139,7 +145,41 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
       emailConfRequired: true
     }, { select: true, isNew: true })
+    
+    setRequiresConfFor(true)
   }
+
+  const checkChangeThisFuncName = useCallback(async () => {
+    const relayerIdentityURL = `${relayerURL}/identity/${isCreateRespCompleted.id}`
+    try {
+      const identity = await fetchGet(relayerIdentityURL)
+      if (identity) {
+          const { emailConfirmed } = identity.meta
+          const isConfirmed = !!emailConfirmed
+          setRequiresConfFor(!emailConfirmed)
+          if (isConfirmed) {
+            
+              onAddAccount({
+                  ...isCreateRespCompleted,
+                  emailConfRequired: false
+              })
+              
+          }
+      }
+  } catch(e) {
+      console.error(e);
+      addToast('Could not check email confirmation.', { error: true })
+  }
+  }, [addToast, isCreateRespCompleted, onAddAccount, relayerURL])
+
+  useEffect(() => {
+    if (requiresEmailConfFor) {
+      const timer = setTimeout(async () => {
+          await checkChangeThisFuncName()
+      }, EMAIL_VERIFICATION_RECHECK)
+      return () => clearTimeout(timer)
+    }
+  })
 
   // EOA implementations
   // Add or create accounts from Trezor/Ledger/Metamask/etc.
@@ -425,7 +465,28 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   }
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
   return (<div className={styles.loginSignupWrapper}>
-      <div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
+      { requiresEmailConfFor ?
+      (<div className={`${styles.emailConf}`}>
+        <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
+        <h3>
+          Email confirmation required
+        </h3>
+        <p>
+          We sent an email to
+          {' '}
+          <span className={styles.email}>
+            {requiresEmailConfFor.email}
+          </span>
+          .
+          <br />
+          Please check your inbox and click
+          <br />
+          "Authorize New Device".
+        </p>
+        {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+      </div>)
+      
+      :(<><div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
       {pluginData && 
       <div className={styles.pluginInfo}>
         <div className={styles.name}>{pluginData.name}</div>
@@ -460,6 +521,8 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           </div>)}
         </div>
       </section>
+      </>)
+      }
     </div>
   )
 }

@@ -27,40 +27,40 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
     const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
     const buttonDisabled = isAccountNotConfirmed || (!modalHidden && areBlockedPermissions)
-    const sendConfirmationEmail = async () => {
-        try {
-            const response = await fetchGet(relayerIdentityURL + '/resend-verification-email')
-            if (!response.success) throw new Error('Relayer did not return success.')
+    // const sendConfirmationEmail = async () => {
+    //     try {
+    //         const response = await fetchGet(relayerIdentityURL + '/resend-verification-email')
+    //         if (!response.success) throw new Error('Relayer did not return success.')
 
-            addToast('Verification email sent!')
-            setEmailResent(true)
-        } catch(e) {
-            console.error(e)
-            addToast('Could not resend verification email.' + e.message || e, { error: true })
-            setEmailResent(false)
-        }
-    }
+    //         addToast('Verification email sent!')
+    //         setEmailResent(true)
+    //     } catch(e) {
+    //         console.error(e)
+    //         addToast('Could not resend verification email.' + e.message || e, { error: true })
+    //         setEmailResent(false)
+    //     }
+    // }
     
-    const checkEmailConfirmation = useCallback(async () => {
-        try {
-            const identity = await fetchGet(relayerIdentityURL)
-            if (identity) {
-                const { emailConfirmed } = identity.meta
-                const isConfirmed = !!emailConfirmed
-                setEmailConfirmed(isConfirmed)
+    // const checkEmailConfirmation = useCallback(async () => {
+    //     try {
+    //         const identity = await fetchGet(relayerIdentityURL)
+    //         if (identity) {
+    //             const { emailConfirmed } = identity.meta
+    //             const isConfirmed = !!emailConfirmed
+    //             setEmailConfirmed(isConfirmed)
 
-                if (isConfirmed && account.emailConfRequired) {
-                    onAddAccount({
-                        ...account,
-                        emailConfRequired: false
-                    })
-                }
-            }
-        } catch(e) {
-            console.error(e);
-            addToast('Could not check email confirmation.', { error: true })
-        }
-    }, [relayerIdentityURL, account, onAddAccount, addToast])
+    //             if (isConfirmed && account.emailConfRequired) {
+    //                 onAddAccount({
+    //                     ...account,
+    //                     emailConfRequired: false
+    //                 })
+    //             }
+    //         }
+    //     } catch(e) {
+    //         console.error(e);
+    //         addToast('Could not check email confirmation.', { error: true })
+    //     }
+    // }, [relayerIdentityURL, account, onAddAccount, addToast])
 
     const requestNotificationsPermission = async () => {
         const status = await askForPermission('notifications')
@@ -72,11 +72,11 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
         if (!status) addToast(toastErrorMessage('Clipboard'), { error: true })
     }
     
-    useEffect(() => {
-        !isEmailConfirmed && checkEmailConfirmation()
-        const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3000)
-        return () => clearInterval(emailConfirmationInterval)
-    }, [isEmailConfirmed, checkEmailConfirmation])
+    // useEffect(() => {
+    //     !isEmailConfirmed && checkEmailConfirmation()
+    //     const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3000)
+    //     return () => clearInterval(emailConfirmationInterval)
+    // }, [isEmailConfirmed, checkEmailConfirmation])
 
     const handleDoneOrIgnoreBtnsClicked = () => {
         hideModal()
@@ -138,7 +138,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
 
     return (
         <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown} onClose={handleOnClose}>
-            {
+            {/* {
                 account.email ? 
                     <div className="permission">
                     <div className="details">
@@ -167,7 +167,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                 </div>
                 :
                 null
-            }
+            } */}
             <div className="permission">
                 <div className="details">
                     <div className="name">Notifications Permission</div>
