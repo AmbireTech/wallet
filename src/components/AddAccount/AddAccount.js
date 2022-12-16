@@ -26,7 +26,7 @@ import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 import Lottie from 'lottie-react'
 import AnimationData from './assets/confirm-email.json'
 import { AiOutlineReload } from 'react-icons/ai'
-import { BiArrowBack } from 'react-icons/bi'
+import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
 
 // Icons
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
@@ -157,6 +157,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   }
 
   const checkEmailConfirmation = useCallback(async () => {
+    if (!isCreateRespCompleted) return
     const relayerIdentityURL = `${relayerURL}/identity/${isCreateRespCompleted[0].id}`
     try {
       const identity = await fetchGet(relayerIdentityURL)
@@ -452,6 +453,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     validator: fileSizeValidator
   })
 
+  const handleBackBtnClicked = () => {
+    setRequiresConfFor((prev) => !prev)
+  }
+
   // Adding accounts from existing signers
   const addFromSignerButtons = (<>
     <button onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
@@ -502,23 +507,29 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             We sent an email to
             {' '}
             <span className={styles.email}>
-              {isCreateRespCompleted[0].email}
+              {isCreateRespCompleted && isCreateRespCompleted[0].email}
             </span>
             .
             <br />
-            Please check your inbox and click
+            Please check your inbox for
             <br />
-            "Authorize New Device".
+            "Welcome to Ambire Wallet"
+            <br />
+            email and click
+            <br />
+            "Verify".
           </p>
           {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
-          {!isEmailConfirmed && <label>Waiting for<br/>your confirmation</label>}
           <div className={styles.btnWrapper}>
-            <Button border mini icon={<BiArrowBack />} onClick={() => setRequiresConfFor(null)}>Back</Button>
             {!isEmailConfirmed && !isEmailResent && <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
                 <Button border mini icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
             </ToolTip>}
           </div>
-          
+          <div className={styles.backButton} onClick={handleBackBtnClicked}>
+            <ChevronLeftIcon />
+            {' '}
+            Back to Register
+          </div>
         </div>)
       : (<>
           <div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>

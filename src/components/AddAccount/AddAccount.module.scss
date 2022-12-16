@@ -286,6 +286,30 @@
         height: 140px;
         margin: 0 auto;
     }
+
+    .backButton {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 400;
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: $c-titan-white;
+        opacity: .8;
+        transition: .3s ease-in-out;
+
+        img {
+            margin-right: 10px;
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
 }
 
 // Mobile
