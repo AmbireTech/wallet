@@ -133,7 +133,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       return
     }
 
-    setIsCreateRespCompleted({
+    setIsCreateRespCompleted([{
       id: identityAddr,
       email: req.email,
       primaryKeyBackup,
@@ -144,13 +144,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       backupOptout: !!req.backupOptout,
       // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
       emailConfRequired: true
-    }, { select: true, isNew: true })
+    }, { select: true, isNew: true }])
     
     setRequiresConfFor(true)
   }
 
   const checkChangeThisFuncName = useCallback(async () => {
-    const relayerIdentityURL = `${relayerURL}/identity/${isCreateRespCompleted.id}`
+    const relayerIdentityURL = `${relayerURL}/identity/${isCreateRespCompleted[0].id}`
     try {
       const identity = await fetchGet(relayerIdentityURL)
       if (identity) {
@@ -158,11 +158,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           const isConfirmed = !!emailConfirmed
           setRequiresConfFor(!emailConfirmed)
           if (isConfirmed) {
-            
               onAddAccount({
-                  ...isCreateRespCompleted,
+                  ...isCreateRespCompleted[0],
                   emailConfRequired: false
-              })
+              }, isCreateRespCompleted[1])
               
           }
       }
