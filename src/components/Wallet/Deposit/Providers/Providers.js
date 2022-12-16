@@ -2,7 +2,7 @@
 import RAMP_LOGO from 'resources/payment-providers/ramp.svg';
 import PAYTRIE_LOGO from 'resources/payment-providers/paytrie.svg';
 import TRANSAK_LOGO from 'resources/payment-providers/transak.svg';
-import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg';
+// import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg';
 import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 import SWAPPIN_LOGO from 'resources/payment-providers/swappin.svg'
 // import MOONPAY_LOGO from 'resources/payment-providers/moonpay.svg'
@@ -15,7 +15,7 @@ import styles from './Providers.module.scss'
 import { ReactComponent as InfoIcon } from 'resources/icons/information.svg' 
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio,  sellMode = false, selectedAsset }) {
-    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
+    const { openRampNetwork, openPayTrie, openTransak, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio }) // openKriptomat
     const initMode = sellMode ? 'sell' : 'buy'
     const providers = [
         {
