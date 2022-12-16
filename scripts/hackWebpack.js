@@ -62,7 +62,7 @@ modifyLineFromFile({
   lineToModify: {
     index: 501,
     value: 'inputSourceMap: shouldUseSourceMap,',
-    newValue: "inputSourceMap: shouldUseSourceMap, plugins: [ require.resolve('@babel/plugin-proposal-logical-assignment-operators')],"
+    newValue: "inputSourceMap: shouldUseSourceMap, plugins: [ require.resolve('@babel/plugin-proposal-nullish-coalescing-operator')],"
   },
 });
 
