@@ -1,14 +1,12 @@
 import './PermissionsModal.scss'
 
-import { useState, useEffect, useCallback } from 'react'
+import { useState } from 'react'
 import { MdCheck, MdClose, MdOutlineCheck } from 'react-icons/md'
 import { useModals, usePermissions } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import { askForPermission } from 'lib/permissions'
-import { Modal, Toggle, Button, Checkbox, ToolTip } from 'components/common'
+import { Modal, Toggle, Button, Checkbox } from 'components/common'
 import { isFirefox } from 'lib/isFirefox'
-import { fetchGet } from 'lib/fetch'
-import { AiOutlineReload } from 'react-icons/ai'
 import { BiExport } from 'react-icons/bi'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 
@@ -18,50 +16,13 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     const { hideModal } = useModals()
     const { isNoticationsGranted, isClipboardGranted, modalHidden, setModalHidden } = usePermissions()
     const { addToast } = useToasts()
-    const [isEmailConfirmed, setEmailConfirmed] = useState(false)
-    const [isEmailResent, setEmailResent] = useState(false)
     const [isJsonBackupDownloaded, setIsJsonBackupDownloaded] = useState(isBackupOptout)
-    const [resendTimeLeft, setResendTimeLeft] = useState(60000)
 
     const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
-    const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
+    const isAccountNotConfirmed = account.emailConfRequired
     const buttonDisabled = isAccountNotConfirmed || (!modalHidden && areBlockedPermissions)
-    // const sendConfirmationEmail = async () => {
-    //     try {
-    //         const response = await fetchGet(relayerIdentityURL + '/resend-verification-email')
-    //         if (!response.success) throw new Error('Relayer did not return success.')
-
-    //         addToast('Verification email sent!')
-    //         setEmailResent(true)
-    //     } catch(e) {
-    //         console.error(e)
-    //         addToast('Could not resend verification email.' + e.message || e, { error: true })
-    //         setEmailResent(false)
-    //     }
-    // }
     
-    // const checkEmailConfirmation = useCallback(async () => {
-    //     try {
-    //         const identity = await fetchGet(relayerIdentityURL)
-    //         if (identity) {
-    //             const { emailConfirmed } = identity.meta
-    //             const isConfirmed = !!emailConfirmed
-    //             setEmailConfirmed(isConfirmed)
-
-    //             if (isConfirmed && account.emailConfRequired) {
-    //                 onAddAccount({
-    //                     ...account,
-    //                     emailConfRequired: false
-    //                 })
-    //             }
-    //         }
-    //     } catch(e) {
-    //         console.error(e);
-    //         addToast('Could not check email confirmation.', { error: true })
-    //     }
-    // }, [relayerIdentityURL, account, onAddAccount, addToast])
-
     const requestNotificationsPermission = async () => {
         const status = await askForPermission('notifications')
         if (!status) addToast(toastErrorMessage('Notifications'), { error: true })
@@ -130,11 +91,6 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
             backupOptout: false
         })
     }
-
-    useEffect(() => {
-        const resendInterval = setInterval(() => setResendTimeLeft(resendTimeLeft => resendTimeLeft > 0 ? resendTimeLeft - 1000 : 0), 1000)
-        return () => clearTimeout(resendInterval)
-    }, [])
 
     return (
         <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown} onClose={handleOnClose}>

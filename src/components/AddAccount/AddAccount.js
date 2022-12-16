@@ -16,7 +16,7 @@ import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { useToasts } from 'hooks/toasts'
 import SelectSignerAccountModal from 'components/Modals/SelectSignerAccountModal/SelectSignerAccountModal'
 import { useModals } from 'hooks'
-import { Loading } from 'components/common'
+import { Loading, Button, ToolTip } from 'components/common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
 import { isFirefox } from 'lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
@@ -25,6 +25,8 @@ import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations
 import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 import Lottie from 'lottie-react'
 import AnimationData from './assets/confirm-email.json'
+import { AiOutlineReload } from 'react-icons/ai'
+import { BiArrowBack } from 'react-icons/bi'
 
 // Icons
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
@@ -49,6 +51,9 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   const { showModal } = useModals()
   const [isCreateRespCompleted, setIsCreateRespCompleted] = useState(null)
   const [requiresEmailConfFor, setRequiresConfFor] = useState(false)
+  const [resendTimeLeft, setResendTimeLeft] = useState(null)
+  const [isEmailResent, setEmailResent] = useState(false)
+  const [isEmailConfirmed, setEmailConfirmed] = useState(false)
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -147,22 +152,23 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     }, { select: true, isNew: true }])
     
     setRequiresConfFor(true)
+    setResendTimeLeft(60000)
   }
 
-  const checkChangeThisFuncName = useCallback(async () => {
+  const checkEmailConfirmation = useCallback(async () => {
     const relayerIdentityURL = `${relayerURL}/identity/${isCreateRespCompleted[0].id}`
     try {
       const identity = await fetchGet(relayerIdentityURL)
       if (identity) {
           const { emailConfirmed } = identity.meta
           const isConfirmed = !!emailConfirmed
+          setEmailConfirmed(isConfirmed)
           setRequiresConfFor(!emailConfirmed)
           if (isConfirmed) {
               onAddAccount({
                   ...isCreateRespCompleted[0],
                   emailConfRequired: false
               }, isCreateRespCompleted[1])
-              
           }
       }
   } catch(e) {
@@ -174,9 +180,30 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   useEffect(() => {
     if (requiresEmailConfFor) {
       const timer = setTimeout(async () => {
-          await checkChangeThisFuncName()
+        await checkEmailConfirmation()
       }, EMAIL_VERIFICATION_RECHECK)
       return () => clearTimeout(timer)
+    }
+  })
+
+  const sendConfirmationEmail = async () => {
+    try {
+        const response = await fetchGet(`${relayerURL}/identity/${(isCreateRespCompleted.length > 0) && isCreateRespCompleted[0].id}/resend-verification-email`)
+        if (!response.success) throw new Error('Relayer did not return success.')
+
+        addToast('Verification email sent!')
+        setEmailResent(true)
+    } catch(e) {
+        console.error(e)
+        addToast('Could not resend verification email.' + e.message || e, { error: true })
+        setEmailResent(false)
+    }
+  }
+ 
+  useEffect(() => {
+    if (resendTimeLeft) {
+      const resendInterval = setInterval(() => setResendTimeLeft(resendTimeLeft => resendTimeLeft > 0 ? resendTimeLeft - 1000 : 0), 1000)
+      return () => clearTimeout(resendInterval)
     }
   })
 
@@ -465,62 +492,70 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
   return (<div className={styles.loginSignupWrapper}>
       { requiresEmailConfFor ?
-      (<div className={`${styles.emailConf}`}>
-        <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
-        <h3>
-          Email confirmation required
-        </h3>
-        <p>
-          We sent an email to
-          {' '}
-          <span className={styles.email}>
-            {requiresEmailConfFor.email}
-          </span>
-          .
-          <br />
-          Please check your inbox and click
-          <br />
-          "Authorize New Device".
-        </p>
-        {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
-      </div>)
-      
-      :(<><div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
-      {pluginData && 
-      <div className={styles.pluginInfo}>
-        <div className={styles.name}>{pluginData.name}</div>
-        <div>{pluginData.description}</div>
-      </div>
-      }
-      <section className={styles.addAccount}>
-        <div className={styles.loginEmail}>
-          <h3>Create a new account</h3>
-          <LoginOrSignup
-            inProgress={inProgress === 'email'}
-            onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
-            action="SIGNUP"
-          ></LoginOrSignup>
+        (<div className={`${styles.emailConf}`}>
+          <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
+          <h3>
+            Email confirmation required
+          </h3>
+          <p>
+            We sent an email to
+            {' '}
+            <span className={styles.email}>
+              {requiresEmailConfFor.email}
+            </span>
+            .
+            <br />
+            Please check your inbox and click
+            <br />
+            "Authorize New Device".
+          </p>
           {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
-        </div>
+          {!isEmailConfirmed && <label>Waiting for<br/>your confirmation</label>}
+          <div className={styles.btnWrapper}>
+            <Button border mini icon={<BiArrowBack />} onClick={() => setRequiresConfFor(prev => !prev)}>Back</Button>
+            {!isEmailConfirmed && !isEmailResent && <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
+                <Button border mini icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
+            </ToolTip>}
+          </div>
+          
+        </div>)
+      : (<>
+          <div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
+          {pluginData &&
+            <div className={styles.pluginInfo}>
+              <div className={styles.name}>{pluginData.name}</div>
+              <div>{pluginData.description}</div>
+            </div>
+          }
+          <section className={styles.addAccount}>
+            <div className={styles.loginEmail}>
+              <h3>Create a new account</h3>
+              <LoginOrSignup
+                inProgress={inProgress === 'email'}
+                onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
+                action="SIGNUP"
+              ></LoginOrSignup>
+              {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+            </div>
 
-        <div className={styles.loginSeparator} />
-        <div className={styles.loginOthers}>
-          <h3>Add an account</h3>
-          {inProgress !== 'hwwallet' ? (<>
-            <Link to="/email-login">
-              <button>
-                <EmailIcon className={styles.email} />
-                Email login
-              </button>
-            </Link>
-            {addFromSignerButtons}
-            {addAccErr ? (<p className={styles.error}>{addAccErr}</p>) : (<></>)}
-          </>) : (<div className={styles.accountLoader}>
-            <Loading/>
-          </div>)}
-        </div>
-      </section>
-      </>)
+            <div className={styles.loginSeparator} />
+            <div className={styles.loginOthers}>
+              <h3>Add an account</h3>
+              {inProgress !== 'hwwallet' ? (<>
+                <Link to="/email-login">
+                  <button>
+                    <EmailIcon className={styles.email} />
+                    Email login
+                  </button>
+                </Link>
+                {addFromSignerButtons}
+                {addAccErr ? (<p className={styles.error}>{addAccErr}</p>) : (<></>)}
+              </>) : (<div className={styles.accountLoader}>
+                <Loading/>
+              </div>)}
+            </div>
+          </section>
+        </>)
       }
     </div>
   )
