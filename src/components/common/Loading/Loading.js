@@ -2,11 +2,11 @@ import './Loading.scss';
 
 import { AiOutlineLoading } from 'react-icons/ai';
 
-const Loading = () => {
+const Loading = ({size = 35}) => {
     return (
         <div className="loading">
             <div className="icon">
-                <AiOutlineLoading size={35}/>
+                <AiOutlineLoading size={size}/>
             </div>
         </div>
     );
