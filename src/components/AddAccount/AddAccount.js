@@ -40,7 +40,8 @@ TrezorConnect.manifest({
   appUrl: 'https://wallet.ambire.com'
 })
 
-const EMAIL_VERIFICATION_RECHECK = 6000
+const EMAIL_AND_TIMER_REFRESH_TIME = 5000
+const RESEND_EMAIL_TIMER_INITIAL = 60000
 
 export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
   const [signersToChoose, setChooseSigners] = useState(null)
@@ -152,7 +153,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     }, { select: true, isNew: true }])
     
     setRequiresConfFor(true)
-    setResendTimeLeft(60000)
+    setResendTimeLeft(RESEND_EMAIL_TIMER_INITIAL)
   }
 
   const checkEmailConfirmation = useCallback(async () => {
@@ -163,12 +164,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           const { emailConfirmed } = identity.meta
           const isConfirmed = !!emailConfirmed
           setEmailConfirmed(isConfirmed)
-          setRequiresConfFor(!emailConfirmed)
           if (isConfirmed) {
-              onAddAccount({
-                  ...isCreateRespCompleted[0],
-                  emailConfRequired: false
-              }, isCreateRespCompleted[1])
+            setRequiresConfFor(!isConfirmed)
+            onAddAccount({
+                ...isCreateRespCompleted[0],
+                emailConfRequired: false
+            }, isCreateRespCompleted[1])
           }
       }
   } catch(e) {
@@ -181,7 +182,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     if (requiresEmailConfFor) {
       const timer = setTimeout(async () => {
         await checkEmailConfirmation()
-      }, EMAIL_VERIFICATION_RECHECK)
+      }, EMAIL_AND_TIMER_REFRESH_TIME)
       return () => clearTimeout(timer)
     }
   })
@@ -202,7 +203,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
  
   useEffect(() => {
     if (resendTimeLeft) {
-      const resendInterval = setInterval(() => setResendTimeLeft(resendTimeLeft => resendTimeLeft > 0 ? resendTimeLeft - 1000 : 0), 1000)
+      const resendInterval = setInterval(() => setResendTimeLeft(resendTimeLeft => resendTimeLeft > 0 ? resendTimeLeft - EMAIL_AND_TIMER_REFRESH_TIME : 0), EMAIL_AND_TIMER_REFRESH_TIME)
       return () => clearTimeout(resendInterval)
     }
   })
@@ -501,7 +502,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             We sent an email to
             {' '}
             <span className={styles.email}>
-              {requiresEmailConfFor.email}
+              {isCreateRespCompleted[0].email}
             </span>
             .
             <br />
@@ -512,7 +513,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
           {!isEmailConfirmed && <label>Waiting for<br/>your confirmation</label>}
           <div className={styles.btnWrapper}>
-            <Button border mini icon={<BiArrowBack />} onClick={() => setRequiresConfFor(prev => !prev)}>Back</Button>
+            <Button border mini icon={<BiArrowBack />} onClick={() => setRequiresConfFor(null)}>Back</Button>
             {!isEmailConfirmed && !isEmailResent && <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
                 <Button border mini icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
             </ToolTip>}

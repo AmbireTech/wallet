@@ -33,12 +33,6 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
         if (!status) addToast(toastErrorMessage('Clipboard'), { error: true })
     }
     
-    // useEffect(() => {
-    //     !isEmailConfirmed && checkEmailConfirmation()
-    //     const emailConfirmationInterval = setInterval(() => !isEmailConfirmed && checkEmailConfirmation(), 3000)
-    //     return () => clearInterval(emailConfirmationInterval)
-    // }, [isEmailConfirmed, checkEmailConfirmation])
-
     const handleDoneOrIgnoreBtnsClicked = () => {
         hideModal()
         if (showThankYouPage) openThankYouPage()
@@ -94,36 +88,6 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
 
     return (
         <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown} onClose={handleOnClose}>
-            {/* {
-                account.email ? 
-                    <div className="permission">
-                    <div className="details">
-                        <div className="name">Email Verification</div>
-                        <div className="description">
-                            <b>Confirming your email is mandatory so that we can make sure your account can be recovered in case access is lost.</b>
-                            &nbsp;We already sent an email, please check your inbox.
-                        </div>
-                    </div>
-                    <div className="status">
-                        { 
-                            !isEmailConfirmed ?
-                                <label>Waiting for<br/>your confirmation</label>
-                                : 
-                                <span className="check-icon"><MdOutlineCheck/></span>
-                        }
-                        { 
-                            !isEmailConfirmed && !isEmailResent ? 
-                                <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
-                                    <Button mini clear icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
-                                </ToolTip>
-                                :
-                                null
-                        }
-                    </div>
-                </div>
-                :
-                null
-            } */}
             <div className="permission">
                 <div className="details">
                     <div className="name">Notifications Permission</div>
