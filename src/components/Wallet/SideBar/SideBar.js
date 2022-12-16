@@ -1,10 +1,11 @@
-import styles from './SideBar.module.scss'
-
-import { NavLink, useRouteMatch  } from 'react-router-dom'
-import { MdClose } from 'react-icons/md'
-import { Loading, Button } from 'components/common'
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
-import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
+import { NavLink, useRouteMatch  } from 'react-router-dom'
+import cn from 'classnames'
+
+import { Loading, Button } from 'components/common'
+import GasIndicator from 'components/Wallet/SideBar/GasIndicator/GasIndicator'
+
+import { MdClose } from 'react-icons/md'
 import { ReactComponent as DashboardIcon } from './images/dashboard.svg'
 import { ReactComponent as DepositIcon } from './images/deposit.svg'
 import { ReactComponent as TransferIcon } from './images/transfer.svg'
@@ -16,14 +17,17 @@ import { ReactComponent as TransactionsIcon } from './images/transactions.svg'
 import { ReactComponent as SecurityIcon } from './images/security.svg'
 import { ReactComponent as DappsIcon } from './images/dapps.svg'
 import { ReactComponent as HelpIcon } from './images/help.svg'
-import cn from 'classnames'
+import { ReactComponent as SignedMessagesIcon } from './images/signed-messages.svg'
+
+import styles from './SideBar.module.scss'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
 const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
 const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
-  const networkBalance = hidePrivateValue(portfolio.balance.total.full)
+  const networkBalance = portfolio.balance.total.full
+  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : networkBalance.toFixed(2)
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
@@ -51,7 +55,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     if(dappModeSidebar) {
       toggleDappMode()
     }
-  }, [dappModeSidebar, toggleDappMode])  
+  }, [dappModeSidebar, toggleDappMode])
 
   return (
     <div className={cn(styles.wrapper, {
@@ -64,8 +68,8 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
       <div className={styles.ambireLogo}>
         <div className={styles.logo} />
         <div className={styles.icon} />
-        <Button  clear icon={<MdClose size={23} />} mini border
-          onClick={() => toggleSideBarOpen()}
+        <Button clear icon={<MdClose size={23} />} mini
+          onClick={toggleSideBarOpen}
         ></Button>
       </div>
       }
@@ -86,14 +90,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
             style={{ fontSize: balanceFontSize }}
           >
             <span className={cn(styles.dollarSign, styles.highlight)}>$</span>
-            {typeof networkBalance === 'number' ? 
-              (
-                networkBalance >= 10000 ? 
-                `${String(round(networkBalance/1000)).split('.').join(',')}K` : 
-                networkBalance.toFixed(2)
-              ) :
-              0
-            }
+            {hidePrivateValue(shortBalance)}
           </div>
         )}
         <div>
@@ -140,6 +137,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         <NavLink to={match.url + "/transactions"} activeClassName={styles.selected}>
           <div className={styles.item}>
                 <TransactionsIcon />Transactions
+          </div>
+        </NavLink>
+        <NavLink to={match.url + "/messages"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+            <SignedMessagesIcon />Signed Messages
           </div>
         </NavLink>
         {/* Temporarily commented OpenSea tab. */}
