@@ -1,15 +1,30 @@
 import styles from 'components/AddAccount/AddAccount.module.scss'
 import networks from 'ambire-common/src/constants/networks'
+import { NETWORKS as enumNETWORKS } from 'ambire-common/src/constants/networks'
 import { fetchPost } from 'lib/fetch'
 import React from 'react'
 
 import useAccounts from 'hooks/accounts'
 import { useLocalStorage } from 'hooks'
 
+const binanceNetworks = {
+  [enumNETWORKS.ethereum]: 'ETH',
+  [enumNETWORKS.polygon]: 'MATIC',
+  [enumNETWORKS['binance-smart-chain']]: 'BSC',
+  [enumNETWORKS.avalanche]: 'AVAXC',
+  [enumNETWORKS.moonriver]: 'MOVR',
+  [enumNETWORKS.moonbeam]: 'GLMR',
+  [enumNETWORKS.fantom]: 'FTM',
+  [enumNETWORKS.arbitrum]: 'ARBITRUM',
+  [enumNETWORKS.optimism]: 'OPTIMISM',
+}
+
 export default function OnRamp({relayerURL}) {
   const { selectedAcc } = useAccounts(useLocalStorage)
   const chosenNetwork = React.createRef();
-  // const testAddress = '0x90654F482aCb3839e12f38c7427D9345289737cA'
+  const networkCodes = networks.filter(network => (network.id in binanceNetworks)).map(network => ({
+    code: binanceNetworks[network.id], name: network.name
+  }))
 
   const openRamp = async () => {
 
@@ -19,7 +34,6 @@ export default function OnRamp({relayerURL}) {
     const merchantCode = fetchData.merchantCode
     const timestamp = fetchData.timestamp
     const iframeUrl = "https://www.binancecnt.com/en/pre-connect?merchantCode="+merchantCode+"&timestamp="+timestamp+"&cryptoAddress="+selectedAcc+"&cryptoNetwork="+networkCode+"&signature="+signature
-    // console.log(iframeUrl)
     window.open(iframeUrl,"binance-connect","menubar=1,resizable=1,width=400,height=640")
   }
 
@@ -38,8 +52,8 @@ export default function OnRamp({relayerURL}) {
             <h2>Buy Crypto with Fiat?</h2>
             <p>Choose network</p>
             <select ref={chosenNetwork}>
-              {networks.map((network, id) =>
-                <option key={id} value={network.nativeAssetSymbol}>{network.name}</option>
+              {networkCodes.map((network, id) =>
+                <option key={id} value={network.code}>{network.name}</option>
               )}
             </select>
             <button id="proceed_btn" onClick={openRamp}>Proceed</button>
