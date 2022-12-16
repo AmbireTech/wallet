@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <g id="Transactionsr_icon" data-name="Transactionsr icon" opacity="0.5">
-    <rect id="Boundary" width="32" height="32" fill="none"/>
-    <g id="Shape" transform="translate(3.412 2.093)">
-      <path id="Path_37" data-name="Path 37" d="M1.322,15.957A1.322,1.322,0,0,1,.387,13.7L11.434,2.654l-5.916.008h0a1.322,1.322,0,0,1,0-2.644L17.827,0,2.257,15.57A1.318,1.318,0,0,1,1.322,15.957Z" transform="translate(12.612 0) rotate(45)" fill="currentColor"/>
-      <path id="Path_39" data-name="Path 39" d="M1.322,15.957A1.322,1.322,0,0,1,.387,13.7L11.434,2.654l-5.916.008a1.322,1.322,0,0,1,0-2.644L17.827,0,2.257,15.57A1.318,1.318,0,0,1,1.322,15.957Z" transform="translate(12.606 27.856) rotate(-135)" fill="currentColor"/>
-    </g>
-  </g>
-</svg>
