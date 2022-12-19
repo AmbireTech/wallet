@@ -226,7 +226,7 @@ select {
   }
 
   &.danger {
-    background: mix($danger-color, $panel-background-color, 5%);
+    background: mix($danger-color, $c-shark, 5%);
     border: 1px solid $danger-color;
     color: $danger-color
   }
@@ -248,7 +248,7 @@ select {
 
 .info-panel {
   padding: 16px;
-  background-color: $input-background-color;
+  background-color: #1c1e24;
 }
 
 .notification-banner {

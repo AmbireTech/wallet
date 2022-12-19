@@ -19,11 +19,14 @@ import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
 import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
 import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.svg'
 import { ReactComponent as MetaMaskIcon } from 'resources/providers/metamask-fox.svg'
+import { useModals } from 'hooks'
+import { AddEmailAccountModal } from 'components/Modals'
 
 import styles from './AddAuthSignerModal.module.scss'
 
-const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) => {
+const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork, relayerURL, onAddAccount, showSendTxns }) => {
   const { addToast } = useToasts()
+  const { showModal } = useModals()
 
   const [disabled, setDisabled] = useState(true)
   const [signerAddress, setSignerAddress] = useState({
@@ -149,18 +152,18 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
     setModalToggle(true)
   }
 
-  // async function connectEmailSigner() {
-  //   showModal(
-  //     <AddEmailAccountModal
-  //       relayerURL={relayerURL}
-  //       onAddBtnClicked={onAddBtnClicked}
-  //       onAddAccount={onAddAccount}
-  //       selectedAcc={selectedAcc}
-  //       selectedNetwork={selectedNetwork}
-  //       showSendTxns={showSendTxns}
-  //     />
-  //   )
-  // }
+  async function connectEmailSigner() {
+    showModal(
+      <AddEmailAccountModal
+        relayerURL={relayerURL}
+        onAddBtnClicked={onAddBtnClicked}
+        onAddAccount={onAddAccount}
+        selectedAcc={selectedAcc}
+        selectedNetwork={selectedNetwork}
+        showSendTxns={showSendTxns}
+      />
+    )
+  }
 
   const setLatticeAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
     setChooseSigners({
@@ -283,6 +286,10 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
         </div>
         <div className={styles.signer} onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
           <MetaMaskIcon className={styles.metamask} />
+        </div>
+        <div className={styles.signer} onClick={() => wrapErr(connectEmailSigner)}>
+          {/* <MetaMaskIcon className={styles.metamask} /> */}
+          <h4>Email</h4>
         </div>
       </div>
       <TextInput

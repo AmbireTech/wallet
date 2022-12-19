@@ -151,6 +151,9 @@ const Signers = ({
             selectedAcc={selectedAccount} 
             selectedNetwork={selectedNetwork} 
             onAddBtnClicked={onAddBtnClickedHandler} 
+            relayerURL={relayerURL}
+            onAddAccount={onAddAccount}
+            showSendTxns={showSendTxns}
           />
         )
       }}

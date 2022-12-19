@@ -10,6 +10,7 @@ import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import Alert from './Alert/Alert'
 import Signers from './Signers/Signers'
+import { accHash } from 'lib/quickaccUtils'
 
 import styles from './Security.module.scss'
 

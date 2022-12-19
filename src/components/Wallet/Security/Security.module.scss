@@ -49,6 +49,34 @@
   .panel {
     padding: 30px 40px;
   }
+
+  .email-account-change {
+    background: #1c1e24;
+    padding: 16px;
+    display: flex;
+    gap: 16px;
+    align-items: center;
+
+    & > svg {
+      font-size: 2em;
+      color: $warning-color;
+    }
+
+    .email-account-change-title {
+      font-weight: bold;
+    }
+
+    .email-account-change-desc {
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .email-account-change-action {
+      margin-top: 8px;
+    }
+  }
 }
 
 // Mobile
