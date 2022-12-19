@@ -29,7 +29,7 @@ const checkIsOffline = connectionId => {
   return errors.length > 0 && errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnectLegacy({ account, chainId, clearWcClipboard, allNetworks, setNetwork, useStorage }) {
+export default function useWalletConnectLegacy({ account, chainId, clearWcClipboard, allNetworks, setNetwork, useStorage, setRequests }) {
   const { addToast } = useToasts()
 
   // This is needed cause of the WalletConnect event handlers
@@ -63,6 +63,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
           newRequests.push({
             ...action.batchRequest,
             type: 'eth_sendTransaction',
+            dateAdded: new Date().valueOf(),
             isBatch: true,
             id: action.batchRequest.id + ':' + ix,
             account,
@@ -119,6 +120,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
     })
 
     setStateStorage(state)
+    setRequests(currRe => [...currRe, ...state.requests])
 
     if (updateConnections) dispatch({
       type: 'updateConnections',
@@ -127,7 +129,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
         .map(({ connectionId }) => ({ connectionId, session: connectors[connectionId].session, isOffline: checkIsOffline(connectionId) }))
     })
   }
-  useEffect(maybeUpdateSessions, [account, chainId, state, setStateStorage])
+  useEffect(maybeUpdateSessions, [account, chainId, state, setStateStorage, setRequests])
   // we need this so we can invoke the latest version from any event handler
   stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
@@ -305,6 +307,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
         dispatch({
           type: 'batchRequestsAdded', batchRequest: {
             id: payload.id,
+            dateAdded: new Date().valueOf(),
             type: payload.method,
             connectionId: connectionIdentifier,
             txns: payload.params,
@@ -344,6 +347,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
       dispatch({
         type: 'requestAdded', request: {
           id: payload.id,
+          dateAdded: new Date().valueOf(),
           type: payload.method,
           connectionId: connectionIdentifier,
           txn,
