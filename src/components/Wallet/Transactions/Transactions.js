@@ -23,7 +23,7 @@ import { useLocalStorage } from 'hooks'
 
 // 10% in geth and most EVM chain RPCs; relayer wants 12%
 const RBF_THRESHOLD = 1.14
-const ITEMS_PER_PAGE = 3
+const ITEMS_PER_PAGE = 8
 
 function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns, addRequest, eligibleRequests, setSendTxnState, privateMode, showMessagesView }) {
   const { addToast } = useToasts()
@@ -75,7 +75,6 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
     defaultValue: []
   })
 
-
   const filteredMessages = useMemo(() =>
     messages
       .filter(m =>
@@ -86,8 +85,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   , [messages, selectedNetwork, selectedAcc])
 
   let maxPages = showMessages ? Math.ceil(filteredMessages.length / ITEMS_PER_PAGE) : Math.ceil(executedTransactions.length / maxBundlePerPage)
-  // Making sure we don't get "Page 1/0" if no items
-  maxPages = Math.max(1, maxPages)
+
   const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
   const [page, setPage] = useState(defaultPage)
 
@@ -223,7 +221,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           </div>
           <div className={styles.topPagination}>
             {
-              paginationControls
+              (showMessages && !messages.length) || (!showMessages && !bundlesList.length) ?  null : paginationControls
             }
           </div>
         </div>
@@ -241,7 +239,9 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         </div>)}
         { showMessages && <SignedMessages filteredMessages={filteredMessages} privateMode={privateMode} page={page} selectedAcc={selectedAcc} selectedNetwork={selectedNetwork}/> }
         <div className={styles.bottomPagination}>
-          { paginationControls }
+          {
+            (showMessages && !messages.length) || (!showMessages && !bundlesList.length) ?  null : paginationControls
+          }
         </div>
       </div>
     </section>
