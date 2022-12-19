@@ -100,7 +100,6 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
       }
     }
     if (action.type === 'requestAdded') {
-      console.log(action)
       if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
       return { ...state, requests: [...state.requests, action.request] }
     }
@@ -365,7 +364,6 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
               account: requestAccount,
               notification: true
             }
-            console.log({ request })
             setRequests(prev => [...prev, request])
             if (WC2_VERBOSE) console.log('WC2 request added :', request)
             dispatch({
