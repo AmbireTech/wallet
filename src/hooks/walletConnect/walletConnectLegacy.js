@@ -80,7 +80,22 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
     }
     if (action.type === 'requestAdded') {
       if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
-      return { ...state, requests: [...state.requests, action.request] }
+
+      const currentConnection = state.connections?.find(({ uri }) => uri === action.request.wcUri)
+      if (!currentConnection) {
+          addToast(`Couldn't find connection with: ${action.request.wcUri}`, { error: true })
+          return { ...state }
+      }
+
+      return { ...state, requests: [...state.requests, {
+        ...action.request,
+        dapp: {
+            name: currentConnection.session.peerMeta.name,
+            description: currentConnection.session.peerMeta.description,
+            url: currentConnection.session.peerMeta.url,
+            icons: currentConnection.session.peerMeta.icons,
+        }
+      }] }
     }
     if (action.type === 'requestsResolved') {
       return {
