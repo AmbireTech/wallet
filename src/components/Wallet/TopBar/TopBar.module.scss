@@ -5,75 +5,12 @@
     z-index: 49;
     padding: 45px $layout-spacing 40px 0;
     display: flex;
-    width: 100%;
     justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px 0;
+    width: 100%;
     color: $c-titan-white;
     min-height: 96px;    
-
-    .dappMenu {
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center center;
-        transition: opacity 0.1s ease-in-out;
-    }
-
-    .dappMenu {
-        height: 40px;
-
-        .dappMenuBtns {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            height: 100%;
-            max-width: 169px;
-            gap: 4px;
-
-            .ambireMenuBtn {
-                margin-right: 20px;
-            }
-
-            .dappData {
-                height: 100%;
-                display: flex;
-                flex-direction: row;
-                align-items: center;
-                gap: 4px;
-                a {
-                    height: 100%;
-                    display: flex;
-                    flex-direction: row;
-                    align-items: center;
-                    color: $c-heliotrope;
-                }
-                .dappLogo {     
-                    padding: 4px;
-                    width: auto;
-                    max-width: 100%;
-                    min-width: 50px;
-                    object-fit: contain;
-                    align-self: flex-end;
-                    flex-shrink: 0;
-                    height: 100%;
-                    border: 1px solid $c-heliotrope;
-                }
-                .dappExitBtn {
-                    display: flex;
-                    flex-direction: column;
-                    gap: 2px;
-                    padding: 2px;
-                    justify-content: space-between;
-                    font-size: 15px;
-                    line-height: 15px;
-                }
-            }            
-            
-            .buttonComponent {
-                flex-shrink: 0;
-                height: 100%;
-                width: 50px;          
-            }
-        }
-    }
     
     &.visualEnv {
         margin-top: 12px;
@@ -200,26 +137,17 @@
         }
     }
 }
+@media screen and (max-width: 1280px) {
+    .wrapper {
+        .container {
+            gap: 7px;
+        }
+    }
+}
 
 @media screen and (max-width: $sidebar-small-breakpoint) {
     .wrapper {
         padding: $layout-spacing / 4;
-
-        .dappMenu {
-            height: 35px;
-
-            .dappMenuBtns {
-                width: 140px;
-                .buttonComponent {
-                    width: 35px;
-                }
-                .dappData {
-                    .dappLogo {
-                        min-width: 35px;
-                    }
-                }
-            }
-        }
     }
 }
 
@@ -289,14 +217,6 @@
 
             &.open {
                 display: flex;
-            }
-        }
-
-        &.dappMode {
-            .dappMenu {
-                .ambireMenuBtn {
-                    display: none;
-                }
             }
         }
     }

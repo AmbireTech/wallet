@@ -1,18 +1,20 @@
-import styles from './DApps.module.scss'
-
-import React, { useState, useCallback } from 'react'
-import { FiHelpCircle } from 'react-icons/fi'
-import { ReactComponent as ConnectIcon } from './images/connect.svg'
-import { MdBrokenImage } from 'react-icons/md'
-import { AiOutlineDisconnect } from 'react-icons/ai'
-import { ReactComponent as WalletConnect } from 'resources/icons/wallet-connect.svg'
-import { DropDown, ToolTip, Button } from "components/common"
-import { checkClipboardPermission } from 'lib/permissions'
-import { MdOutlineWarning } from 'react-icons/md'
-import { canOpenInIframe } from 'lib/dappsUtils'
+import { useState, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
+
+import { checkClipboardPermission } from 'lib/permissions'
+import { canOpenInIframe } from 'lib/dappsUtils'
+
+import { DropDown, ToolTip, Button, Loading } from "components/common"
 import DropDownItem from 'components/common/DropDown/DropDownItem/DropDownItem'
 import DropDownItemSeparator from 'components/common/DropDown/DropDownItem/DropDownItemSeparator'
+
+import { MdOutlineWarning, MdBrokenImage } from 'react-icons/md'
+import { ReactComponent as ConnectIcon } from './images/connect.svg'
+import { FiHelpCircle } from 'react-icons/fi'
+import { AiOutlineDisconnect } from 'react-icons/ai'
+import { ReactComponent as WalletConnect } from 'resources/icons/wallet-connect.svg'
+
+import styles from './DApps.module.scss'
 
 const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     const history = useHistory()
@@ -46,22 +48,22 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     }, [history])
 
     return (
-        <DropDown 
-            className={styles.wrapper} 
-            menuClassName={styles.menu} 
+        <DropDown
+            className={styles.wrapper}
+            menuClassName={styles.menu}
             title={
                 <div className={styles.title}>
                     <WalletConnect />
                     <label>WalletConnect</label>
                 </div>
-            } 
-            badge={connections.length} 
-            onOpen={() => checkPermission()} 
+            }
+            badge={connections.length}
+            onOpen={() => checkPermission()}
             isLoading={isClipboardGranted && isWcConnecting}
         >
             <div className={styles.connectDapp}>
                 <div className={styles.heading}>
-                    <Button primaryGradient small className={styles.buttonClass} icon={<ConnectIcon />} disabled={isClipboardGranted} onClick={readClipboard}>
+                    <Button primaryGradient small className={styles.buttonClass} icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard}>
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
@@ -76,8 +78,8 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                 ) : null}
             </div>
             <div className={styles.dappList}>
-                {connections.map(({ session, uri, isOffline }) => (
-                  <DropDownItem className={styles.dappsItem} key={session.key}>
+                {connections.map(({ session, connectionId, isOffline, wcVersion }, index) => (
+                  <DropDownItem className={styles.dappsItem} key={index}>
                       <div className={styles.icon}>
                           <div className={styles.iconOverlay} style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
                           <MdBrokenImage/>
@@ -100,11 +102,11 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                                     :
                                     null
                               }
-                              <div className={styles.name}>{session.peerMeta.name}</div>
+                              <div className={styles.name}>{session.peerMeta.name || 'Untitled dApp'}</div>
                           </div>
                       </span>
                       <DropDownItemSeparator />
-                      <button onClick={() => disconnect(uri)}>Disconnect</button>
+                      <button onClick={() => disconnect(connectionId, wcVersion)}>Disconnect</button>
                   </DropDownItem>
                 ))}
             </div>
