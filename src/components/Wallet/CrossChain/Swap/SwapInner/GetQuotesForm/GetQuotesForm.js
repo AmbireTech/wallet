@@ -1,4 +1,4 @@
-import { useEffect, useCallback, useMemo } from 'react'
+import { useCallback, useMemo } from 'react'
 import { ethers } from 'ethers'
 import { parseUnits } from 'ethers/lib/utils'
 import cn from 'classnames'
@@ -15,28 +15,21 @@ const GetQuotesForm = ({
   portfolio,
   selectedAccount,
   setQuotes,
-  fromTokensItems,
   setLoadingQuotes,
-  loadingFromTokens,
-  loadingToTokens,
   fromChain,
-  fromToken,
-  toChain,
-  setToChain,
-  setFromToken,
-  toToken,
-  setToToken,
   amount,
   setAmount,
-  toTokenItems,
-  toChains,
-  loadingToChains,
   fetchQuotes,
-  portfolioTokens,
+  toChains,
+  setToChains,
+  toTokens,
+  fromTokens,
+  setFromTokens,
+  setToTokens,
 }) => {
   const { addToast } = useToasts()
 
-  const formDisabled = !(fromToken && toToken && fromChain && toChain && amount > 0)
+  const formDisabled = !(fromTokens.selected && toTokens.selected && fromChain && toChains.selected && amount > 0)
   const getTokenFromPortofolio = useCallback(
     (tokenAddress) =>
       portfolio.tokens
@@ -48,15 +41,14 @@ const GetQuotesForm = ({
     [portfolio.tokens]
   )
 
-  const getQuotes = useCallback(async () => {
+  const getQuotes = useCallback(async () => {    
     setLoadingQuotes(true)
-
     try {
-      const portfolioToken = getTokenFromPortofolio(fromToken)
+      const portfolioToken = getTokenFromPortofolio(fromTokens.selected)
       if (!portfolioToken) return
       const { decimals } = portfolioToken
       const flatAmount = parseUnits(amount, decimals).toString()
-      const quotes = await fetchQuotes(selectedAccount, fromToken, fromChain, toToken, toChain, flatAmount, [
+      const quotes = await fetchQuotes(selectedAccount, fromTokens.selected, fromChain, toTokens.selected, toChains.selected, flatAmount, [
         'hyphen',
         'celer',
       ]) //'anyswap-router-v4'
@@ -67,13 +59,11 @@ const GetQuotesForm = ({
     }
 
     setLoadingQuotes(false)
-  }, [addToast, amount, fetchQuotes, fromChain, fromToken, getTokenFromPortofolio, selectedAccount, setLoadingQuotes, setQuotes, toChain, toToken])
-
-  useEffect(() => (portfolioTokens.current = portfolio.tokens), [portfolio.tokens, portfolioTokens])
+  }, [addToast, amount, fetchQuotes, fromChain, getTokenFromPortofolio, selectedAccount, setLoadingQuotes, setQuotes, toChains.selected, fromTokens.selected, toTokens.selected])
 
   const maxAmount = useMemo(() => {
     try {
-      const portfolioToken = getTokenFromPortofolio(fromToken)
+      const portfolioToken = getTokenFromPortofolio(fromTokens.selected)
       if (!portfolioToken) return 0
       const { balanceRaw, decimals } = portfolioToken
       return ethers.utils.formatUnits(balanceRaw, decimals)
@@ -81,17 +71,17 @@ const GetQuotesForm = ({
       console.error(e)
       addToast(`Error while formating amount: ${e.message || e}`, { error: true })
     }
-  }, [getTokenFromPortofolio, fromToken, addToast])
+  }, [getTokenFromPortofolio, fromTokens.selected, addToast])
 
   return (
     <div className={styles.wrapper}>
-      <div className={cn(styles.body, {[styles.loading]: loadingFromTokens || loadingToTokens})}>
-        <FormSection className={styles.fromSection} inputsClassName={styles.inputs} label="From" isLoading={loadingFromTokens}>
+      <div className={cn(styles.body, {[styles.loading]: fromTokens.loading || toTokens.loading})}>
+        <FormSection className={styles.fromSection} inputsClassName={styles.inputs} label="From" isLoading={fromTokens.loading}>
           <Select
             searchable
-            defaultValue={fromToken}
-            items={fromTokensItems}
-            onChange={({ value }) => setFromToken(value)}
+            defaultValue={fromTokens.selected}
+            items={fromTokens.items}
+            onChange={({ value }) => setFromTokens((prev) => ({...prev, selected: value}))}
             iconClassName={styles.selectIcon}
             selectInputClassName={styles.selectInput}
           />
@@ -109,20 +99,20 @@ const GetQuotesForm = ({
           />
         </FormSection>
         <SwapIcon className={styles.swapIcon} />
-        <FormSection label="To" isLoading={loadingToTokens || loadingToChains} isLoadingSmaller>
+        <FormSection label="To" isLoading={toTokens.loading || toChains.loading} isLoadingSmaller>
           <Select
             searchable
-            defaultValue={toChain}
-            items={toChains}
-            onChange={({ value }) => setToChain(value)}
+            defaultValue={toChains.selected}
+            items={toChains.items}
+            onChange={({ value }) => setToChains((prev) => ({...prev, selected: value}))}
             iconClassName={styles.selectIcon}
             selectInputClassName={styles.selectInput}
           />
           <Select
             searchable
-            defaultValue={toToken}
-            items={toTokenItems}
-            onChange={({ value }) => setToToken(value)}
+            defaultValue={toTokens.selected}
+            items={toTokens.items}
+            onChange={({ value }) => setToTokens((prev) => ({...prev, selected: value}))}
             iconClassName={styles.selectIcon}
             selectInputClassName={styles.selectInput}
           />
