@@ -11,7 +11,7 @@ import { fetchGet } from 'lib/fetch'
 import { MdClose, MdOutlineNavigateNext, MdOutlineAddCircleOutline, MdCancel } from 'react-icons/md'
 import { Contract, ethers } from 'ethers'
 import { ERC20PermittableInterface } from 'consts/permittableCoins'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { GAS_SPEEDS } from 'ambire-common/src/constants/gasSpeeds'
 
 const TRANSFER_CONSUMPTION = 52000 // higher avg, 21000 included
@@ -168,6 +168,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
   }, [network, customTokenAddress, signerAccount, identityAccount, setCustomTokenError, selectableTokens])
 
   const canCoverGasFees = useCallback((speed) => {
+    if (!estimatedGasFees) return false
     const nativeToSpend = selectableTokensUserInputs.find(t => t.address === ZERO_ADDRESS && t.selected)?.amount || 0
 
     return new BigNumber(estimatedGasFees.gasFees[speed].signerTransactionsCost)
@@ -445,6 +446,7 @@ const AssetsMigrationSelector = ({ signerAccount, identityAccount, network, setI
                           <div className={`migration-asset-select${item.selected ? ' checked' : ''}`}
                                onClick={() => false}>
                             <Checkbox
+                              labelClassName='checkbox-label'
                               id={`check-${item.address}`}
                               label={<span className={'migration-asset-select-label'}>
                                   <span className='migration-asset-select-icon'>

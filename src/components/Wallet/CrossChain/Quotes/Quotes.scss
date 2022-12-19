@@ -37,6 +37,10 @@
                 .name {
                     flex: 0 0 auto;
                 }
+                
+                .time {
+                    flex: 0 0 auto;
+                }
             }
 
             .network {
@@ -62,6 +66,17 @@
         }
 
         .route {
+            background-color: $c-mirage;
+            border-radius: 12px;
+            padding: 20px;
+            align-items: flex-start;
+
+            > div {
+                margin-top: 15px;
+            }
+        }
+
+        .route-body {
             display: flex;
             flex-direction: column;
             gap: 5px;
@@ -84,11 +99,23 @@
                     background-repeat: no-repeat;
                 }
 
+                .time {
+                    flex: 0 0 auto;
+                }
+
                 .bridge,
                 .middleware {
                     display: flex;
                     align-items: center;
-                    gap: 7px;
+                    gap: 5px;
+                    
+                    .name {
+                        font-weight: 300;
+                    }
+                }
+
+                .bridge {
+                    margin-left: auto;
                 }
             }
 
@@ -104,9 +131,14 @@
                     gap: 10px;
 
                     .amount {
+                        font-size: 14px;
                         flex: 1 1 50%;
 
-                        &:nth-child(2) {
+                        &.middleware {
+                            text-align: left;
+                        }
+
+                        &.bridge {
                             text-align: right;
                         }
                     }
@@ -114,17 +146,28 @@
 
                 .fees {
                     display: flex;
+                    justify-content: space-between;
+                    margin-bottom: 20px;
 
                     .fee {
                         flex: 1 1 50%;
-                        font-size: 15px;
+                        font-size: 13px;
                         opacity: 0.8;
-                        color: $danger-color;
+                        color: $c-heliotrope;
 
-                        &:nth-child(2) {
+                        &.middleware {
+                            text-align: left;
+                        }
+                        &.bridge {
                             text-align: right;
                         }
                     }
+                }
+
+                .time {
+                    text-align: right;
+                    font-size: 12px;
+                    opacity: .7;
                 }
             }
         }

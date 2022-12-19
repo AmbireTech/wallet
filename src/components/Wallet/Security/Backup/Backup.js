@@ -1,7 +1,9 @@
-import './Backup.scss'
+import cn from 'classnames'
+import { Button, Panel } from "components/common"
+import { ReactComponent as ExportIcon } from 'resources/icons/export.svg'
+import { ReactComponent as ImportIcon } from 'resources/icons/import.svg'
 
-import { BiExport, BiImport } from "react-icons/bi"
-import { Button } from "components/common"
+import styles from './Backup.module.scss'
 
 const Backup = ({ selectedAccount, onOpen, onAddAccount }) => {
     const onBackupDownloaded = () => {
@@ -12,10 +14,9 @@ const Backup = ({ selectedAccount, onOpen, onAddAccount }) => {
     }
 
     return (
-        <div id="backup">
-            <div className="panel">
-                <div className="panel-title">Backup current account</div>
-                <div className="content" id="export">
+        <div className={styles.wrapper}>
+            <Panel className={styles.panel} titleClassName={styles.panelTitle} title="Backup current account">
+                <div className={cn(styles.content, styles.export)}>
                     <a
                         type="button"
                         href={`data:text/json;charset=utf-8,${encodeURIComponent(
@@ -23,22 +24,21 @@ const Backup = ({ selectedAccount, onOpen, onAddAccount }) => {
                         )}`}
                         download={`${selectedAccount.id}.json`}
                     >
-                        <Button icon={<BiExport/>} onClick={onBackupDownloaded}>Export</Button>
+                        <Button icon={<ExportIcon />} onClick={onBackupDownloaded} className={styles.button}>Export</Button>
                     </a>
-                    <div style={{ fontSize: '0.9em' }}>
+                    <p>
                         Downloads a backup of your current account ({selectedAccount.id.slice(0, 5)}...{selectedAccount.id.slice(-3)}) encrypted with
                         your password. It's safe to store in iCloud/Google Drive, but you cannot use it to restore your account if you forget the password.
                         <b> You can only import this in Ambire</b>, it's not importable in other wallets.
-                    </div>
+                    </p>
                 </div>
-            </div>
-            <div className="panel">
-                <div className="panel-title">Import an account from backup</div>
-                <div className="content" id="import">
-                    <Button icon={<BiImport/>} onClick={onOpen}>Import</Button>
+            </Panel>
+            <Panel className={styles.panel} titleClassName={styles.panelTitle} title="Import an account from backup">
+                <div className={cn(styles.content, styles.import)}>
+                    <Button icon={<ImportIcon />} onClick={onOpen} className={styles.button}>Import</Button>
                     <p>...or you can drop an account backup JSON file on this page</p>
                 </div>
-            </div>
+            </Panel>
         </div>
     )
 }

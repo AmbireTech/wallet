@@ -3,7 +3,9 @@ import {useToasts} from 'hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
 import {GnosisConnector} from 'lib/GnosisConnector'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
+
+import { rpcProviders } from 'config/providers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
@@ -93,7 +95,12 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
       const method = msg.data.params.call
       const callTx = msg.data.params.params
 
-      const provider = getProvider(stateRef.current.network.id)
+      // NOTE: swap only provider
+      const provider = (stateRef.current?.network?.id === 'ethereum' && connector?.current?.app?.name === 'Ambire swap') ?
+        rpcProviders['ethereum-ambire-swap']
+        : getProvider(stateRef.current.network.id)
+      // const provider = getProvider(stateRef.current.network.id)
+
       let result
       if (method === "eth_call") {
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
@@ -210,13 +217,21 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         return
       }
 
+      const currentAppData = connector.current.app
+
       const request = {
         id,
         forwardId: msg.data.id,
         type: message.signType === 'eth_signTypedData_v4' ? 'eth_signTypedData_v4' : 'personal_sign',
         txn: message.signType === 'eth_signTypedData_v4' ? JSON.parse(message.message) : message,
         chainId: stateRef.current.network.chainId,
-        account: stateRef.current.selectedAccount
+        account: stateRef.current.selectedAccount,
+        dapp: currentAppData ? {
+          name: currentAppData.name,
+          description: currentAppData.description,
+          icons: [currentAppData.iconUrl],
+          url: currentAppData.url,
+        } : null
       }
 
       setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])

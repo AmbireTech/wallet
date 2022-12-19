@@ -1,0 +1,9 @@
+<svg id="Error_icon" data-name="Error icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+  <rect id="Boundary" width="24" height="24" rx="12" transform="translate(24 24) rotate(180)" fill="#fd1a64"/>
+  <g id="Group_66" data-name="Group 66" transform="translate(5.515 5.585)">
+    <g id="Group_103" data-name="Group 103" transform="translate(0)">
+      <path id="Line_37" data-name="Line 37" d="M1.286,15.571A1.286,1.286,0,0,1,0,14.286v-13a1.286,1.286,0,0,1,2.571,0v13A1.286,1.286,0,0,1,1.286,15.571Z" transform="translate(11.011) rotate(45)" fill="#fff"/>
+      <path id="Line_37-2" data-name="Line 37" d="M1.286,0A1.286,1.286,0,0,0,0,1.286v13a1.286,1.286,0,0,0,2.571,0v-13A1.286,1.286,0,0,0,1.286,0Z" transform="translate(12.829 11.011) rotate(135)" fill="#fff"/>
+    </g>
+  </g>
+</svg>

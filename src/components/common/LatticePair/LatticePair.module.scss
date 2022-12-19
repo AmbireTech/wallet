@@ -1,0 +1,24 @@
+@import '../../../variables.scss';
+
+.wrapper {
+    .title {
+        font-size: 22px;
+    }
+
+    .content {
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        justify-content: center;
+    }
+
+    h3 {
+        text-align: center;
+        color: $c-turquoise;
+    }
+
+    button {
+        margin-top: 20px;
+        align-self: center;
+    }
+}

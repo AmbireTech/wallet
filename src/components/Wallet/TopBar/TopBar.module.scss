@@ -1,0 +1,223 @@
+@import 'variables.scss';
+
+.wrapper {
+    position: sticky;
+    z-index: 49;
+    padding: 45px $layout-spacing 40px 0;
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 30px 0;
+    width: 100%;
+    color: $c-titan-white;
+    min-height: 96px;    
+    
+    &.visualEnv {
+        margin-top: 12px;
+        .envBar
+        {
+            color: $c-titan-white;
+            text-align: center;
+            font-size: 10px;
+            line-height: 11px;
+            font-weight: bold;
+            height: 12px;
+            width: 100%;
+            position: absolute;
+            top: -12px;
+            left: 0;
+            display: block;
+
+        }
+
+        &.visualEnvdev {
+            .envBar{
+                background: repeating-linear-gradient(
+                    -45deg,
+                    #0066ff 0px,
+                    #0066ff 30px,
+                    #0048b6 30px,
+                    #004cbd 40px
+                );
+            }
+        }
+
+        &.visualEnvstaging {
+            .envBar{
+                background: repeating-linear-gradient(
+                    -45deg,
+                    #e69b00 0px,
+                    #e69b00 30px,
+                    #c08b00 30px,
+                    #c08b00 40px
+                );
+            }
+        }
+    }
+
+    .mobileMenu {
+        display: none;
+        align-items: center;
+        gap: 1em;
+        padding: 0 20px;
+
+        .logo {
+            width: 100px;
+        }
+
+        .mobileMenuRight {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+
+            .icon {
+                height: 25px;
+                width: 25px;
+                background-color: $c-mirage;
+                border-radius: 8px;
+            }
+    
+            .menuButton {
+                @include flex-center-center;
+                font-size: 30px;
+                margin-left: 10px;
+
+                .menuIcon {
+                    width: 40px;
+                    height: 40px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    border-radius: 12px;
+                    background-color: rgba($c-titan-white, 0.05);
+                }
+            }
+        }
+    }
+
+    .container {        
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 30px;
+        flex-wrap: wrap;
+        max-width: $max-container-width;
+
+        .privacyAndRewards {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+        }
+    }
+
+    &.dappMode {
+        padding: 20px;
+        align-items: center;
+
+        .mobileMenu {
+            padding: 0;
+            width: auto;
+        }
+    }
+}
+
+@media screen and (max-width: 1650px) {
+    .wrapper {
+        padding: 45px $layout-spacing / 3 40px 0;
+    }
+}
+
+// On this breakpoint, the TopBar items overflow and are wrapped on a second row.
+// In order to prevent it, we decrease the items gap.
+@media screen and (max-width: 1500px) {
+    .wrapper {
+        .container {
+            gap: 15px;
+        }
+    }
+}
+@media screen and (max-width: 1280px) {
+    .wrapper {
+        .container {
+            gap: 7px;
+        }
+    }
+}
+
+@media screen and (max-width: $sidebar-small-breakpoint) {
+    .wrapper {
+        padding: $layout-spacing / 4;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .mobileBackground {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -2;
+        background-color: $c-ebony-clay;
+        opacity: 0;
+        transition: .3s ease-out opacity;
+        &.visible {
+            opacity: .8;
+            z-index: 48;
+        }
+    }
+
+    .wrapper {
+        z-index: 50;
+        box-shadow: 0 4px 10px #00000073;
+        border: 1px solid $c-fiord;
+        padding: 20px 0;
+        background-color: $c-fiord;
+
+        .mobileMenu {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+            padding: 0 10px;
+        }
+
+        .container {
+            position: absolute;
+            flex-direction: column;
+            align-items: stretch;
+            top: 93px;
+            left: 0;
+            right: 0;
+            gap: 10px;
+            display: none;
+            padding: 10px 10px;
+            box-shadow: $box-shadow;
+            background-color: $c-fiord;
+
+            .privacyAndRewards {
+                display: flex;
+                justify-content: flex-end;
+                gap: 20px;
+            }
+
+            .dropdown {
+                width: 100%;
+
+                .menu {
+                    width: 100%;
+                }
+            }
+
+            .select {
+                width: 100%;
+            }
+
+            &.open {
+                display: flex;
+            }
+        }
+    }
+}

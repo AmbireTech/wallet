@@ -1,6 +1,7 @@
 @import 'variables.scss';
 
 #transactions {
+    color: $c-titan-white;
     .pagination-controls {
         display: flex;
         align-items: center;
@@ -21,7 +22,9 @@
         flex-direction: column;
         gap: 10px;
         padding: 1.5em;
-        background-color: $panel-background-color;
+        background: $c-ebony-clay;
+        border: 1px solid $c-fiord;
+        border-radius: 12px;
 
         .actions {
             display: flex;
@@ -29,14 +32,16 @@
             gap: 1em;
 
             button {
-                background-color: #80ffdb;
+                background-color: $c-turquoise;
+                color: #000;
+                border: 0;
                 padding: 1em;
                 font-weight: bold;
                 text-transform: uppercase;
 
                 &.cancel {
                     background-color: #da5151;
-                    color: white;
+                    color: $c-titan-white;
                 }
             }
         }
@@ -74,6 +79,11 @@
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
+
+                    a.explorer-url {
+                        color: $c-heliotrope;
+                        text-decoration: underline;
+                    }
                 }
             }
         }
@@ -88,12 +98,9 @@
         .panel-heading {
             height: 75px;
             z-index: 47;
-            position: sticky;
-            top: -30px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background-color: $background-color;
 
             .title {
                 display: flex;
