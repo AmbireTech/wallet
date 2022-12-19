@@ -75,7 +75,7 @@ const SwapInner = ({
         disabled: false
       }
     })
-  }, [fromChain])
+  }, [fromChain, selectedAccount])
 
   const loadToChains = useCallback(async () => {
     try {
@@ -117,12 +117,12 @@ const SwapInner = ({
   useEffect(() => {
     if (!fromChain || !portfolio.isCurrNetworkBalanceLoading) return
     loadToChains()
-  }, [portfolio.isCurrNetworkBalanceLoading, loadToChains, fromChain])
+  }, [selectedAccount, portfolio.isCurrNetworkBalanceLoading, loadToChains, fromChain])
   
   // We set portfolio tokens to the ref to avoid unnecessary re-renders (may be better to change it in the future)
   useEffect(() => {
     portfolioTokens.current = portfolio.tokens
-  }, [portfolio.tokens, portfolioTokens, fromChain])
+  }, [selectedAccount, portfolio.tokens, portfolioTokens, fromChain])
 
   const loadFromTokens = useCallback(async () => {
     try {
@@ -168,7 +168,7 @@ const SwapInner = ({
     if (!fromChain || status.disabled || status.loading || portfolio.isCurrNetworkBalanceLoading) return
     
     loadFromTokens()
-  }, [fromChain, loadFromTokens, portfolio.isCurrNetworkBalanceLoading, status.disabled, status.loading])
+  }, [selectedAccount, fromChain, loadFromTokens, portfolio.isCurrNetworkBalanceLoading, status.disabled, status.loading])
 
   const loadToTokens = useCallback(async () => {
     try {
@@ -205,7 +205,7 @@ const SwapInner = ({
     if (!fromChain || status.disabled || status.loading || portfolio.isCurrNetworkBalanceLoading || fromTokens.loading) return
 
     loadToTokens()
-  }, [fromChain, fromTokens.loading, loadToTokens, portfolio.isCurrNetworkBalanceLoading, status.disabled, status.loading])
+  }, [selectedAccount, fromChain, fromTokens.loading, loadToTokens, portfolio.isCurrNetworkBalanceLoading, status.disabled, status.loading])
   
 
   useEffect(() => setAmount(0), [fromTokens.selected, setAmount, fromChain])
