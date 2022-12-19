@@ -380,7 +380,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
         })
       }
     },
-    [addToast, getConnectionFromSessionTopic]
+    [addToast, getConnectionFromSessionTopic, setRequests]
   )
 
   const onSessionDelete = useCallback((deletion) => {
