@@ -36,6 +36,7 @@
 @media screen and (max-width: 1400px) {
     .wrapper {
         flex-direction: column;
+        height: auto;
     }
 }
 
@@ -43,7 +44,6 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
         gap: 15px;
-        height: auto;
 
         .sell {
             padding: 20px;
