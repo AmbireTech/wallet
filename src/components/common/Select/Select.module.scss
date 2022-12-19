@@ -8,7 +8,7 @@
     user-select: none;
     font-weight: bold;
     cursor: pointer;
-    min-width: 240px;
+    min-width: 210px;
 
     &InputContainer {
         border-radius: 0;
@@ -75,6 +75,7 @@
                 @include flex-center-center;
                 height: 32px;
                 width: 32px;
+                background-color: rgba($c-titan-white, 0.05);
                 border-radius: 12px;
                 transition: all 0.1s ease-in-out;
 

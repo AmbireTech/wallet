@@ -4,18 +4,34 @@ $account-height: 60px;
 
 .wrapper {
     color: $c-titan-white;
+
     .content {
         cursor: pointer;
     }
 
-    .title {
-        font-family: 'Ubuntu Mono';
-        font-weight: bold;
+    .selectedAddress {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        
+        p {
+            margin: 0;
+        }
+
+        svg {
+            width: 18px;
+            transition: .3s ease-in-out opacity;
+
+            &:hover {
+                opacity: .6;
+            }
+        }
     }
 
     .menu {
         background-color: $c-mirage;
         padding-top: 15px;
+        
 
         .list {
             max-height: calc(#{$account-height} * 6.5);

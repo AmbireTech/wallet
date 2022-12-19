@@ -1,0 +1,12 @@
+@import 'variables';
+
+.panelBody {
+  overflow-y: auto;
+  height: 100%;
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .panelBody {
+    overflow-y: hidden;
+  }
+}

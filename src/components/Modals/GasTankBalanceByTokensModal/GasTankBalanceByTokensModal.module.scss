@@ -4,45 +4,78 @@
     .content {
         display: flex;
         flex-direction: column;
+        gap: 10px;
         
-        .row {
+        .token {
             display: flex;
-            justify-content: space-around;
-            align-items: center;
-            text-align: center;
-            height: 60px;
-            
-            &:nth-child(odd) {
-                background-color: rgba(255, 255, 255, 0.02);
+            background-color: $c-mirage;
+            border-radius: 12px;
+            padding: 8px 20px;
+
+            p {
+                opacity: .9;
+                font-weight: 300;
+                margin: 0;
+                font-size: 14px;
             }
 
-            &:first-child {
-                border-radius: 12px 12px 0 0;
-            }
-            &:last-child {
-                border-radius: 0 0 12px 12px;
-            }
-            
-            .item {
-                flex: 2 0 0;
-            }
+            .iconAndName {
+                display: flex;
+                flex: 2 0 0; 
+                gap: 10px;
+                align-items: center;
 
-            .logo {
-                flex: 1 0 0;
-                
-                img {
-                    border-radius: 50%;
+                .icon {
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 34px;
+                    height: 34px;
+                    border-radius: 12px;
+                    background-color: rgba($c-titan-white, 0.05);
+
+                    img {
+                        width: 18px;
+                        height: 18px;
+                    }
                 }
             }
+            .amountAndValue {
+                display: flex;
+                align-items: center;
+                flex: 3 0 0;
 
-            .balance {
-                flex: 4 0 0;
+                .amount {
+                    flex: 4;
+                    text-align: left;
+                }
+
+                .value {
+                    flex: 2;
+                    text-align: right;
+                }
             }
         }
     }
+}
 
-    :global(.buttons button) {
-        flex: 0 1 100% !important;
-        height: 100%;
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        .content {
+            .token {
+                align-items: flex-start;
+                justify-content: space-between;
+
+                .iconAndName {
+                    flex: unset;
+                }
+                .amountAndValue {
+                    flex: unset;
+                    gap: 5px;
+                    flex-direction: column;
+                    align-items: flex-end;
+                }
+            }
+        }
     }
 }
