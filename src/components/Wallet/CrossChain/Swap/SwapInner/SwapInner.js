@@ -203,11 +203,10 @@ const SwapInner = ({
   }, [addToast, fetchToTokens, fromChain, fromTokens, toChains.selected])
 
   useEffect(() => {
-    // Load toTokens only if a toChain is already selected
-    if (!toChains.selected) return
-
+    if (!fromChain || status.loading || status.disabled || fromTokens.loading) return
+    
     loadToTokens()
-  }, [loadToTokens, toChains.selected])
+  }, [selectedAccount, fromChain, status.disabled, status.loading, fromTokens.loading, loadToTokens])
   
 
   useEffect(() => setAmount(0), [fromTokens.selected, setAmount, fromChain])
