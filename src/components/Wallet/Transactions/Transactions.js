@@ -221,7 +221,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
           </div>
           <div className={styles.topPagination}>
             {
-              (showMessages && !messages.length) || (!showMessages && !bundlesList.length) ?  null : paginationControls
+              maxPages >= 1 ?  paginationControls : null
             }
           </div>
         </div>
@@ -240,7 +240,7 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
         { showMessages && <SignedMessages filteredMessages={filteredMessages} privateMode={privateMode} page={page} selectedAcc={selectedAcc} selectedNetwork={selectedNetwork}/> }
         <div className={styles.bottomPagination}>
           {
-            (showMessages && !messages.length) || (!showMessages && !bundlesList.length) ?  null : paginationControls
+             maxPages >= 1 ?  paginationControls : null
           }
         </div>
       </div>
