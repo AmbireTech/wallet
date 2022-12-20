@@ -1,3 +1,7 @@
+// For testing purposes, you can use the following code to test the SDK
+// import BuyCrypto from 'components/SDK/BuyCrypto/BuyCrypto'
+// import SDK from 'components/SDK/SDK'
+// import SwitchNetwork from 'components/SDK/SwitchNetwork/SwitchNetwork'
 import { createContext, useEffect, useState } from 'react'
 
 import styles from './ThemeProvider.module.scss'
