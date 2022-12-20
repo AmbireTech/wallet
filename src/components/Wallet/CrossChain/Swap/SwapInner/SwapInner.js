@@ -115,14 +115,14 @@ const SwapInner = ({
   }, [fromChain, fetchChains, addToast])
 
   useEffect(() => {
-    if (!fromChain || !portfolio.isCurrNetworkBalanceLoading) return
+    if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
     loadToChains()
   }, [selectedAccount, portfolio.isCurrNetworkBalanceLoading, loadToChains, fromChain])
   
   // We set portfolio tokens to the ref to avoid unnecessary re-renders (may be better to change it in the future)
   useEffect(() => {
     portfolioTokens.current = portfolio.tokens
-  }, [selectedAccount, portfolio.tokens, portfolioTokens, fromChain])
+  }, [selectedAccount, portfolio.tokens, fromChain])
 
   const loadFromTokens = useCallback(async () => {
     try {
@@ -165,10 +165,10 @@ const SwapInner = ({
   }, [addToast, fetchFromTokens, fromChain, toChains.selected])
 
   useEffect(() => {
-    if (!fromChain || status.disabled || status.loading || portfolio.isCurrNetworkBalanceLoading) return
+    if (!fromChain || status.disabled || status.loading) return
     
     loadFromTokens()
-  }, [selectedAccount, fromChain, loadFromTokens, portfolio.isCurrNetworkBalanceLoading, status.disabled, status.loading])
+  }, [selectedAccount, fromChain, loadFromTokens, status.disabled, status.loading])
 
   const loadToTokens = useCallback(async () => {
     try {
@@ -202,10 +202,10 @@ const SwapInner = ({
   }, [addToast, fetchToTokens, fromChain, fromTokens, toChains.selected])
   
   useEffect(() => {
-    if (!fromChain || status.disabled || status.loading || portfolio.isCurrNetworkBalanceLoading || fromTokens.loading) return
+    if (!fromChain || status.disabled || status.loading || fromTokens.loading) return
 
     loadToTokens()
-  }, [selectedAccount, fromChain, fromTokens.loading, loadToTokens, portfolio.isCurrNetworkBalanceLoading, status.disabled, status.loading])
+  }, [selectedAccount, fromChain, fromTokens.loading, loadToTokens, status.disabled, status.loading])
   
 
   useEffect(() => setAmount(0), [fromTokens.selected, setAmount, fromChain])
