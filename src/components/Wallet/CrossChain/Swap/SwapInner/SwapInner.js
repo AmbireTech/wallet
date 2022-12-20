@@ -201,13 +201,13 @@ const SwapInner = ({
       setToTokens(defaultState)
     }
   }, [addToast, fetchToTokens, fromChain, fromTokens, toChains.selected])
-  
-  useEffect(() => {
-    if (!fromChain || status.disabled || status.loading || fromTokens.loading) return
 
-    // @TODO when we switch from a supported network to an unsupported one this this still gets called. We should fix it
+  useEffect(() => {
+    // Load toTokens only if a toChain is already selected
+    if (!toChains.selected) return
+
     loadToTokens()
-  }, [selectedAccount, fromChain, fromTokens.loading, loadToTokens, status.disabled, status.loading])
+  }, [loadToTokens, toChains.selected])
   
 
   useEffect(() => setAmount(0), [fromTokens.selected, setAmount, fromChain])
@@ -225,7 +225,7 @@ const SwapInner = ({
     return <NoFundsPlaceholder />
   } else if (!fromTokens.loading && !fromTokens.items.length) {
     return <p className={styles.placeholder}>You don't have any available tokens to swap</p>
-  } 
+  }
   
   return quotes ? (
     <Quotes
