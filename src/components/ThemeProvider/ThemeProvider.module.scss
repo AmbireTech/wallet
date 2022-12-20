@@ -63,9 +63,9 @@
 .light {
   --theme: light;
   @include Text($c-fiord, rgba($c-fiord, 0.8));
-  @include Background($c-titan-white, red, #F2F3FF, red, red, $c-fiord);
+  @include Background($c-titan-white, red, #F7F8FF, red, red, $c-fiord);
   @include Border(red, $c-titan-white, red, $c-fiord);
-  @include Highlight($c-heliotrope, $c-blue-lagoon);
+  @include Highlight($c-blue-lagoon, $c-electric-violet);
   // Our gradients are currently the same, but we may change them later
   @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
   // Other
