@@ -88,6 +88,7 @@ const SwapInner = ({
         loading: false
       })
 
+      // If the current network is not supported we don't load anything else
       if (!isSupported) return
 
       const newToChains = chains
@@ -165,7 +166,7 @@ const SwapInner = ({
   }, [addToast, fetchFromTokens, fromChain, toChains.selected])
 
   useEffect(() => {
-    if (!fromChain || status.disabled || status.loading) return
+    if (!fromChain || status.loading || status.disabled) return
     
     loadFromTokens()
   }, [selectedAccount, fromChain, loadFromTokens, status.disabled, status.loading])
@@ -204,6 +205,7 @@ const SwapInner = ({
   useEffect(() => {
     if (!fromChain || status.disabled || status.loading || fromTokens.loading) return
 
+    // @TODO when we switch from a supported network to an unsupported one this this still gets called. We should fix it
     loadToTokens()
   }, [selectedAccount, fromChain, fromTokens.loading, loadToTokens, status.disabled, status.loading])
   
@@ -215,7 +217,7 @@ const SwapInner = ({
     setToTokens((prev) => ({ ...prev, loading: true }))
   }, [toChains.selected, fromTokens.selected, setToTokens])
     
-  if (status.loading || portfolio.isCurrNetworkBalanceLoading || loadingQuotes || fromTokens.loading) {
+  if (status.loading || portfolio.isCurrNetworkBalanceLoading || loadingQuotes || (fromTokens.loading  && !status.disabled)) {
     return <Loading />
   } else if (status.disabled) {
     return <p className={styles.placeholder}>Not supported on this Network</p>
