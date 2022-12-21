@@ -1,0 +1,54 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+
+  .titleWrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+
+    &.noRoutes {
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 16px;
+      font-weight: 400;
+      margin: 0;
+    }
+  }
+
+  .routes {
+    gap: 12px;
+
+    .route {
+      background-color: $c-mirage;
+      border-radius: 12px;
+      padding: 20px;
+      align-items: flex-start;
+    }
+  }
+  
+  .noRoutesPlaceholder {
+    margin: 0;
+    max-width: 480px;
+    font-size: 14px;
+    font-weight: 300;
+    opacity: 0.9;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .routes {   
+      .route {
+        flex-direction: column;
+        padding: 15px;
+      }
+    }
+  }
+}

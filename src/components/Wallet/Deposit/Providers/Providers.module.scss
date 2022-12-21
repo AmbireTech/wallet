@@ -20,6 +20,12 @@
 
         .logo {
             display: block;
+            max-width: 30%;
+            min-width: 100px;
+
+            img, svg {
+                width: 100%;
+            }
         }
 
         .details {
@@ -79,6 +85,11 @@
             flex-direction: column;
             gap: 20px!important;
             padding: 30px;
+
+            .logo {
+                max-width: 80%;
+            }
+
             .details {
                 text-align: center;
 
