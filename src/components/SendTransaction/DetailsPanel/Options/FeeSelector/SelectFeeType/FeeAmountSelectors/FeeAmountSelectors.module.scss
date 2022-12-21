@@ -15,6 +15,11 @@
     border: 1px solid transparent;
     text-align: center;
     transition: .3s ease-in-out all;
+    // If not set, .feeSquare items min width is set to the width of its content.
+    // In other words, the different fees values ($0,01 and 0.000421434) may result in a different square widths.
+    // This can result in layouts appearing uneven.
+    // Credits: https://dfmcphee.com/flex-items-and-min-width-0/
+    min-width: 0;
 
     .speed,
     .feeEstimation {

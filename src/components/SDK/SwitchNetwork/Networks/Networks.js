@@ -6,7 +6,7 @@ import styles from './Networks.module.scss'
 const Network = ({id, name}) => (
   <div className={styles.network}>
     <div className={styles.networkIconWrapper}>
-      <img src={networkIconsById(id)} alt="" className={styles.networkIcon} />
+      <img src={networkIconsById[id]} alt="" className={styles.networkIcon} />
     </div>
     <h3 className={styles.networkName}>{name}</h3>
   </div>

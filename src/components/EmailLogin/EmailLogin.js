@@ -21,7 +21,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const [inProgress, setInProgress] = useState(false)
     const [loginSessionKey, setLoginSessionKey, removeLoginSessionKey] = useLocalStorage({ key: 'loginSessionKey', isStringStorage: true })
 
-    const EMAIL_VERIFICATION_RECHECK = 3000
+    const EMAIL_VERIFICATION_RECHECK = 6000
 
     const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
       // try by-email first: if this returns data we can just move on to decrypting
