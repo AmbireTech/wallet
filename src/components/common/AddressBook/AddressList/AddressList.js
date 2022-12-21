@@ -3,7 +3,7 @@ import styles from './AddressList.module.scss'
 
 import { MdOutlineDelete } from 'react-icons/md'
 
-const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress ,className }) => {
+const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress, className, addressClassName }) => {
     const items = addresses.filter(({ isAccount }) => !(isAccount && noAccounts))
 
     return (
@@ -13,7 +13,7 @@ const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress ,cl
                     <div className={styles.placeholder}>Your Address Book is empty</div>
                     :
                     items.map(({ isAccount, icon, name, address, type }) => (
-                        <div className={styles.item} key={address + name}>
+                        <div className={cn(styles.item, addressClassName)} key={address + name}>
                             <div className={styles.inner} onClick={() => onSelectAddress && onSelectAddress(address)}>
                                 <div className={styles.icon} style={{ backgroundImage: `url(${icon})`}}></div>
                                 <div className={styles.details}>

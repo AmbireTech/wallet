@@ -56,4 +56,14 @@ modifyLineFromFile({
   },
 });
 
+// required for WC 2.0
+modifyLineFromFile({
+  path: 'node_modules/react-scripts/config/webpack.config.js',
+  lineToModify: {
+    index: 501,
+    value: 'inputSourceMap: shouldUseSourceMap,',
+    newValue: "inputSourceMap: shouldUseSourceMap, plugins: [ require.resolve('@babel/plugin-proposal-nullish-coalescing-operator')],"
+  },
+});
+
 console.log('✅ Create React App webpack config modified, in order to compile the ts|tsx code in the ambire-common package. Be aware that this might break if (when) react-scripts package gets updated in future.')
