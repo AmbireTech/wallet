@@ -8,6 +8,7 @@
     min-height: 100%;
     padding: 40px 0;
     overflow: hidden;
+
     @if theme(theme) == dark {
         background: url('/resources/login-bg.png');
         background-size: cover;
@@ -75,19 +76,21 @@
         font-size: 16px;
 
         &:not([type=submit]):focus {
-            border-bottom-color: red;
+            @if theme(theme) == dark {
+                border-bottom-color: $c-white;
+            }
+            @else {
+                border-bottom-color: #6000ff;
+            }
+        
         }
     }
 
     .logo {
-        // background-image: url('/resources/logo.svg');
         width: 100%;
         max-width: 252px;
         margin: 0px auto;
         height: 110px;
-        // background-size: contain;
-        // background-repeat: no-repeat;
-        // background-position: center;
     }
 
     .pluginInfo {

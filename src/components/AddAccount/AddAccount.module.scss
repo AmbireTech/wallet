@@ -8,6 +8,7 @@
     min-height: 100%;
     padding: 40px 0;
     overflow: hidden;
+
     @if theme(theme) == dark {
         background: url('/resources/login-bg.png');
         background-size: cover;
@@ -77,12 +78,18 @@
     input {
         color: $c-scampi;
         margin: 2em 0px;
-        border-bottom: 2px solid red;
+        border-bottom: 2px solid theme(border-input);
         width: 100%;
         font-size: 16px;
 
         &:not([type=submit]):focus {
-            border-bottom-color: red;
+            @if theme(theme) == dark {
+                border-bottom-color: $c-white;
+            }
+            @else {
+                border-bottom-color: $c-electric-violet;
+            }
+        
         }
     }
 
