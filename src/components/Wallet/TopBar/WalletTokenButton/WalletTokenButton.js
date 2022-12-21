@@ -37,7 +37,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
         const isCurrentClaimStatusLoadingAndNoPrevData =
           currentClaimStatus.loading && !currentClaimStatus.lastUpdated
         const isRewardsDataLoadingAndNoPrevData = rewardsIsLoading && !rewardsLastUpdated
-        const isMatchingRewardsDataAccWithCurrAcc = rewardsData.rewards.accountAddr.toLowerCase() === accountId.toLowerCase()
+        const isMatchingRewardsDataAccWithCurrAcc = rewardsData.rewards.accountAddr.toLowerCase() === accountId.toLowerCase() 
         if (isCurrentClaimStatusLoadingAndNoPrevData
             || isRewardsDataLoadingAndNoPrevData
             || !isMatchingRewardsDataAccWithCurrAcc) {
