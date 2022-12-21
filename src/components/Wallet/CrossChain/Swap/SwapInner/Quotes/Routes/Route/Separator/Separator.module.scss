@@ -1,0 +1,34 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex: 1;
+  align-items: center;
+
+  .circle {
+    width: 8px;
+    height: 8px;
+    max-width: 8px;
+    max-height: 8px;
+    border-radius: 100%;
+    border: 1px solid $c-scampi;
+  }
+
+  .line {
+    flex: 1;
+    white-space: nowrap;
+    height: 1px;
+    border: 1px dashed $c-scampi;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    min-height: 35px;
+    flex-direction: column;
+
+    .body {
+      flex-direction: column;
+    }
+  }
+}
