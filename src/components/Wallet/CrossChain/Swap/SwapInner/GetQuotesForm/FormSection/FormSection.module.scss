@@ -1,0 +1,32 @@
+@import 'variables';
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 224px;
+  width: 100%;
+  background-color: $c-mirage;
+  border-radius: 12px;
+  margin-bottom: 20px;
+
+  &.smaller {
+    height: 140px;
+  }
+}
+
+.wrapper {
+  .label {
+    display: block;
+    padding-left: 20px;
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+
+  .inputs {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}
