@@ -26,7 +26,7 @@ const CongratsRewardsModal = ({ pendingTokensTotal }) => {
     return (
         <>
             <Modal className={styles.wrapper} title="Woo-hoo!" buttons={modalButtons}>
-                <div className={styles.content}>
+                <div className={styles.innerContent}>
                     <div id="rewardId" className={styles.reward} />
                     <div className={styles.logo}></div>
                     <h2>You just received { pendingTokensTotal } $WALLET!</h2>

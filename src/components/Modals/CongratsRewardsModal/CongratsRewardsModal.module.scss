@@ -1,11 +1,13 @@
-.wrapper {
-    .heading {
-        .title {
-            height: 34px !important;
-        }
+.wrapper {  
+    width: 510px;
+
+    :global(.title-wrapper) {
+        height: 34px !important;
+        width: 100%;
+        justify-content: center;
     }
 
-    :global(.content) {
+    .innerContent {
         padding-bottom: 0 40px;
 
         .reward {
@@ -21,7 +23,7 @@
         }
     }
     
-    .buttons {
+    :global(.buttons) {
         button {
             flex: 0 1 100% !important;
         }
