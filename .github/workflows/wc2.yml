@@ -1,0 +1,39 @@
+name: Build & deploy 🔥 Ambire Wallet 🔥 (WC-v2 🧪🔬)
+
+on:
+  push:
+    branches:
+      - wc-2.0
+  pull_request:
+    branches:
+      - wc-2.0
+permissions:
+  contents: write
+jobs:
+  build:
+    name: Build & Deploy - (WC-v2 🧪🔬)
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }} 
+    steps:
+    - name: Checkout code 🛎️
+      uses: actions/checkout@v3
+
+    - name: Install Node.js ⚙️
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Install NPM packages ♾️🕳️
+      run: npm ci
+
+    - name: Build project 🛠️
+      run: npm run build
+
+    - name: Deploy 🚀🌕 (WC-v2 🧪🔬)
+      if: github.ref == 'refs/heads/wc-2.0'
+      uses: JamesIves/github-pages-deploy-action@v4.4.1
+      with:
+        branch: gh-pages
+        folder: build
+        target-folder: walletconnect2
+        cname: wallet.ambire.com
