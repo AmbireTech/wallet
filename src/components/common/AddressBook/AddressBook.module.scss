@@ -27,13 +27,15 @@ $heading-height: 45px;
         }
     }
 
-    :global(.menu) {
-        top: 60px !important;
+    .menu {
+        top: 70px !important;
         display: flex;
         flex-direction: column;
         gap: 0;
         padding: 0;
         white-space: nowrap;
+        min-width: 260px;
+        max-width: 400px;
     }
 
     .button {
@@ -87,6 +89,15 @@ $heading-height: 45px;
             input {
                 padding-right: initial !important;
             }
+        }
+
+        .emptyText {
+            padding: 15px;
+            margin: 0;
+        }
+
+        .address {
+            border-radius: 0;
         }
     }
 

@@ -498,39 +498,38 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
   return (<div className={styles.loginSignupWrapper}>
       { requiresEmailConfFor ?
-        (<div className={`${styles.emailConf}`}>
-          <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
-          <h3>
-            Email confirmation required
-          </h3>
-          <p>
-            We sent an email to
-            {' '}
-            <span className={styles.email}>
-              {isCreateRespCompleted && isCreateRespCompleted[0].email}
-            </span>
-            .
-            <br />
-            Please check your inbox for
-            <br />
-            "Welcome to Ambire Wallet"
-            <br />
-            email and click
-            <br />
-            "Verify".
-          </p>
-          {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
-          <div className={styles.btnWrapper}>
-            {!isEmailConfirmed && !isEmailResent && <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
-                <Button border mini icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
-            </ToolTip>}
+        (<> 
+          <div className={styles.logo} />
+          <div className={`${styles.emailConf}`}>
+            <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
+            <h3>
+              Email confirmation required
+            </h3>
+            <p>
+              We sent an email to
+              {' '}
+              <span className={styles.email}>
+                {isCreateRespCompleted && isCreateRespCompleted[0].email}
+              </span>
+              .
+              <br />
+              Please check your inbox for "Welcome to
+              <br />
+              Ambire Wallet" email and click "Verify".
+            </p>
+            {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+            <div className={styles.btnWrapper}>
+              {!isEmailConfirmed && !isEmailResent && <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
+                  <Button border mini icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
+              </ToolTip>}
+            </div>
+            <div className={styles.backButton} onClick={handleBackBtnClicked}>
+              <ChevronLeftIcon />
+              {' '}
+              Back to Register
+            </div>
           </div>
-          <div className={styles.backButton} onClick={handleBackBtnClicked}>
-            <ChevronLeftIcon />
-            {' '}
-            Back to Register
-          </div>
-        </div>)
+        </>)
       : (<>
           <div className={styles.logo} {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
           {pluginData &&
