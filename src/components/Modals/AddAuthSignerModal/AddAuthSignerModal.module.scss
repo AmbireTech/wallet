@@ -25,7 +25,7 @@
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: stretch;
-  gap: 20px;
+  gap: 10px;
 
   .signer {
     position: relative;
@@ -42,7 +42,7 @@
 
     svg {
       color: $c-scampi;
-      width: 170px;
+      width: 150px;
       transition: .3s ease-out all;
     }
 

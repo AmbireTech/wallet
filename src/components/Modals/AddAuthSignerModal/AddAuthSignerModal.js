@@ -19,6 +19,8 @@ import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
 import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
 import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.svg'
 import { ReactComponent as MetaMaskIcon } from 'resources/providers/metamask-fox.svg'
+import { ReactComponent as EmailIcon } from 'resources/email.svg'
+
 import { useModals } from 'hooks'
 import { AddEmailAccountModal } from 'components/Modals'
 
@@ -288,8 +290,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork, rel
           <MetaMaskIcon className={styles.metamask} />
         </div>
         <div className={styles.signer} onClick={() => wrapErr(connectEmailSigner)}>
-          {/* <MetaMaskIcon className={styles.metamask} /> */}
-          <h4>Email</h4>
+          <EmailIcon className={styles.email} />
         </div>
       </div>
       <TextInput
