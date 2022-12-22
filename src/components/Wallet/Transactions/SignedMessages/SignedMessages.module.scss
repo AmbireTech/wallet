@@ -1,0 +1,125 @@
+@import 'variables.scss';
+
+.signedMessages {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 24px;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
+    border-radius: 12px;
+
+    .colDapp {
+        flex-basis: 30%;
+    }
+
+    .colSigtype {
+        flex-basis: 30%;
+    }
+
+    .colDate {
+        flex-basis: 30%;
+    }
+
+    .colExpand {
+        flex-basis: 40px;
+    }
+
+    .headerContainer {
+        padding: 8px 16px;
+        color: $c-scampi;
+        display: flex;
+        gap: 16px;
+        justify-content: space-between;
+    }
+
+    .subContainer {
+        border-radius: 12px;
+        padding: 16px;
+        overflow: hidden;
+        background-color: $c-mirage;
+        color: $c-titan-white;
+
+        .subContainerVisible {
+        display: flex;
+        gap: 16px;
+
+        border-radius: 12px;
+        position: relative;
+        align-items: center;
+        justify-content: space-between;
+
+        .dapp {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-basis: 30%;
+
+            .colExpandMobile {
+            display: none;
+            }
+
+            .dappIcon {
+            display: flex;
+            width: 40px;
+            height: 40px;
+            padding: 4px;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(235, 236, 255, 0.05);
+            border-radius: 12px;
+            }
+        }
+
+        .signatureExpand {
+            cursor: pointer;
+            border-radius: 12px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: rgba(235, 236, 255, 0.05);
+
+            &:hover {
+            background-color: rgba(235, 236, 255, 0.1);
+            }
+        }
+
+        .colSigtype {
+            .colSigtypeLabel {
+            display: none;
+            }
+        }
+
+        .colDate {
+            .colDateLabel {
+            display: none;
+            }
+        }
+        }
+
+        .subContainerExpanded {
+        user-select: text;
+        padding: 16px 0 0 16px;
+
+        & > div {
+
+            margin: 16px 0;
+
+            b {
+            font-weight: normal;
+            }
+
+            .messageContent {
+            padding-top: 4px;
+            color: $c-scampi;
+            font-family: monospace;
+            white-space: break-spaces;
+            font-size: 16px;
+            overflow-wrap: break-word;
+            }
+        }
+        }
+    }
+    }
