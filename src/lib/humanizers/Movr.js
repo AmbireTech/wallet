@@ -35,7 +35,7 @@ const MovrMapping = (humanizerInfo) => {
     [MovrAnyswapInterface.getSighash('outboundTransferTo')]: (txn, network, { extended = false }) => {
       const { middlewareInputToken, amount, tokenToBridge, toChainId } = MovrAnyswapInterface.parseTransaction(txn).args[0]
       return !extended ?
-        [`Transfer ${token(humanizerInfo, middlewareInputToken, amount)} to ${getNetwork(toChainId)} for ${token(humanizerInfo, tokenToBridge)}`]
+        [`Transfer ${token(humanizerInfo, middlewareInputToken, amount)} to ${getNetwork(toChainId)} for ${token(humanizerInfo, tokenToBridge, null)}`]
         : toExtended(token(humanizerInfo, middlewareInputToken, amount, true), getNetwork(toChainId, true), token(humanizerInfo, tokenToBridge, null, true))
     },
     [MovrRouterInterface.getSighash('outboundTransferTo')]: (txn, network, { extended = false }) => {
@@ -43,7 +43,7 @@ const MovrMapping = (humanizerInfo) => {
       const { inputToken } = middlewareRequest
       const { inputToken: outputToken } = bridgeRequest
       return !extended ?
-        [`Transfer ${token(humanizerInfo, formatNativeTokenAddress(inputToken), amount)} to ${getNetwork(toChainId)} for ${token(humanizerInfo, formatNativeTokenAddress(outputToken))}`]
+        [`Transfer ${token(humanizerInfo, formatNativeTokenAddress(inputToken), amount)} to ${getNetwork(toChainId)} for ${token(humanizerInfo, formatNativeTokenAddress(outputToken), null)}`]
         : toExtended(token(humanizerInfo, formatNativeTokenAddress(inputToken), amount, true), getNetwork(toChainId, true), token(humanizerInfo, formatNativeTokenAddress(outputToken), null, true))
     },
   }
