@@ -21,7 +21,7 @@ import { isFirefox } from 'lib/isFirefox'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
-import { AddEmailAccountModal, LatticeModal, SelectSignerAccountModal } from 'components/Modals'
+import { LatticeModal, SelectSignerAccountModal } from 'components/Modals'
 
 // Icons
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
@@ -35,7 +35,7 @@ TrezorConnect.manifest({
   appUrl: 'https://wallet.ambire.com'
 })
 
-export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData, selectedAcc, selectedNetwork, showSendTxns, onAddBtnClicked }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
@@ -138,19 +138,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
       emailConfRequired: true
     }, { select: true, isNew: true })
-  }
-
-  async function connectEmailSigner() {
-    showModal(
-      <AddEmailAccountModal
-        relayerURL={relayerURL}
-        onAddBtnClicked={onAddBtnClicked}
-        onAddAccount={onAddAccount}
-        selectedAcc={selectedAcc}
-        selectedNetwork={selectedNetwork}
-        showSendTxns={showSendTxns}
-      />
-    )
   }
 
   // EOA implementations
@@ -418,27 +405,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     <button onClick={() => wrapErr(open)}>
       <VscJson size={25} />
       Import from JSON
-    </button>
-    {/* {
-      !selectedAcc.email &&
-      <button
-        onClick={() => wrapErr(connectEmailSigner)}
-      >
-        <div
-          className="icon"
-          style={{ backgroundImage: 'url(./resources/envelope.png)' }}
-        />
-        Email Account
-      </button>
-    } */}
-    <button
-        onClick={() => wrapErr(connectEmailSigner)}
-    >
-        <div
-          className="icon"
-          style={{ backgroundImage: 'url(./resources/envelope.png)' }}
-        />
-        Email Account
     </button>
     <input {...getInputProps()} />
   </>)
