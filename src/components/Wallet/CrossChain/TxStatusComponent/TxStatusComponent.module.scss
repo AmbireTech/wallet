@@ -1,0 +1,48 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px;
+  padding-bottom: 15px;
+  border-radius: 12px;
+  background-color: $c-mirage;
+
+  p {
+    margin: 0;
+  }
+
+  .body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    flex-direction: column;
+    gap: 30px;
+    padding: 20px;
+
+    .body {
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .body {
+      gap: 10px;
+    }
+  }
+}
