@@ -429,7 +429,7 @@ const Actions = ({
 
   return (<div className={styles.buttons}>
       {rejectButton}
-      <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus} onClick={approveTxn}>
+      <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus?.inProgress} onClick={approveTxn}>
         {signingStatus && signingStatus.inProgress ? 'Signing...' : 'Sign and Send'}
       </Button>
   </div>)
