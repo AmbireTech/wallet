@@ -27,6 +27,7 @@
 
     .headerContainer {
         padding: 8px 16px;
+        font-size: 16px;
         color: $c-scampi;
         display: flex;
         gap: 16px;
@@ -39,11 +40,11 @@
         overflow: hidden;
         background-color: $c-mirage;
         color: $c-titan-white;
+        font-size: 14px;
 
         .subContainerVisible {
         display: flex;
         gap: 16px;
-
         border-radius: 12px;
         position: relative;
         align-items: center;
