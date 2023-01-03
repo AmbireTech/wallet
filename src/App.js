@@ -44,6 +44,10 @@ import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
 
+// Temporary code to test the new Button component
+import { AiFillApple } from 'react-icons/ai'
+import { Button } from 'components/common'
+
 // Initialize rpc providers for all networks
 initRpcProviders(rpcProviders)
 
@@ -355,7 +359,16 @@ export default function App() {
       <ConstantsProvider>
         <ToastProvider>
           <ModalProvider>
-            <AppInner/>
+            {/* <AppInner/> */}
+            <Button variant="filled" color="primaryGradient">Primary Gradient</Button>
+            <Button>Default</Button>
+            <Button color="danger">Danger</Button>
+            <Button variant="text">Text</Button>
+            <Button startIcon={<AiFillApple />} variant="filled" color="primaryGradient">Icon + Text</Button>
+            <Button endIcon={<AiFillApple />} variant="filled" color="primaryGradient">Text + Icon</Button>
+            <Button disabled variant="filled" color="primaryGradient">Disabled</Button>
+            <Button disabled variant="filled" color="primaryGradient" size="small">Disabled Small</Button>
+            <Button loading variant="filled" color="primaryGradient" size="small">Loading Small</Button>
           </ModalProvider>
         </ToastProvider>
       </ConstantsProvider>
