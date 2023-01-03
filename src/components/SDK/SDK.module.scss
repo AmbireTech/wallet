@@ -1,25 +1,31 @@
 @import 'variables';
 
 .wrapper {
-  max-width: 354px;
+  max-width: 380px;
   width: 100%;
+  min-height: 555px;
   background-color: $c-white;
   border: 2px solid red;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-  .header {
-    padding: 21px 30px;
-    width: 100%;
-
-    .tempLogo {
-      font-size: 25px;
-      display: block;
-      text-align: right;
-    }
-  }
+  .headerAndBody {
+    .header {
+      padding: 21px 30px;
+      width: 100%;
   
-  .body {
-    padding: 0 20px;
+      .tempLogo {
+        font-size: 25px;
+        display: block;
+        text-align: right;
+      }
+    }
+    
+    .body {
+      padding: 0 20px;
+    }
   }
 
   .footer {
