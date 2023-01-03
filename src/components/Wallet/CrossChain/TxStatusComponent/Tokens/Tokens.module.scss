@@ -1,0 +1,104 @@
+@import 'variables';
+
+@mixin Icon($width, $height) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: $width;
+  height: $height;
+  border-radius: 12px;
+  background-color: rgba($c-titan-white, 0.05);
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  .swapIcon {
+    width: 30px;
+    height: 30px;
+    // We stop it from shrinking
+    min-width: 30px;
+    min-height: 30px;
+  }
+
+  .token {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+
+    .tokenBody {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .tokenText {
+      font-size: 14px;
+      max-width: 120px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .iconWrapper {
+      @include Icon(28px, 28px);
+
+      .icon {
+        width: 18px;
+        height: 18px;
+      }
+    }
+
+    &.toToken {
+      justify-content: flex-end;
+    }
+  }
+}
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    justify-content: unset;
+    gap: 15px;
+
+    .token {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      flex: 1;
+
+      &.toToken {
+        align-items: flex-end;
+
+        .tokenBody {
+          flex-direction: row-reverse;
+        }
+      }
+      .tokenText {
+        font-size: 12px;
+
+        max-width: unset;
+        flex: 1;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    .swapIcon {
+      display: none;
+    }
+
+    .token {
+      .tokenText {
+        max-width: 120px;
+      }
+    }
+  }
+}

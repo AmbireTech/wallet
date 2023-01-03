@@ -15,7 +15,7 @@ import ModalProvider from './components/ModalProvider/ModalProvider'
 import OfflineProvider from './components/OfflineProvider/OfflineProvider'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
-import useWalletConnect from './hooks/walletconnect'
+import useWalletConnect from './hooks/useWalletConnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, 
@@ -263,6 +263,7 @@ function AppInner() {
         totalRequests={everythingToSign.length}
         relayerURL={relayerURL}
         network={network}
+        useStorage={useLocalStorage}
         resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
       ></SignMessage>)}
 
