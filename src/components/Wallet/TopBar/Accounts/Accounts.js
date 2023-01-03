@@ -151,9 +151,9 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                     </div>
                     :
                     <div className={`${styles.account} ${isActive(id)} ${styles.confirmDeleteAccount}`} key={id}>
-                        <div className={styles.message}>
+                        <p className={styles.message}>
                             Are you sure you want to log out from this account ?
-                        </div>
+                        </p>
                         <div className={styles.buttons}>
                             <div className={cn(styles.button, styles.danger)} onClick={() => {
                                 setLogoutWarning(false)
