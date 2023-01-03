@@ -16,14 +16,14 @@ const SwitchNetwork = () => {
         {/* Placeholder logo */}
         <div className={styles.siteLogo} />
         <h2 className={styles.siteName}>app.pooltogether.com</h2>
-        <p className={styles.message}>
+        <p className={cn(styles.message, {[styles.smallMb]: !supported})}>
           {supported ? 'Allow this site to switch the network?' : "Ambire Wallet doesn't support this network"}
         </p>
         {supported ? <Networks
-          fromNetworkId={1}
-          fromNetworkName="Ethereum"
-          toNetworkId={56}
-          toNetworkName="Binance Smart Chain"
+          fromNetworkId="polygon"
+          fromNetworkName="Polygon"
+          toNetworkId="ethereum"
+          toNetworkName="Ethereum"
         /> : null}
       </div>
       {supported ? (
