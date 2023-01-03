@@ -1,143 +1,124 @@
 @import 'variables.scss';
 
+// We use a mixin to reduce the repetition of code
+@mixin ButtonStyle($primary-color) {
+    // Variants
+    &.filled {
+        background: $primary-color;
+        color: $c-titan-white;
+    }
+
+    &.outlined {
+        background-color: transparent;
+        color: $primary-color;
+        border: 2px solid $primary-color;
+    }
+
+    &.text {
+        background-color: transparent;
+        color: $primary-color;
+        border: none;
+    }
+}
+
 .wrapper {
-    height: 60px;
-    border-radius: 12px;
     @include flex-center-center;
     gap: 10px;
+    height: 60px;
     padding: 0 20px;
-    border: none;
     font-family: 'Poppins', sans-serif;
     font-size: 20px;
     font-weight: 500;
-    background-color: transparent;
-    color: $c-turquoise;
-    border: 2px solid $c-turquoise;
+    border-radius: 12px;
+    border: none;
     outline: none;
-    transition: 0.1s ease-in-out;
+    transition: 0.3s ease-in-out opacity;
+    cursor: pointer;
 
-    .iconButton {
-        @include flex-center-center;
-        color: $c-turquoise !important;
+    
+    svg {
+        width: 24px;
+        height: 24px;
     }
 
-    &.small {
-        height: 50px;
-        font-size: 17px;
-    }
-
-    &.full {
-        width: 100%;
-    }
-
-    &.mini {
-        gap: 5px;
-        height: 40px;
-        padding: 0 10px;
-        font-size: 14px;
-    }
-
+    // Default Button color
+    @include ButtonStyle($c-turquoise);
+    
+    // Colors
     &.danger {
-        border: none;
-        color: $c-titan-white;
-        background: $danger-color;
-
-        .iconButton {
-            color: inherit!important;
+        @include ButtonStyle($danger-color);
+    }
+    
+    // Gradients
+    &.filled {
+        &.primaryGradient {
+            @include ButtonStyle(transparent linear-gradient(90deg, $c-turquoise 0%, $c-electric-violet 100%) 0% 0% no-repeat padding-box);
+        }
+    
+        &.secondaryGradient {
+            @include ButtonStyle(transparent linear-gradient(90deg, $c-heliotrope 0%, $c-electric-violet 100%) 0% 0% no-repeat padding-box);
+        }
+    
+        &.terniaryGradient {
+            @include ButtonStyle(transparent linear-gradient(90deg, $c-turquoise 0%, $c-blue-lagoon 100%) 0% 0% no-repeat padding-box);
         }
     }
 
-    &.clear {
-        border: none;
-        color: $c-titan-white;
-        background-color: rgba(0, 0, 0, 0.1);
-
-        .iconButton {
-            color: inherit!important;
+    // Other states
+    &.loading {
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+        
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        &:not([disabled]):hover {
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-    }
+        .loadingInner {
+            display: flex;
+            gap: 15px;
+            align-items: center;
 
-    &.primaryGradient {
-        border: none;
-        background: transparent linear-gradient(90deg, $c-turquoise 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
-        color: $c-titan-white;
+            .loadingText {
+                margin: 0;
+            }
 
-        .iconButton {
-            color: inherit!important;
-        }
-    }
-
-    &.purpleGradient {
-        border: none;
-        background: transparent linear-gradient(90deg, $c-heliotrope 0%, $c-electric-violet 100%) 0% 0% no-repeat padding-box;
-        color: $c-titan-white;
-
-        .iconButton {
-            color: inherit!important;
+            svg {
+                animation: spin 1.5s infinite ease-in-out;
+            }
         }
     }
 
-    &.greenGradient {
-        border: none;
-        background: transparent linear-gradient(90deg, $c-turquoise 0%, $c-blue-lagoon 100%) 0% 0% no-repeat padding-box;
-        color: $c-titan-white;
+    // Sizes
+    &.small {
+        font-size: 16px;
+        height: 50px;
+        padding: 0 15px;
 
-        .iconButton {
-            color: inherit!important;
+        &.loading {
+            .loadingInner {
+                gap: 10px;
+
+                svg {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
         }
     }
 
-    &.secondary {
-        border: none;
-        color: $c-titan-white;
-        background-color: $c-heliotrope;
-
-        .iconButton {
-            color: inherit!important;
-        }
+    &:hover:not(.disabled) {
+        opacity: .6;
     }
 
-    &.textOnly {
-        padding: 0;
-        margin: 0;
-        height: auto;
-        background: 0;
-        border: none;
-        color: $c-titan-white;
-        font-size: 1em;
-        display: inline-flex;
+    &:active:not(.disabled) {
+        opacity: 1;
     }
 
-    &.border {
-        color: $c-turquoise;
-        background-color: transparent;
-        border: 2px solid $c-turquoise;
-
-        .iconButton {
-            color: $c-turquoise !important;
-        }
-
-        &:not([disabled]):hover {
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-    }
-
-    &:disabled, &.disabled{
-        opacity: 0.4 !important;
-    }
-
-    &:not([disabled]):not(.disabled) {
-        &:hover {
-            cursor: pointer;
-            opacity: 0.8;
-        }
-
-        &:active {
-            opacity: 0.6;
-        }
+    &.disabled {
+        opacity: .2;
+        cursor: not-allowed;
     }
 }
