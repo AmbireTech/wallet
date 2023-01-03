@@ -9,11 +9,17 @@
     padding: 40px 0;
     overflow: hidden;
 
-    @if theme(theme) == dark {
+    &.dark {
         background: url('/resources/login-bg.png');
         background-size: cover;
         background-position: top center;
         background-repeat: no-repeat;
+
+        input {
+            &:not([type=submit]):focus {
+                border-bottom-color: $c-white;
+            }
+        }
     }
 
     button, input {
@@ -76,13 +82,7 @@
         font-size: 16px;
 
         &:not([type=submit]):focus {
-            @if theme(theme) == dark {
-                border-bottom-color: $c-white;
-            }
-            @else {
-                border-bottom-color: #6000ff;
-            }
-        
+            border-bottom-color: #6000ff;        
         }
     }
 
