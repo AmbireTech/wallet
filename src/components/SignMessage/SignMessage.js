@@ -106,7 +106,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
   return (
     <div className={styles.wrapper}>
-      <Panel title={'Signing with account'} className={styles.panel}>
+      <Panel title="Signing with account" titleClassName={styles.panelTitle} className={styles.panel}>
         <AccountAndNetwork
           address={account.id}
           networkName={requestedNetwork.name}
@@ -154,11 +154,9 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             )}
             is requesting your signature.
           </div>
-          <span>
-            {totalRequests > 1
-              ? `You have ${totalRequests - 1} more pending requests.`
-              : ""}
-          </span>
+          {(totalRequests > 1) ? <span>
+            You have {totalRequests - 1} more pending requests.
+          </span> : null}
           {!isDAppSupported && <DAppIncompatibilityWarningMsg />}
         </div>
 
@@ -243,6 +241,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
             <div className={styles.buttons}>
               <Button
+                className={styles.button}
                 type='button'
                 danger
                 onClick={() => resolve({ message: "signature denied" })}
@@ -250,7 +249,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
                 Reject
               </Button>
               {isDeployed !== null && isDeployed && hasPrivileges && (
-                <Button type='submit' disabled={isLoading}>
+                <Button type='submit' primaryGradient disabled={isLoading} className={styles.button}>
                   {isLoading ? "Signing..." : "Sign"}
                 </Button>
               )}
