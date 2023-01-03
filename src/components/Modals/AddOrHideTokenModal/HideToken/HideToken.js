@@ -62,6 +62,7 @@ const HideToken = ({
           return (
             <Token
               key={address}
+              address={address}
               icon={tokenImageUrl}
               name={symbol}
               network={network.toUpperCase()}

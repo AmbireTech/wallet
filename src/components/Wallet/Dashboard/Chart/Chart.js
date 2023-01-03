@@ -85,6 +85,8 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
     },
   }), [data.empty])
 
+  const formatDate = (date) => new Date(date).toLocaleTimeString('en-us', { day: 'numeric', year: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
+
   return (
     <div className={cn(styles.wrapper, className)}>
       <div className={styles.donut}>
@@ -107,6 +109,7 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
             }
           </label>
         </div>
+        {portfolio?.resultTime && <div className={styles.lastUpdate}>Last update: {formatDate(portfolio?.resultTime) } </div>}
       </div>
       <div className={styles.legend}>
         <h2 className={styles.legendTitle}>Balance by tokens</h2>

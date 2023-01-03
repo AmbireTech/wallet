@@ -21,9 +21,12 @@
       justify-content: center;
       margin-right: 10px;
     }
-    .icon {
-      width: 24px;
-      height: 24px;
+    .failedIcon {
+      border-radius: 0;
+      width: 22px;
+    }
+    
+    .innerImage {
       border-radius: 12px;
     }
 
