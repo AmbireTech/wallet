@@ -120,14 +120,6 @@
         .iconButton {
             color: theme(highlight-secondary) !important;
         }
-
-        &:not([disabled]):hover {
-            @if theme(theme) == dark {
-                background-color: rgba(0, 0, 0, 0.2);
-            } @else {
-                background-color: rgba($c-electric-violet, 0.15);
-            }
-        }
     }
 
     &:disabled, &.disabled{
