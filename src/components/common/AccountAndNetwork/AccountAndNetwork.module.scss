@@ -47,21 +47,15 @@
 
 @media (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
-    .title {
-      text-align: center;
-    }
+    flex-direction: column;
+    gap: 10px;
 
-    .body {
+    .account {
       flex-direction: column;
-      gap: 10px;
 
-      .account {
-        flex-direction: column;
-
-        .address {
-          font-size: 13px;
-          text-align: center;
-        }
+      .address {
+        font-size: 13px;
+        text-align: center;
       }
     }
   }
