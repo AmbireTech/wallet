@@ -360,15 +360,16 @@ export default function App() {
         <ToastProvider>
           <ModalProvider>
             {/* <AppInner/> */}
-            <Button variant="filled" color="primaryGradient">Primary Gradient</Button>
+            <Button variant="primaryGradient">Primary Gradient</Button>
             <Button>Default</Button>
-            <Button color="danger">Danger</Button>
+            <Button variant="danger">Danger</Button>
+            <Button variant="secondary">Ex-Clear, Now-Secondary</Button>
             <Button variant="text">Text</Button>
-            <Button startIcon={<AiFillApple />} variant="filled" color="primaryGradient">Icon + Text</Button>
-            <Button endIcon={<AiFillApple />} variant="filled" color="primaryGradient">Text + Icon</Button>
-            <Button disabled variant="filled" color="primaryGradient">Disabled</Button>
-            <Button disabled variant="filled" color="primaryGradient" size="small">Disabled Small</Button>
-            <Button loading variant="filled" color="primaryGradient" size="small">Loading Small</Button>
+            <Button startIcon={<AiFillApple />} variant="primaryGradient">Icon + Text</Button>
+            <Button endIcon={<AiFillApple />} variant="primaryGradient">Text + Icon</Button>
+            <Button disabled variant="primaryGradient">Disabled</Button>
+            <Button disabled variant="primaryGradient" size="small">Disabled Small</Button>
+            <Button loading variant="primaryGradient" size="small">Loading Small</Button>
           </ModalProvider>
         </ToastProvider>
       </ConstantsProvider>
