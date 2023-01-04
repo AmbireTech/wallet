@@ -142,7 +142,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                     value={guardarian?.estimateInfo?.data ? guardarian?.estimateInfo?.data?.value : ''}
                     disabled
                 /> : <TextInput
-                    value='Loading...'
+                    value='Info...'
                     disabled
                     className={styles.loadingInput}
                 />}

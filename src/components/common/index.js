@@ -28,6 +28,8 @@ import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppI
 import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
 import Image from './Image/Image';
+import Info from './Info/Info';
+import Note from './Note/Note';
 
 export {
     AddressBook,
@@ -60,4 +62,6 @@ export {
     Pagination,
     Panel,
     Image,
+    Info,
+    Note,
 };

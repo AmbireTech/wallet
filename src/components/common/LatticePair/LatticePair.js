@@ -1,6 +1,6 @@
 import styles from './LatticePair.module.scss'
 
-import { Button, TextInput, Loading } from 'components/common'
+import {Button, TextInput, Loading, Info, Note} from 'components/common'
 import { useState, useEffect, useRef } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { latticeInit, 
@@ -98,7 +98,7 @@ const LatticePair = ({ addresses }) => {
         }
     }
 
-    const buttons = <>
+    const buttons = <div className={styles.buttons}>
         {!isLoading ? (
             <Button onClick={connectToDevice}>
                 Connect to Wallet
@@ -108,43 +108,41 @@ const LatticePair = ({ addresses }) => {
                 <Loading />
             </Button>
         )}
-    </>
+    </div>
 
     return (
         <div className={styles.wrapper}>
             <div className={styles.title}>Connect to Lattice Device</div>
             <div className={styles.content}>
-                <p>
-                    The device ID is listed on your Lattice under{' '}
-                    <strong>Settings</strong>.
-                </p>
-                <h4>Device ID</h4>
-                <TextInput
-                    disabled={isSecretFieldShown}
-                    placeholder="Enter the device ID"
-                    onInput={value => handleInputDeviceId(value)}
-                />
+                <div className={styles.formItem}>
+                    <label>1. Enter Device</label>
+                    <TextInput
+                        disabled={isSecretFieldShown}
+                        placeholder="Enter the device ID"
+                        onInput={value => handleInputDeviceId(value)}
+                    />
+                </div>
                 {isSecretFieldShown && (
-                    <>
-                        <h4>Secret</h4>
+                    <div className={styles.formItem}>
+                        <label>2. Enter Secret</label>
                         <TextInput
                             ref={inputSecretRef}
                             placeholder="Enter secret"
-                            style={{ textTransform:'uppercase' }}
                             onInput={value => handleInputSecret(value)}
                         />
-                    </>
+                    </div>
                 )}
-                {(isLoading && !isSecretFieldShown) ? (
-                    <>
-                        <h3>It may takes a while.</h3>
-                        <h3>Please wait...</h3>
-                    </>
-                ) : (
-                    <></>
+                {(isLoading && !isSecretFieldShown) && (
+                    <div className={styles.loadingText}>It may takes a while. Please wait...</div>
                 )}
-                {buttons}
             </div>
+            { isSecretFieldShown ? <Note className={styles.info}>
+                Enter your SECRET from your GRID+ device
+            </Note> : <Info className={styles.info}>
+                The device ID is listed on your Lattice under <strong>Settings</strong>
+            </Info>}
+
+            {buttons}
         </div>
     )
 }

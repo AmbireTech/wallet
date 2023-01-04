@@ -21,6 +21,7 @@ import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.sv
 import { ReactComponent as MetaMaskIcon } from 'resources/providers/metamask-fox.svg'
 
 import styles from './AddAuthSignerModal.module.scss'
+import cn from 'classnames'
 
 const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) => {
   const { addToast } = useToasts()
@@ -159,6 +160,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       }
     })
 
+    setLatticeToggle(false)
     setModalToggle(true)
   }
   
@@ -243,58 +245,76 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
   }, [selectedAcc, signerAddress.address])
 
 
-  return !showLoading ? (
-    <Modal 
-    title="Add Signer" 
-    className={styles.wrapper}
-    buttons={
-      <Button
-        className={styles.button}
-        disabled={disabled}
-        onClick={() => onAddBtnClicked(signerAddress)}
-        primaryGradient
-      >
-      Add
-    </Button>
-    }
-    >
-      <div className={styles.signers}>
-        <div className={styles.signer} onClick={() => wrapErr(connectTrezorAndGetAccounts)}>
-          <TrezorIcon />
-        </div>
-        <div className={styles.signer} onClick={() => wrapErr(connectLedgerAndGetAccounts)}>
-          <LedgerIcon />
-        </div>
-        <div className={styles.signer} onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
-          <GridPlusIcon className={styles.gridplus}/>
-        </div>
-        <div className={styles.signer} onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
-          <MetaMaskIcon className={styles.metamask} />
-        </div>
+  const stepOne = <>
+    <div className={cn(styles.subtitle, styles.chooseSignerSubtitle)}>Choose Signer</div>
+    <div className={styles.signers}>
+      <div className={styles.signer} onClick={() => wrapErr(connectTrezorAndGetAccounts)}>
+        <TrezorIcon width={172} />
       </div>
+      <div className={styles.signer} onClick={() => wrapErr(connectLedgerAndGetAccounts)}>
+        <LedgerIcon width={172} />
+      </div>
+      <div className={styles.signer} onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
+        <GridPlusIcon width={127} className={styles.gridplus}/>
+      </div>
+      <div className={styles.signer} onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
+        <MetaMaskIcon width={70} className={styles.metamask} />
+      </div>
+    </div>
+
+    <div className={styles.subtitle}>- or -</div>
+
+    <div className={styles.manualSigner}>
       <TextInput
-        placeholder="Enter signer address"
-        className={styles.signerAddress}
-        value={signerAddress.address}
-        info={textInputInfo}
-        onInput={onTextInput}
+          placeholder="Enter signer address manually"
+          className={styles.signerAddress}
+          value={signerAddress.address}
+          info={textInputInfo}
+          onInput={onTextInput}
       />
-      { validationFormMgs.message && 
+
+      <Button
+          className={styles.button}
+          disabled={disabled}
+          onClick={() => onAddBtnClicked(signerAddress)}
+          primaryGradient
+      >
+        Add
+      </Button>
+    </div>
+    { validationFormMgs.message &&
         <div className={styles.validationeError}><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>
-      }
+    }
+  </>
 
-      {latticeToggle && <LatticePair addresses={setLatticeAddresses} />}
+  const stepTwo = <>
+    {latticeToggle && <LatticePair addresses={setLatticeAddresses} />}
 
-      {modalToggle && signersToChoose && <SelectSignerAccount
-          showTitle
-          signersToChoose={signersToChoose.addresses}
-          selectedNetwork={selectedNetwork}
-          onSignerAddressClicked={onSignerAddressClicked}
-          description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
-          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
-      />}
+    {modalToggle && signersToChoose && <SelectSignerAccount
+        showTitle
+        signersToChoose={signersToChoose.addresses}
+        selectedNetwork={selectedNetwork}
+        onSignerAddressClicked={onSignerAddressClicked}
+        description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
+        onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
+    />}
+  </>
+
+  const steps = [stepOne, stepTwo]
+  const currentStep = (latticeToggle || (modalToggle && signersToChoose)) ? 1 : 0
+
+  return <Modal
+    title="Add Signer"
+    className={styles.wrapper}
+    isBackBtnShown={currentStep > 0}
+    isTitleCentered
+    onBack={() => {
+      setLatticeToggle(false)
+      setModalToggle(false)
+    }}
+    >
+     {steps[currentStep]}
     </Modal>
-  ) : <Loading />
 }
 
 export default AddAuthSignerModal

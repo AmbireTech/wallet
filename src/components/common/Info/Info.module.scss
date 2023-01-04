@@ -1,0 +1,16 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    svg {
+        width: 24px;
+        height: 24px;
+    }
+
+    label {
+        font-size: 16px;
+    }
+}

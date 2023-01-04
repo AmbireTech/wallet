@@ -7,7 +7,7 @@ import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 import SWAPPIN_LOGO from 'resources/payment-providers/swappin.svg'
 // import MOONPAY_LOGO from 'resources/payment-providers/moonpay.svg'
 
-import { Loading } from 'components/common'
+import { Loading, Info } from 'components/common'
 import useProviders from './useProviders'
 
 import styles from './Providers.module.scss'
@@ -146,15 +146,9 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                 )
             }
             {
-                networkDetails.id !== 'ethereum' ? 
-                    <label className={styles.networkWarning}>
-                        <InfoIcon />
-                        <label>
-                            Some {sellMode ? 'sell' : 'deposit'} methods are unavailable on {networkDetails.name}. Switch to Ethereum for the widest support.
-                        </label>
-                    </label>
-                    :
-                    null
+                networkDetails.id !== 'ethereum' && <Info className={styles.info}>
+                    Some {sellMode ? 'sell' : 'deposit'} methods are unavailable on {networkDetails.name}. Switch to Ethereum for the widest support.
+                </Info>
             }
         </div>
     )
