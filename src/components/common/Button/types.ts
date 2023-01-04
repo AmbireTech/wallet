@@ -2,7 +2,7 @@ import React from "react"
 
 export type ButtonProps = {
   variant: 'primary' | 'secondary' | 'text' | 'primaryGradient' | 'secondaryGradient' | 'terniaryGradient';
-  size?: 'small' | 'normal' | 'mini';
+  size?: 'xsm' | 'sm';
   loading?: boolean;
   startIcon?: React.ReactElement | React.ReactElement[];
   endIcon?: React.ReactElement | React.ReactElement[];
@@ -11,6 +11,7 @@ export type ButtonProps = {
   className?: string;
   children: React.ReactElement | React.ReactElement[] | string;
   title?: string;
+  loadingText?: string;
   type?: 'button' | 'submit' | 'reset';
   form?: string;
 }
