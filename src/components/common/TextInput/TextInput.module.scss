@@ -38,8 +38,7 @@ $input-height: 60px;
                 padding-left: 48px;
 
                 &:focus ~ .textInputContainerIcon {
-                    // border-bottom-color: $c-titan-white;
-                    border-bottom-color: red;
+                    border-bottom-color: theme(border-input);
                 }
             }
         }
@@ -79,13 +78,11 @@ $input-height: 60px;
             border-bottom: 2px solid transparent;
 
             &:focus {
-                // border-bottom-color: $c-titan-white;
-                border-bottom-color: red;
+                border-bottom-color: theme(border-input);
             }
 
             &:focus ~ .button {
-                // border-bottom-color: $c-titan-white;
-                border-bottom-color: red;
+                border-bottom-color: theme(border-input);
             }
         }
     }
