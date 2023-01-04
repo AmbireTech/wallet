@@ -376,7 +376,7 @@ const AssetsMigrationSelector = ({
                 setSelectableTokens={setSelectableTokens}
                 identityAccount={identityAccount}
                 setTokenAllowances={setTokenAllowances}
-                setSelectableTokensUserInputs={setSelectableTokens}
+                setSelectableTokensUserInputs={setSelectableTokensUserInputs}
               />
               <FeesAffordability
                 canCoverGasFees={canCoverGasFees}
