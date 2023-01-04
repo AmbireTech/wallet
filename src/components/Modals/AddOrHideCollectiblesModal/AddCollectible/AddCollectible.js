@@ -59,8 +59,8 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
       if (!networkDetails) throw new Error('This network is not supported')
 
       setTokenDetails(metadata => ({
-          ...metadata,
           type: 'nft',
+          ...metadata,
           tokenId,
           network: network.id,
           image,
@@ -84,7 +84,7 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
 
   const onIdInput = async (tokenId) => {
     setTokenDetails(prev => ({...prev, tokenId }))
-    if (!tokenId) return
+    if (!tokenId || !tokenDetails?.collectionAddress) return
 
     setLoading(true)
 
@@ -99,7 +99,7 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
       const metaURI = await token.uri(tokenId)
       
       if (!balance) {
-        addToast(`You don't have balance of this collectible to add in your wallet`)
+        addToast(`You don't have balance of this collectible to add in your wallet`, { error: true })
         setTokenDetails(null)
         setLoading(false)
         return
@@ -110,9 +110,9 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
         json = await response.json()
 
         setTokenDetails(metadata => ({
+          type: 'nft',
           ...metadata,
           ...json,
-          type: 'nft',
           network: network.id,
           tokenId,
           address: collectionAddress,
@@ -139,11 +139,11 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
           contract.uri(tokenId).then(uri => ({ uri })).catch(err => ({ err })),
           contract.balanceOf(account)
         ])
-        // debugger
+
         balance = Number(balance)
 
         if (!balance) {
-          addToast(`You don't have balance of this collectible to add in your wallet`)
+          addToast(`You don't have balance of this collectible to add in your wallet`, { error: true })
           setTokenDetails(null)
           setLoading(false)
           return
@@ -161,16 +161,16 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
           json = await response.json()
         }
         setTokenDetails(metadata => ({
+          type: 'nft',
           ...metadata,
           network: network.id,
-          type: 'nft',
-          tokenId,
           owner: address,
           balance: 1,
           balanceUSD: 0,
           collection,
           name: collection,
           collectionName: collection,
+          address: collectionAddress,
           image: json?.image
         })) 
         setLoading(false)
@@ -199,14 +199,13 @@ const AddCollectible = ({ network, account, portfolio, handleUri }) => {
     hideModal()
   }
 
-  console.log(extraCollectibles)
-
   return (
     <div className={styles.wrapper}>
       <TextInput
         small
         label="Collectible Address"
         placeholder="0x..."
+        value={tokenDetails?.collectionAddress || ''}
         onInput={value => onInput(value)}
         className={styles.addressInput}
       />
