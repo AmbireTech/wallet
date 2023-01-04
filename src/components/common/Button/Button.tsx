@@ -1,11 +1,12 @@
 import cn from 'classnames'
+import { FC } from 'react'
 import { AiOutlineLoading } from 'react-icons/ai'
 import styles from './Button.module.scss'
+import { ButtonProps } from './types'
 
-const Button = ({
-  variant,
-  color,
-  size,
+const Button:FC<ButtonProps> = ({
+  variant = 'primary',
+  size = 'normal',
   loading,
   startIcon,
   endIcon,
@@ -20,10 +21,10 @@ const Button = ({
   return (
     <button
       onClick={(...args) => !disabled && onClick && onClick.apply(this, args)}
-      className={cn(styles.wrapper, className, styles[color], styles[variant], styles[size], {
+      className={cn(styles.wrapper, styles[variant], styles[size], {
         [styles.disabled]: disabled || loading,
         [styles.loading]: loading,
-      })}
+      }, className)}
       // disabled={disabled} // causing pointer-events to not trigger
       title={title}
       // used with <form>
@@ -38,10 +39,6 @@ const Button = ({
       {endIcon && endIcon}
     </button>
   )
-}
-
-Button.defaultProps = {
-  variant: 'outlined',
 }
 
 export default Button

@@ -1,24 +1,15 @@
 @import 'variables.scss';
 
-// We use a mixin to reduce the repetition of code
-@mixin ButtonStyle($primary-color) {
-    // Variants
-    &.filled {
-        background: $primary-color;
-        color: $c-titan-white;
-    }
+// We use mixins to reduce the repetition of code
+@mixin BorderButton($primary-color) {
+    background-color: transparent;
+    color: $primary-color;
+    border: 2px solid $primary-color;
+}
 
-    &.outlined {
-        background-color: transparent;
-        color: $primary-color;
-        border: 2px solid $primary-color;
-    }
-
-    &.text {
-        background-color: transparent;
-        color: $primary-color;
-        border: none;
-    }
+@mixin FilledButton($primary-color) {
+    background: $primary-color;
+    color: $c-titan-white;
 }
 
 .wrapper {
@@ -32,35 +23,50 @@
     border-radius: 12px;
     border: none;
     outline: none;
-    transition: 0.3s ease-in-out opacity;
+    transition: 0.3s ease-in-out;
+    transition-property: color, opacity, text-decoration;
     cursor: pointer;
 
-    
     svg {
         width: 24px;
         height: 24px;
     }
-
-    // Default Button color
-    @include ButtonStyle($c-turquoise);
     
     // Colors
+    &.primary { // DEFAULT
+        @include BorderButton($c-turquoise);
+    }
+    
+    &.secondary {
+        @include FilledButton(rgba($c-mirage, .4));
+    }
+
     &.danger {
-        @include ButtonStyle($danger-color);
+        @include BorderButton($danger-color);
     }
     
     // Gradients
-    &.filled {
-        &.primaryGradient {
-            @include ButtonStyle(transparent linear-gradient(90deg, $c-turquoise 0%, $c-electric-violet 100%) 0% 0% no-repeat padding-box);
-        }
-    
-        &.secondaryGradient {
-            @include ButtonStyle(transparent linear-gradient(90deg, $c-heliotrope 0%, $c-electric-violet 100%) 0% 0% no-repeat padding-box);
-        }
-    
-        &.terniaryGradient {
-            @include ButtonStyle(transparent linear-gradient(90deg, $c-turquoise 0%, $c-blue-lagoon 100%) 0% 0% no-repeat padding-box);
+    &.primaryGradient {
+        @include FilledButton(transparent linear-gradient(90deg, $c-turquoise 0%, $c-electric-violet 100%));
+    }
+
+    &.secondaryGradient {
+        @include FilledButton(transparent linear-gradient(90deg, $c-heliotrope 0%, $c-electric-violet 100%));
+    }
+
+    &.terniaryGradient {
+        @include FilledButton(transparent linear-gradient(90deg, $c-turquoise 0%, $c-blue-lagoon 100%));
+    }
+
+    &.text {
+        color: inherit;
+        background-color: transparent;
+        border: none;
+        font-size: 16px;
+        font-weight: 400;
+
+        &:hover:not(.disabled) {
+            text-decoration: underline;
         }
     }
 
