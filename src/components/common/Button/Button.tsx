@@ -17,6 +17,7 @@ const Button:FC<ButtonProps> = ({
   title,
   type,
   form,
+  loadingText
 }) => {
   return (
     <button
@@ -34,7 +35,7 @@ const Button:FC<ButtonProps> = ({
       {startIcon && startIcon}
       {!loading ? children : <div className={styles.loadingInner}>
         <AiOutlineLoading />
-        <p className={styles.loadingText}>Loading...</p>
+        <p className={styles.loadingText}>{loadingText || "Loading..."}</p>
       </div>}
       {endIcon && endIcon}
     </button>
