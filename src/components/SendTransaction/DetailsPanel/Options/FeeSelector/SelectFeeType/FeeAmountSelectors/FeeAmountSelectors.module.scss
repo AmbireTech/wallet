@@ -11,9 +11,10 @@
     flex: 1;
     padding: 12px 15px;
     border-radius: 12px;
-    background-color: $c-mirage;
+    background-color: theme(background-primary);
     border: 1px solid transparent;
     text-align: center;
+    transition: .3s ease-in-out all;
     // If not set, .feeSquare items min width is set to the width of its content.
     // In other words, the different fees values ($0,01 and 0.000421434) may result in a different square widths.
     // This can result in layouts appearing uneven.
@@ -55,19 +56,19 @@
 
     &:not(.disabled):hover {
       cursor: pointer;
-      background-color: rgba($c-mirage, 0.4);
+      opacity: .4;
     }
 
     &.selected {
-      border: 1px solid $c-heliotrope;
-      background-color: rgba($c-mirage, 0.4);
+      border: 1px solid theme(highlight-primary);
+      background-color: rgba(theme(background-primary), 0.4);
     }
 
     .discountBadge {
       position: absolute;
       top: 4px;
       right: 4px;
-      color: $c-turquoise;
+      color: theme(highlight-secondary);
     }
   }
 }

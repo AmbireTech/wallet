@@ -7,8 +7,8 @@ $extended-summary-height: 36px;
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
-    background-color: $c-mirage;
-    color: $c-titan-white;
+    background-color: theme(background-primary);
+    color: theme(text-primary);
     border-radius: 12px;
     min-height: $txn-height;
     position: relative;
@@ -17,7 +17,7 @@ $extended-summary-height: 36px;
     transition: .3s ease-out;
 
     &:hover {
-        background-color: rgba($c-mirage, 0.8)
+        opacity: .8;
     }
 
     .heading {
@@ -54,7 +54,7 @@ $extended-summary-height: 36px;
                     min-width: 36px;
                     min-height: 36px;
                     @include flex-center-center;
-                    background-color: rgba($c-titan-white, 0.05);
+                    background-color: theme(background-icon);
                     border-radius: 12px;
                     
                     .icon {
@@ -87,6 +87,7 @@ $extended-summary-height: 36px;
                 padding: 10px 15px;
                 text-align: center;
                 background-color: $danger-color;
+                color: $c-titan-white;
                 border-radius: 12px;
                 margin: 0;
             }
@@ -103,7 +104,7 @@ $extended-summary-height: 36px;
                 width: 36px;
                 height: 36px;
                 border-radius: 12px;
-                background-color: rgba($c-titan-white, 0.05);
+                background-color: theme(background-icon);
                 transition: all 0.1s ease-in-out;
                 opacity: 1;
 
@@ -136,7 +137,7 @@ $extended-summary-height: 36px;
             word-break: break-word;
             font-size: 13.5px;
             font-weight: 300;
-            color: $c-scampi;
+            color: theme(text-secondary);
             user-select: text;
         }
     }
