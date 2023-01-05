@@ -1,24 +1,25 @@
 
 import React, { useState, useMemo } from "react";
+import * as blockies from 'blockies-ts';
 import cn from 'classnames'
 import { NavLink, useRouteMatch } from "react-router-dom";
-import { MdOutlineArrowForward, MdMenu, MdExitToApp, MdInfo } from "react-icons/md";
-import { ReactComponent as PrivacyOff } from './images/privacy-off.svg'
-import { ReactComponent as PrivacyOn } from './images/privacy-on.svg'
+
+import { networkIconsById } from "consts/networks";
+
 import Accounts from "./Accounts/Accounts";
 import Networks from "./Networks/Networks";
-import { networkIconsById } from "consts/networks";
 import DApps from "./DApps/DApps";
-import * as blockies from 'blockies-ts';
 import Links from "./Links/Links";
 import WalletTokenButton from "./WalletTokenButton/WalletTokenButton";
-import { Button, ToolTip } from 'components/common';
-import DAPPS_ICON from 'resources/dapps.svg';
 
+import { MdOutlineArrowForward } from "react-icons/md";
+import { ReactComponent as PrivacyOff } from './images/privacy-off.svg'
+import { ReactComponent as PrivacyOn } from './images/privacy-on.svg'
 import { ReactComponent as MenuIcon } from 'resources/icons/burger-menu.svg'
 import { ReactComponent as CloseIcon } from 'resources/icons/close.svg' 
 
 import styles from "./TopBar.module.scss";
+import DAppMenu from "./DAppMenu/DAppMenu";
 
 const TopBar = ({
   useRelayerData,
@@ -68,47 +69,19 @@ const TopBar = ({
           </div>
       }
 
-      {dappModeTopBar ?
-        <div className={styles.dappMenu}>
-          <div className={styles.dappMenuBtns}>
-            <ToolTip label='Open Ambire Wallet menu'>
-              <Button className={`${styles.buttonComponent} ${styles.ambireMenuBtn}`} border mini icon={<MdMenu size={23} />}
-                onClick={() => toggleSideBarOpen()}
-              ></Button>
-            </ToolTip>
-            <div className={styles.dappData}>
-              <ToolTip label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}>
-                {/* TODO: update the blogpost link */}
-                <a className="info-btn" href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'}
-                  target="_blank"
-                  rel="noreferrer noopener">
-                  <MdInfo size={23} />
-                </a>
-              </ToolTip>
-              <ToolTip label={`Connected to ${currentDappData?.name} with Ambire Wallet`}>
-                <a href={currentDappData?.providedBy?.url || currentDappData?.url}
-                  target="_blank"
-                  rel="noreferrer noopener">
-                  <img className={styles.dappLogo} src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name}/>
-                </a>
-              </ToolTip>
-              <ToolTip label={`Exit from ${currentDappData?.name}`}>
-                <Button
-                  className={`${styles.buttonComponent} ${styles.dappExitBtn}`}
-                  secondary mini 
-                  icon={<MdExitToApp size={15} /> }
-                  onClick={() => loadCurrentDappData(null)}
-                >Exit</Button>
-              </ToolTip>
-            </div>
-          </div>
-        </div>
-      :        
-      <NavLink to={'/wallet/dashboard'}>
-        <div id="logo" />
-        <div id="icon" />
-      </NavLink>     
-      }
+      {dappModeTopBar ? (
+        <DAppMenu
+          toggleSideBarOpen={toggleSideBarOpen}
+          currentDappData={currentDappData}
+          loadCurrentDappData={loadCurrentDappData}
+          dappModeTopBar={dappModeTopBar}
+        /> 
+      ) : (        
+        <NavLink to={'/wallet/dashboard'}>
+          <div id="logo" />
+          <div id="icon" />
+        </NavLink>     
+      )}
 
       <div className={styles.mobileMenu}>
         {!dappModeTopBar &&  <NavLink to={'/wallet/dashboard'}>

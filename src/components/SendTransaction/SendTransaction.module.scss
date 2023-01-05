@@ -10,43 +10,46 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: transparent linear-gradient(180deg, $c-fiord 0%, $c-ebony-clay 100%);
+  background: theme(background-gradient);
   overflow: hidden;
 
   .container {
     display: flex;
-    gap: 16px;
+    flex-direction: column;
     height: 100%;
     width: 100%;
-    padding: 25px 40px;
-    padding-bottom: 90px;
-    max-width: 1500px;
-    overflow: hidden;
-
-    .panelWrapper {
-      display: flex;
-      flex-direction: column;
+    padding-bottom: 46px;
+    max-width: 1760px;
+    padding: 37px 40px;
+    
+    .containerBody {
+      overflow: hidden;
       flex: 1;
-      align-items: stretch;
-      max-width: 50%;
-
-      .panelWrapperTitle {
-        font-size: 25px;
-        font-weight: 400;
-        margin: 0;
-        margin-bottom: 20px;
-      }
+      display: flex;
+      gap: 16px;
 
       .panel {
         flex: 1;
-        overflow-y: auto;
         padding: 30px 40px;
+  
+        &:first-child {
+          flex: 2;
+        }
     
-        & > div {
+        & > div { // Panel .content div
           justify-content: space-between;
+        }
+  
+        .panelTitle {
+          margin: 0;
+          margin-bottom: 27px;
+          font-size: 25px;
+          font-weight: 400;
+          text-align: center;
         }
       }
     }
+
   }
 }
 // Here we are not using a breakpoint from variables.scss, but SendTransaction
@@ -54,14 +57,15 @@
 @media screen and (max-width: 1600px) { 
   .wrapper {
     .container {
-      max-width: 1400px;
-      padding-bottom: 25px;
-      padding-top: 10px;
-
-      .panelWrapper {
-        .panelWrapperTitle {
-          font-size: 23px;
-          margin-bottom: 10px;
+      .containerBody {
+        .panel {
+          &:first-child {
+            flex: 1.5;
+          }
+  
+          .panelTitle {
+            font-size: 23px;
+          }
         }
       }
     }
@@ -71,27 +75,43 @@
 @media (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
     .container {
-      flex-direction: column;
-      height: auto;
-      overflow-y: auto;
-      padding: 20px;
-      gap: 40px;
-      padding-bottom: 40px;
+      padding: 40px 20px;
+      padding-top: 5px; // Fix for the Back Icon being cut
       max-width: 900px;
       margin: 0 auto;
-
-      .panelWrapper {
-        max-width: 100%;
-
-        .panelWrapperTitle {
-          font-size: 24px;
-          margin-bottom: 15px;
-          text-align: center;
-        }
+      margin-top: 30px;
+      overflow-y: auto;
+      
+      .containerBody {
+        overflow: unset;
+        flex-direction: column;
+        gap: 40px;
+        flex: unset;
 
         .panel {
           overflow-y: unset;
           padding: 20px;
+  
+          .panelTitle {
+            font-size: 20px;
+          }
+        }
+      }
+
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .container {
+      padding: 30px 15px;
+      padding-top: 5px;
+      margin-top: 15px;
+
+      .containerBody {
+        .panel {
+          padding: 15px;
         }
       }
     }

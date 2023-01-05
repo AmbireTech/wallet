@@ -56,7 +56,7 @@
         border-left-color: $danger-color;
       }
 
-      &.info {
+      &.info, &.degenTip {
         background-color: $info-background-color;
         border-left-color: $ambire-dark-blue;
       }
@@ -68,13 +68,13 @@
           display: flex;
           align-items: center;
           gap: 20px;
-          margin-bottom: 10px;
 
           .title {
             margin: 0;
             font-size: 20px;
           }
         }
+
         .text {
           margin: 0;
           font-size: 16px;
@@ -82,6 +82,24 @@
 
           .link {
             color: $c-heliotrope;
+          }
+        }
+      }
+
+      // Sizes
+      &.small {
+        .body {
+          .titleWrapper {
+            gap: 10px;
+
+            .title {
+              font-size: 16px;
+              font-weight: 400;
+            }
+          }
+
+          .text {
+            font-size: 14px;
           }
         }
       }
@@ -100,7 +118,6 @@
 
         .body {
           .titleWrapper {
-            margin-bottom: 10px;
             gap: 15px;
 
             .title {
@@ -121,6 +138,22 @@
           border: 0;
           outline: none;
         }
+
+        // Sizes
+        &.small {
+          gap: 10px;
+          
+          .body {
+            .titleWrapper {
+              .title {
+                font-size: 15px;
+              }
+            }
+            .text {
+              font-size: 13px;
+            }
+          }
+        }
       }
     }
   }
@@ -138,7 +171,7 @@
         border-top: 7px solid;
         text-align: center;
 
-        &.info {
+        &.info, &.degenTip {
           border-top-color: $ambire-dark-blue;
         }
   
@@ -160,10 +193,12 @@
         }
 
         .body {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
           margin-left: 0;
 
           .titleWrapper {
-            margin-bottom: 10px;
             flex-direction: column;
             justify-content: flex-start;
             gap: 5px;

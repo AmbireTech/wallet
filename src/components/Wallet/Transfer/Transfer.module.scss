@@ -2,19 +2,41 @@
 
 .panel {
     padding: 0;
-    flex: 0 1 50%;
+    flex: 1;
+
+    &.sendOnly {
+        max-width: 750px;
+    }
 }
 
 .wrapper {
     display: flex;
-    gap: 30px;
+    justify-content: center;
+    gap: 17px;
     overflow-y: hidden;
     height: 100%;
+
+    .gasTankSendTitle {
+        margin: 0;
+        font-size: 25px;
+        font-weight: 400;
+    }
+    .sell {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 40px;
+        padding-top: 15px;
+        gap: 40px;
+        overflow-y: auto;
+    }
 }
 
 @media screen and (max-width: 1400px) {
     .wrapper {
         flex-direction: column;
+        height: auto;
     }
 }
 
@@ -22,8 +44,12 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
         gap: 15px;
-        overflow-y: auto;
+
+        .sell {
+            padding: 20px;
+        }
     }
+
     .panel {
         padding: 0;
         flex: 0 1 50%;

@@ -1,26 +1,20 @@
-import useSignMessage from "ambire-common/src/hooks/useSignMessage"
-import supportedDApps from "ambire-common/src/constants/supportedDApps"
-
-import styles from "./SignMessage.module.scss"
-
-import { MdBrokenImage, MdCheck, MdClose, MdInfoOutline } from "react-icons/md"
-import { toUtf8String, isHexString } from "ethers/lib/utils"
 import * as blockies from "blockies-ts"
-import { getWallet } from "lib/getWallet"
-import { useToasts } from "hooks/toasts"
+import { toUtf8String, isHexString } from "ethers/lib/utils"
+import supportedDApps from "ambire-common/src/constants/supportedDApps"
+import styles from "./SignMessage.module.scss"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
-import { networkIconsById } from 'consts/networks'
 import cn from "classnames"
 import { onMsgRejected, onMsgSigned } from 'components/SDK/WindowMessages'
+import { useSignMessage } from "hooks"
+import AccountAndNetwork from "components/common/AccountAndNetwork/AccountAndNetwork"
 
-import useLocalStorage from 'hooks/useLocalStorage'
+import { MdBrokenImage, MdClose, MdInfoOutline } from "react-icons/md"
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests }) {
+export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests, useStorage }) {
   const defaultState = () => ({ codeRequired: false, passphrase: "" })
-  const { addToast } = useToasts()
   const [signingState, setSigningState] = useState(defaultState())
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
@@ -38,26 +32,11 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     return
   }
 
-  const getHardwareWallet = () => {
-    // if quick account, wallet = await fromEncryptedBackup
-    // and just pass the signature as secondSig to signMsgHash
-    const wallet = getWallet(
-      {
-        signer: account.signer,
-        signerExtra: account.signerExtra,
-        chainId: 1 // does not matter
-      }
-    )
-
-    return wallet
-  }
-
   const {
     approve,
-    toSign,
+    msgToSign,
     isLoading,
     hasPrivileges,
-    hasProviderError,
     typeDataErr,
     isDeployed,
     dataV4,
@@ -67,15 +46,12 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     confirmationType,
     dApp
   } = useSignMessage({
-    fetch,
     account,
-    everythingToSign,
+    messagesToSign: everythingToSign,
     relayerURL,
-    addToast,
     resolve,
     onConfirmationCodeRequired,
-    getHardwareWallet,
-    useStorage: useLocalStorage,
+    useStorage,
   })
 
   const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
@@ -89,14 +65,14 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     if (confirmationType) inputSecretRef.current.focus()
   }, [confirmationType])
 
-  if (!toSign || !account) return <></>
+  if (!msgToSign || !account) return <></>
 
   // should not happen unless chainId is dropped for some reason in addRequests
   if (!requestedNetwork) {
     return (
       <div className={styles.wrapper}>
         <h3 className='error'>
-          Inexistant network for chainId : {requestedChainId}
+        Unexistent network for chainId : {requestedChainId}
         </h3>
         <Button
           className={styles.reject}
@@ -133,29 +109,16 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     onMsgSigned()
   }
 
-  const requestedNetworkIcon = networkIconsById[requestedNetwork.id]
-
   return (
     <div className={styles.wrapper}>
-      <Panel title={'Signing with account'} className={styles.panel}>
-        <div className={styles.signingAccountContent}>
-          <div className={styles.signingAccountAccount}>
-            <img
-              className={styles.icon}
-              src={blockies.create({ seed: account.id }).toDataURL()}
-              alt='Account Icon'
-            />
-            {account.id}
-          </div>
-          <div className={styles.signingAccountNetwork}>
-            on
-            <div
-              className={styles.icon}
-              style={{ backgroundImage: `url(${requestedNetworkIcon})` }}
-            />
-            <div className='address'>{requestedNetwork.name}</div>
-          </div>
-        </div>
+      <Panel title="Signing with account" titleClassName={styles.panelTitle} className={styles.panel}>
+        <AccountAndNetwork
+          address={account.id}
+          networkName={requestedNetwork.name}
+          networkId={requestedNetwork.id}
+          avatar={blockies.create({ seed: account.id }).toDataURL()}
+          maxAddressLength={30}
+        />
       </Panel>
       <Panel className={styles.panel}>
         <div className={cn(styles.title, styles.signMessageTitle)}>
@@ -196,11 +159,9 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             )}
             is requesting your signature.
           </div>
-          <span>
-            {totalRequests > 1
-              ? `You have ${totalRequests - 1} more pending requests.`
-              : ""}
-          </span>
+          {(totalRequests > 1) ? <span>
+            You have {totalRequests - 1} more pending requests.
+          </span> : null}
           {!isDAppSupported && <DAppIncompatibilityWarningMsg />}
         </div>
 
@@ -210,8 +171,8 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
           value={
             dataV4
               ? JSON.stringify(dataV4, "\n", " ")
-              : toSign.txn !== "0x"
-              ? getMessageAsText(toSign.txn)
+              : msgToSign.txn !== "0x"
+              ? getMessageAsText(msgToSign.txn)
               : "(Empty message)"
           }
           readOnly={true}
@@ -258,7 +219,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
               </>
             )}
 
-            {isDeployed === null && !hasProviderError && (
+            {isDeployed === null && (
               <div>
                 <Loading />
               </div>
@@ -283,37 +244,19 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
               </div>
             )}
 
-            {hasProviderError && (
-              <div>
-                <h3 className='error'>
-                  There was an issue with the network provider:{" "}
-                  {hasProviderError}
-                </h3>
-              </div>
-            )}
-
             <div className={styles.buttons}>
               <Button
+                className={styles.button}
                 type='button'
                 danger
                 icon={<MdClose />}
-                className={styles.reject}
                 onClick={rejectMsg}
               >
                 Reject
               </Button>
               {isDeployed !== null && isDeployed && hasPrivileges && (
-                <Button type='submit' disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loading />
-                      Signing...
-                    </>
-                  ) : (
-                    <>
-                      <MdCheck /> Sign
-                    </>
-                  )}
+                <Button type='submit' primaryGradient disabled={isLoading} className={styles.button}>
+                  {isLoading ? "Signing..." : "Sign"}
                 </Button>
               )}
             </div>

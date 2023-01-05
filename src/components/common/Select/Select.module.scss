@@ -8,7 +8,7 @@
     user-select: none;
     font-weight: bold;
     cursor: pointer;
-    min-width: 240px;
+    min-width: 210px;
 
     &InputContainer {
         border-radius: 0;
@@ -31,7 +31,7 @@
         align-items: center;
         justify-content: center;
         border-radius: 12px;
-        background-color: rgba($c-titan-white, 0.05);
+        background-color: theme(background-icon);
         background-size: contain;
         background-position: center center;
         background-repeat: no-repeat;
@@ -63,7 +63,7 @@
             padding: 0 20px;
             font-size: 16px;
             font-weight: bold;
-            background-color: $c-mirage;
+            background-color: theme(background-primary);
             border-radius: 12px;
 
             .separator {
@@ -75,6 +75,7 @@
                 @include flex-center-center;
                 height: 32px;
                 width: 32px;
+                background-color: theme(background-icon);
                 border-radius: 12px;
                 transition: all 0.1s ease-in-out;
 
@@ -93,9 +94,9 @@
             max-height: 250px;
             width: 100%;
             border-radius: 12px;
-            background-color: $c-mirage;
+            background-color: theme(background-primary);
             box-shadow: 0px 4px 10px #00000073;
-            border: 1px solid $c-fiord;
+            border: 1px solid theme(border-secondary);
             overflow: hidden;
             overflow-y: auto;
             scrollbar-width: thin;
@@ -147,7 +148,7 @@
                 }
                 
                 &:hover {
-                    background-color: $c-ebony-clay;
+                    background-color: theme(background-terniary);
                 }
                 
                 &.active {
@@ -160,7 +161,7 @@
                         right: 15px;
                         height: 8px;
                         width: 8px;
-                        background-color: $c-turquoise;
+                        background-color: theme(highlight-secondary);
                         border-radius: 100%;
                     }
                 }

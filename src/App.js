@@ -14,7 +14,7 @@ import ToastProvider from './components/ToastProvider/ToastProvider'
 import ModalProvider from './components/ModalProvider/ModalProvider'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
-import useWalletConnect from './hooks/walletconnect'
+import useWalletConnect from './hooks/useWalletConnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, 
@@ -45,6 +45,7 @@ import { onTxnSent } from 'components/SDK/WindowMessages'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
+import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
 
 // Initialize rpc providers for all networks
 initRpcProviders(rpcProviders)
@@ -265,6 +266,7 @@ function AppInner() {
         totalRequests={everythingToSign.length}
         relayerURL={relayerURL}
         network={network}
+        useStorage={useLocalStorage}
         resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
       ></SignMessage>)}
 
@@ -372,11 +374,13 @@ export default function App() {
   return (
     <Router>
       <ConstantsProvider>
-        <ToastProvider>
-          <ModalProvider>
-            <AppInner/>
-          </ModalProvider>
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <ModalProvider>
+              <AppInner/>
+            </ModalProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </ConstantsProvider>
     </Router>
   )

@@ -7,6 +7,8 @@ import Replace from "./Replace/Replace";
 import ActionsWrapper from "./ActionsWrapper/ActionsWrapper";
 import { onTxnRejected } from "components/SDK/WindowMessages";
 
+import styles from './DetailsPanel.module.scss'
+
 const DetailsPanel = ({
   estimation,
   setEstimation,
@@ -28,6 +30,7 @@ const DetailsPanel = ({
   REJECT_MSG,
   onBroadcastedTxn,
   panelClassName,
+  panelTitleClassName
 }) => {
   const [replaceTx, setReplaceTx] = useState(!!replaceByDefault);
 
@@ -50,42 +53,45 @@ const DetailsPanel = ({
 
   return (
     <Panel className={cn(panelClassName)}>
-      <Options
-        account={account}
-        network={network}
-        estimation={estimation}
-        signingStatus={signingStatus}
-        feeSpeed={feeSpeed}
-        setFeeSpeed={setFeeSpeed}
-        setEstimation={setEstimation}
-        onDismiss={onDismiss}
-        relayerURL={relayerURL}
-        bundle={bundle}
-        canProceed={canProceed}
-        currentAccGasTankState={currentAccGasTankState}
-      />
-      <Replace
-        isInt={isInt}
-        mustReplaceNonce={mustReplaceNonce}
-        canProceed={canProceed}
-        rejectTxn={rejectTxn}
-      />
+      <div className={styles.panelBody}>
+        <h2 className={cn(panelTitleClassName, styles.title)}>Estimation</h2>
+        <Options
+          account={account}
+          network={network}
+          estimation={estimation}
+          signingStatus={signingStatus}
+          feeSpeed={feeSpeed}
+          setFeeSpeed={setFeeSpeed}
+          setEstimation={setEstimation}
+          onDismiss={onDismiss}
+          relayerURL={relayerURL}
+          bundle={bundle}
+          canProceed={canProceed}
+          currentAccGasTankState={currentAccGasTankState}
+        />
+        <Replace
+          isInt={isInt}
+          mustReplaceNonce={mustReplaceNonce}
+          canProceed={canProceed}
+          rejectTxn={rejectTxn}
+        />
 
-      {
-        // If there's `bundle.nonce` set, it means we're cancelling or speeding up, so this shouldn't even be visible
-        // We also don't show this in any case in which we're forced to replace a particular transaction (mustReplaceNonce)
-        !isInt(bundle.nonce) &&
-          !isInt(mustReplaceNonce) &&
-          !!estimation?.nextNonce?.pendingBundle && (
-            <div>
-              <Checkbox
-                label="Replace currently pending transaction"
-                checked={replaceTx}
-                onChange={({ target }) => setReplaceTx(target.checked)}
-              />
-            </div>
-          )
-      }
+        {
+          // If there's `bundle.nonce` set, it means we're cancelling or speeding up, so this shouldn't even be visible
+          // We also don't show this in any case in which we're forced to replace a particular transaction (mustReplaceNonce)
+          !isInt(bundle.nonce) &&
+            !isInt(mustReplaceNonce) &&
+            !!estimation?.nextNonce?.pendingBundle && (
+              <div>
+                <Checkbox
+                  label="Replace currently pending transaction"
+                  checked={replaceTx}
+                  onChange={({ target }) => setReplaceTx(target.checked)}
+                />
+              </div>
+            )
+        }
+      </div>
 
       <ActionsWrapper
         signingStatus={signingStatus}

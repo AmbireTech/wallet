@@ -1,0 +1,39 @@
+name: Build & deploy 🔥 Ambire Wallet 🔥 (swap-alchemy-test 🧪🔬)
+
+on:
+  push:
+    branches:
+      - temp-swap-provider
+  pull_request:
+    branches:
+      - temp-swap-provider
+permissions:
+  contents: write
+jobs:
+  build:
+    name: Build & Deploy - (temp-swap-provider 🧪🔬)
+    runs-on: ubuntu-latest
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }} 
+    steps:
+    - name: Checkout code 🛎️
+      uses: actions/checkout@v3
+
+    - name: Install Node.js ⚙️
+      uses: actions/setup-node@v3
+      with:
+        node-version: 16.x
+    - name: Install NPM packages ♾️🕳️
+      run: npm ci
+
+    - name: Build project 🛠️
+      run: npm run build
+
+    - name: Deploy 🚀🌕 (temp-swap-provider 🧪🔬)
+      if: github.ref == 'refs/heads/temp-swap-provider'
+      uses: JamesIves/github-pages-deploy-action@v4.4.1
+      with:
+        branch: gh-pages
+        folder: build
+        target-folder: swap-alchemy-test
+        cname: wallet.ambire.com
