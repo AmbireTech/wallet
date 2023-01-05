@@ -17,16 +17,9 @@ $max-width: 650px;
   align-items: center;
   gap: 17px;
   padding: 32px;
-  box-sizing: border-box;
 
   .panel {
     width: $max-width;
-
-    .title {
-      align-items: center;
-      justify-content: flex-start;
-      gap: 8px;
-    }
 
     .content {
       flex-wrap: wrap;
@@ -52,51 +45,6 @@ $max-width: 650px;
         span {
           margin-left: 4px;
         }
-      }
-    }
-  }
-
-
-  .accountAndNetwork {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px 30px;
-
-    .account {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-
-      .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-      }
-
-      .address {
-        color: theme(text-primary);
-        font-size: 16px;
-        margin: 0;
-        word-break: break-all;
-      }
-    }
-
-    .network {
-      display: flex;
-      justify-self: flex-end;
-      align-items: center;
-      gap: 10px;
-      color: theme(text-secondary);
-      font-size: 14px;
-      margin: 0;
-
-      .icon {
-        border-radius: 12px;
-        width: 24px;
-        height: 24px;
-        background-color: theme(background-icon);
       }
     }
   }
