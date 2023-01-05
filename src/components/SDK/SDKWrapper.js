@@ -5,6 +5,8 @@ import OnRampSDK from 'components/SDK/OnRamp'
 import SendTransactionSDK from 'components/SDK/SendTransaction'
 import SignMessageSDK from 'components/SDK/SignMessage'
 import LogoutSDK from 'components/SDK/Logout'
+import { ReactComponent as AmbireLogoIcon } from 'resources/logo.svg'
+import styles from './SDK.module.scss'
 
 export default function SDKWrapper(props) {
 
@@ -58,13 +60,26 @@ export default function SDKWrapper(props) {
 
   return (
     <Switch>
-        {
-          routes.map(({ path, component }) => (
-              <Route exact path={props.match.url + path} key={path}>
-                  { component ? component : null }
-              </Route>
-          ))
-        }
+      <div className={styles.wrapper}>
+        <div className={styles.headerAndBody}>
+          <div className={styles.header}>
+            <span className={styles.tempLogo}>Logo</span>
+          </div>
+          <div className={styles.body}>
+            {
+              routes.map(({ path, component }) => (
+                  <Route exact path={props.match.url + path} key={path}>
+                      { component ? component : null }
+                  </Route>
+              ))
+            }
+          </div>
+        </div>
+        <div className={styles.footer}>
+          <p className={styles.footerText}>Powered by Ambire Wallet</p>
+          <AmbireLogoIcon className={styles.footerLogo} />
+        </div>
+      </div>
     </Switch>
   )
 }
