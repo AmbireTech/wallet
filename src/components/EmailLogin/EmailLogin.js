@@ -1,26 +1,29 @@
-import styles from './EmailLogin.module.scss'
-
 import { useState, useEffect } from 'react'
+import Lottie from 'lottie-react'
+import cn from 'classnames'
 
 import { fetch, fetchCaught } from 'lib/fetch'
 
-import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 import { useLocalStorage } from 'hooks'
+import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
+import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
+
+import styles from './EmailLogin.module.scss'
 
 import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
-
-import Lottie from 'lottie-react'
+import { ReactComponent as AmbireLogo } from 'resources/logo.svg'
 import AnimationData from './assets/confirm-email.json'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
 export default function EmailLogin({ relayerURL, onAddAccount }) {
+    const { theme } = useThemeContext()
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
     const [inProgress, setInProgress] = useState(false)
     const [loginSessionKey, setLoginSessionKey, removeLoginSessionKey] = useLocalStorage({ key: 'loginSessionKey', isStringStorage: true })
 
-    const EMAIL_VERIFICATION_RECHECK = 3000
+    const EMAIL_VERIFICATION_RECHECK = 6000
 
     const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
       // try by-email first: if this returns data we can just move on to decrypting
@@ -105,7 +108,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const importJSONHref = `/#/json-import`
 
     if (!relayerURL) {
-        return (<section className={`${styles.loginSignupWrapper} ${styles.emailLoginSection}`}>
+        return (<section className={cn(styles.loginSignupWrapper, styles.emailLoginSection, styles[theme])}>
             <div className={styles.logo}/>
             <h3 className={styles.error}>Email login not supported without the relayer.</h3>
             <a href={importJSONHref}><button>Import JSON</button></a>
@@ -146,8 +149,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       </div>)
 
     return (
-      <section className={`${styles.loginSignupWrapper} ${styles.emailLoginSection}`}>
-      <div className={styles.logo} />
+      <section className={cn(styles.loginSignupWrapper, styles.emailLoginSection, styles[theme])}>
+      <AmbireLogo className={styles.logo} alt="ambire-logo" />
       {inner}
     </section>
     )

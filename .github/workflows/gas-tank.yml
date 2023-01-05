@@ -1,0 +1,54 @@
+name: Build & deploy staging for Gas Tank
+
+on:
+  push:
+    branches:
+      - feature/redesign-gas-tank-style
+  pull_request:
+    branches:
+      - feature/redesign-gas-tank-style
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 16.x
+
+      - name: Install NPM packages
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Upload production-ready build files
+        uses: actions/upload-artifact@v2
+        with:
+          name: production-files
+          path: ./build
+  deploy-redesign:
+    name: Deploy Gas Tank Redesign
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/feature/redesign-gas-tank-style'
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: production-files
+          path: ./build
+
+      - name: Deploy to gh-pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build
+          destination_dir: ./gas-tank
+          cname: wallet.ambire.com

@@ -1,0 +1,228 @@
+@import 'variables.scss';
+
+.wrapper {
+  position: relative;
+  
+  .shadow {
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    bottom: 0;
+    width: 99%;
+    height: 40px;
+    transform: translateX(-50%);
+    background: rgba($c-mirage, 0.8);
+    mix-blend-mode: multiply;
+    border-radius: 10px;
+    filter: blur(5px);
+  }
+
+  .alertWrapper {
+    overflow: hidden;
+    border-radius: 12px;
+
+    .alert {
+      position: relative;
+      display: flex;
+      align-items: center;
+      z-index: 2;
+      gap: 20px;
+      padding: 13px 20px;
+      padding-left: 13px;
+      color: $c-martinique-light;
+      border-left: 7px solid;
+
+      &.alertIconNextToTitle {
+        padding-left: 20px;
+      }
+
+      svg {
+        width: 34px;
+        height: 34px;
+      }
+
+      &.success {
+        background-color: $success-background-color;
+        border-left-color: $success-color;
+      }
+
+      &.warning {
+        background-color: $warning-background-color;
+        border-left-color: $warning-color;
+      }
+
+      &.danger {
+        background-color: $danger-background-color;
+        border-left-color: $danger-color;
+      }
+
+      &.info, &.degenTip {
+        background-color: $info-background-color;
+        border-left-color: $ambire-dark-blue;
+      }
+
+      .body {
+        flex: 1;
+
+        .titleWrapper {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+
+          .title {
+            margin: 0;
+            font-size: 20px;
+          }
+        }
+
+        .text {
+          margin: 0;
+          font-size: 16px;
+          text-align: left;
+
+          .link {
+            color: $c-heliotrope;
+          }
+        }
+      }
+
+      // Sizes
+      &.small {
+        .body {
+          .titleWrapper {
+            gap: 10px;
+
+            .title {
+              font-size: 16px;
+              font-weight: 400;
+            }
+          }
+
+          .text {
+            font-size: 14px;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1600px) {
+  .wrapper {
+    .alertWrapper {
+      .alert {
+        svg {
+          width: 30px;
+          height: 30px;
+        }
+
+        .body {
+          .titleWrapper {
+            gap: 15px;
+
+            .title {
+              font-size: 18px;
+            }
+          }
+
+          .text {
+            font-size: 14px;
+          }
+        }
+
+        .close {
+          margin-left: 30px;
+          cursor: pointer;
+          color: $warning-color;
+          background-color: transparent;
+          border: 0;
+          outline: none;
+        }
+
+        // Sizes
+        &.small {
+          gap: 10px;
+          
+          .body {
+            .titleWrapper {
+              .title {
+                font-size: 15px;
+              }
+            }
+            .text {
+              font-size: 13px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .alertWrapper {
+      .alert {
+        display: flex;
+        flex-direction: column;
+        padding: 20px;
+        gap: 10px;
+        border-left: 0;
+        border-top: 7px solid;
+        text-align: center;
+
+        &.info, &.degenTip {
+          border-top-color: $ambire-dark-blue;
+        }
+  
+        &.success {
+          border-top-color: $success-color;
+        }
+  
+        &.warning {
+          border-top-color: $warning-color;
+        }
+  
+        &.danger {
+          border-top-color: $danger-color;
+        }
+
+        svg {
+          width: 28px;
+          height: 28px;
+        }
+
+        .body {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          margin-left: 0;
+
+          .titleWrapper {
+            flex-direction: column;
+            justify-content: flex-start;
+            gap: 5px;
+
+            .title {
+              font-size: 16px;
+            }
+          }
+
+          .text {
+            font-size: 12px;
+            text-align: center;
+          }
+        }
+
+        .close {
+          margin-left: 30px;
+          cursor: pointer;
+          color: $warning-color;
+          background-color: transparent;
+          border: 0;
+          outline: none;
+        }
+      }
+    }
+  }
+}

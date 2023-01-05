@@ -1,0 +1,110 @@
+@import 'variables';
+
+.wrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 10px;
+  width: 100%;
+  margin-bottom: 30px;
+
+  .feeSquare {
+    flex: 1;
+    padding: 12px 15px;
+    border-radius: 12px;
+    background-color: theme(background-primary);
+    border: 1px solid transparent;
+    text-align: center;
+    transition: .3s ease-in-out all;
+    // If not set, .feeSquare items min width is set to the width of its content.
+    // In other words, the different fees values ($0,01 and 0.000421434) may result in a different square widths.
+    // This can result in layouts appearing uneven.
+    // Credits: https://dfmcphee.com/flex-items-and-min-width-0/
+    min-width: 0;
+
+    .speed,
+    .feeEstimation {
+      margin: 0;
+    }
+
+    .speed {
+      margin-bottom: 7px;
+      font-size: 16px;
+      font-weight: 400;
+      text-transform: capitalize;
+    }
+
+    .feeEstimation {
+      font-size: 14px;
+      font-weight: 300;
+      opacity: 0.8;
+
+      max-width: 150px;
+      width: 100%;
+      overflow: hidden;
+      white-space: nowrap;
+      margin: 0 auto;
+      text-overflow: ellipsis;
+      
+      &.symbol {
+        opacity: .6;
+      }
+    }
+
+    &.disabled {
+      opacity: 0.4;
+    }
+
+    &:not(.disabled):hover {
+      cursor: pointer;
+      opacity: .4;
+    }
+
+    &.selected {
+      border: 1px solid theme(highlight-primary);
+      background-color: rgba(theme(background-primary), 0.4);
+    }
+
+    .discountBadge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      color: theme(highlight-secondary);
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    grid-gap: 5px;
+    
+    .feeSquare {
+      .speed {
+        font-size: 14px;
+      }
+
+      .feeEstimation {
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    grid-gap: 5px;
+    .feeSquare {
+      padding: 6px;
+
+      .speed {
+        font-size: 12px;
+      }
+
+      .feeEstimation {
+        font-size: 11px;
+        max-width: 50px;
+        max-height: 30px;
+      }
+    }
+  }
+}
+

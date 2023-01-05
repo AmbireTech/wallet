@@ -1,0 +1,149 @@
+@import "variables";
+
+.wrapper {
+  gap: 30px;
+
+  .confirmationCodeInfo {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  
+    .confirmationCodeInfoTitle {
+      font-size: 16px;
+      margin-bottom: 10px;
+    }
+  
+    .confirmationCodeInfoMessage {    
+      p {
+        opacity: .9;
+        font-size: 14px;
+        font-weight: 300;
+        margin: 0;
+      }
+    }
+  }
+
+  .quickAccSigningForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .code2faNotRequiredMsg {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background-color: $success-background-color;
+      color: $alert-text-color;    
+      padding: 15px;
+      font-size: 14px;
+      border-radius: 12px;
+    }
+
+    .inputsContainer {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+  }
+}
+
+.buttons {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  flex-direction: row;
+  gap: 20px;
+  flex-wrap: wrap;
+
+  .button {
+    &.danger {
+      flex: 1;
+      background-color: transparent;
+      border: 2px solid $danger-color;
+      color: $danger-color;
+    }
+
+    &.confirm {
+      flex: 3;
+      .loading {
+        width: auto;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 1600px) {
+  .wrapper {
+    .quickAccSigningForm {
+      .inputsContainer {
+        flex-direction: row;
+
+        & > div {
+          flex: 1;
+
+          input {
+            height: 50px;
+          }
+        }
+      }
+    }
+  }
+
+  .buttons {
+    gap: 10px;
+
+    .button {
+      font-size: 16px;
+      height: 50px;
+      
+      &.danger {
+        flex: 1;
+      }
+
+      &.confirm {
+        flex: 1;
+      }
+    }
+  }
+}
+
+@media (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    text-align: center;
+
+    .quickAccSigningForm {
+      .inputsContainer {
+        flex-direction: column;
+
+        & > div {
+          flex: unset;
+
+          input {
+            height: 60px;
+          }
+        }
+      }
+    }
+  }
+
+  .buttons {
+    flex-direction: column-reverse;
+    gap: 10px;
+    width: 100%;
+
+    .button {
+      font-size: 14px;
+      width: 100%;
+      height: 50px;
+
+      &.danger {
+        flex: unset;
+      }
+
+      &.confirm {
+        flex: unset;
+      }
+    }
+  }
+}

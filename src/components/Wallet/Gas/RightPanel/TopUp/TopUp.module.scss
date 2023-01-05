@@ -1,0 +1,127 @@
+@import 'variables';
+
+.wrapper {
+  margin-bottom: 30px;
+
+  .titleWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 43px;
+
+    .title {
+      margin: 0;
+      font-size: 16px;
+      text-transform: uppercase;
+      font-weight: 400;
+      color: $c-turquoise;
+    }
+
+    .network {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      
+      p {
+        margin: 0;
+        font-size: 14px;
+        opacity: .9;
+
+        &.name {
+          text-transform: capitalize;
+        }
+      }
+      
+      .networkIcon {
+        flex: 0 0 auto;
+        @include flex-center-center;
+        height: 32px;
+        width: 32px;
+        border-radius: 12px;
+        background-color: $c-mirage;
+    
+        img {
+          height: 24px;
+          width: 24px;
+          user-select: none;
+        }
+      }
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    overflow-y: auto;
+    max-height: 210px;
+    margin-bottom: 20px;
+    padding-right: 20px;
+    gap: 10px;
+  }
+
+  .warning {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 30px;
+
+    .warningIcon {
+      width: 24px;
+      height: 24px;
+      color: $c-ebony-clay;
+    }
+
+    .warningText {
+      flex: 1;
+      font-size: 14px;
+      margin: 0;
+      color: $warning-color;
+
+      span {
+        font-weight: bold;
+        font-size: 16px;
+      }
+    }
+  }
+
+  .depositBtn {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .list {
+      max-height: 430px;
+      padding-right: 12px;
+    }
+
+    .depositBtn {
+      font-size: 16px;
+      height: 50px;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .titleWrapper {
+      flex-direction: column;
+    }
+    .warning {
+      margin-bottom: 20px;
+      
+      .warningText {
+        font-size: 12px;
+
+        span {
+          font-size: 14px;
+        }
+      }
+    }
+  }
+}
