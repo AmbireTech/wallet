@@ -26,8 +26,25 @@ export const rpcUrls = {
 
 // @ts-ignore
 const rpcProviders: { [key in NetworkId]: any } = {}
+const CHECK_NET_INTERVAL_MS = 2000
+const TRIES_LEFT = 10
+const checkNetworkStatus = (ms: number, triesLeft: number) => {
+  return new Promise((resolve, reject) => {
+    const interval = setInterval(() => {
+      if (navigator.onLine) {
+        resolve(navigator.onLine)
+        clearInterval(interval)
+      } else if (triesLeft <= 1) {
+        reject(navigator.onLine)
+        clearInterval(interval)
+      }
+    }, ms)
+  })
+}
 
-const setProvider = (_id: NetworkId) => {
+const setProvider = async (_id: NetworkId) => {
+  const isOnline = await checkNetworkStatus(CHECK_NET_INTERVAL_MS, TRIES_LEFT)
+  if (!isOnline) return null
   // eslint-disable-next-line no-underscore-dangle
   const url = rpcUrls[_id]
   const network = networks.find(({ id }) => id === _id)
@@ -47,8 +64,8 @@ const setProvider = (_id: NetworkId) => {
   })
 }
 
-;(Object.keys(NETWORKS) as Array<keyof typeof NETWORKS>).forEach((networkId: NetworkId) => {
-  rpcProviders[networkId] = setProvider(networkId)
+;(Object.keys(NETWORKS) as Array<keyof typeof NETWORKS>).forEach(async(networkId: NetworkId) => {
+  rpcProviders[networkId] = await setProvider(networkId)
 })
 
 // @ts-ignore
