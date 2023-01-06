@@ -89,6 +89,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             isSellAvailable: false,
+            isBuyAvailable: true,
             onClick: () => openTransak()
         },
         {
