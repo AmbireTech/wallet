@@ -1,0 +1,103 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 30px;
+
+    &.loading {
+      .swapIcon {
+        margin-bottom: 30px;
+      }
+    }
+
+    .selectInput {
+      .selectIcon {
+        position: relative;
+        width: 20px;
+        height: 20px;
+        margin: 0 10px;
+      }
+
+      &::before {
+        position: absolute;
+        top: 10px;
+        left: 20px;
+        width: 40px;
+        height: 40px;
+        content: '';
+        background-color: $c-titan-white;
+        opacity: 0.05;
+        border-radius: 12px;
+      }
+    }
+
+    .amountLabel {
+      margin: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      span {
+        opacity: 0.8;
+      }
+    }
+
+    .fromSection {
+      margin-bottom: 20px;
+
+      .inputs {
+        gap: 40px;
+      }
+    }
+
+    .swapIcon {
+      min-width: 48px;
+      min-height: 48px;
+      align-self: center;
+      flex: 1;
+      background-color: rgba($c-titan-white, 0.05);
+      border-radius: 12px;
+      transform: rotate(90deg);
+    }
+  }
+
+  .button {
+    flex: 0 0 auto;
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .body {
+      .swapIcon {
+        min-width: 40px;
+        min-height: 40px;
+        width: 40px;
+        height: 40px;
+      }
+
+      .selectInput {
+        padding: 0 10px;
+        font-size: 14px;
+
+        .selectIcon {
+          margin-left: 10px;
+        }
+
+        &::before {
+          left: 10px;
+        }
+      }
+    }
+  }
+}

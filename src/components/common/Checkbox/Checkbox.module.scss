@@ -9,7 +9,7 @@
   cursor: pointer;
   margin: 20px 0px;
   user-select: none;
-  color: $c-titan-white;
+  color: theme(text-primary);
 
   &.disabled {
     opacity: 0.5;

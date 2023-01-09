@@ -6,7 +6,8 @@
   .title {
     font-size: 16px;
     font-weight: 300;
-    color: $c-titan-white;
+    // color: $c-titan-white;
+    color: theme(text-primary);
     margin: 0;
     margin-bottom: 10px;
   }

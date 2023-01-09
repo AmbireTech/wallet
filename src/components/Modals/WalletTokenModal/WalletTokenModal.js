@@ -123,9 +123,9 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
         </div>
         <div className={cn(styles.actions, 'mt-4')}>
           <ToolTip label={network.id !== 'ethereum' ? 'Switch to Ethereum network to claim' : ''}>
-            <Button className={styles.claimRewardsWithBurn} purpleGradient full onClick={openUnbondModal}
+            <Button className={styles.claimRewardsWithBurn} secondaryGradient full onClick={openUnbondModal}
                     disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
-            <Button className={styles.claimRewardsXWallet} greenGradient full onClick={claimEarlyRewards}
+            <Button className={styles.claimRewardsXWallet} terniaryGradient full onClick={claimEarlyRewards}
                   disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
           </ToolTip>
         </div>

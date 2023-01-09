@@ -48,7 +48,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
   if (estimation && !estimation.success) return (!checkIfDAppIncompatible(estimation.message) ?
     <FailingTxn
-      message={<>The current transaction batch cannot be sent because it will fail: {mapTxnErrMsg(estimation.message)}</>}
+      message={`The current transaction batch cannot be sent because it will fail: ${mapTxnErrMsg(estimation.message)}`}
       tooltip={getErrHint(estimation.message)}
     /> : <DAppIncompatibilityWarningMsg 
             title={'Unable to send transaction'}
@@ -121,6 +121,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
     {insufficientFee ? <Alert
         className={styles.alert}
         type="danger"
+        size="small"
         title="Insufficient balance for the fee."
         text={`Accepted tokens: ${(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}
           ${ isGasTankEnabled ? 'Disable your Gas Tank to use the default fee tokens.' : ''}

@@ -103,13 +103,14 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             isBuyAvailable: false,
             onClick: () => openSwappin()
         }
-    ];
-    
-    const filteredProviders = providers.filter(p => sellMode ? p.isSellAvailable : p.isBuyAvailable)
-    const shouldBeDisabled = (networks) => {
-        return !networks.includes(networkDetails.id)
-    }
+    ]
 
+    const shouldBeDisabled = (networks) => {
+        return networks.includes(networkDetails.id) ? null : 'disabled'
+    }
+    const isNoteVisible = () => providers.find(i => !i.networks.includes(networkDetails.id))
+    const filteredProviders = providers.filter(p => sellMode ? p.isSellAvailable : p.isBuyAvailable)
+    
     return (
         <div className={styles.wrapper}>
             {
@@ -118,7 +119,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                     <div className={`${styles.provider} ${shouldBeDisabled(networks) && styles.disabled}`} key={name} onClick={onClick}>
 
                         <div className={styles.logo}>
-                            <img src={logo} alt={name}></img>
+                            <img src={logo} alt={name} />
                         </div>
                         { isLoading.includes(name) ? <div> <Loading/> </div> :
                         <div className={styles.details}>
@@ -147,15 +148,13 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                 )
             }
             {
-                networkDetails.id !== 'ethereum' ? 
+                !!isNoteVisible() && 
                     <label className={styles.networkWarning}>
                         <InfoIcon />
                         <label>
                             Some {sellMode ? 'sell' : 'deposit'} methods are unavailable on {networkDetails.name}. Switch to Ethereum for the widest support.
                         </label>
                     </label>
-                    :
-                    null
             }
         </div>
     )
