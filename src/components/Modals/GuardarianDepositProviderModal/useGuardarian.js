@@ -100,7 +100,6 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
     }, [mode, onRampFiats, offRampFiats])
 
     //mode
-    console.log({ marketInfo })
     useEffect(()=> {
         if (mode === 'buy') {
             setAmount('50')
