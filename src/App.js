@@ -43,6 +43,7 @@ import SignMessage from './components/SignMessage/SignMessage'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
+import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
 
 // Initialize rpc providers for all networks
 initRpcProviders(rpcProviders)
@@ -379,11 +380,13 @@ export default function App() {
   return (
     <Router>
       <ConstantsProvider>
-        <ToastProvider>
-          <ModalProvider>
-            <AppInner/>
-          </ModalProvider>
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <ModalProvider>
+              <AppInner/>
+            </ModalProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </ConstantsProvider>
     </Router>
   )

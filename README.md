@@ -1,5 +1,9 @@
 ## Ambire Wallet
 
+### About
+Ambire Wallet is a self-custodial crypto wallet designed with power and ease of use in mind. Unlike most crypto wallets, Ambire focuses on user experience and human-friendliness, while not compromising on features. Ambire is unopinionated, it can be connected to any dApp and it supports most of the popular EVM networks. Ambire is also a Web3 superapp: you can swap, lend, borrow, perform cross-chain transfers, deposit FIAT, all without the app.
+
+It's built on smart contract wallet technology, enabling powerful features such as transaction batching, account recovery, multisigs, key rotation and paying for transactions in stablecoins (gas abstractions).
 
 ### All documentation
 
@@ -18,6 +22,9 @@
 
 **NOTE 2: we test on Polygon,** because it's cheap enough and it's a real environment with all the supported protocols - Sushiswap, Uniswap, Aave, and others. Ping #dev-wallet channel on Slack so we can send you some MATIC tokens.
 
+### Running the relayer
+**IMPORTANT: if you are running from public repositories, and do not have access to the relayer, please skip this step and run in relayerless mode!**
+
 First, clone and run the relayer
 ```
 git clone https://github.com/AmbireTech/relayer.git -b wallet-v2
@@ -25,6 +32,8 @@ cd relayer
 npm i
 NODE_ENV=development npm start
 ```
+
+### Running the wallet
 
 Then run the Ambire Wallet:
 ```

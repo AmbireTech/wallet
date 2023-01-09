@@ -140,7 +140,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
     const connectionIdentifier = connectorOpts.uri
 
     if (connectors[connectionIdentifier]) {
-      addToast('dApp already connectedz')
+      addToast('dApp already connected')
       return connectors[connectionIdentifier]
     }
     let connector

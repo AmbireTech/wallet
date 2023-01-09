@@ -37,7 +37,10 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
         const isCurrentClaimStatusLoadingAndNoPrevData =
           currentClaimStatus.loading && !currentClaimStatus.lastUpdated
         const isRewardsDataLoadingAndNoPrevData = rewardsIsLoading && !rewardsLastUpdated
-        if (isCurrentClaimStatusLoadingAndNoPrevData || isRewardsDataLoadingAndNoPrevData) {
+        const isMatchingRewardsDataAccWithCurrAcc = rewardsData?.rewards?.accountAddr?.toLowerCase() === accountId.toLowerCase() 
+        if (isCurrentClaimStatusLoadingAndNoPrevData
+            || isRewardsDataLoadingAndNoPrevData
+            || !isMatchingRewardsDataAccWithCurrAcc) {
           return (<span><Loading/></span>)
         }
         
@@ -52,7 +55,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
         }
     
         return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
-    }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry])
+    }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry, accountId, rewardsData.rewards.accountAddr])
 
     return (
         !relayerURL ?
