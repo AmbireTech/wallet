@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useLocalStorage } from 'hooks'
 
 const VALID_SIGN_METHODS = ['eth_sign', 'personal_sign', 'eth_signTypedData', 'eth_signTypedData_v4']
 const TYPED_DATA_METHODS = ['eth_signTypedData', 'eth_signTypedData_v4']
@@ -7,8 +8,16 @@ const TYPED_DATA_METHODS = ['eth_signTypedData', 'eth_signTypedData_v4']
 export default function SignMessage({selectedAcc, selectedNetwork, addRequest, everythingToSign}) {
     const [hasLoaded, setHasLoaded] = useState(false)
     const { type, messageToSign } = useParams()
+    const [stateStorage, setStateStorage] = useLocalStorage({
+        key: 'login_sdk',
+        defaultValue: {connected_dapps: []}
+    })
+
+    const dappOrigin = new URLSearchParams(window.location.search).get("dappOrigin")
+    const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
 
     const req = useMemo(() => {
+        if (!matchedDapp) return null
         if (!type || !VALID_SIGN_METHODS.includes(type)) return null
         if (!messageToSign) return null
 
@@ -19,9 +28,8 @@ export default function SignMessage({selectedAcc, selectedNetwork, addRequest, e
             account: selectedAcc,
             txn: TYPED_DATA_METHODS.includes(type) ? JSON.parse(decodeURIComponent(messageToSign)) : messageToSign,
             dapp: {
-                // TODO: dummy data, replace it with something coming from as input params
-                name: 'Example Dapp',
-                url: 'http://example-dapp.local',
+                name: matchedDapp.name,
+                url: matchedDapp.origin,
                 icons: [
                     'https://sigtool.ambire.com/favicon.ico',
                 ]

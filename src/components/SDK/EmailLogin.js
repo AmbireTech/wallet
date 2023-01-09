@@ -19,6 +19,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   })
 
   const dappOrigin = new URLSearchParams(location.search).get("dappOrigin")
+  const dappName = new URLSearchParams(location.search).get("dappName")
   const chainId = parseInt(new URLSearchParams(location.search).get("chainId"))
   const validTargetNetwork = allNetworks.filter(network => network.chainId === chainId)[0]
 
@@ -59,6 +60,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       ...stateStorage.connected_dapps,
       {
         origin: dappOrigin,
+        name: dappName,
         wallet_address: wallet_address,
       }
     ]})
