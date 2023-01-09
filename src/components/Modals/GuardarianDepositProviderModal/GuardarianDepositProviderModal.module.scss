@@ -37,14 +37,20 @@
     }
     .inputCurrenciesWrapper {
         display: flex;
-        gap: 10px;
-        align-items: center;
+
         background-color: $c-mirage;
         padding: 4px 20px;
         padding-bottom: 0;
         border-radius: 12px;
-        height: 73px;
+        height: 95px;
+        flex-direction: column;
 
+        .currenciesRowWrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            align-items: center;
+        }
         .inputLabel {
             margin: 0;
             color: $c-scampi;
@@ -99,7 +105,7 @@
 
         .loadingWrapper {
             margin-top: 20px;
-            height: 60px;
+            height: 40px;
             width: 100%;
             background-color: $c-mirage;
             border-radius: 12px;
