@@ -52,7 +52,7 @@ const TokensPlaceholder = ({ onClickAddToken, onClickShowToken, footer }) => {
         >
             {tokens.map(({ icon, symbol, balance, balanceUSD, address, network }) => (
                 <Token 
-                    key={address}
+                    key={address || symbol}
                     address={address}
                     network={network}
                     // Token data
