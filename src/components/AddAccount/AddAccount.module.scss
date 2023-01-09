@@ -5,18 +5,26 @@
     flex-direction: column;
     justify-content: center;
     gap: 50px;
-    background: url('/resources/login-bg.png');
-    background-size: cover;
-    background-position: top center;
-    background-repeat: no-repeat;
     min-height: 100%;
     padding: 40px 0;
     overflow: hidden;
 
+    &.dark {
+        background: url('/resources/login-bg.png');
+        background-size: cover;
+        background-position: top center;
+        background-repeat: no-repeat;
+
+        input {
+            &:not([type=submit]):focus {
+                border-bottom-color: $c-white;
+            }
+        }
+    }
+
     h3 {
         font-size: 25px;
         text-align: left;
-        color: $c-titan-white;
         font-weight: 400;
         margin-bottom: 43px;
     }
@@ -64,7 +72,7 @@
         height: 60px;
         width: 100%;
         border: none;
-        background: transparent linear-gradient(90deg, $c-turquoise 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        background: theme(gradient-primary);
         border-radius: 12px;
         color: $c-titan-white;
         font-size: 20px;
@@ -76,24 +84,20 @@
     input {
         color: $c-scampi;
         margin: 2em 0px;
-        border-bottom: 2px solid $c-titan-white;
+        border-bottom: 2px solid theme(border-input);
         width: 100%;
         font-size: 16px;
 
         &:not([type=submit]):focus {
-            border-bottom-color: #dae6fd;
+            border-bottom-color: $c-electric-violet;
         }
     }
 
     .logo {
-        background-image: url('/resources/logo.svg');
         width: 100%;
         max-width: 252px;
         margin: 0px auto;
         height: 110px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
     }
 
     .pluginInfo {
@@ -149,6 +153,7 @@
 
         .loginSeparator {
             width: 1px;
+            // background-color: theme(background-fournary);
             background-color: $c-scampi;
             margin: 0 96px;
             margin-top: 35px;
@@ -162,10 +167,10 @@
                 position: relative;
                 top: 0;
                 width: 100%;
-                background: $c-mirage;
+                background: theme(background-primary);
                 border: 1px solid $c-scampi;
                 border-radius: 12px;
-                color: $c-scampi;
+                color: theme(text-secondary);
                 height: 60px;
                 text-align: center;
                 display: flex;
@@ -176,15 +181,16 @@
                 transition: .3s ease-out all;
 
                 svg {
-                    color: $c-scampi;
+                    color: theme(text-secondary);
                     transition: .3s ease-out all;
                 }
 
                 &:hover {
                     top: -4px;
-                    color: $c-white;
+                    color: theme(text-primary);
+
                     svg {
-                        color: $c-white;
+                        color: theme(text-primary);
                     }
 
                     svg.email {
@@ -194,14 +200,14 @@
                         color: #EF801B;
 
                         :global(#decoration) {
-                            color: $c-white;
+                            color: theme(text-primary);
                         }
                     }
 
                     svg.gridplus {
-                        color: $c-white;
+                        color: theme(text-primary);
                         :global(#logo) {
-                            color: $c-white;
+                            color: theme(text-primary);
                         }
                         :global(#decoration) {
                             color: $c-picton-blue;
@@ -271,6 +277,10 @@
             display: flex;
             justify-content: space-around;
             padding: 15px 0;
+
+            button {
+                width: 100%;
+            }
         }
     }
     
@@ -301,6 +311,7 @@
         color: $c-titan-white;
         opacity: .8;
         transition: .3s ease-in-out;
+        margin-bottom: 50px;
 
         img {
             margin-right: 10px;
@@ -344,6 +355,10 @@
             p {
                 min-width: unset;
             }
+        }
+
+        .backButton {
+            margin-bottom: 0;
         }
     }
 }
