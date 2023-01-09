@@ -288,7 +288,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
   </>
 
   const stepTwo = <>
-    {latticeToggle && <LatticePair addresses={setLatticeAddresses}/>}
+    {latticeToggle && <LatticePair addresses={setLatticeAddresses} title="Connect to Lattice Device" />}
 
     {modalToggle && signersToChoose && <SelectSignerAccount
         showTitle

@@ -1,10 +1,10 @@
 import Lattice from './Lattice'
 import useLattice from 'hooks/useLattice'
 
-const LatticePair = ({ addresses }) => {
+const LatticePair = ({ addresses, title }) => {
     const latticeProps = useLattice({ addresses })
 
-    return <Lattice title="Connect to Lattice Device" {...latticeProps}  />
+    return <Lattice {...latticeProps} title={title}  />
 }
 
 export default LatticePair
