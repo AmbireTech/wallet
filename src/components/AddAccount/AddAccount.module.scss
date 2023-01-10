@@ -240,39 +240,37 @@
     }
 
     .emailConf {
-        background-color: $c-mirage;
-        border: 1px solid $c-scampi;
+        background-color: theme(background-terniary);
+        border: 1px solid theme(border-primary);
         border-radius: 12px;
         padding: 30px 60px;
         padding-top: 12px;
         text-align: center;
-        color: $c-titan-white;
+        color: theme(text-primary);
         width: 100%;
         max-width: 460px;
         margin: 0 auto;
-    }
-    
-    .emailConf h3 {
-        font-size: 24px;
-        text-align: center;
-        font-weight: 400;
-        margin-top: 0;
-        margin-bottom: 20px;
-    }
-    
-    .emailConf p {
-        font-size: 16px;
-        font-weight: 300;
-        line-height: 25px;
-        margin-bottom: 0;
-        min-width: 360px;
-    
-        span.email {
-            color: $c-heliotrope;
-        }
-    }
 
-    .emailConf {
+        h3 {
+            font-size: 24px;
+            text-align: center;
+            font-weight: 400;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            font-weight: 300;
+            line-height: 25px;
+            margin-bottom: 0;
+            min-width: 360px;
+        
+            span.email {
+                color: $c-heliotrope;
+            }
+        }
+
         .btnWrapper {
             display: flex;
             justify-content: space-around;
@@ -283,7 +281,7 @@
             }
         }
     }
-    
+        
     .magicLink {
         font-weight: 400;
         color: $c-titan-white;
@@ -360,5 +358,37 @@
         .backButton {
             margin-bottom: 0;
         }
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .loginSignupWrapper {
+        input {
+            margin: 20px 0;
+            font-size: 14px;
+            padding: 12px;
+
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+        input[type=submit] {
+            height: 50px;
+            font-size: 14px;
+        }
+    
+        .emailConf {
+            padding: 15px;
+            padding-top: 10px;
+    
+            h3 {
+                font-size: 20px;
+            }
+    
+            p {
+                font-size: 14px;
+                line-height: 150%;
+            }
+        }      
     }
 }

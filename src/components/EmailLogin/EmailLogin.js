@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { fetch, fetchCaught } from 'lib/fetch'
 
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
-import LoginForm from 'components/SDK/LoginForm'
+import LoginForm from 'components/SDK/EmailLogin/LoginForm/LoginForm'
 import { useLocalStorage } from 'hooks'
 import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
 
@@ -17,7 +17,7 @@ import AnimationData from './assets/confirm-email.json'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
-export default function EmailLogin({ relayerURL, onAddAccount, isSDK = false, onLoginSuccess = undefined }) {
+export default function EmailLogin({ relayerURL, onAddAccount, isSDK = false, onLoginSuccess = undefined, className }) {
     const { theme } = useThemeContext()
     const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
     const [err, setErr] = useState('')
@@ -146,19 +146,19 @@ export default function EmailLogin({ relayerURL, onAddAccount, isSDK = false, on
           <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
         }
         <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
-        <a className={styles.backButton} href={isSDK ? "#/sdk/add-account" : "#/add-account"}>
+        {!isSDK && <a className={styles.backButton} href="#/add-account">
           <ChevronLeftIcon />
           {' '}
-          {isSDK ? "Create Account" : "Back to Register"}
-        </a>
+          Back to Register
+        </a>}
         {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
 
         {/*<a href={importJSONHref}>Import JSON</a>*/}
       </div>)
 
     return (
-      <section className={cn(styles.loginSignupWrapper, styles.emailLoginSection, styles[theme])}>
-      <AmbireLogo className={styles.logo} alt="ambire-logo" />
+      <section className={cn(styles.loginSignupWrapper, styles.emailLoginSection, styles[theme], className)}>
+      {!isSDK && <AmbireLogo className={styles.logo} alt="ambire-logo" />}
       {inner}
     </section>
     )

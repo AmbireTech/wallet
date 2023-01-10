@@ -40,7 +40,7 @@ import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
-import SDKWrapper from 'components/SDK/SDKWrapper'
+import SDKWrapper from 'components/SDK/SDKWrapper/SDKWrapper'
 import { onTxnSent } from 'components/SDK/WindowMessages'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
@@ -311,8 +311,7 @@ function AppInner() {
             sendTxnState={sendTxnState}
             internalRequests={internalRequests}
             everythingToSign={everythingToSign}
-          >
-          </SDKWrapper>
+          />
         </Route>
 
         {selectedAcc ?

@@ -1,24 +1,31 @@
-export function onTxnRejected() {
+function onTxnRejected() {
   window.parent.postMessage({
     type: 'txnRejected',
   }, '*')
 }
 
-export function onTxnSent(hash) {
+function onTxnSent(hash) {
   window.parent.postMessage({
     type: 'txnSent',
     hash: hash
   }, '*')
 }
 
-export function onMsgRejected() {
+function onMsgRejected() {
   window.parent.postMessage({
     type: 'msgRejected'
   }, '*')
 }
 
-export function onMsgSigned() {
+function onMsgSigned() {
   window.parent.postMessage({
     type: 'msgSigned'
   }, '*')
+}
+
+export {
+  onTxnRejected,
+  onTxnSent,
+  onMsgRejected,
+  onMsgSigned
 }

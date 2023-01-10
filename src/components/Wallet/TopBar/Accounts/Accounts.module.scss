@@ -3,8 +3,6 @@
 $account-height: 60px;
 
 .wrapper {
-    color: $c-titan-white;
-
     .content {
         cursor: pointer;
     }
@@ -29,7 +27,7 @@ $account-height: 60px;
     }
 
     .menu {
-        background-color: $c-mirage;
+        background-color: theme(background-primary);
         padding-top: 15px;
         
 
@@ -111,7 +109,7 @@ $account-height: 60px;
                     }
 
                     &:hover {
-                        background-color: $c-ebony-clay;
+                        background-color: theme(background-terniary);
 
                         // ~.buttons .button {
                         //     svg {
@@ -132,7 +130,7 @@ $account-height: 60px;
                         height: 60px;
                         width: 50px;
                         @include flex-center-center;
-                        color: $c-titan-white;
+                        color: theme(text-primary);
                         font-size: 28px;
                         cursor: pointer;
                         border-radius: 12px;
@@ -144,7 +142,7 @@ $account-height: 60px;
                         }
 
                         &:hover {
-                            background-color: $c-ebony-clay;
+                            background-color: theme(background-terniary);
 
                             svg {
                                 opacity: 1;
@@ -152,7 +150,7 @@ $account-height: 60px;
                         }
 
                         &:active {
-                            background-color: rgba(255, 255, 255, 0.05);
+                            background-color: theme(background-icon);
                         }
                     }
                 }

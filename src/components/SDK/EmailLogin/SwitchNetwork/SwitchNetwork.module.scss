@@ -23,7 +23,9 @@
       height: 64px;
       margin-bottom: 20px;
       border-radius: 12px;
-      background-color: #7549E8;
+      background-color: theme(background-icon);
+      border: 1px solid theme(border-primary);
+      padding: 12px;
     }
 
     .siteName {
@@ -53,7 +55,6 @@
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 40px;
 
     .button {
       flex: 1;
@@ -62,6 +63,5 @@
 
   .singleButton {
     width: 100%;
-    margin-bottom: 40px;
   }
 }
