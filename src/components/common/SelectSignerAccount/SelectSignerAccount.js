@@ -53,7 +53,6 @@ const SelectSignerAccount = ({
     return (
         <div className={styles.wrapper}>
             {showTitle && <div className={styles.title}>Choose Address</div>}
-            <Info className={styles.info}>{ description }</Info>
             <div className={styles.signers}>
                 {!!signersToChoose && pages[currentPage].map((addr, index) => (
                     <div
@@ -76,6 +75,8 @@ const SelectSignerAccount = ({
                     </div>
                 ))}
             </div>
+
+            <Info className={styles.info}>{ description }</Info>
 
             { <div className={styles.pagination}>
                 <PaginationButtons
