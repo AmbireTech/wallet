@@ -33,7 +33,11 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
   // already logged-in logic
   useEffect(() => {
-    if (chainId || alreadyLogged || !dappIsConnected) return
+    if (
+      !dappIsConnected
+      || (alreadyLogged && !chainId)
+      || (chainId && network.id !== validTargetNetwork?.id)
+    ) return
 
     const provider = getProvider(network.id)
 
@@ -111,6 +115,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   if (chainId && !validTargetNetwork) {
     return <SwitchNetwork onConfirm={confirmNetworkSwitch} onReject={rejectNetworkSwitch} supported={false} />
   }
+
   if (!dappIsConnected) {
     return (
       <BaseEmailLogin
@@ -122,6 +127,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       />
     )
   }
+
   // network.id !== validTargetNetwork.id prevents the user from seeing the same Network in Switch Network
   if (chainId && dappIsConnected && network.id !== validTargetNetwork.id) {
     return (
