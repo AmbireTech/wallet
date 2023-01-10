@@ -1,4 +1,4 @@
-name: Build & deploy staging for Redesign
+name: Build & deploy staging for Portfolio v2 + Dashboard redesigned
 
 on:
   push:
@@ -33,8 +33,8 @@ jobs:
         with:
           name: production-files
           path: ./build
-  deploy-redesign:
-    name: Deploy Redesign
+  deploy-portfolio:
+    name: Deploy Portfolio v2
     needs: build
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/feature/redesign-dashboard-style'
@@ -50,5 +50,5 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ./build
-          destination_dir: ./redesign
+          destination_dir: ./portfolio-v2
           cname: wallet.ambire.com
