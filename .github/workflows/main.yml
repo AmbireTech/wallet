@@ -39,7 +39,6 @@ jobs:
         clean-exclude: |
             staging
             relayerless
-            redesign
             paperbackup
             portfolio-v2
             moonpay
