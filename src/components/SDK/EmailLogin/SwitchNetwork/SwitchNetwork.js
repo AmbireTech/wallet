@@ -33,7 +33,7 @@ const SwitchNetwork = ({
     </div>
     {supported ? (
       <div className={styles.buttons}>
-        <Button small danger className={styles.button}>
+        <Button small danger className={styles.button} onClick={onReject}>
           Reject
         </Button>
         <Button small primaryGradient className={styles.button} onClick={onConfirm}>
