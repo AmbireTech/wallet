@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useLocation } from 'react-router-dom'
 import { useLocalStorage } from 'hooks'
 
 const VALID_SIGN_METHODS = ['eth_sign', 'personal_sign', 'eth_signTypedData', 'eth_signTypedData_v4']
 const TYPED_DATA_METHODS = ['eth_signTypedData', 'eth_signTypedData_v4']
 
 export default function SignMessage({selectedAcc, selectedNetwork, addRequest, everythingToSign}) {
+    const location = useLocation()
     const [hasLoaded, setHasLoaded] = useState(false)
     const { type, messageToSign } = useParams()
     const [stateStorage, setStateStorage] = useLocalStorage({
@@ -13,7 +14,7 @@ export default function SignMessage({selectedAcc, selectedNetwork, addRequest, e
         defaultValue: {connected_dapps: []}
     })
 
-    const dappOrigin = new URLSearchParams(window.location.search).get("dappOrigin")
+    const dappOrigin = new URLSearchParams(location.search).get('dappOrigin')
     const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
 
     const req = useMemo(() => {
@@ -30,13 +31,11 @@ export default function SignMessage({selectedAcc, selectedNetwork, addRequest, e
             dapp: {
                 name: matchedDapp.name,
                 url: matchedDapp.origin,
-                icons: [
-                    'https://sigtool.ambire.com/favicon.ico',
-                ]
+                icons: [matchedDapp.icon]
             },
             // notification: true
         }
-    }, [type, messageToSign, selectedNetwork.chainId, selectedAcc])
+    }, [type, messageToSign, selectedNetwork.chainId, selectedAcc, matchedDapp])
 
     useEffect(() => {
         if (hasLoaded || !req) return
