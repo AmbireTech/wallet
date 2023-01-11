@@ -34,10 +34,10 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   const matchedDapp = stateStorage.connected_dapps.find((dapp) => dapp.origin === dappOrigin)
   const dappIsConnected = !!(matchedDapp && matchedDapp.wallet_address)
 
-  console.log(location.search)
   useEffect(() => {
     setDappQuery(location.search)
   }, [location.search, setDappQuery])
+
   // already logged-in logic
   useEffect(() => {
     if (
@@ -59,7 +59,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     )
 
     setAlreadyLogged(true)
-  }, [alreadyLogged, dappIsConnected, matchedDapp, chainId, network.id, network.chainId])
+  }, [alreadyLogged, dappIsConnected, matchedDapp, chainId, network.id, network.chainId, validTargetNetwork])
 
   const onLoginSuccess = (wallet_address) => {
     if (validTargetNetwork) setNetwork(validTargetNetwork.id)

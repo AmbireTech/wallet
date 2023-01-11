@@ -10,7 +10,7 @@ export default function SignMessage({selectedAcc, selectedNetwork, addRequest, e
     const location = useLocation()
     const [hasLoaded, setHasLoaded] = useState(false)
     const { type, messageToSign } = useParams()
-    const [stateStorage, setStateStorage] = useLocalStorage({
+    const [stateStorage] = useLocalStorage({
         key: 'login_sdk',
         defaultValue: {connected_dapps: []}
     })
