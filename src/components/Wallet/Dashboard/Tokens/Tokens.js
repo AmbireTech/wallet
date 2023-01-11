@@ -143,7 +143,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                                 pending={pending}
                                                 unconfirmed={unconfirmed}
                                                 latest={latest}
-                                                extraMargin={sortType === "custom"}
+                                                extraMargin={sortType === "custom" && sortedTokens.length > 1 && !isMobileScreen}
                                             />
                                         }
                                         // Token data
