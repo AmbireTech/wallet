@@ -8,7 +8,7 @@ const AuthNavigation = ({ currentTab }) => {
   const { dappQuery } = useSDKContext()
 
   return (
-    <div className={cn(styles.wrapper, { [styles.smallerMargin]: currentTab === 'add-account' })}>
+    <div className={styles.wrapper}>
       <a
         href={`#/sdk/email-login${dappQuery}`}
         className={cn(styles.link, { [styles.linkActive]: currentTab === 'email-login' })}
