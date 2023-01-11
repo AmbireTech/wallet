@@ -73,7 +73,8 @@ const useGuardarian = function({ relayerURL, selectedNetwork, initMode, tokens, 
                     .map(t => ({
                         label: t.ticker,
                         value: t.ticker ,
-                        icon: t.logo_url
+                        icon: t.logo_url,
+                        address: t.networks.find(n => n.network === NETWORK_MAPPING[network] && tokens.find(bt => bt?.address?.toLowerCase() === n?.token_contract?.toLowerCase() || (bt?.address === NATIVE_ADDRESS && n?.token_contract === null)))?.token_contract         
                     })).filter(t => t.value) || [],
                 isLoading: cryptoCurrencies.isLoading
             }
