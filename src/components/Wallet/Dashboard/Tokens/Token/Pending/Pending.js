@@ -22,7 +22,7 @@ const Pending = ({ hidePrivateValue, decimals, pending, unconfirmed, latest, ext
           { hidePrivateValue(formatFloatTokenAmount(latest?.balance ? Number(latest?.balance).toFixed((latest?.balance < 1) ? 8 : 4) : 0, true, decimals))  }
         </span>
         {' '}
-        on chain
+        On-chain
       </h3>
     </div>
   ) : null
