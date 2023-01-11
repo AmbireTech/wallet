@@ -130,8 +130,6 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                     drop
                                 } = dragAndDrop
 
-                                const currentBalance = latest ? latest.balance : balance
-
                                 return (
                                     <Token
                                         key={address}
@@ -151,7 +149,9 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                         // Token data
                                         img={tokenImageUrl}
                                         symbol={symbol}
-                                        balance={hidePrivateValue(formatFloatTokenAmount(Number(currentBalance).toFixed((currentBalance < 1) ? 8 : 4), true, decimals))}
+                                        balance={hidePrivateValue(formatFloatTokenAmount(Number(balance).toFixed((balance < 1) ? 8 : 4), true, decimals))}
+                                        pending={pending}
+                                        unconfirmed={unconfirmed}
                                         value={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balanceUSD : balanceUSD, true, decimals))}
                                         price={`$${price ? hidePrivateValue(price.toFixed((price < 1) ? 5 : 2)) : '-'}`}
                                         // Actions

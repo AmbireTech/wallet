@@ -18,6 +18,8 @@ const Token = ({
   address, 
   network, 
   value,
+  unconfirmed,
+  pending,
   // Children
   bodyChildren,
   wrapperEndChildren,
@@ -44,7 +46,7 @@ const Token = ({
             </div>
             <div className={styles.balanceAndSymbol}>
               <h3 className={styles.symbol}>{ symbol }</h3>
-              <p className={styles.balance}>
+              <p className={`${styles.balance} ${(unconfirmed || pending  ? styles.balanceEstimated : '')}`}>
                 { balance }
               </p>
             </div>
