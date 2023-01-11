@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams, useLocation } from 'react-router-dom'
 import { useLocalStorage } from 'hooks'
-import { useSDKContext } from './SDKWrapper/SDKWrapper'
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 
 const VALID_SIGN_METHODS = ['eth_sign', 'personal_sign', 'eth_signTypedData', 'eth_signTypedData_v4']
 const TYPED_DATA_METHODS = ['eth_signTypedData', 'eth_signTypedData_v4']

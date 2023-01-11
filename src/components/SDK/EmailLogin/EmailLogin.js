@@ -8,7 +8,7 @@ import allNetworks from 'consts/networks'
 import { useLocalStorage } from 'hooks'
 import { Loading } from 'components/common'
 import BaseEmailLogin from 'components/EmailLogin/EmailLogin'
-import { useSDKContext } from 'components/SDK/SDKWrapper/SDKWrapper'
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import SwitchNetwork from './SwitchNetwork/SwitchNetwork'
 
 import styles from './EmailLogin.module.scss'

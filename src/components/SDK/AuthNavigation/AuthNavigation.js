@@ -1,6 +1,6 @@
 import cn from 'classnames'
 
-import { useSDKContext } from 'components/SDK/SDKWrapper/SDKWrapper'
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 
 import styles from './AuthNavigation.module.scss'
 

@@ -1,7 +1,7 @@
 import { useEffect } from 'react'
 import cn from 'classnames'
 
-import { useSDKContext } from 'components/SDK/SDKWrapper/SDKWrapper'
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import { Button } from 'components/common'
 import Networks from './Networks/Networks'
 
