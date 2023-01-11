@@ -41,11 +41,12 @@ import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
 import SDKWrapper from 'components/SDK/SDKWrapper/SDKWrapper'
+import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
+import SDKProvider from 'components/SDKProvider/SDKProvider'
 import { onTxnSent } from 'components/SDK/WindowMessages'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
-import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
 
 // Initialize rpc providers for all networks
 initRpcProviders(rpcProviders)
@@ -376,7 +377,9 @@ export default function App() {
         <ThemeProvider>
           <ToastProvider>
             <ModalProvider>
-              <AppInner/>
+              <SDKProvider>
+                <AppInner/>
+              </SDKProvider>
             </ModalProvider>
           </ToastProvider>
         </ThemeProvider>
