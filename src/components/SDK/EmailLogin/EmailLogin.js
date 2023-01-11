@@ -129,7 +129,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   }
 
   // network.id !== validTargetNetwork.id prevents the user from seeing the same Network in Switch Network
-  if (chainId && dappIsConnected && network.id !== validTargetNetwork.id) {
+  if (chainId && dappIsConnected && (network.id !== validTargetNetwork.id)) {
     return (
       <SwitchNetwork
         fromNetworkId={network.id}

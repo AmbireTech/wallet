@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocalStorage } from 'hooks'
+import { useSDKContext } from './SDKWrapper/SDKWrapper'
 
 const VALID_SIGN_METHODS = ['eth_sign', 'personal_sign', 'eth_signTypedData', 'eth_signTypedData_v4']
 const TYPED_DATA_METHODS = ['eth_signTypedData', 'eth_signTypedData_v4']
@@ -15,6 +16,11 @@ export default function SignMessage({selectedAcc, selectedNetwork, addRequest, e
 
     const dappOrigin = new URLSearchParams(window.location.search).get("dappOrigin")
     const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
+    const { setIsBackButtonVisible } = useSDKContext()
+
+    useEffect(() => {
+        setIsBackButtonVisible(false)
+    }, [setIsBackButtonVisible])
 
     const req = useMemo(() => {
         if (!matchedDapp) return null

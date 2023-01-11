@@ -23,8 +23,27 @@
     overflow-y: auto;
 
     .header {
-      padding: 21px 30px;
+      padding: 25px 30px;
       width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      .backButton {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        cursor: pointer;
+
+        .backButtonIcon {
+          width: 10.545px;
+          height: 6.515px;
+        }
+
+        .backButtonText {
+          margin: 0;
+        }
+      }
 
       .dappLogo {
         width: 32px;
