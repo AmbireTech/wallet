@@ -17,12 +17,12 @@ const Pending = ({ hidePrivateValue, decimals, pending, unconfirmed, latest, ext
           Pending transaction signature
         </p> : null}
       </div>
-      <h3 className={styles.estimated}>
+      <h3 className={styles.latest}>
           <span>
           { hidePrivateValue(formatFloatTokenAmount(latest?.balance ? Number(latest?.balance).toFixed((latest?.balance < 1) ? 8 : 4) : 0, true, decimals))  }
         </span>
         {' '}
-        On-chain
+        (On-chain)
       </h3>
     </div>
   ) : null
