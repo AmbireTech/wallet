@@ -40,6 +40,8 @@ import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
+import SDKWrapper from 'components/SDK/SDKWrapper/SDKWrapper'
+import { onTxnSent } from 'components/SDK/WindowMessages'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
@@ -198,6 +200,7 @@ function AppInner() {
         &nbsp;Click to view on block explorer.
       </span>
     ), { url: network.explorerUrl + '/tx/' + hash, timeout: 15000 })
+    onTxnSent(hash)
   }
   const confirmSentTx = txHash => setSentTxn(sentTxn => {
     const tx = sentTxn.find(tx => tx.hash === txHash)
@@ -293,6 +296,22 @@ function AppInner() {
 
         <Route path="/email-login">
           <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount}></EmailLogin>
+        </Route>
+
+        <Route path="/sdk">
+          <SDKWrapper
+            match={{ url: "/sdk" }}
+            relayerURL={relayerURL}
+            onAddAccount={onAddAccount}
+            utmTracking={utmTracking}
+            pluginData={pluginData}
+            selectedAcc={selectedAcc}
+            selectedNetwork={network}
+            addRequest={addRequest}
+            sendTxnState={sendTxnState}
+            internalRequests={internalRequests}
+            everythingToSign={everythingToSign}
+          />
         </Route>
 
         {selectedAcc ?

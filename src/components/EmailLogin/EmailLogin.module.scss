@@ -182,8 +182,8 @@
 }
 
 .emailConf {
-    background-color: theme(background-primary);
-    border: 1px solid theme(border-terniary);
+    background-color: theme(background-terniary);
+    border: 1px solid theme(border-primary);
     border-radius: 12px;
     padding: 30px 60px;
     padding-top: 12px;
@@ -243,6 +243,29 @@
 
         p {
             min-width: unset;
+        }
+    }
+    .magicLink {
+        font-size: 14px;
+    }
+}
+
+@media screen and (max-width: 600px) {
+    .magicLink {
+        font-size: 12px;
+    }
+
+    .emailConf {
+        padding: 15px;
+        padding-top: 10px;
+
+        h3 {
+            font-size: 20px;
+        }
+
+        p {
+            font-size: 14px;
+            line-height: 150%;
         }
     }
 }

@@ -24,7 +24,7 @@
   --background-fournary: #{$fournary};
   // --background-highlight: #{$highlight};
   --background-topbar: #{$topbar};
-  --background-icon: #{rgba($icon, 0.05)};
+  --background-icon: #{$icon};
 }
 
 @mixin Border($primary, $secondary, $terniary, $input) {
@@ -58,7 +58,7 @@
 .dark {
   --theme: dark;
   @include Text($c-titan-white, $c-scampi);
-  @include Background($c-mirage, $c-martinique, $c-ebony-clay, $c-ebony-clay-light, $c-fiord, $c-titan-white);
+  @include Background($c-mirage, $c-martinique, $c-ebony-clay, $c-ebony-clay-light, $c-fiord, rgba($c-titan-white, 0.05));
   @include Border($c-mirage, $c-fiord, $c-scampi, $c-titan-white);
   @include Highlight($c-heliotrope, $c-turquoise);
   @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
@@ -70,7 +70,7 @@
 .light {
   --theme: light;
   @include Text($c-fiord, rgba($c-fiord, 0.8));
-  @include Background($c-titan-white, red, #F7F8FF, red, red, $c-fiord);
+  @include Background($c-titan-white, red, #F7F8FF, red, red, $c-white);
   @include Border($c-titan-white, $c-titan-white, red, $c-fiord);
   @include Highlight($c-blue-lagoon, $c-electric-violet);
   // Our gradients are currently the same, but we may change them later

@@ -1,16 +1,15 @@
-import { useState, useEffect, useRef } from "react"
 import * as blockies from "blockies-ts"
 import { toUtf8String, isHexString } from "ethers/lib/utils"
 import supportedDApps from "ambire-common/src/constants/supportedDApps"
-import cn from "classnames"
-
-import { useSignMessage } from "hooks"
+import styles from "./SignMessage.module.scss"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
+import cn from "classnames"
+import { onMsgRejected, onMsgSigned } from 'components/SDK/WindowMessages'
+import { useSignMessage } from "hooks"
 import AccountAndNetwork from "components/common/AccountAndNetwork/AccountAndNetwork"
 
-import { MdBrokenImage, MdInfoOutline } from "react-icons/md"
-
-import styles from "./SignMessage.module.scss"
+import { MdBrokenImage, MdClose, MdInfoOutline } from "react-icons/md"
 
 const CONF_CODE_LENGTH = 6
 
@@ -57,6 +56,11 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
   const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
 
+  const rejectMsg = useCallback(() => {
+    resolve({ message: "signature denied" })
+    onMsgRejected()
+  }, [resolve])
+
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()
   }, [confirmationType])
@@ -72,7 +76,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
         </h3>
         <Button
           className={styles.reject}
-          onClick={() => resolve({ message: "signature denied" })}
+          onClick={rejectMsg}
         >
           Reject
         </Button>
@@ -86,7 +90,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
         <h3 className='error'>Invalid signing request: {typeDataErr}</h3>
         <Button
           className={styles.reject}
-          onClick={() => resolve({ message: "signature denied" })}
+          onClick={rejectMsg}
         >
           Reject
         </Button>
@@ -97,11 +101,12 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     if (e.length === CONF_CODE_LENGTH) promiseResolve(e)
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    approve({
+    await approve({
       password: signingState.passphrase
     })
+    onMsgSigned()
   }
 
   return (
@@ -244,7 +249,8 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
                 className={styles.button}
                 type='button'
                 danger
-                onClick={() => resolve({ message: "signature denied" })}
+                icon={<MdClose />}
+                onClick={rejectMsg}
               >
                 Reject
               </Button>

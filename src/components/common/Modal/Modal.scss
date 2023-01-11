@@ -14,10 +14,10 @@ $buttons-height: 160px;
     flex-direction: column;
     gap: 10px;
     padding-top: 40px;
-    background: $c-ebony-clay;
-    border: 1px solid $c-fiord;
+    background: theme(background-terniary);
+    border: 1px solid theme(border-secondary);
     border-radius: 12px;
-    color: $c-titan-white;
+    color: theme(text-primary);
     box-sizing: border-box;
 
     &.buttons {
@@ -46,14 +46,14 @@ $buttons-height: 160px;
         .close {
             height: 40px;
             width: 40px;
-            background-color: rgba($c-titan-white, 0.05);
+            background-color: theme(background-icon);
             border-radius: 12px;
             @include flex-center-center;
             font-size: 20px;
 
             &:hover {
                 cursor: pointer;
-                background-color: rgba($c-titan-white, 0.02);
+                opacity: .6;
             }
         }
     }

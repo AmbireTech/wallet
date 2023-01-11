@@ -5,6 +5,7 @@ import { Checkbox, Panel } from "components/common";
 import Options from "./Options/Options";
 import Replace from "./Replace/Replace";
 import ActionsWrapper from "./ActionsWrapper/ActionsWrapper";
+import { onTxnRejected } from "components/SDK/WindowMessages";
 
 import styles from './DetailsPanel.module.scss'
 
@@ -40,6 +41,7 @@ const DetailsPanel = ({
     onDismiss();
     bundle.requestIds &&
       resolveMany(bundle.requestIds, { message: REJECT_MSG });
+    onTxnRejected()
   };
 
   // `mustReplaceNonce` is set on speedup/cancel, to prevent the user from broadcasting the txn if the same nonce has been mined

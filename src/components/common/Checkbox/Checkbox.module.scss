@@ -70,3 +70,27 @@
     }
   }
 }
+
+@media screen and (max-width: 600px) {
+  .checkboxContainer {
+    margin: 15px 0;
+    gap: 10px;
+
+    .label {
+      font-size: 12px;
+    }
+
+    .checkboxMark {
+      width: 18px;
+      height: 18px;
+
+      &:after {
+        left: 4px;
+        top: 0px;
+        width: 4px;
+        height: 8px;
+        border-width: 0 2px 2px 0;
+      }
+    }
+  }
+}

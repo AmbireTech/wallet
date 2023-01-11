@@ -1,0 +1,57 @@
+@import 'variables';
+
+.wrapper {
+  max-width: 315px;
+  padding-top: 0;
+  width: 100%;
+  height: 280px;
+
+  :global(.content) {
+    padding: 18px 11px;
+  }
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+
+    .icon {
+      width: 90px;
+      height: 88px;
+      color: $c-white;
+      margin-bottom: 12px;
+    }
+  
+    .title {
+      margin: 0;
+      margin-bottom: 10px;
+      font-size: 20px;
+    }
+  
+    .text {
+      margin: 0;
+      margin-bottom: 20px;
+      font-size: 12px;
+    }
+  }
+
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .button {
+      flex: 1;
+      height: 50px;
+    }
+  }
+}
+
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    height: 280px !important;
+  }
+}

@@ -1,0 +1,25 @@
+@import 'variables';
+
+.wrapper {
+  .accountsWrapper {
+    margin-bottom: 24px;
+
+    .or {
+      text-align: center;
+      color: #bbbde4;
+      margin: 0;
+    }
+  }
+
+  .input {
+    margin-top: 0;
+    margin-bottom: 30px;
+  }
+
+  .button[type='submit'] {
+    margin-top: 0;
+    margin-bottom: 17px;
+    height: 50px;
+    font-size: 14px;
+  }
+}

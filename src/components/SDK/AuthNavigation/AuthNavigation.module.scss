@@ -1,0 +1,44 @@
+@import 'variables';
+
+.wrapper {
+  display: flex!important;
+  align-items: center;
+  width: 100%;
+  gap: 10px;
+  // margin-bottom: 80px;
+  margin-bottom: 50px;
+  
+  &.smallerMargin {
+    margin-bottom: 44px;
+  }
+
+  .link {
+    margin: 0;
+    padding: 13px 0;
+    flex: 1;
+    font-size: 14px;
+    border-radius: 12px;
+    background-color: transparent;
+    border: 2px solid transparent;
+    color: #6000FF;
+    font-weight: 500;
+    text-decoration: underline;
+    text-transform: unset;
+    text-align: center;
+
+    .or {
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    &.linkActive {
+      background-color: #EFE5FF;
+      border: 2px solid #6000FF;
+      text-decoration: none;
+
+      .or {
+        display: none;
+      }
+    }
+  }
+}
