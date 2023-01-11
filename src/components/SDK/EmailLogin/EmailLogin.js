@@ -8,12 +8,14 @@ import allNetworks from 'consts/networks'
 import { useLocalStorage } from 'hooks'
 import { Loading } from 'components/common'
 import BaseEmailLogin from 'components/EmailLogin/EmailLogin'
+import { useSDKContext } from 'components/SDK/SDKWrapper/SDKWrapper'
 import SwitchNetwork from './SwitchNetwork/SwitchNetwork'
 
 import styles from './EmailLogin.module.scss'
 
 export default function EmailLogin({ relayerURL, onAddAccount }) {
   const location = useLocation()
+  const { setDappQuery } = useSDKContext()
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
 
   // login state stuff
@@ -32,6 +34,10 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
   const matchedDapp = stateStorage.connected_dapps.find((dapp) => dapp.origin === dappOrigin)
   const dappIsConnected = !!(matchedDapp && matchedDapp.wallet_address)
 
+  console.log(location.search)
+  useEffect(() => {
+    setDappQuery(location.search)
+  }, [location.search, setDappQuery])
   // already logged-in logic
   useEffect(() => {
     if (

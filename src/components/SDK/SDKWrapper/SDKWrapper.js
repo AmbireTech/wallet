@@ -20,6 +20,7 @@ const SDK = (props) => {
   const { showModal } = useModals()
   const { setTheme } = useThemeContext()
   const [isBackButtonVisible, setIsBackButtonVisible] = useState(true)
+  const [dappQuery, setDappQuery] = useState(false)
 
   // sets the theme to light only on SDK
   useLayoutEffect(() => {
@@ -45,7 +46,7 @@ const SDK = (props) => {
   }, [location])
 
   return (
-    <SDKContext.Provider value={{ setIsBackButtonVisible }}>
+    <SDKContext.Provider value={{ setIsBackButtonVisible, dappQuery, setDappQuery }}>
       <div className={styles.wrapper}>
         <div className={styles.headerAndBody}>
           <div className={styles.header}>
