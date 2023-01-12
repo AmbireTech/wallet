@@ -1,5 +1,5 @@
 import { RiDragDropLine } from 'react-icons/ri'
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useMemo } from 'react'
 import { Loading, Panel } from 'components/common'
 import { AbiCoder, keccak256 } from 'ethers/lib/utils'
 import cn from 'classnames'
@@ -37,7 +37,11 @@ const Security = ({
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges?cacheBreak=${cacheBreak}`
     : null
   const { data, errMsg, isLoading } = useRelayerData({ url })
-  const privileges = data ? data.privileges : {}
+  const privileges = useMemo(() => data ? data.privileges : {}, [data])
+  // We are converting the privileges to an alphabetically sorted list, in order to map and render them easily.
+  // Also, we are sorting it via `a[0].localeCompare(b[0])` in order to keep the same sorting order,
+  // as it was in the privileges object before that (returned by Relayer).
+  const privilegesList = useMemo(() => Object.entries(privileges).sort((a, b) => a[0].localeCompare(b[0])), [privileges])
   const recoveryLock = data && data.recoveryLock
   const { addToast } = useToasts()
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
@@ -106,10 +110,10 @@ const Security = ({
       {errMsg && (
         <h3 className={styles.error}>Error getting authorized signers: {errMsg}</h3>
       )}
-      {(!showLoading && Object.entries(privileges)) ? <Signers 
+      {(!showLoading && privilegesList.length) ? <Signers 
         relayerURL={relayerURL}
         relayerData={data} 
-        signers={Object.entries(privileges)} 
+        signers={privilegesList} 
         onAddAccount={onAddAccount}
         cacheBreak={cacheBreak}
         setCacheBreak={setCacheBreak}

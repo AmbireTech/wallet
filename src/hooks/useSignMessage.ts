@@ -233,7 +233,6 @@ const useSignMessage = ({
       account,
       addToast,
       dataV4,
-      messagesToSign,
       handleSigningErr,
       isTypedData,
       onConfirmationCodeRequired,

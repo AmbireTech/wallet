@@ -22,6 +22,9 @@ It's built on smart contract wallet technology, enabling powerful features such 
 
 **NOTE 2: we test on Polygon,** because it's cheap enough and it's a real environment with all the supported protocols - Sushiswap, Uniswap, Aave, and others. Ping #dev-wallet channel on Slack so we can send you some MATIC tokens.
 
+### Running the relayer
+**IMPORTANT: if you are running from public repositories, and do not have access to the relayer, please skip this step and run in relayerless mode!**
+
 First, clone and run the relayer
 ```
 git clone https://github.com/AmbireTech/relayer.git -b wallet-v2
@@ -29,6 +32,8 @@ cd relayer
 npm i
 NODE_ENV=development npm start
 ```
+
+### Running the wallet
 
 Then run the Ambire Wallet:
 ```
@@ -376,3 +381,50 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix: Adx staking details
 * Fix: popping up the addresses modal when add new signer via Trezor
 * Fix: AAVE earn card
+
+### v0.6.0
+* Redesign the dark theme
+* New dapps section
+* Added support for relayerless chains only
+* Added ethpow chain for relayerless
+* Upgraded "trezor-connect": "^8.2.8" to "@trezor/connect-web": "^9.0.2"
+* Added new params for feeTokens: disableGasTankDeposit and disableAsFeeToken
+* Sign message - supporting custom typed data v4 call
+* Hide token modal not closing when clicking on the side
+* Earn card minor fixes in text
+* Optimize bundle size
+* switch from claim to claimWithRootUpdate for rewards
+* SignatureValidator fix
+* Dapps message for sign message unsupported dapps
+* Trezor manifest
+* Send transaction gasTank badge improvement
+* Wc 2.0 implementation
+* Added signMessage history
+* Swappin as offramp
+* Offramp section in transfer page
+* Added copy button next to current identity address
+* Refactore sign message hook - move into common repo
+* New rewards modal
+* QuickAccManager: fix cancelability
+* Feature / Configurable Providers
+* Provide param to relayer for estimation isGasTankEnabled
+* New Swap release based by Uniswap v2 and v3
+* Socket v2 API
+* humanizer - Uniswap v2 & v3 improvements & AAVE address
+* Aapps iframe allow copy & paste
+* on creating account with MM, added a option to choose the address from MM if have more then one.
+* Fix / View amount in the rewards button
+* Fix / On a Signer removal button click, hide the modal
+* Fix / Change signers error message
+* Fix / Infinitive Gas tank loading indicator
+* Fix / Native fees decimals numbers in sign txn
+* Fix / NFT images from ipfs by hash
+* Fix / Handle error if WalletConnect if session is not initialized
+* Fix / Wallet stacking unbond period
+* Fix / Gas-tank top up
+* Fix / Bug fixed removed xWallet from feeAssets in gas tank
+* Fix / Styles email confirm view in Add Account page
+* Fix / Wallet staking unbond period
+* Fix / Now the wallet token is on first position in a fee assets list
+* Fix / Change github Workflow on deploy to not remove stagings folders
+* Fix / Multiple requests on earn page in Aave card
