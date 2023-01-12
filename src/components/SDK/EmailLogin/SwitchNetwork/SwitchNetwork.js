@@ -5,6 +5,8 @@ import { Button } from 'components/common'
 import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import Networks from './Networks/Networks'
 
+import { ReactComponent as UnsupportedIcon } from 'resources/icons/blocked.svg'
+
 import styles from './SwitchNetwork.module.scss'
 
 const SwitchNetwork = ({
@@ -26,8 +28,11 @@ const SwitchNetwork = ({
     <div className={styles.wrapper}>
       <h1 className={styles.title}>Switch Network Request</h1>
       <div className={styles.body}>
-        <img src={`${document.referrer}/favicon.png`} alt="site-logo" className={styles.siteLogo} />
-        <h2 className={styles.siteName}>{document.referrer.split('://')[1]}</h2>
+        <div className={styles.dappLogoWrapper}>
+          <img src={`${document.referrer}/favicon.png`} alt="dapp-logo" className={styles.dappLogo} />
+          {!supported ? <UnsupportedIcon className={styles.unsupportedIcon} /> : null}
+        </div>
+        <h2 className={styles.dappName}>{document.referrer.split('://')[1]}</h2>
         <p className={cn(styles.message, { [styles.smallMb]: !supported })}>
           {supported ? 'Allow this site to switch the network?' : "Ambire Wallet doesn't support this network"}
         </p>
