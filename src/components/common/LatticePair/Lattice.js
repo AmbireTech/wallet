@@ -1,6 +1,6 @@
 import styles from './LatticePair.module.scss'
 
-import { TextInput, Info, Note, Alert } from 'components/common'
+import { TextInput, Info, Alert } from 'components/common'
 
 const Lattice = ({
     handleInputDeviceId,
@@ -11,6 +11,16 @@ const Lattice = ({
     title,
     buttons
 }) => {
+
+    const renderMessage = () => {
+        if (isLoading && !isSecretFieldShown) return <div className={styles.info} />
+
+        if (isSecretFieldShown) return <Alert className={styles.info} text="Enter your SECRET from your GRID+ device"/>
+
+        return <Info className={styles.info}>
+            The device ID is listed on your Lattice under <strong>Settings</strong>
+        </Info>
+    }
 
     return (
         <div className={styles.wrapper}>
@@ -38,12 +48,8 @@ const Lattice = ({
                     <div className={styles.loadingText}>It may takes a while. Please wait...</div>
                 )}
             </div>
-            { isSecretFieldShown ?
-                <Alert className={styles.info} text="Enter your SECRET from your GRID+ device"/>
-                :
-                <Info className={styles.info}>
-                The device ID is listed on your Lattice under <strong>Settings</strong>
-            </Info>}
+
+            {renderMessage()}
 
             {buttons}
         </div>
