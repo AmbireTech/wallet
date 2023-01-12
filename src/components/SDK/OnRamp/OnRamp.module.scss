@@ -4,21 +4,32 @@
   .title {
     font-size: 20px;
     margin: 0;
-    margin-bottom: 62px;
+    margin-bottom: 60px;
     text-align: center;
   }
 
   .illustration {
     display: block;
     margin: 0 auto;
-    margin-bottom: 52px;
+    margin-bottom: 40px;
+  }
+
+  .select {
+    margin-bottom: 10px;
+  }
+
+  .selectInput {
+    height: 50px!important;
+  }
+
+  .selectMenu {
+    max-height: unset;
   }
 
   .buttons {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    margin-bottom: 40px;
+    gap: 10px;
 
     .button {
       font-size: 16px;
