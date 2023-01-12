@@ -27,7 +27,7 @@ const SwitchNetwork = ({
       <h1 className={styles.title}>Switch Network Request</h1>
       <div className={styles.body}>
         <img src={`${document.referrer}/favicon.png`} alt="site-logo" className={styles.siteLogo} />
-        <h2 className={styles.siteName}>{document.referrer}</h2>
+        <h2 className={styles.siteName}>{document.referrer.split('://')[1]}</h2>
         <p className={cn(styles.message, { [styles.smallMb]: !supported })}>
           {supported ? 'Allow this site to switch the network?' : "Ambire Wallet doesn't support this network"}
         </p>
