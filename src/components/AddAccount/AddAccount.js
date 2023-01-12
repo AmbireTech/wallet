@@ -38,9 +38,6 @@ import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.sv
 import { ReactComponent as MetamaskIcon } from 'resources/providers/metamask-fox.svg'
 import { ReactComponent as EmailIcon } from 'resources/icons/email.svg'
 
-import { useLocalStorage } from 'hooks'
-import useNetwork from 'ambire-common/src/hooks/useNetwork'
-import { getProvider } from 'ambire-common/src/services/provider'
 import AuthNavigation from 'components/SDK/AuthNavigation/AuthNavigation'
 
 TrezorConnect.manifest({
@@ -51,7 +48,7 @@ TrezorConnect.manifest({
 const EMAIL_AND_TIMER_REFRESH_TIME = 5000
 const RESEND_EMAIL_TIMER_INITIAL = 60000
 
-export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData, isSDK = false, className }) {
+export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData, isSDK = false, onSDKRegisterSuccess = undefined, className }) {
   const { theme } = useThemeContext()
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
@@ -64,7 +61,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   const [resendTimeLeft, setResendTimeLeft] = useState(null)
   const [isEmailResent, setEmailResent] = useState(false)
   const [isEmailConfirmed, setEmailConfirmed] = useState(false)
-  const { network } = useNetwork({ useStorage: useLocalStorage })
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -183,14 +179,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             }, isCreateRespCompleted[1])
 
             if (isSDK) {
-              const provider = getProvider(network.id)
-
-              window.parent.postMessage({
-                address: isCreateRespCompleted[0].id,
-                chainId: network.chainId,
-                providerUrl: provider.connection.url,
-                type: 'registrationSuccess',
-              }, '*')
+              onSDKRegisterSuccess(isCreateRespCompleted[0].id)
             }
           }
       }
@@ -198,7 +187,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         console.error(e);
         addToast('Could not check email confirmation.', { error: true })
     }
-  }, [addToast, isCreateRespCompleted, onAddAccount, relayerURL, isSDK, network.id, network.chainId])
+  }, [addToast, isCreateRespCompleted, onAddAccount, relayerURL, isSDK, onSDKRegisterSuccess])
 
   useEffect(() => {
     if (requiresEmailConfFor) {
