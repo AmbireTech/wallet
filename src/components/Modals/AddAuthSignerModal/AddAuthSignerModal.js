@@ -258,6 +258,10 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
           onInput={onTextInput}
       />
 
+      { validationFormMgs.message && <div className={styles.errorMessage}>
+        <BsXLg size={12}/> { validationFormMgs.message }
+      </div> }
+
       <Button
           className={styles.button}
           disabled={disabled}
@@ -267,7 +271,6 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
         Add
       </Button>
     </div>
-    { validationFormMgs.message && <div><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div> }
   </>
 
   // In case of Lattice Signer, we are handling the Lattice Pairing process on our end in the same Modal
