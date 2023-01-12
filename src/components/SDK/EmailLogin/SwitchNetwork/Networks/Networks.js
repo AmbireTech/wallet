@@ -1,4 +1,5 @@
 import { networkIconsById } from 'consts/networks'
+
 import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
 
 import styles from './Networks.module.scss'

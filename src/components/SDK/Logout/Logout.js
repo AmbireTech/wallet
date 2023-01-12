@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
-import { useLocalStorage } from 'hooks'
 import { useLocation } from 'react-router-dom'
+
+import { useLocalStorage } from 'hooks'
 
 export default function Logout() {
   const location = useLocation()

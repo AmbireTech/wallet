@@ -1,8 +1,8 @@
 import { useEffect } from 'react'
 import cn from 'classnames'
 
-import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import { Button } from 'components/common'
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import Networks from './Networks/Networks'
 
 import styles from './SwitchNetwork.module.scss'

@@ -1,5 +1,5 @@
-import BaseAccounts from 'components/Wallet/TopBar/Accounts/Accounts'
 import { useLocalStorage } from 'hooks'
+import BaseAccounts from 'components/Wallet/TopBar/Accounts/Accounts'
 
 import styles from './Accounts.module.scss'
 

@@ -40,10 +40,10 @@ import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
-import SDKWrapper from 'components/SDK/SDKWrapper/SDKWrapper'
+import SDK from 'components/SDK/SDK'
 import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
 import SDKProvider from 'components/SDKProvider/SDKProvider'
-import { onTxnSent } from 'components/SDK/WindowMessages'
+import { onTxnSent } from 'components/SDK/helpers/WindowMessages'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
@@ -300,7 +300,7 @@ function AppInner() {
         </Route>
 
         <Route path="/sdk">
-          <SDKWrapper
+          <SDK
             match={{ url: "/sdk" }}
             relayerURL={relayerURL}
             onAddAccount={onAddAccount}

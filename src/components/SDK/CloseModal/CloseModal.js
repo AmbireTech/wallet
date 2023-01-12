@@ -1,10 +1,11 @@
+import { useEffect } from 'react'
+
 import { useModals } from 'hooks'
 import { Button, Modal } from 'components/common'
 
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
 
 import styles from './CloseModal.module.scss'
-import { useEffect } from 'react'
 
 const CloseSDKModal = () => {
   const { hideModal } = useModals()

@@ -2,9 +2,9 @@
 import EmailLoginSDK from 'components/SDK/EmailLogin/EmailLogin'
 import AddAccountSDK from 'components/SDK/AddAccount/AddAccount'
 import OnRampSDK from 'components/SDK/OnRamp/OnRamp'
-import SendTransactionSDK from 'components/SDK/SendTransaction'
-import SignMessageSDK from 'components/SDK/SignMessage'
-import LogoutSDK from 'components/SDK/Logout'
+import SendTransactionSDK from 'components/SDK/SendTransaction/SendTransaction'
+import SignMessageSDK from 'components/SDK/SignMessage/SignMessage'
+import LogoutSDK from 'components/SDK/Logout/Logout'
 
 const getRoutes = (props) => [
   {

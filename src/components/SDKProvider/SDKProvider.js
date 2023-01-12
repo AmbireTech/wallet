@@ -1,7 +1,7 @@
 import { createContext, useContext, useState } from 'react'
 
 import { useModals } from 'hooks'
-import CloseSDKModal from 'components/SDK/SDKWrapper/CloseModal/CloseModal'
+import CloseSDKModal from 'components/SDK/CloseModal/CloseModal'
 
 import { ReactComponent as AmbireLogoIcon } from 'resources/logo.svg'
 import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
