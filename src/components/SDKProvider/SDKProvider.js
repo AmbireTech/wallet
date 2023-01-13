@@ -4,7 +4,7 @@ import { useModals } from 'hooks'
 import { Image } from 'components/common'
 import CloseSDKModal from 'components/SDK/CloseModal/CloseModal'
 
-import { ReactComponent as AmbireLogoIcon } from 'resources/logo.svg'
+import { ReactComponent as AmbireLogoIcon } from './images/ambire-logo.svg'
 import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
 import { ReactComponent as DappFallbackIcon } from 'components/SDK/images/dapp-fallback.svg'
 
