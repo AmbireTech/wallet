@@ -67,16 +67,6 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     const targetNetwork = validTargetNetwork ? validTargetNetwork : network
     const provider = getProvider(targetNetwork.id)
 
-    window.parent.postMessage(
-      {
-        address: wallet_address,
-        chainId: targetNetwork.chainId,
-        providerUrl: provider.connection.url,
-        type: 'loginSuccess',
-      },
-      '*'
-    )
-
     setStateStorage({
       connected_dapps: [
         ...stateStorage.connected_dapps,
@@ -88,6 +78,16 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         },
       ],
     })
+
+    window.parent.postMessage(
+      {
+        address: wallet_address,
+        chainId: targetNetwork.chainId,
+        providerUrl: provider.connection.url,
+        type: 'loginSuccess',
+      },
+      '*'
+    )
   }
 
   const confirmNetworkSwitch = () => {

@@ -1,9 +1,11 @@
-import BaseAddAccount from 'components/AddAccount/AddAccount'
 import { useCallback, useMemo } from 'react'
 import { useLocation } from 'react-router-dom'
-import { useLocalStorage } from 'hooks'
-import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import { getProvider } from 'ambire-common/src/services/provider'
+import useNetwork from 'ambire-common/src/hooks/useNetwork'
+
+import { useLocalStorage } from 'hooks'
+import BaseAddAccount from 'components/AddAccount/AddAccount'
+
 import styles from './AddAccount.module.scss'
 
 const AddAccount = ({ relayerURL, onAddAccount, utmTracking, pluginData }) => {
@@ -21,13 +23,7 @@ const AddAccount = ({ relayerURL, onAddAccount, utmTracking, pluginData }) => {
   const onSDKRegisterSuccess = useCallback((wallet_address) => {
     const provider = getProvider(network.id)
 
-    window.parent.postMessage({
-      address: wallet_address,
-      chainId: network.chainId,
-      providerUrl: provider.connection.url,
-      type: 'registrationSuccess',
-    }, '*')
-
+    
     setStateStorage({
       connected_dapps: [
         ...stateStorage.connected_dapps,
@@ -39,6 +35,13 @@ const AddAccount = ({ relayerURL, onAddAccount, utmTracking, pluginData }) => {
         },
       ],
     })
+    
+    window.parent.postMessage({
+      address: wallet_address,
+      chainId: network.chainId,
+      providerUrl: provider.connection.url,
+      type: 'registrationSuccess',
+    }, '*')
   }, [network.id, network.chainId, stateStorage, setStateStorage, dappOrigin, dappName, dappIcon])
 
   return (
