@@ -15,17 +15,18 @@ const SDKContext = createContext({})
 const SDKProvider = ({ children }) => {
 	const { showModal } = useModals()
 	const [isBackButtonVisible, setIsBackButtonVisible] = useState(true)
+	const [isHeaderVisible, setIsHeaderVisible] = useState(true)
 	const [dappQuery, setDappQuery] = useState(false)
 	const [isSDK, setIsSDK] = useState(false)
 
 	const showCloseModal = () => showModal(<CloseSDKModal />)
 
 	return (
-		<SDKContext.Provider value={{ setIsBackButtonVisible, dappQuery, setDappQuery, isSDK, setIsSDK }}>
+		<SDKContext.Provider value={{ setIsBackButtonVisible, setIsHeaderVisible, dappQuery, setDappQuery, isSDK, setIsSDK }}>
 			{isSDK ? (
 				<div className={styles.wrapper}>
 					<div className={styles.headerAndBody}>
-						<div className={styles.header}>
+						{isHeaderVisible ? <div className={styles.header}>
 							{isBackButtonVisible ? (
 								<div className={styles.backButton} onClick={showCloseModal}>
 									<ChevronLeftIcon className={styles.backButtonIcon} />
@@ -39,7 +40,7 @@ const SDKProvider = ({ children }) => {
 								size={32}
 								fallback={<DappFallbackIcon />}
 							/>
-						</div>
+						</div> : null}
 						<div className={styles.body}>{children}</div>
 					</div>
 					<div className={styles.footer}>

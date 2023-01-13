@@ -9,7 +9,7 @@ import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 const SDK = (props) => {
   const { location } = useLocation()
   const { setTheme } = useThemeContext()
-  const { setIsBackButtonVisible, setIsSDK, isSDK } = useSDKContext()
+  const { setIsBackButtonVisible, setIsHeaderVisible, setIsSDK, isSDK } = useSDKContext()
 
   // sets the theme to light only on SDK
   useLayoutEffect(() => {
@@ -31,8 +31,9 @@ const SDK = (props) => {
 
   useLayoutEffect(() => {
     setIsBackButtonVisible(true)
-  }, [location, setIsBackButtonVisible])
-
+    setIsHeaderVisible(true)
+  }, [location, setIsBackButtonVisible, setIsHeaderVisible])
+  
   return (
     <Switch>
       {getRoutes(props).map(({ path, component }) => (
