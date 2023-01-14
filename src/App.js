@@ -45,6 +45,8 @@ import { initRpcProviders } from 'ambire-common/src/services/provider'
 import { rpcProviders } from 'config/providers'
 import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
 
+const MATCH = { url: "/wallet" };
+
 // Initialize rpc providers for all networks
 initRpcProviders(rpcProviders)
 
@@ -298,7 +300,7 @@ function AppInner() {
         {selectedAcc ?
           <Route path="/wallet">
             <Wallet
-              match={{ url: "/wallet" }}
+              match={MATCH}
               accounts={accounts}
               selectedAcc={selectedAcc}
               addressBook={addressBook}
