@@ -102,13 +102,13 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     }
   }, [connectV2, connectLegacy, addToast] )
 
-  const disconnect = (connectionId, wcVersion) => {
+  const disconnect = useCallback((connectionId, wcVersion) => {
     if (wcVersion === 2) {
       disconnectV2(connectionId)
     } else if (wcVersion === 1) {
       disconnectLegacy(connectionId)
     }
-  }
+  }, [disconnectV2, disconnectLegacy])
 
 
   // clipboard stuff
