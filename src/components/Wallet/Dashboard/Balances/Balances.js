@@ -7,7 +7,8 @@ import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
 import BalanceItem from './BalanceItem/BalanceItem'
-import { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
+import isEqual from 'react-fast-compare'
 
 import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
@@ -53,7 +54,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     useEffect(() => {
         handleSetBlur()    
     }, [otherBalancesLoading, otherBalances, handleSetBlur])
-    
+
     return (
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
@@ -98,4 +99,22 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     )
 }
 
-export default Balances
+const areEqual = (prevProps, nextProps) => {
+    return prevProps.selectedNetwork === nextProps.selectedNetwork &&
+        prevProps.relayerURL === nextProps.relayerURL &&
+        prevProps.selectedAccount === nextProps.selectedAccount &&
+        prevProps.setNetwork === nextProps.setNetwork &&
+        prevProps.hidePrivateValue === nextProps.hidePrivateValue &&
+        prevProps.match === nextProps.match &&
+        isEqual(
+            prevProps.portfolio.otherBalances.filter(({ network, total }) => network !== prevProps.selectedNetwork.id && total.full > 0),
+            nextProps.portfolio.otherBalances.filter(({ network, total }) => network !== nextProps.selectedNetwork.id && total.full > 0)
+        ) &&
+        isEqual(
+            Object.entries(prevProps.portfolio.balancesByNetworksLoading).find(ntw => ntw[0] !== prevProps.selectedNetwork.id && ntw[1]),
+            Object.entries(nextProps.portfolio.balancesByNetworksLoading).find(ntw => ntw[0] !== nextProps.selectedNetwork.id && ntw[1])
+        ) &&
+        prevProps.portfolio.isCurrNetworkBalanceLoading === nextProps.portfolio.isCurrNetworkBalanceLoading
+}
+
+export default React.memo(Balances, areEqual)
