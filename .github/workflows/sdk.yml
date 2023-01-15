@@ -11,7 +11,7 @@ permissions:
   contents: write
 jobs:
   build:
-    name: Build & Deploy SDK Branch
+    name: Build & Deploy - (staging sdk 🧪🔬)
     runs-on: ubuntu-latest
     concurrency:
       group: ${{ github.workflow }}-${{ github.ref }} 
@@ -29,10 +29,11 @@ jobs:
     - name: Build project 🛠️
       run: npm run build
 
-    - name: Deploy SDK
+    - name: Deploy 🚀🌕 (staging sdk 🧪🔬)
       if: github.ref == 'refs/heads/feat/ambire-login-sdk-v2'
       uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
         branch: gh-pages
         folder: build
+        target-folder: staging
         cname: wallet.ambire.com
