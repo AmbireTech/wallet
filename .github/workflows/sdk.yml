@@ -35,5 +35,5 @@ jobs:
       with:
         branch: gh-pages
         folder: build
-        target-folder: staging
+        target-folder: sdk-login
         cname: wallet.ambire.com
