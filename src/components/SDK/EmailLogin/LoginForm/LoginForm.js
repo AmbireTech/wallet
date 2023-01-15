@@ -1,8 +1,8 @@
 import { useState } from 'react'
 
 import { useLocalStorage, useAccounts, usePrivateMode } from 'hooks'
-import Accounts from './Accounts/Accounts'
 import AuthNavigation from 'components/SDK/AuthNavigation/AuthNavigation'
+import Accounts from './Accounts/Accounts'
 
 import styles from './LoginForm.module.scss'
 

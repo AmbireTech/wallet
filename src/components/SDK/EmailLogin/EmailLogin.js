@@ -8,12 +8,14 @@ import allNetworks from 'consts/networks'
 import { useLocalStorage } from 'hooks'
 import { Loading } from 'components/common'
 import BaseEmailLogin from 'components/EmailLogin/EmailLogin'
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import SwitchNetwork from './SwitchNetwork/SwitchNetwork'
 
 import styles from './EmailLogin.module.scss'
 
 export default function EmailLogin({ relayerURL, onAddAccount }) {
   const location = useLocation()
+  const { setDappQuery } = useSDKContext()
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
 
   // login state stuff
@@ -31,6 +33,10 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
   const matchedDapp = stateStorage.connected_dapps.find((dapp) => dapp.origin === dappOrigin)
   const dappIsConnected = !!(matchedDapp && matchedDapp.wallet_address)
+
+  useEffect(() => {
+    setDappQuery(location.search)
+  }, [location.search, setDappQuery])
 
   // already logged-in logic
   useEffect(() => {
@@ -53,23 +59,13 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     )
 
     setAlreadyLogged(true)
-  }, [alreadyLogged, dappIsConnected, matchedDapp, chainId, network.id, network.chainId])
+  }, [alreadyLogged, dappIsConnected, matchedDapp, chainId, network.id, network.chainId, validTargetNetwork])
 
   const onLoginSuccess = (wallet_address) => {
     if (validTargetNetwork) setNetwork(validTargetNetwork.id)
 
     const targetNetwork = validTargetNetwork ? validTargetNetwork : network
     const provider = getProvider(targetNetwork.id)
-
-    window.parent.postMessage(
-      {
-        address: wallet_address,
-        chainId: targetNetwork.chainId,
-        providerUrl: provider.connection.url,
-        type: 'loginSuccess',
-      },
-      '*'
-    )
 
     setStateStorage({
       connected_dapps: [
@@ -82,6 +78,16 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         },
       ],
     })
+
+    window.parent.postMessage(
+      {
+        address: wallet_address,
+        chainId: targetNetwork.chainId,
+        providerUrl: provider.connection.url,
+        type: 'loginSuccess',
+      },
+      '*'
+    )
   }
 
   const confirmNetworkSwitch = () => {

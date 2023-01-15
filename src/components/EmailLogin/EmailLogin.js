@@ -112,7 +112,7 @@ export default function EmailLogin({ relayerURL, onAddAccount, isSDK = false, on
     const importJSONHref = `/#/json-import`
 
     if (!relayerURL) {
-        return (<section className={cn(styles.loginSignupWrapper, styles.emailLoginSection, styles[theme])}>
+        return (<section className={cn(styles.loginSignupWrapper, styles.emailLoginSection, styles[theme], className)}>
             <div className={styles.logo}/>
             <h3 className={styles.error}>Email login not supported without the relayer.</h3>
             <a href={importJSONHref}><button>Import JSON</button></a>

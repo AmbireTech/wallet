@@ -5,7 +5,7 @@ import styles from "./SignMessage.module.scss"
 import { useState, useEffect, useRef, useCallback } from "react"
 import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
 import cn from "classnames"
-import { onMsgRejected, onMsgSigned } from 'components/SDK/WindowMessages'
+import { onMsgRejected, onMsgSigned } from 'components/SDK/helpers/WindowMessages'
 import { useSignMessage } from "hooks"
 import AccountAndNetwork from "components/common/AccountAndNetwork/AccountAndNetwork"
 

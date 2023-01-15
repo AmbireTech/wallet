@@ -1,9 +1,15 @@
 import { useState, useEffect } from 'react'
-import { useLocalStorage } from 'hooks'
 import { useLocation } from 'react-router-dom'
+
+import { useLocalStorage } from 'hooks'
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
+import { Loading } from 'components/common'
+
+import styles from './Logout.module.scss'
 
 export default function Logout() {
   const location = useLocation()
+  const { setIsHeaderVisible } = useSDKContext()
 
   const [alreadyLoggedOut, setAlreadyLoggedOut] = useState(false)
   const [stateStorage, setStateStorage] = useLocalStorage({
@@ -15,6 +21,10 @@ export default function Logout() {
 
   const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === dappOrigin)
 
+  useEffect(() => {
+    setIsHeaderVisible(false)
+  }, [setIsHeaderVisible])
+  
   useEffect(() => {
     if (alreadyLoggedOut || !dappOrigin || !matchedDapp || !matchedDapp.wallet_address) return
 
@@ -29,6 +39,9 @@ export default function Logout() {
   }, [stateStorage.connected_dapps, setStateStorage, alreadyLoggedOut, dappOrigin, matchedDapp])
 
   return (
-    <div>Logging out...</div>
+    <div className={styles.wrapper}>
+      <p className={styles.text}>Logging out</p>
+      <Loading className={styles.loading} />
+    </div>
   )
 }

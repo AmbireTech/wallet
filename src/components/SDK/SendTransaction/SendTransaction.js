@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useSDKContext } from './SDKWrapper/SDKWrapper'
+
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 
 export default function SendTransaction({selectedAcc, selectedNetwork, addRequest, sendTxnState, internalRequests}) {
     const [hasLoaded, setHasLoaded] = useState(false)

@@ -12,6 +12,7 @@ import DetailsPanel from './DetailsPanel/DetailsPanel'
 import TransactionPanel from './TransactionPanel/TransactionPanel'
 
 import styles from './SendTransaction.module.scss'
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
@@ -66,6 +67,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
   const [signingStatus, setSigningStatus] = useState(false)
   const [feeSpeed, setFeeSpeed] = useState(DEFAULT_SPEED)
   const { addToast } = useToasts()
+  const { isSDK } = useSDKContext()
 
   // Safety check: make sure our input parameters make sense
   if (isInt(mustReplaceNonce) && !(replaceByDefault || isInt(bundle.nonce))) {
@@ -150,7 +152,10 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        <BackButton onDismiss={onDismiss} />
+        {!isSDK
+          ? <BackButton onDismiss={onDismiss} />
+          : null
+        }
         <div className={styles.containerBody}>
           <TransactionPanel
             bundle={bundle}

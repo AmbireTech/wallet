@@ -9,7 +9,7 @@ import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.
 
 import cn from 'classnames'
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, selectInputClassName, selectMenuClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -76,7 +76,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                             </div>
                             {
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
-                                    <div className={styles.selectMenu} ref={transitionRef}>
+                                    <div className={`${styles.selectMenu} ${selectMenuClassName || ''}`} ref={transitionRef}>
                                         {displayDraggableHeader && draggableHeader}
                                         {
                                             searchable ?

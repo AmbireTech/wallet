@@ -9,12 +9,6 @@
   flex-direction: column;
   justify-content: space-between;
 
-  // & ~ :global(body), :global(html) {
-  //   border-radius: 12px;
-  //   overflow: hidden;
-  //   background: unset;
-  // }
-
   .headerAndBody {
     position: relative;
     flex-grow: 1;

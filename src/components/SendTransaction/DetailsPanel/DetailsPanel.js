@@ -5,7 +5,7 @@ import { Checkbox, Panel } from "components/common";
 import Options from "./Options/Options";
 import Replace from "./Replace/Replace";
 import ActionsWrapper from "./ActionsWrapper/ActionsWrapper";
-import { onTxnRejected } from "components/SDK/WindowMessages";
+import { onTxnRejected } from "components/SDK/helpers/WindowMessages";
 
 import styles from './DetailsPanel.module.scss'
 

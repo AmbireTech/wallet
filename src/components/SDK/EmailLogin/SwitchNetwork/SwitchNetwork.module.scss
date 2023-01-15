@@ -13,22 +13,38 @@
     flex-direction: column;
     align-items: center;
     padding: 20px 36px;
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     background-color: theme(background-terniary);
     border: 1px solid theme(border-secondary);
     border-radius: 12px;
 
-    .siteLogo {
+    .dappLogoWrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 64px;
       height: 64px;
-      margin-bottom: 20px;
       border-radius: 12px;
-      background-color: theme(background-icon);
-      border: 1px solid theme(border-primary);
+      margin-bottom: 20px;
       padding: 12px;
+      border: 1px solid theme(border-primary);
+      background-color: theme(background-icon);
+
+      .dappLogo {
+        width: 40px;
+        height: 40px;
+      }
+
+      .unsupportedIcon {
+        position: absolute;
+        top: 0;
+        right: 0;
+        transform: translate(45%, -15%);
+      }
     }
 
-    .siteName {
+    .dappName {
       font-size: 20px;
       margin: 0;
       margin-bottom: 20px;

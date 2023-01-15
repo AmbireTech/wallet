@@ -268,4 +268,16 @@
             line-height: 150%;
         }
     }
+
+    .emailLoginSection {
+        .loginEmail {
+            .error {
+                top: 20px;
+                font-size: 14px;
+                padding: 15px;
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    }
 }
