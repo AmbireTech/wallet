@@ -53,7 +53,7 @@ const setProvider = (_id: NetworkId) => {
 
 // Case specific RPCs:
 
-const getChainId = (id: NetworkId): Number =>  {  
+const getChainId = (id: NetworkId): number =>  {  
   const chainId = networks.find(x => x.id === id)?.chainId
   if(chainId) {
     return chainId
