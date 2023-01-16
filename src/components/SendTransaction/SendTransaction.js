@@ -5,7 +5,9 @@ import { getProvider } from 'ambire-common/src/services/provider'
 import { useToasts } from 'hooks/toasts'
 import {
   getDefaultFeeToken,
-  isTokenEligible, makeBundle
+  isTokenEligible,
+  makeBundle,
+  addMockedTxnToBundle
  } from './helpers'
  import BackButton from './BackButton/BackButton'
 import DetailsPanel from './DetailsPanel/DetailsPanel'
@@ -100,8 +102,14 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
 
     // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
     // We may want to change this if we make a check if the currently replaced txn was already mined
+    let bundleToEstimate
+    if (network.id === 'arbitrum') {
+      bundleToEstimate = addMockedTxnToBundle(bundle, network, account.id)
+    } else {
+      bundleToEstimate = { ...bundle }
+    }
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundle.minFeeInUSDPerGas, getNextNonce: true, gasTank: currentAccGasTankState.isEnabled })
+        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundleToEstimate.minFeeInUSDPerGas, getNextNonce: true, gasTank: currentAccGasTankState.isEnabled })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then((estimation) => {
