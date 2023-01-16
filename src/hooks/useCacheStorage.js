@@ -125,7 +125,7 @@ export default function useCacheStorage({ key, data: { accounts} }) {
 
                         // update the value(s) in the object that you want to change
                         data = { key: key, ...allPassedAssets[key] }
-                        console.log(key, data)
+
                         // Put this updated object back into the database.
                         store.put(data);
                     
