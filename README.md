@@ -414,7 +414,7 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Aapps iframe allow copy & paste
 * On creating account with MM, added a option to choose the address from MM if have more then one.
 * Update uniswap integrated swap with working v2 routing.
-* Portfolio V2 and dashboard redesign with panding balances by panding and unsigned transactions.
+* Portfolio V2 and dashboard redesign with pending balances by pending and unsigned transactions.
 * Fix / View amount in the rewards button
 * Fix / On a Signer removal button click, hide the modal
 * Fix / Change signers error message
