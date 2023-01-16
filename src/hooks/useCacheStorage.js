@@ -101,53 +101,59 @@ export default function useCacheStorage({ key, data: { accounts} }) {
 
         const transaction = await db.current.transaction("assets", "readwrite");
         const store = await transaction.objectStore('assets');
+        const storeAssets = await store.getAll();
 
-        if (typeof value === 'function') {
-            const updatedItems = value(store)
+        storeAssets.onsuccess = async () => {
+            const assetsDb = storeAssets.result.reduce((acc, cur) => {
+                acc[cur.key] = cur;
+                return acc;
+            }, {})
 
-            Object.keys(updatedItems).forEach(async key => {
+            if (typeof value === 'function') {
+                const updatedItemsByKeys = value(store)
+                const allPassedAssets = value(assetsDb)
+                Object.keys(updatedItemsByKeys).forEach(async key => {
+                    const request = await store.get(key)
+
+                    request.onerror = async (e) => {
+                        // Handle errors!
+                        console.error('Error saving data in idexedDb', e)
+                    };
+                    request.onsuccess = async (event) => {
+                        // Get the old value that we want to update
+                        let data = event.target.result;
+
+                        // update the value(s) in the object that you want to change
+                        data = { key: key, ...allPassedAssets[key] }
+
+                        // Put this updated object back into the database.
+                        store.put(data);
+                    
+                    };
+                })
+            } else {
+                const key = Object.keys(value)
                 const request = await store.get(key)
 
-                request.onerror = async () => {
-                    // Handle errors!                    
-                    // update the value(s) in the object that you want to change
-                    const data = { key: key, ...updatedItems[key] }
-                    
-                    // Put this updated object back into the database.
-                    store.put(data);
+                request.onerror = async (e) => {
+                    console.error('Error saving data in idexedDb', e)
+
                 };
                 request.onsuccess = async (event) => {
                     // Get the old value that we want to update
-                    let data = event.target.result;
-                    
+                    let data = await event.target.result;
+                
                     // update the value(s) in the object that you want to change
-                    data = { key: key, ...updatedItems[key] }
-                    
+                    data = { key: key, ...value }
                     // Put this updated object back into the database.
                     store.put(data);
-                    
                 };
-            })
-        } else {
-            const key = Object.keys(value)
-            const request = await store.get(key)
 
-            request.onerror = async () => {
-                // update the value(s) in the object that you want to change
-                const data = { key: key, ...value }
-                // Put this updated object back into the database.
-                store.put(data);
-            };
-            request.onsuccess = async (event) => {
-                // Get the old value that we want to update
-                let data = await event.target.result;
-                
-                // update the value(s) in the object that you want to change
-                data = { key: key, ...value }
-                // Put this updated object back into the database.
-                store.put(data);
-            };
+            }
+        }
 
+        storeAssets.onerror = async (e) => {
+            console.error('Error saving data in idexedDb', e)
         }
     }
 

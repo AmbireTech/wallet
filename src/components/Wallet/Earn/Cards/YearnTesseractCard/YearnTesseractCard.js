@@ -5,7 +5,6 @@ import { Interface, parseUnits } from 'ethers/lib/utils'
 import networks from 'consts/networks'
 import YEARN_TESSERACT_VAULT_ABI from 'ambire-common/src/constants/abis/YearnTesseractVaultABI'
 import useYearn from './useYearn'
-import useTesseract from './useTesseract'
 import { useToasts } from 'hooks/toasts'
 import { getProvider } from 'ambire-common/src/services/provider'
 import AmbireBatcherABI from 'ambire-common/src/constants/abis/AmbireBatcherABI.json'
@@ -18,10 +17,6 @@ const BATCHER_ADDRESS = '0x460fad03099f67391d84c9cc0ea7aa2457969cea'
 const BATCHER_INTERFACE = new Interface(AmbireBatcherABI)
 const ERC20_INTERFACE = new Interface(ERC20ABI)
 const VaultInterface = new Interface(YEARN_TESSERACT_VAULT_ABI)
-const TESSERACT_DETAILS = {
-    title: 'What is Tesseract Finance',
-    description: 'Tesseract Finance is a DeFi yield farming protocol that brings yearn.finance to selected EVM compatible chains. Tesseract Finance enables lending and borrowing opportunities on the Polygon network.'
-}
 
 const YEARN_DETAILS = {
     title: 'What is Yearn.finance',
@@ -34,8 +29,8 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const currentNetwork = useRef()
     const [loading, setLoading] = useState([])
 
-    const unavailable = !(networkId === 'ethereum' || networkId === 'polygon' || networkId === 'fantom')
-    const name = networkId === 'ethereum' ? 'Yearn' : 'Tesseract'
+    const unavailable = !(networkId === 'ethereum' || networkId === 'fantom')
+    const name = 'Yearn' 
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     const provider = useMemo(() => {
@@ -52,24 +47,17 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
         currentNetwork
     })
 
-    const tesseract = useTesseract({
-        tokens,
-        provider,
-        networkId,
-        currentNetwork
-    })
-
     const {
         icon,
         loadVaults,
         tokensItems,
         details,
         onTokenSelect
-    } = useMemo(() => networkId === 'polygon' ? tesseract : yearn, [networkId, yearn, tesseract])
+    } = useMemo(() => yearn, [yearn])
 
     const moreDetails = {
-        title: networkId === 'polygon' ? TESSERACT_DETAILS.title : YEARN_DETAILS.title,
-        description: networkId === 'polygon' ? TESSERACT_DETAILS.description : YEARN_DETAILS.description
+        title: YEARN_DETAILS.title,
+        description: YEARN_DETAILS.description
     }
 
     const onValidate = async (type, value, amount) => {

@@ -283,7 +283,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
         <div className={styles.validationeError}><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>
       }
 
-      {latticeToggle && <LatticePair addresses={setLatticeAddresses} />}
+      {latticeToggle && <LatticePair addresses={setLatticeAddresses}/>}
 
       {modalToggle && signersToChoose && <SelectSignerAccount
           showTitle

@@ -24,6 +24,7 @@ import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
 import ErrorScreen from './ErrorScreen/ErrorScreen';
 import Stepper from './Stepper/Stepper.tsx';
+import Tabs from './Tabs/Tabs';
 import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppIncompatibilityWarningMsg';
 import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
@@ -57,6 +58,7 @@ export {
     ErrorBoundary,
     ErrorScreen,
     Stepper,
+    Tabs,
     DAppIncompatibilityWarningMsg,
     Pagination,
     Panel,

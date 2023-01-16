@@ -58,7 +58,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading ? <Loading /> : (
                 <div className={styles.otherBalances} ref={otherBalancesRef} onScroll={handleSetBlur}>
-                    { !otherBalances.length && otherBalancesLoading ? <Loading /> : otherBalances.length > 0 ? (
+                    { !otherBalances.length && otherBalancesLoading ? <div className={styles.loadingOtherBalancesWrapper}><Loading /></div> : otherBalances.length > 0 ? (
                         <>
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (
