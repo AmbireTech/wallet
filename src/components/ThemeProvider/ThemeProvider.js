@@ -1,4 +1,6 @@
-import { createContext, useContext, useLayoutEffect, useState } from 'react'
+import { createContext, useContext, useState } from 'react'
+import cn from 'classnames'
+
 import styles from './ThemeProvider.module.scss'
 
 const ThemeContext = createContext(null)
@@ -6,13 +8,11 @@ const ThemeContext = createContext(null)
 const ThemeProvider = ({ children }) => {
 	const [theme, setTheme] = useState('dark')
 
-	useLayoutEffect(() => {
-		document.documentElement.className = styles[theme || 'dark']
-	}, [theme])
-
 	return (
 		<ThemeContext.Provider value={{ theme, setTheme }}>
-			{children}
+			<div className={cn(styles[theme], styles.wrapper)}>
+				{children}
+			</div>
 		</ThemeContext.Provider>
 	)
 }

@@ -1,17 +1,15 @@
 @import 'variables';
 
-// Temporary fix for the initial <Loading /> components passed to the <Suspense /> components in App.js
-// Without this line the components are light themed, because the css variables are not loaded yet(only on initial load)
-:global(html) {
-  --text-primary: #{$c-titan-white};
-  --background-gradient: linear-gradient(180deg, #{$c-fiord} 0%, #{$c-ebony-clay} 100%);
-}
-
 @function GetGradient($start, $end) {
   @return transparent linear-gradient(90deg, #{$start} 0%, #{$end} 100%);
 }
 
 /* Global */
+@mixin Global($color, $background) {
+  color: #{$color};
+  background: #{$background};
+}
+
 @mixin Text($primary, $secondary) {
   --text-primary: #{$primary};
   --text-secondary: #{$secondary};
@@ -78,4 +76,10 @@
   // Other
   @include BackgroundGradient(white, white);
   @include Scrollbar(rgba($c-blue-bell, 0.3), $c-blue-bell);
+}
+
+.wrapper {
+  height: 100%;
+  color: var(--text-primary);
+  background: var(--background-gradient);
 }

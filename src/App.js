@@ -373,17 +373,17 @@ function AppInner() {
 export default function App() {
   return (
     <Router>
-      <ConstantsProvider>
-        <ThemeProvider>
-          <ToastProvider>
-            <ModalProvider>
-              <SDKProvider>
-                <AppInner/>
-              </SDKProvider>
-            </ModalProvider>
-          </ToastProvider>
-        </ThemeProvider>
-      </ConstantsProvider>
+      <ThemeProvider>
+        <ToastProvider>
+          <ModalProvider>
+            <SDKProvider>
+              <ConstantsProvider>
+                      <AppInner/>
+              </ConstantsProvider>
+            </SDKProvider>
+          </ModalProvider>
+        </ToastProvider>
+      </ThemeProvider>
     </Router>
   )
 }

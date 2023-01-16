@@ -1,5 +1,7 @@
-import { createContext, useContext, useState } from 'react'
+import { createContext, useContext, useLayoutEffect, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
+import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
 import { useModals } from 'hooks'
 import { Image } from 'components/common'
 import CloseSDKModal from 'components/SDK/CloseModal/CloseModal'
@@ -13,13 +15,32 @@ import styles from './SDKProvider.module.scss'
 const SDKContext = createContext({})
 
 const SDKProvider = ({ children }) => {
+	const location = useLocation()
 	const { showModal } = useModals()
+	const { setTheme } = useThemeContext()
 	const [isBackButtonVisible, setIsBackButtonVisible] = useState(true)
 	const [isHeaderVisible, setIsHeaderVisible] = useState(true)
 	const [dappQuery, setDappQuery] = useState(false)
 	const [isSDK, setIsSDK] = useState(false)
 
 	const showCloseModal = () => showModal(<CloseSDKModal />)
+
+	useLayoutEffect(() => {
+		// no pathname in location object
+		if (!(typeof location === 'object' && ("pathname" in location))) return
+		// Not in SDK
+		if (!location.pathname.includes('sdk')) return
+		// In SDK
+		setIsSDK(true)
+		setTheme('light')
+
+		const borderRadiusStyle = 'border-radius: 12px; overflow: hidden; background: unset;'
+
+		const html = document.querySelector('html')
+		const body = document.querySelector('body')
+		html.style = borderRadiusStyle
+		body.style = borderRadiusStyle
+	}, [location, setTheme])
 
 	return (
 		<SDKContext.Provider value={{ setIsBackButtonVisible, setIsHeaderVisible, dappQuery, setDappQuery, isSDK, setIsSDK }}>
