@@ -1,8 +1,8 @@
-import { createContext, useContext, useLayoutEffect, useState } from 'react'
+import { createContext, useContext, useEffect, useLayoutEffect, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 
 import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
-import { useModals } from 'hooks'
+import { useLocalStorage, useModals } from 'hooks'
 import { Image } from 'components/common'
 import CloseSDKModal from 'components/SDK/CloseModal/CloseModal'
 
@@ -21,7 +21,18 @@ const SDKProvider = ({ children }) => {
 	const [isBackButtonVisible, setIsBackButtonVisible] = useState(true)
 	const [isHeaderVisible, setIsHeaderVisible] = useState(true)
 	const [dappQuery, setDappQuery] = useState(false)
+	const [sdkDapp, setSdkDapp] = useState(undefined)
 	const [isSDK, setIsSDK] = useState(false)
+
+	const [stateStorage] = useLocalStorage({
+		key: 'login_sdk',
+		defaultValue: {connected_dapps: []}
+	})
+
+	useEffect(() => {
+		const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === document.referrer.split('/').slice(0, 3).join('/'))
+		setSdkDapp(matchedDapp)
+	}, [stateStorage, document.referrer, setSdkDapp])
 
 	const showCloseModal = () => showModal(<CloseSDKModal />)
 
@@ -43,7 +54,7 @@ const SDKProvider = ({ children }) => {
 	}, [location, setTheme])
 
 	return (
-		<SDKContext.Provider value={{ setIsBackButtonVisible, setIsHeaderVisible, dappQuery, setDappQuery, isSDK, setIsSDK }}>
+		<SDKContext.Provider value={{ setIsBackButtonVisible, setIsHeaderVisible, dappQuery, setDappQuery, isSDK, setIsSDK, sdkDapp }}>
 			{isSDK ? (
 				<div className={styles.wrapper}>
 					<div className={styles.headerAndBody}>
@@ -55,7 +66,7 @@ const SDKProvider = ({ children }) => {
 								</div>
 							) : null}
 							<Image
-								src={`${document.referrer}/favicon.png`}
+								src={sdkDapp ? sdkDapp.icon : dappQuery ? new URLSearchParams(dappQuery).get('dappIcon') : ''}
 								alt=""
 								className={styles.dappLogo}
 								size={32}
