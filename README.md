@@ -412,7 +412,9 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Socket v2 API
 * humanizer - Uniswap v2 & v3 improvements & AAVE address
 * Aapps iframe allow copy & paste
-* on creating account with MM, added a option to choose the address from MM if have more then one.
+* On creating account with MM, added a option to choose the address from MM if have more then one.
+* Update uniswap integrated swap with working v2 routing.
+* Portfolio V2 and dashboard redesign with panding balances by panding and unsigned transactions.
 * Fix / View amount in the rewards button
 * Fix / On a Signer removal button click, hide the modal
 * Fix / Change signers error message
