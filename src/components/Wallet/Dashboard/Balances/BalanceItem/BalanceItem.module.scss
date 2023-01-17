@@ -46,5 +46,6 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .balanceContainer {
     height: auto;
+    padding-right: 0;
   }
 }

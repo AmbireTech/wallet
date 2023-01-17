@@ -90,7 +90,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = useCallback((id, txn, extraGas = 0) => { 
         const request = attachMetaIfNeeded(
-                { id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas },
+                { id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas },
                 shareValue,
                 rewardsData
             )

@@ -54,6 +54,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
   const sendTx = (id, chainId, to, data, value = '0x00') => {
     addRequest({
       id,
+      dateAdded: new Date().valueOf(),
       chainId,
       account: selectedAccount,
       type: 'eth_sendTransaction',

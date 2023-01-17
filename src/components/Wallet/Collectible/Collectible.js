@@ -68,6 +68,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         try {
             let req = {
                 id: `transfer_nft_${Date.now()}`,
+                dateAdded: new Date().valueOf(),
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
                 account: selectedAcc,
