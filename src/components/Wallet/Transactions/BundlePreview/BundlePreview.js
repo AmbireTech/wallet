@@ -1,18 +1,19 @@
-import styles from './BundlePreview.module.scss'
-import TxnPreview from 'components/common/TxnPreview/TxnPreview'
+import React from 'react'
+import { formatUnits } from 'ethers/lib/utils'
+import cn from 'classnames'
+
 import { BsCoin, BsCalendarWeek, BsGlobe2 } from 'react-icons/bs'
 import { MdShuffle, MdOutlineSavings } from 'react-icons/md'
+
 import networks from 'consts/networks'
 import { getTransactionSummary } from 'lib/humanReadableTransactions'
-
-import React from 'react'
 import { formatFloatTokenAmount } from 'lib/formatters'
-import { formatUnits } from 'ethers/lib/utils'
-import { ToolTip } from 'components/common'
-// eslint-disable-next-line import/no-relative-parent-imports
-import { getAddedGas } from '../../../SendTransaction/helpers'
+
 import useConstants from 'hooks/useConstants'
-import cn from 'classnames'
+import { ToolTip, TxnPreview } from 'components/common'
+import { getAddedGas } from 'components/SendTransaction/helpers'
+
+import styles from './BundlePreview.module.scss'
 
 const TO_GAS_TANK = `to Gas Tank`
 
