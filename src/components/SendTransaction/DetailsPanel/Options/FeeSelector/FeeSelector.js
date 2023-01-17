@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import {
   isTokenEligible,
   mapTxnErrMsg,
@@ -40,6 +41,7 @@ const mapGasTankTokens = nativePrice => item => {
 }
 
 export function FeeSelector({ disabled, signer, estimation, network, setEstimation, feeSpeed, setFeeSpeed, onDismiss, isGasTankEnabled }) {
+  const { isSDK } = useSDKContext()
 
   if (!estimation) return (<Loading />)
   // Only check for insufficient fee in relayer mode (.feeInUSD is available)
@@ -151,7 +153,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
     <div className={styles.title}>
       <span>Transaction Speed</span>
-      { network.isGasTankAvailable && 
+      { !isSDK && network.isGasTankAvailable && 
         <span>Gas Tank: { isGasTankEnabled ? 
           (<span className={styles.gasTankEnabled}>Enabled</span>) : 
           (<span className={styles.gasTankDisabled}>Disabled</span>)}

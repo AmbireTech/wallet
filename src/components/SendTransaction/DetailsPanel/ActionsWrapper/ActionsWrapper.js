@@ -1,4 +1,5 @@
 import { Alert } from 'components/common';
+import { useSDKContext } from 'components/SDKProvider/SDKProvider';
 import FailingTxn from "components/SendTransaction/DetailsPanel/FailingTxn/FailingTxn";
 import Actions from "./Actions/Actions";
 
@@ -23,6 +24,7 @@ const ActionsWrapper = ({
   resolveMany,
   canProceed
 }) => {
+  const { isSDK } = useSDKContext()
 
   return canProceed && (
     <div>
@@ -33,7 +35,8 @@ const ActionsWrapper = ({
       <Alert
         className={styles.firstTransactionAlert}
         type="info"
-        title="Note"
+        isIconHidden={isSDK}
+        title={!isSDK ? "Note" : ""}
         text={`
           Because this is your first Ambire transaction, this fee is 
           ${((60000 / bundle.gasLimit) * 100).toFixed()}% higher than usual

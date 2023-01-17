@@ -2,6 +2,7 @@ import cn from "classnames";
 
 import { Panel, Alert } from "components/common";
 import TxnPreview from "components/common/TxnPreview/TxnPreview";
+import { useSDKContext } from "components/SDKProvider/SDKProvider";
 
 import styles from "./TransactionPanel.module.scss";
 
@@ -14,6 +15,8 @@ const TransactionPanel = ({
   panelClassName,
   panelTitleClassName,
 }) => {
+  const { isSDK } = useSDKContext()
+
   return (
     <Panel className={cn(panelClassName, styles.wrapper)}>
       <div className={styles.panelBody}>
@@ -56,7 +59,7 @@ const TransactionPanel = ({
           })}
         </div>
       </div>
-      {bundle.requestIds && <Alert
+      {!isSDK && bundle.requestIds && <Alert
         title="Degen tip"
         type="degenTip"
         text="

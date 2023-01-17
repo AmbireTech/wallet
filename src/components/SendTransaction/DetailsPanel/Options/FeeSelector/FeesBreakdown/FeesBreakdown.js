@@ -2,6 +2,7 @@ import cn from 'classnames'
 
 import { formatFloatTokenAmount } from 'lib/formatters'
 
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import { getDiscountApplied } from 'components/SendTransaction/helpers'
 
 import { MdInfoOutline } from 'react-icons/md'
@@ -19,11 +20,11 @@ const FeesBreakdown = ({
   walletDiscountBlogpost,
   DISCOUNT_TOKENS_SYMBOLS
 }) => {
-
+  const { isSDK } = useSDKContext()
   const discountInUSD = getDiscountApplied(feeInUSD, discount)
   const baseFeeInUSD = feeInUSD + discountInUSD
   
-  return (
+  return !isSDK ? (
     <div className={styles.wrapper}>
       {(<div className={styles.fee}>
         <p className={styles.feeSide}>
@@ -97,7 +98,7 @@ const FeesBreakdown = ({
           </div>}
       </>)}
     </div>
-  )
+  ) : null
 }
 
 export default FeesBreakdown

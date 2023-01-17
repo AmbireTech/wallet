@@ -12,3 +12,11 @@
     margin-bottom: 10px;
   }
 }
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .selectInput {
+      height: 50px!important;
+    }
+  }
+}

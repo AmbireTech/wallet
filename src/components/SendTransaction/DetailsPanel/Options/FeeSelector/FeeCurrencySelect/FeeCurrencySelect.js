@@ -17,6 +17,7 @@ const FeeCurrencySelect = ({
       defaultValue={estimation.selectedFeeToken?.address || estimation.selectedFeeToken?.symbol}
       items={currenciesItems}
       onChange={onFeeCurrencyChange}
+      selectInputClassName={styles.selectInput}
     />
   </div>) : null
 }
