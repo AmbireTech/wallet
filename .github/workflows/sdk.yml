@@ -1,4 +1,4 @@
-name: Build & deploy Ambire Wallet SDK!
+name: Build & deploy Ambire Wallet SDK
 
 on:
   push:
