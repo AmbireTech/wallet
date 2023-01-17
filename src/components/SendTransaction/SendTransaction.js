@@ -152,10 +152,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>
-        {!isSDK
-          ? <BackButton onDismiss={onDismiss} />
-          : null
-        }
+        {!isSDK ? (<BackButton onDismiss={onDismiss} />): null}
         <div className={styles.containerBody}>
           <TransactionPanel
             bundle={bundle}
