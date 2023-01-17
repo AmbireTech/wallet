@@ -10,7 +10,7 @@ import { fetchPost } from "lib/fetch";
 import { getProvider } from 'ambire-common/src/services/provider'
 
 import { useToasts } from 'hooks/toasts';
-import { Button, Loading, TextInput } from 'components/common'
+import { Button, TextInput } from 'components/common'
 import { isTokenEligible } from 'components/SendTransaction/helpers'
 import { sendNoRelayer } from "components/SendTransaction/noRelayer";
 import { getFeesData, toHexAmount } from "components/SendTransaction/helpers";
@@ -298,6 +298,7 @@ const Actions = ({
         // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
         recoveryMode: finalBundle.recoveryMode,
         canSkip2FA: canSkip2FA,
+        isGasTankEnabled: currentAccGasTankState.isEnabled && !!relayerURL
       }
     );
     if (!success) {
@@ -351,10 +352,6 @@ const Actions = ({
     </div>)
   }
 
-  const signButtonLabel = signingStatus && signingStatus.inProgress ?
-    <><Loading/>Signing...</>
-    : 'Sign and Send'
-
   const isRecoveryMode = signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
   if (signingStatus && signingStatus.quickAcc) {
     return (<div className={styles.wrapper}>
@@ -395,7 +392,6 @@ const Actions = ({
           {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
           {signingStatus.confCodeRequired !== 'notRequired' &&
             <TextInput
-              pattern='[0-9]+'
               title='Confirmation code should be 6 digits'
               autoComplete='nope'
               required minLength={6} maxLength={6}
@@ -409,7 +405,7 @@ const Actions = ({
         <div className={styles.buttons}>
           <Button
             danger
-            disabled={signingStatus && signingStatus.inProgress}
+            disabled={signingStatus?.inProgress}
             type='button'
             className={cn(styles.button, styles.danger)}
             onClick={cancelSigning}
@@ -419,12 +415,13 @@ const Actions = ({
           <Button
             primaryGradient
             className={cn(styles.button, styles.confirm)}
+            disabled={signingStatus?.inProgress}
             onClick={() => {
               if (!form.current.checkValidity()) return
               approveTxn({ quickAccCredentials })
             }}
           >
-            { signingStatus && signingStatus.inProgress ? <Loading/> : 'Confirm'}
+            { signingStatus && signingStatus.inProgress ? 'Loading...' : 'Confirm'}
           </Button>
         </div>
       </form>
@@ -433,8 +430,8 @@ const Actions = ({
 
   return (<div className={styles.buttons}>
       {rejectButton}
-      <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus} onClick={approveTxn}>
-        {signButtonLabel}
+      <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus?.inProgress} onClick={approveTxn}>
+        {signingStatus && signingStatus.inProgress ? 'Signing...' : 'Sign and Send'}
       </Button>
   </div>)
 }

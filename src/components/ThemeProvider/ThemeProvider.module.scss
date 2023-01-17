@@ -1,0 +1,81 @@
+@import 'variables';
+
+// Temporary fix for the initial <Loading /> components passed to the <Suspense /> components in App.js
+// Without this line the components are light themed, because the css variables are not loaded yet(only on initial load)
+:global(html) {
+  --text-primary: #{$c-titan-white};
+  --background-gradient: linear-gradient(180deg, #{$c-fiord} 0%, #{$c-ebony-clay} 100%);
+}
+
+@function GetGradient($start, $end) {
+  @return transparent linear-gradient(90deg, #{$start} 0%, #{$end} 100%);
+}
+
+/* Global */
+@mixin Text($primary, $secondary) {
+  --text-primary: #{$primary};
+  --text-secondary: #{$secondary};
+}
+
+@mixin Background($primary, $secondary, $terniary, $fournary, $topbar, $icon) {
+  --background-primary: #{$primary};
+  --background-secondary: #{$secondary};
+  --background-terniary: #{$terniary};
+  --background-fournary: #{$fournary};
+  // --background-highlight: #{$highlight};
+  --background-topbar: #{$topbar};
+  --background-icon: #{rgba($icon, 0.05)};
+}
+
+@mixin Border($primary, $secondary, $terniary, $input) {
+  --border-primary: #{$primary};
+  --border-secondary: #{$secondary};
+  --border-terniary: #{$terniary};
+  --border-input: #{$input};
+}
+
+@mixin Highlight($primary, $secondary) {
+  --highlight-primary: #{$primary};
+  --highlight-secondary: #{$secondary};
+}
+
+@mixin Gradient($primary, $secondary, $terniary) {
+  --gradient-primary: #{$primary};
+  --gradient-secondary: #{$secondary};
+  --gradient-terniary: #{$terniary};
+}
+
+/* Other */
+@mixin BackgroundGradient($primary, $secondary) {
+  --background-gradient: linear-gradient(180deg, #{$primary} 0%, #{$secondary} 100%);
+}
+
+@mixin Scrollbar($background, $thumb-background) {
+  --scrollbar-background: #{$background};
+  --scrollbar-thumb-background: #{$thumb-background};
+}
+
+.dark {
+  --theme: dark;
+  @include Text($c-titan-white, $c-scampi);
+  @include Background($c-mirage, $c-martinique, $c-ebony-clay, $c-ebony-clay-light, $c-fiord, $c-titan-white);
+  @include Border($c-mirage, $c-fiord, $c-scampi, $c-titan-white);
+  @include Highlight($c-heliotrope, $c-turquoise);
+  @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
+  // Other
+  @include BackgroundGradient($c-fiord, $c-ebony-clay);
+  @include Scrollbar($c-mirage, $c-blue-bell);
+}
+
+.light {
+  --theme: light;
+  @include Text($c-fiord, rgba($c-fiord, 0.8));
+  @include Background($c-titan-white, red, #F7F8FF, red, red, $c-fiord);
+  @include Border($c-titan-white, $c-titan-white, red, $c-fiord);
+  @include Highlight($c-blue-lagoon, $c-electric-violet);
+  // Our gradients are currently the same, but we may change them later
+  @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
+  // Other
+  @include BackgroundGradient(white, white);
+  @include Scrollbar(rgba($c-blue-bell, 0.3), $c-blue-bell);
+}

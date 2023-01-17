@@ -11,12 +11,12 @@
   align-items: center;
   justify-content: space-between;
   padding: 20px 22px;
-  background-color: $c-mirage;
+  background-color: theme(background-primary);
   border-radius: 12px;
-  color: $c-titan-white;
+  color: theme(text-primary);
 
   &.discount {
-    color: $c-turquoise;
+    color: theme(highlight-secondary);
   }
 
   &.warning {

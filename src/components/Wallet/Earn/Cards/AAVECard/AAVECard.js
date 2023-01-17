@@ -13,6 +13,7 @@ import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'ambire-common/src/services/approveToken'
 import EarnDetailsModal from 'components/Modals/EarnDetailsModal/EarnDetailsModal'
 import { MdInfo } from "react-icons/md"
+import { rpcProviders } from 'config/providers'
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
@@ -49,7 +50,7 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
     const networkDetails = networks.find(({ id }) => id === networkId)
     const defaultTokens = useMemo(() => getDefaultTokensItems(networkDetails.id), [networkDetails.id])
     const getToken = (type, address) => tokensItems.filter(token => token.type === type).find(token => token.address === address)
-    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
 
     const onValidate = async (type, tokenAddress, amount) => {
         const validate = async (type, functionData) => {
@@ -94,7 +95,9 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
         }
 
         try {
-            const provider = getProvider(networkDetails.id)
+            const provider = (networkDetails.id === 'ethereum') 
+                ? rpcProviders['ethereum-ambire-earn']
+                : getProvider(networkDetails.id)
             const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
             lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
 

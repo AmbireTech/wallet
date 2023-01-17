@@ -9,7 +9,7 @@ import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStaking
 import AdexStakingPool from 'ambire-common/src/constants/AdexStakingPool.json'
 import supplyControllerABI from 'ambire-common/src/constants/ADXSupplyController.json'
 import { Interface, parseUnits, formatUnits } from "ethers/lib/utils"
-import { getProvider } from 'ambire-common/src/services/provider'
+import { rpcProviders } from 'config/providers'
 import ERC20ABI from 'adex-protocol-eth/abi/ERC20.json'
 import networks from 'consts/networks'
 import AmbireEarnDetailsModal from 'components/Modals/AmbireEarnDetailsModal/AmbireEarnDetailsModal'
@@ -90,7 +90,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
     const networkDetails = networks.find(({ id }) => id === networkId)
     const addRequestTxn = useCallback((id, txn, extraGas = 0) => { 
         const request = attachMetaIfNeeded(
-                { id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas },
+                { id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas },
                 shareValue,
                 rewardsData
             )
@@ -269,7 +269,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                 // Prevent init if the card is unavailable for current network
                 if (networkId !== 'ethereum') return
 
-                const provider = getProvider(networkId)
+                const provider = rpcProviders['ethereum-ambire-earn']
                 
                 const tokenAddress = isAdxTokenSelected() ? ADX_TOKEN_ADDRESS : WALLET_TOKEN_ADDRESS
                 const stakingTokenAddress = isAdxTokenSelected() ? ADX_STAKING_TOKEN_ADDRESS : WALLET_STAKING_ADDRESS
@@ -409,7 +409,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                         walletValue: utils.formatUnits(walletValue.toString(), 18)
                     })
                 
-                    let remainingTime = leaveLog ? ((leaveLog.unlocksAt.toString() * 1000) - Date.now()) : null
+                    let remainingTime = unlocksAt ? ((unlocksAt.toString() * 1000) - Date.now()) : null
                     if (remainingTime <= 0) remainingTime = 0
                     setLockedRemainingTime(remainingTime)    
                 } else {
@@ -423,7 +423,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
         return () => {
             setShareValue(ZERO)
         }
-    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected, leaveLog])
+    }, [networkId, accountId, selectedToken.label, isAdxTokenSelected])
 
     useEffect(() => setLoading(false), [])
 

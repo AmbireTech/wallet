@@ -1,54 +1,50 @@
+import cn from 'classnames'
+import { useLayoutEffect, useState, useMemo } from 'react'
+import { useParams } from 'react-router-dom'
 
-import { useEffect, useLayoutEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
-
-import { Chart, Loading, Segments, Panel } from 'components/common'
+import { Loading, Panel } from 'components/common'
 import Balances from './Balances/Balances'
-import Protocols from './Protocols/Protocols'
+import Tokens from './Tokens/Tokens'
 import Collectibles from './Collectibles/Collectibles'
 
 import Promotions from './Promotions/Promotions'
+import Tabs from 'components/common/Tabs/Tabs'
+import Chart from './Chart/Chart'
 import AssetsMigrationBanner from 'components/common/AssetsMigrationBanner/AssetsMigrationBanner'
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
-import cn from 'classnames'
 
 import styles from './Dashboard.module.scss'
 
-const tabSegments = [
-    {
-        value: 'tokens'
-    },
-    {
-        value: 'collectibles'
-    }
-]
-
+const Footer = ({selectedAccount, selectedNetwork}) => <div className={styles.footer}>
+    <span className={styles.missingTokenNotice}>
+        If you don't see a specific token that you own, please check the
+        {' '}
+        <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">
+            Block Explorer
+        </a>
+    </span>
+</div>
 
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
-    const history = useHistory()
-    const { tabId, page = 1 } = useParams()
+    const { tabId } = useParams()
 
+    const balance = useMemo(() => portfolio.balance, [portfolio.balance])
+    const tokens = useMemo(() => portfolio.tokens, [portfolio.tokens])
     const [chartTokensData, setChartTokensData] = useState([]);
-    const [tab, setTab] = useState(tabId || tabSegments[0].value);
+    const defaultTab = tabId ? (tabId === 'tokens' ? 1 : 2) : 1
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
     const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
-    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
-        portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
-
-    useEffect(() => {
-        if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
-        history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
-    }, [tab, history, page])
+    const isBalancesCachedCurrentNetwork = portfolio.cache || false
 
     useLayoutEffect(() => {
-        const tokensData = portfolio.tokens
+        const tokensData = tokens
             .map(({ label, symbol, balanceUSD }) => ({
                 label: label || symbol,
-                value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2)),
+                value: Number(((balanceUSD / balance.total.full) * 100).toFixed(2)),
                 balanceUSD
             }))
             .filter(({ value }) => value > 0);
@@ -65,12 +61,13 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     label: "You don't have any tokens",
                     balanceUSD: 1,
                     value: 0
-                }]
+                }],
+                tokensLength: tokens?.length,
+                allTokensWithoutPrice: tokens?.length && tokens.every(t => !t.price)
             })
         }
-    }, [portfolio.balance, portfolio.tokens]);
+    }, [balance, tokens, portfolio?.balance?.total?.full]);
 
-    useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
     return (
         <section className={styles.wrapper}>
@@ -137,26 +134,43 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                     />
                 </Panel>
             </div>
-            <Panel title={<>Assets <Segments small defaultValue={tab} segments={tabSegments} onChange={setTab} /></>}>
-                {
-                    tab === tabSegments[0].value ?
-                        <Protocols
+                <Tabs
+                    firstTabLabel="Tokens"
+                    secondTabLabel="Collectibles"
+                    firstTab={
+                        <Tokens
                             portfolio={portfolio}
                             network={selectedNetwork}
                             account={selectedAccount}
                             hidePrivateValue={privateMode.hidePrivateValue}
                             userSorting={userSorting}
                             setUserSorting={setUserSorting}
+                            footer={
+                                <Footer
+                                    selectedAccount={selectedAccount}
+                                    selectedNetwork={selectedNetwork}
+                                />
+                            }
                         />
-                        :
-                        <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
-                }
-                <div className={styles.footer}>
-                    <span className={styles.missingTokenNotice}>
-                        If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
-                    </span>
-                </div>
-            </Panel>
+                    }
+                    secondTab={
+                        <Collectibles
+                            portfolio={portfolio}
+                            isPrivateMode={privateMode.isPrivateMode}
+                            selectedNetwork={selectedNetwork}
+                            footer={
+                                <Footer
+                                    selectedAccount={selectedAccount}
+                                    selectedNetwork={selectedNetwork}
+                                />
+                            }
+                        />
+                    }
+                    panelClassName={styles.assetsPanel}
+                    tabClassName={styles.tab}
+                    shadowClassName={styles.tabsShadow}
+                    defaultTab={defaultTab}
+                />
         </section>
     )
 }

@@ -1,21 +1,20 @@
-import './WalletTokenModal.scss'
+import styles from './WalletTokenModal.module.scss'
 
 import { Button, Modal, ToolTip, RemoteLottie } from 'components/common'
-import { MdOutlineClose } from 'react-icons/md'
-import { useModals } from 'hooks'
 import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
-import MultiplierBadges from './MultiplierBadges'
+import MultiplierBadges from './MultiplierBadges/MultiplierBadges'
 import { useState } from 'react'
 import UnbondModal from './UnbondModal/UnbondModal'
 import { formatFloatTokenAmount } from 'lib/formatters'
+import cn from 'classnames'
 
 const MIN_ELIGIBLE_USD = 1000
 const MIN_CLAIMABLE_WALLET = 1000
+const MIN_CLAIMABLE_ADX_USD = 1000
 
-const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
+const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
 
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
-  const { hideModal } = useModals()
   const { stakedAmount } = useStakedWalletToken({ accountId })
 
   const hideUnbondModal = () => setIsUnbondModalVisible(false)
@@ -39,12 +38,10 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
 
   const claimWithBurn = () => claimEarlyRewards(false)
 
-  const modalButtons = <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-
   const eligibilityLeft = MIN_ELIGIBLE_USD - rewards.balance.balanceInUSD
   const isEligible = eligibilityLeft <= 0
-  const walletClaimableLeft = MIN_CLAIMABLE_WALLET - claimableNow
-  const canClaimWallet = walletClaimableLeft <= 0
+  const accumulatedWallets = rewards['balance-rewards'] + rewards['adx-rewards']
+  const canClaimWallet = accumulatedWallets >= MIN_CLAIMABLE_WALLET
 
   const apys = {
     adxStakingApy: {
@@ -53,8 +50,11 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
     }
   }
 
+  const formatAmount = amount => amount ? amount.toFixed(6): 0
+
   return (
-    <Modal id='wallet-token-modal' title='WALLET token distribution' buttons={modalButtons}>
+    <Modal className={styles.wrapper} title='WALLET token distribution'>
+      <div className={styles.content}>
       <UnbondModal
         isVisible={isUnbondModalVisible}
         hideModal={hideUnbondModal}
@@ -64,39 +64,39 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
         onClick={claimWithBurn}
       />
 
-      <div className={'rewards-progress-container'}>
-        <div className={'rewards-progress-path'}>
-          <div className={`rewards-progress-holding active`}>
-            <div className={`rewards-progress-holding-icon`}></div>
+      <div>
+        <div className={styles.rewardsProgressPath}>
+          <div>
+            <div className={styles.rewardsProgressHoldingIcon}></div>
           </div>
-          <div className={`rewards-progress-bar rewards-progress-holding active`}>
-            <div className={`rewards-progress-bar-filler`}
+          <div className={styles.rewardsProgressBar}>
+            <div className={cn(styles.rewardsProgressBarFiller, styles.rewardsProgressBarFillerActive)}
                  style={{ width: (Math.min(rewards.balance.balanceInUSD / MIN_ELIGIBLE_USD, 1) * 100) + '%' }}></div>
             <span><b>${Math.floor(Math.min(rewards.balance.balanceInUSD, MIN_ELIGIBLE_USD))}{rewards.balance.balanceInUSD > MIN_ELIGIBLE_USD && '+'}</b>/${MIN_ELIGIBLE_USD}</span>
           </div>
 
-          <div className={`rewards-wallet ${isEligible ? 'active' : 'inactive'}`}>
+          <div>
             {
               isEligible
                 ? (<ToolTip label={`You are earning $WALLET rewards`}>
-                    <RemoteLottie remoteJson={'/resources/rewards/rewards-active.mp4.lottie.json'} className='rewards-wallet-icon-animated' background='transparent' speed='1' loop autoplay />
+                    <RemoteLottie remoteJson={'/resources/rewards/rewards-active.mp4.lottie.json'} className={styles.rewardsWalletIconAnimated} background='transparent' speed='1' loop autoplay />
                 </ToolTip>)
-                : (<ToolTip label={`You need a balance worth more than $${MIN_ELIGIBLE_USD} worth of tokens to start accumulating $WALLET rewards`}><div className={`rewards-wallet-icon`}></div></ToolTip>)
+                : (<ToolTip label={`You need a balance worth more than $${MIN_ELIGIBLE_USD} worth of tokens to start accumulating $WALLET rewards`}><div className={styles.rewardsWalletIcon}></div></ToolTip>)
             }
           </div>
 
-          <div className={`rewards-progress-bar rewards-progress-wallets ${isEligible ? 'active' : 'inactive'}`}>
-            <div className={`rewards-progress-bar-filler`}
-                 style={{ width: (Math.min(claimableNow / MIN_CLAIMABLE_WALLET, 1) * 100) + '%' }}></div>
-            <span><b>$Wallet {Math.floor(Math.min(claimableNow, MIN_CLAIMABLE_WALLET))}{claimableNow > MIN_CLAIMABLE_WALLET && '+'}</b>/{MIN_CLAIMABLE_WALLET}</span>
+          <div className={styles.rewardsProgressBar}>
+            <div className={cn(styles.rewardsProgressBarFiller, {[styles.rewardsProgressBarFillerActive]:isEligible})}
+                 style={{ width: (Math.min(accumulatedWallets / MIN_CLAIMABLE_WALLET, 1) * 100) + '%' }}></div>
+            <span><b>$WALLET {Math.floor(Math.min(accumulatedWallets, MIN_CLAIMABLE_WALLET))}{accumulatedWallets > MIN_CLAIMABLE_WALLET && '+'}</b>/{MIN_CLAIMABLE_WALLET}</span>
           </div>
-          <ToolTip label={canClaimWallet ? `You need to accumulate ${MIN_CLAIMABLE_WALLET} $WALLET to claim` : `You can claim accumulated $WALLET rewards`}>
-            <div className={`rewards-progress-claim ${canClaimWallet ? 'active' : 'inactive'}`}>
-              <div className={`rewards-progress-claim-icon`}></div>
+          <ToolTip label={canClaimWallet ? `You can claim accumulated $WALLET rewards`: `You need to accumulate ${MIN_CLAIMABLE_WALLET} $WALLET to claim`}>
+            <div>
+              <div className={cn(styles.rewardsProgressClaimIcon, {[styles.rewardsProgressClaimIconActive]: canClaimWallet})}></div>
             </div>
           </ToolTip>
         </div>
-        <div className={'rewards-progress-labels'}>
+        <div className={styles.rewardsProgressLabels}>
           <span>Balance</span>
           <span>My Ambire Rewards</span>
           <span>Unlock Claim</span>
@@ -105,93 +105,99 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards }) => {
 
       <MultiplierBadges rewards={rewards} apys={apys}/>
 
-      <div id='info'>
+      <div className={styles.info}>
         You are receiving $WALLETs for holding funds on your Ambire wallet as an early user. <a
         href='https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747' target='_blank' rel='noreferrer'>Read
         More</a>
       </div>
 
-      <div className='item'>
-        <div className='details'>
+      <div className={styles.item}>
+        <div className={styles.details}>
           <label>Claimable now (Early users + ADX Staking bonus)</label>
-          <div className='balance'>
-            <div className='amount'><span
-              className='primary-accent'>{formatFloatTokenAmount(Math.floor(claimableNow), true, 0)}</span></div>
-            <div className='amount usd'><span className='text'>$</span>{claimableNowUsd}</div>
-          </div>
-        </div>
-        <div className='actions mt-4'>
-          <Button className='claim-rewards-with-burn' purpleGradient full onClick={openUnbondModal}
-                  disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
-          <Button className='claim-rewards-x-wallet' greenGradient full onClick={claimEarlyRewards}
-                  disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
-        </div>
-      </div>
-
-      <div className='item'>
-        <div className='details'>
-          <label>Early users Incentive</label>
-          <div className='balance'>
-            <div className='amount'><span className='primary-accent'>{rewards['balance-rewards']}</span></div>
-            <div className='amount apy'>{walletTokenAPYPercentage} <span>APY</span></div>
-          </div>
-        </div>
-      </div>
-
-      <div className='item'>
-        <div className='details'>
-          <label>ADX staking bonus</label>
-          <ToolTip label={rewards['adx-rewards'] > 0 ? `$ADX Staking bonus is active` : `You need to stake $ADX to receive the $ADX staking bonus`}>
-            <div className={'activation-badge'}>
-              <span className={`badge-adx ${rewards['adx-rewards'] > 0 ? 'active' : 'inactive'}`}></span>
+          <div className={styles.balance}>
+            <div className={styles.amount}>
+              <span>{formatFloatTokenAmount(Math.floor(claimableNow), true, 0)}</span>
             </div>
+            <div className={cn(styles.amount, styles.usd)}><span>$</span>{claimableNowUsd}</div>
+          </div>
+        </div>
+        <div className={cn(styles.actions, 'mt-4')}>
+          <ToolTip label={network.id !== 'ethereum' ? 'Switch to Ethereum network to claim' : ''}>
+            <Button className={styles.claimRewardsWithBurn} secondaryGradient full onClick={openUnbondModal}
+                    disabled={!!(claimDisabledReason || disabledReason)}>Claim with burn</Button>
+            <Button className={styles.claimRewardsXWallet} terniaryGradient full onClick={claimEarlyRewards}
+                  disabled={!!(claimDisabledReason || disabledReason)}>CLAIM IN xWALLET</Button>
           </ToolTip>
-          <div className='balance'>
-            <div className='amount'><span
-              className='primary-accent'>{rewards['adx-rewards'] === 0 ? '0.00' : rewards['adx-rewards']}</span></div>
-            <div className='amount apy'>{adxTokenAPYPercentage} <span>APY</span></div>
+        </div>
+      </div>
+
+      <div className={styles.item}>
+        <div className={styles.details}>
+          <label>Early users Incentive (Total)</label>
+          <div className={styles.balance}>
+            <div className={styles.amount}><span>{formatAmount(rewards['balance-rewards'])}</span></div>
+            <div className={cn(styles.amount, styles.apy)}>{walletTokenAPYPercentage} <span>APY</span></div>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.item}>
+        <div className={styles.details}>
+          <label>
+            <ToolTip label={rewards.balance.balanceFromADX >= MIN_CLAIMABLE_ADX_USD ? `$ADX Staking bonus is active` : `You need to stake $${MIN_CLAIMABLE_ADX_USD} in $ADX to receive the $ADX staking bonus`}>
+              <div className={styles.activationBadge}>
+                ADX staking bonus (Total) <span className={cn(styles.badgeAdx, {[styles.badgeAdxActive]: rewards.balance.balanceFromADX >= MIN_CLAIMABLE_ADX_USD})}></span>
+              </div>
+            </ToolTip></label>
+          <div className={styles.balance}>
+            <div className={styles.amount}>
+              <span>{formatAmount(rewards['adx-rewards'])}</span>
+            </div>
+            <div className={cn(styles.amount, styles.apy)}>{adxTokenAPYPercentage} <span>APY</span></div>
           </div>
         </div>
       </div>
 
       {shouldDisplayMintableVesting && (
-        <div className='item'>
-          <div className='details'>
+        <div className={styles.item}>
+          <div className={styles.details}>
             <label>Claimable early supporters vesting</label>
-            <div className='balance'>
-              <div className='amount'><span className='primary-accent'>
-                                {currentClaimStatus.mintableVesting}
-                            </span></div>
-              <div className='amount usd'>
-                <span className='secondary-accent'>$</span>
+            <div className={styles.balance}>
+              <div className={styles.amount}>
+                <span>
+                  {formatAmount(currentClaimStatus.mintableVesting)}
+                </span>
+              </div>
+              <div className={cn(styles.amount, styles.usd)}>
+                <span>$</span>
                 {mintableVestingUsd}
               </div>
             </div>
           </div>
-          <div className='actions mt-4'>
+          <div className={cn(styles.actions, 'mt-4')}>
             <ToolTip label={
               disabledReason || `Linearly vested over approximately ${Math.ceil((vestingEntry.end - vestingEntry.start) / 86400)} days`
             }>
-              <Button primaryGradient full onClick={claimVesting} disabled={!!disabledReason}>CLAIM</Button>
+              <Button primaryGradient full onClick={claimVesting} disabled={!!disabledReason}>Claim</Button>
             </ToolTip>
           </div>
         </div>
       )}
 
       {!!stakedAmount && (
-        <div className='item'>
-          <div className='details'>
+        <div className={styles.item}>
+          <div className={styles.details}>
             <label>Staked WALLET</label>
-            <div className='balance'>
-              <div className='amount'><span className='primary-accent'>
-                                    {stakedAmount}
-                                </span></div>
-              <div className='amount apy'>{xWALLETAPYPercentage} <span>APY</span></div>
+            <div className={styles.balance}>
+              <div className={styles.amount}>
+                <span>{formatAmount(stakedAmount)}</span>
+              </div>
+              <div className={cn(styles.amount, styles.apy)}>{xWALLETAPYPercentage} <span>APY</span></div>
             </div>
           </div>
         </div>
       )}
-
+      </div>
     </Modal>
   )
 }
