@@ -20,7 +20,7 @@ import styles from './Dashboard.module.scss'
 const Footer = ({ selectedAccount, selectedNetwork, isAddBtnShown, onFooterButtonClick }) => <div className={styles.footer}>
     <span className={styles.missingTokenNotice}>
         If you don't see a specific token that you own, please
-        {!isAddBtnShown ? `check the ` : " "}
+        {!isAddBtnShown ? ` check the ` : " "}
         {!isAddBtnShown ? (<a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">
             Block Explorer
         </a>) : (<button className={styles.footerButton} onClick={onFooterButtonClick}>
