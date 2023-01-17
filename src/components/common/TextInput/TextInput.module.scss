@@ -24,12 +24,12 @@ $input-height: 60px;
                 left: 0;
                 height: 100%;
                 display: flex;
-                background-color: $c-mirage;
+                background-color: theme(background-primary);
                 align-items: center;
                 justify-content: center;
                 width: 60px;
                 font-size: 24px;
-                color: $c-titan-white;
+                color: theme(text-primary);
                 border-bottom: 2px solid transparent;
                 transition: all 0.1s ease-in-out;
             }
@@ -38,7 +38,7 @@ $input-height: 60px;
                 padding-left: 48px;
 
                 &:focus ~ .textInputContainerIcon {
-                    border-bottom-color: $c-titan-white;
+                    border-bottom-color: theme(border-input);
                 }
             }
         }
@@ -50,7 +50,7 @@ $input-height: 60px;
             height: 100%;
             width: 3.5em;
             @include flex-center-center;
-            color: $c-titan-white;
+            color: theme(text-primary);
             cursor: pointer;
             user-select: none;
             transition: $basic-transition;
@@ -64,7 +64,7 @@ $input-height: 60px;
         input {
             height: $input-height;
             width: 100%;
-            color: $c-scampi;
+            color: theme(text-secondary);
             font-family: 'Poppins', sans-serif;
             font-size: 16px;
             padding: 18px;
@@ -73,16 +73,16 @@ $input-height: 60px;
             border: none;
             text-overflow: ellipsis;
             outline: none;
-            background-color: $c-mirage;
+            background-color: theme(background-primary);
             transition: all 0.1s ease-in-out;
             border-bottom: 2px solid transparent;
 
             &:focus {
-                border-bottom-color: $c-titan-white;
+                border-bottom-color: theme(border-input);
             }
 
             &:focus ~ .button {
-                border-bottom-color: $c-titan-white;
+                border-bottom-color: theme(border-input);
             }
         }
     }

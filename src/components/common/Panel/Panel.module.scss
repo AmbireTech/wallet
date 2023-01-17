@@ -6,8 +6,8 @@
     flex-direction: column;
     gap: 25px;
     padding: 25px 30px 30px;
-    background: $c-ebony-clay;
-    border: 1px solid $c-fiord;
+    background-color: theme(background-terniary);
+    border: 1px solid theme(border-secondary);
     border-radius: 12px;
 
     .title {

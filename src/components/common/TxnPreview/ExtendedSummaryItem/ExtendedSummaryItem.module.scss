@@ -7,7 +7,7 @@ $extended-summary-height: 36px;
   display: flex;
   align-items: center;
   height: $extended-summary-height;
-  color: $c-turquoise;
+  color: theme(highlight-secondary);
   font-size: 14px;
 
   &.unknown {
@@ -21,7 +21,7 @@ $extended-summary-height: 36px;
 
 .word {
   font-size: 13px;
-  color: $c-scampi;
+  color: theme(text-secondary);
 }
 
 .token,
@@ -33,14 +33,14 @@ $extended-summary-height: 36px;
   gap: 10px;
   font-size: 14px;
   flex-wrap: wrap;
-  color: $c-titan-white;
+  color: theme(text-primary);
 
   .icon {
     height: 36px;
     width: 36px;
     padding: 8px;
     border-radius: 12px;
-    background-color: rgba($c-titan-white, 0.05);
+    background-color: theme(background-icon);
   }
 }
 

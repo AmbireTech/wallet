@@ -1,16 +1,16 @@
-import supportedDApps from "ambire-common/src/constants/supportedDApps"
-
-import styles from "./SignMessage.module.scss"
-
-import { MdBrokenImage, MdCheck, MdClose, MdInfoOutline } from "react-icons/md"
-import { toUtf8String, isHexString } from "ethers/lib/utils"
-import * as blockies from "blockies-ts"
 import { useState, useEffect, useRef } from "react"
-import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
-import { networkIconsById } from 'consts/networks'
+import * as blockies from "blockies-ts"
+import { toUtf8String, isHexString } from "ethers/lib/utils"
+import supportedDApps from "ambire-common/src/constants/supportedDApps"
 import cn from "classnames"
 
 import { useSignMessage } from "hooks"
+import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
+import AccountAndNetwork from "components/common/AccountAndNetwork/AccountAndNetwork"
+
+import { MdBrokenImage, MdInfoOutline } from "react-icons/md"
+
+import styles from "./SignMessage.module.scss"
 
 const CONF_CODE_LENGTH = 6
 
@@ -104,29 +104,16 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     })
   }
 
-  const requestedNetworkIcon = networkIconsById[requestedNetwork.id]
-
   return (
     <div className={styles.wrapper}>
-      <Panel title={'Signing with account'} className={styles.panel}>
-        <div className={styles.signingAccountContent}>
-          <div className={styles.signingAccountAccount}>
-            <img
-              className={styles.icon}
-              src={blockies.create({ seed: account.id }).toDataURL()}
-              alt='Account Icon'
-            />
-            {account.id}
-          </div>
-          <div className={styles.signingAccountNetwork}>
-            on
-            <div
-              className={styles.icon}
-              style={{ backgroundImage: `url(${requestedNetworkIcon})` }}
-            />
-            <div className='address'>{requestedNetwork.name}</div>
-          </div>
-        </div>
+      <Panel title="Signing with account" titleClassName={styles.panelTitle} className={styles.panel}>
+        <AccountAndNetwork
+          address={account.id}
+          networkName={requestedNetwork.name}
+          networkId={requestedNetwork.id}
+          avatar={blockies.create({ seed: account.id }).toDataURL()}
+          maxAddressLength={30}
+        />
       </Panel>
       <Panel className={styles.panel}>
         <div className={cn(styles.title, styles.signMessageTitle)}>
@@ -167,11 +154,9 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             )}
             is requesting your signature.
           </div>
-          <span>
-            {totalRequests > 1
-              ? `You have ${totalRequests - 1} more pending requests.`
-              : ""}
-          </span>
+          {(totalRequests > 1) ? <span>
+            You have {totalRequests - 1} more pending requests.
+          </span> : null}
           {!isDAppSupported && <DAppIncompatibilityWarningMsg />}
         </div>
 
@@ -256,26 +241,16 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
             <div className={styles.buttons}>
               <Button
+                className={styles.button}
                 type='button'
                 danger
-                icon={<MdClose />}
-                className={styles.reject}
                 onClick={() => resolve({ message: "signature denied" })}
               >
                 Reject
               </Button>
               {isDeployed !== null && isDeployed && hasPrivileges && (
-                <Button type='submit' disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loading />
-                      Signing...
-                    </>
-                  ) : (
-                    <>
-                      <MdCheck /> Sign
-                    </>
-                  )}
+                <Button type='submit' primaryGradient disabled={isLoading} className={styles.button}>
+                  {isLoading ? "Signing..." : "Sign"}
                 </Button>
               )}
             </div>
