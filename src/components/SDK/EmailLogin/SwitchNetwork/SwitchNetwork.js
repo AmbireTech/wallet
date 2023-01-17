@@ -19,7 +19,7 @@ const SwitchNetwork = ({
 	onReject,
 	supported
 }) => {
-	const { setIsBackButtonVisible } = useSDKContext()
+	const { sdkDapp, setIsBackButtonVisible } = useSDKContext()
 
 	useEffect(() => {
 		setIsBackButtonVisible(false)
@@ -31,7 +31,7 @@ const SwitchNetwork = ({
 			<div className={styles.body}>
 				<div className={styles.dappLogoWrapper}>
 					<Image
-						src={`${document.referrer}/favicon.png`}
+						src={sdkDapp ? sdkDapp.icon : ''}
 						alt=""
 						className={styles.dappLogo}
 						size={32}
