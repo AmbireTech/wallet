@@ -19,6 +19,7 @@ import NumberInput from './NumberInput/NumberInput';
 import PasswordInput from './PasswordInput/PasswordInput';
 import Toggle from './Toggle/Toggle';
 import ToolTip from './ToolTip/ToolTip';
+import TxnPreview from './TxnPreview/TxnPreview';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
@@ -53,6 +54,7 @@ export {
     PasswordInput,
     Toggle,
     ToolTip,
+    TxnPreview,
     NoFundsPlaceholder,
     CountdownTimer,
     ErrorBoundary,
