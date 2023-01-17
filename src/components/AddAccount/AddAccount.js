@@ -134,7 +134,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     
     if (createResp.success) {
       utmTracking.resetUtm()
-    }
+    } 
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
       return

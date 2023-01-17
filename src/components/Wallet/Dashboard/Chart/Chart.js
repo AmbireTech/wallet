@@ -85,6 +85,8 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
     },
   }), [data.empty])
 
+  const formatDate = (date) => new Date(date).toLocaleTimeString('en-us', { day: 'numeric', year: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
+
   return (
     <div className={cn(styles.wrapper, className)}>
       <div className={styles.donut}>
@@ -101,12 +103,13 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
               (
                 networkBalance >= 10000 ? 
                 `${String(round(networkBalance/1000)).split('.').join(',')}K` : 
-                networkBalance.toFixed(2)
+                (data?.allTokensWithoutPrice ? ' -' : networkBalance.toFixed(2))
               ) :
-              0
+              (data?.allTokensWithoutPrice ? ' -' : 0 )
             }
           </label>
         </div>
+        {portfolio?.resultTime && <div className={styles.lastUpdate}>Last update: {formatDate(portfolio?.resultTime) } </div>}
       </div>
       <div className={styles.legend}>
         <h2 className={styles.legendTitle}>Balance by tokens</h2>
@@ -123,12 +126,14 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
                 </div>
               ))} 
             </div> :
-            <div className={styles.noTokensWrapper}>
+            (!data.tokensLength ? (
+              <div className={styles.noTokensWrapper}>
               <div className={styles.noTokens}>
                 <AlertCircle />
                 <label>You don't have any tokens on this network</label>
               </div>
             </div>
+            ) : null)
           }
       </div>
   </div>
