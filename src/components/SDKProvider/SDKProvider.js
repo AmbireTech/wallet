@@ -32,7 +32,7 @@ const SDKProvider = ({ children }) => {
 	useEffect(() => {
 		const matchedDapp = stateStorage.connected_dapps.find(dapp => dapp.origin === document.referrer.split('/').slice(0, 3).join('/'))
 		setSdkDapp(matchedDapp)
-	}, [stateStorage, document.referrer, setSdkDapp])
+	}, [stateStorage, setSdkDapp])
 
 	const showCloseModal = () => showModal(<CloseSDKModal />)
 

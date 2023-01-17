@@ -336,7 +336,6 @@ function AppInner() {
             selectedNetwork={network}
             addRequest={addRequest}
             sendTxnState={sendTxnState}
-            internalRequests={internalRequests}
             everythingToSign={everythingToSign}
           />
         </Route>
