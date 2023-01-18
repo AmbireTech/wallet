@@ -25,10 +25,10 @@ const Alert = ({ title, text, type, size, iconNextToTitle, isIconHidden, classNa
         <div className={cn(styles.alert, styles[type || "info"], styles[size || "normal"], {[styles.alertIconNextToTitle] : iconNextToTitle})}>
           {(!iconNextToTitle && !isIconHidden) ? icon : null}
           <div className={styles.body}>
-            <div className={styles.titleWrapper}>
+            {((!isIconHidden || !iconNextToTitle) && title) ? (<div className={styles.titleWrapper}>
               {(iconNextToTitle && !isIconHidden) ? icon : null}
-              <h4 className={styles.title}>{title}</h4>
-            </div>
+              {title ? <h4 className={styles.title}>{title}</h4> : null}
+            </div>) : null}
             {text ? <p className={styles.text}>{text}</p> : null}
           </div>
         </div>
