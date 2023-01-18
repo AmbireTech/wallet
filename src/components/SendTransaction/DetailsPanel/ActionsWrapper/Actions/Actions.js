@@ -349,7 +349,7 @@ const Actions = ({
     && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
   const willFail = (estimation && !estimation.success) || insufficientFee
   if (willFail) {
-    return (<div className={styles.buttons}>
+    return (<div className={cn(styles.buttons, {[styles.sdkButtons]: isSDK})}>
       {rejectButton}
     </div>)
   }
