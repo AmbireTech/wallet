@@ -1,0 +1,49 @@
+@import 'variables';
+
+$titleBar-height: 90px;
+
+.wrapper {
+	position: relative;
+	z-index: 99;
+	display: flex;
+	align-items: center;
+	width: 100%;
+  margin-bottom: 30px;
+
+	.row {
+		@include flex-center-center;
+		gap: 10px;
+
+    &.dismiss {
+      cursor: pointer;
+    }
+	}
+
+	.backIcon {
+		background-color: theme(background-icon);
+		min-width: 40px;
+		min-height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 12px;
+	}
+
+	.backLabel {
+		margin: 0;
+		font-size: 16px;
+		font-weight: 300;
+		transition: 0.3s ease-in-out opacity;
+	}
+
+	.infoIcon {
+		width: 20px;
+		height: 20px;
+	}
+
+	&:hover {
+		.backLabel {
+			opacity: 0.8;
+		}
+	}
+}

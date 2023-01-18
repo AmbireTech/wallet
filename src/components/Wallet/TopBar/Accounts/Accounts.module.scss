@@ -4,18 +4,34 @@ $account-height: 60px;
 
 .wrapper {
     color: $c-titan-white;
+
     .content {
         cursor: pointer;
     }
 
-    .title {
-        font-family: 'Ubuntu Mono';
-        font-weight: bold;
+    .selectedAddress {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        
+        p {
+            margin: 0;
+        }
+
+        svg {
+            width: 18px;
+            transition: .3s ease-in-out opacity;
+
+            &:hover {
+                opacity: .6;
+            }
+        }
     }
 
     .menu {
         background-color: $c-mirage;
         padding-top: 15px;
+        
 
         .list {
             max-height: calc(#{$account-height} * 6.5);
@@ -151,11 +167,13 @@ $account-height: 60px;
         }
 
         .confirmDeleteAccount {
-            padding-left: 25px;
-            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 15px;
             
             .message {
-                padding-right: 15px;
+                margin: 0;
+                margin-left: 10px;
                 font-size: 15px;
             }
         }
@@ -176,6 +194,13 @@ $account-height: 60px;
     .wrapper {
         .menu {
             width: 100%;
+
+            .confirmDeleteAccount {
+                .message {
+                    font-size: 14px;
+                    word-wrap: break-word;
+                }
+            }
         }
     }
 }

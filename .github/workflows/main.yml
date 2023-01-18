@@ -39,10 +39,11 @@ jobs:
         clean-exclude: |
             staging
             relayerless
-            redesign
             paperbackup
             portfolio-v2
-            uniswap
+            moonpay
+            walletconnect2
+            sdk-login
 
 
 

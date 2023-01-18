@@ -159,7 +159,6 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                         <div className={styles.emailBody}>
                             <TextInput
                                 className={styles.emailInput}
-                                pattern='[0-9]+'
                                 title='Confirmation code should be 6 digits'
                                 autoComplete='nope'
                                 required minLength={6} maxLength={6}

@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Borders as LoadingBorders } from 'components/common'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
-import { ReactComponent as ArrowDownIcon } from 'resources/icons/arrow-down.svg'
+import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
 
 export default function DropDown({ children, id, icon, className, menuClassName, handleClassName, titleClassName, title, badge, open, closeOnClick, onChange, onOpen, onClose, style, isLoading }) {
     const ref = useRef();
@@ -37,7 +37,7 @@ export default function DropDown({ children, id, icon, className, menuClassName,
                 }
                 {/* <div className={styles.separator}></div> */}
                 <div className={cn(styles.handle, handleClassName, {[styles.open]: isMenuOpen})}>
-                    <ArrowDownIcon />
+                    <ChevronDownIcon />
                 </div>
 
                 { isLoading && <LoadingBorders /> }

@@ -5,13 +5,22 @@
     flex-direction: column;
     justify-content: center;
     gap: 60px;
-    background: url('/resources/login-bg.png');
-    background-size: cover;
-    background-position: top center;
-    background-repeat: no-repeat;
     min-height: 100%;
     padding: 40px 0;
     overflow: hidden;
+
+    &.dark {
+        background: url('/resources/login-bg.png');
+        background-size: cover;
+        background-position: top center;
+        background-repeat: no-repeat;
+
+        input {
+            &:not([type=submit]):focus {
+                border-bottom-color: $c-white;
+            }
+        }
+    }
 
     button, input {
         font-size: 16px;
@@ -56,7 +65,7 @@
         height: 60px;
         width: 100%;
         border: none;
-        background: transparent linear-gradient(90deg, $c-turquoise 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        background: theme(gradient-primary);
         border-radius: 12px;
         color: $c-white;
         font-size: 20px;
@@ -66,26 +75,22 @@
     }
 
     input {
-        color: $c-scampi;
+        color: theme(text-secondary);
         margin: 32px 0px;
-        border-bottom: 2px solid $c-titan-white;
+        border-bottom: 2px solid theme(border-input);
         width: 100%;
         font-size: 16px;
 
         &:not([type=submit]):focus {
-            border-bottom-color: #dae6fd;
+            border-bottom-color: #6000ff;        
         }
     }
 
     .logo {
-        background-image: url('/resources/logo.svg');
         width: 100%;
         max-width: 252px;
         margin: 0px auto;
         height: 110px;
-        background-size: contain;
-        background-repeat: no-repeat;
-        background-position: center;
     }
 
     .pluginInfo {
@@ -134,13 +139,16 @@
     }
 
     .backButton {
+        display: flex;
+        align-items: center;
+        gap: 10px;
         font-size: 16px;
         font-weight: 400;
         position: absolute;
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        color: $c-titan-white;
+        color: theme(text-primary);
         opacity: .8;
         transition: .3s ease-in-out;
 
@@ -174,13 +182,13 @@
 }
 
 .emailConf {
-    background-color: $c-mirage;
-    border: 1px solid $c-scampi;
+    background-color: theme(background-primary);
+    border: 1px solid theme(border-terniary);
     border-radius: 12px;
     padding: 30px 60px;
     padding-top: 12px;
     text-align: center;
-    color: $c-titan-white;
+    color: theme(text-primary);
     width: 100%;
     max-width: 460px;
     margin: 0 auto;
@@ -208,7 +216,7 @@
 
 .magicLink {
     font-weight: 400;
-    color: $c-titan-white;
+    color: theme(text-primary);
     opacity: .8;
     text-align: center;
 }

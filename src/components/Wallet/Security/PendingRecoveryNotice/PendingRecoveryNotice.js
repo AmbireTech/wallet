@@ -1,6 +1,6 @@
-import { AiFillWarning } from "react-icons/ai"
 import { FaCheck } from "react-icons/fa"
 import buildRecoveryBundle from 'lib/recoveryBundle'
+import { ReactComponent as WarningIcon } from 'resources/icons/alert.svg'
 
 const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, selectedNetwork }) => {
     const isAlreadyInitiated = recoveryLock && recoveryLock.status !== 'requestedButNotInitiated'
@@ -28,7 +28,7 @@ const PendingRecoveryNotice = ({ recoveryLock, showSendTxns, selectedAccount, se
             {
               recoveryLockStatus === 'ready'
                 ? <FaCheck />
-                : <AiFillWarning />
+                : <WarningIcon />
             }
 
             {

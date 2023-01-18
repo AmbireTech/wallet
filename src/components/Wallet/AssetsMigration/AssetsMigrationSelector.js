@@ -11,7 +11,7 @@ import { fetchGet } from 'lib/fetch'
 import { MdClose, MdOutlineNavigateNext, MdOutlineAddCircleOutline, MdCancel } from 'react-icons/md'
 import { Contract, ethers } from 'ethers'
 import { ERC20PermittableInterface } from 'consts/permittableCoins'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { GAS_SPEEDS } from 'ambire-common/src/constants/gasSpeeds'
 
 const TRANSFER_CONSUMPTION = 52000 // higher avg, 21000 included

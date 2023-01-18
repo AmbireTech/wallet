@@ -28,7 +28,7 @@ const CATEGORY_LABEL = {
 }
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
-  const dappUrl = useOneTimeQueryParam('dappUrl')
+  const dappUrl = useOneTimeQueryParam('dappUrlCatalog')
   const { addCustomDapp, loadDappFromUrl, isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
   const { showModal } = useModals()
   const [dappUrlFromLink, setDappUrlsFromLink] = useState('')
