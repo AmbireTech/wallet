@@ -25,7 +25,7 @@ const AccountAndNetwork = ({ address, avatar, networkName, networkId, maxAddress
 		<div className={cn(styles.wrapper, {[styles.sdk]: isSDK})}>
 			<div className={styles.account}>
 				<img className={styles.avatar} alt="avatar" src={avatar} />
-				<p className={styles.address}>{formatAddress(address, maxAddressLength)}</p>
+				<p className={styles.address}>{formatAddress(address, !isSDK ? maxAddressLength : 20)}</p>
 			</div>
 			<p className={styles.network}>
 				on {networkName}
