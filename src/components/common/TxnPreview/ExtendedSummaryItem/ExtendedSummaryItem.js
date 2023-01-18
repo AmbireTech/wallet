@@ -9,7 +9,7 @@ import { getTokenIcon } from 'lib/icons'
 import styles from './ExtendedSummaryItem.module.scss'
 
 const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
-  if (item.length === 1) return item
+  if (item.length <= 1) return null
 
   if (i === 0) return <div className={cn(styles.action, styles[item.toLowerCase()])}>{item}</div>
 
@@ -22,7 +22,9 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
       )
     return (
       <div className={styles.token}>
-        {item.amount > 0 ? <span>{formatFloatTokenAmount(item.amount, true, item.decimals)}</span> : null}
+        {item.amount > 0 ? (<span>
+          {formatFloatTokenAmount(item.amount, true, item.decimals)}
+        </span>) : null}
         {item.decimals !== null && item.symbol ? (
           <>
             {item.address ? (
@@ -41,7 +43,9 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
     )
   }
 
-  if (item.type === 'address')
+  if (item.type === 'address') {
+    const shortenedAddress = item.address.substring(0, 8) + '...' + item.address.substring(item.name.length - 3, item.name.length)
+
     return (
       <a
         className={styles.address}
@@ -51,11 +55,17 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <ToolTip disabled={!item.address} label={item.address}>
-          {item.name ? item.name : item.address}
+          <span className={styles.toAddress}>{item.name ? item.name : item.address}</span>
+          {item.name ? (<span className={cn(styles.toAddress, styles.short)}>
+            {item.name}
+          </span>) : (<span className={cn(styles.toAddress, styles.short)}>
+            {item.address.length > 14 ? shortenedAddress : item.address}
+          </span>)}
           {item.address ? <ExternalLinkIcon className={styles.externalLink} /> : null}
         </ToolTip>
       </a>
     )
+  }
 
   if (item.type === 'network')
     return (
@@ -79,7 +89,8 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         rel="noreferrer"
         onClick={(e) => e.stopPropagation()}
       >
-        {item.name}
+        <span className={styles.toAddress}>{item.name}</span>
+        <span className={cn(styles.toAddress, styles.short)}>{item.name.substring(0, 5) + '...' + item.name.substring(-5, item.name.length)}</span>
         {canShowLink ? <ExternalLinkIcon /> : null}
       </a>
     )
