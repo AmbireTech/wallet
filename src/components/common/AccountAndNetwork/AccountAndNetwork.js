@@ -18,14 +18,14 @@ const formatAddress = (fullStr, strLen) => {
 	return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars)
 }
 
-const AccountAndNetwork = ({ address, avatar, networkName, networkId, maxAddressLength = 20 }) => {
+const AccountAndNetwork = ({ address, avatar, networkName, networkId, maxAddressLength = 20, email }) => {
 	const { isSDK } = useSDKContext()
 
 	return (
 		<div className={cn(styles.wrapper, {[styles.sdk]: isSDK})}>
 			<div className={styles.account}>
 				<img className={styles.avatar} alt="avatar" src={avatar} />
-				<p className={styles.address}>{formatAddress(address, !isSDK ? maxAddressLength : 20)}</p>
+				<p className={styles.address}>{formatAddress(address, !isSDK ? maxAddressLength : 20)} {(isSDK && email) ? `(${email})` : ""}</p>
 			</div>
 			<p className={styles.network}>
 				on {networkName}

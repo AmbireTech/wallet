@@ -13,6 +13,7 @@ const AccountAndNetwork = ({ account, accountAvatar, network }) => {
       <h2 className={styles.title}>Signing With</h2>
       <AccountAndNetworkComponent
         address={account.id}
+        email={account.email}
         networkName={network.name}
         networkId={network.id}
         avatar={accountAvatar}
