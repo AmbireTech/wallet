@@ -116,8 +116,14 @@
 
         .containerBody {
           // .panel > .content(in the Panel component)
-          .panel > div {
-            gap: 0;
+          .panel {
+            .panelTitle {
+              font-size: 16px;
+            }
+
+            & > div {
+              gap: 0;
+            }
           }
         }
       }
