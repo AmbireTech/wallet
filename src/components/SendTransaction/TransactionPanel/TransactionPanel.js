@@ -24,6 +24,7 @@ const TransactionPanel = ({
         <div
           className={cn(styles.listOfTransactions, {
             [styles.frozen]: !bundle.requestIds,
+            [styles.sdk]: isSDK
           })}
         >
           {bundle.txns.map((txn, i) => {

@@ -1,3 +1,5 @@
+import cn from 'classnames'
+
 import { Alert } from 'components/common';
 import { useSDKContext } from 'components/SDKProvider/SDKProvider';
 import FailingTxn from "components/SendTransaction/DetailsPanel/FailingTxn/FailingTxn";
@@ -33,7 +35,7 @@ const ActionsWrapper = ({
       estimation.isDeployed === false &&
       bundle.gasLimit ? (
       <Alert
-        className={styles.firstTransactionAlert}
+        className={cn({[styles.firstTransactionAlert]: !isSDK})}
         type="info"
         isIconHidden={isSDK}
         title={!isSDK ? "Note" : ""}

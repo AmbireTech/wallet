@@ -132,6 +132,30 @@
     gap: 10px;
     width: 100%;
 
+    &.sdkButtons {
+      position: fixed;
+      bottom: 34.8px;
+      padding: 10px 15px;
+      background: $c-white;
+      z-index: 99;
+      border-top: 1px solid theme(border-primary);
+      left: 0;
+      flex-direction: row;
+      
+      .button {
+        width: unset;
+        flex: 1;
+  
+        &.danger {
+          flex: 1;
+        }
+  
+        &.confirm {
+          flex: 1;
+        }
+      }
+    }
+
     .button {
       font-size: 14px;
       width: 100%;

@@ -94,6 +94,7 @@
   
           .panelTitle {
             font-size: 20px;
+            margin-bottom: 12px;
           }
         }
       }
@@ -109,9 +110,21 @@
       padding-top: 5px;
       margin-top: 15px;
 
+      &.sdk {
+        margin-top: 0;
+        padding: 15px 15px 80px 15px;
+      }
+
       .containerBody {
+        gap: 10px;
+
         .panel {
+          position: static;
           padding: 15px;
+
+          & > div {
+            position: static;
+          }
         }
       }
     }

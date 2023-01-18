@@ -7,6 +7,6 @@
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .panelBody {
-    overflow-y: hidden;
+    overflow-y: visible;
   }
 }

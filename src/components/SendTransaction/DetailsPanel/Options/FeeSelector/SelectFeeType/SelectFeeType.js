@@ -3,6 +3,7 @@ import cn from 'classnames'
 
 import { formatFloatTokenAmount } from "lib/formatters"
 
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import {
   getFeesData
 } from 'components/SendTransaction/helpers'
@@ -32,6 +33,7 @@ const SelectFeeType = ({
   setFeeSpeed,
   nativeAssetSymbol
 }) => {
+  const { isSDK } = useSDKContext()
   const [editCustomFee, setEditCustomFee] = useState(false)
 
   const setCustomFee = value => setEstimation(prevEstimation => ({
@@ -68,6 +70,28 @@ const SelectFeeType = ({
   const isOverpriced = !!estimation.customFee
     && !isNaN(parseFloat(estimation.customFee))
     && (baseFeeInFeeToken > baseMaxFee)
+
+  if (isSDK) {
+    return (
+      <FeeAmountSelectors
+        setFeeSpeed={setFeeSpeed}
+        setCustomFee={setCustomFee}
+        setEditCustomFee={setEditCustomFee}
+        disabled={disabled}
+        estimation={estimation}
+        isGasTankEnabled={isGasTankEnabled}
+        network={network}
+        discount={discount}
+        symbol={symbol}
+        SPEEDS={SPEEDS}
+        nativeAssetSymbol={nativeAssetSymbol}
+        feeSpeed={feeSpeed}
+        decimals={decimals}
+        nativeRate={nativeRate}
+        className={styles.sdkAmountSelectors}
+      />
+    )
+  }
 
   return (
     <div className={styles.wrapper}>

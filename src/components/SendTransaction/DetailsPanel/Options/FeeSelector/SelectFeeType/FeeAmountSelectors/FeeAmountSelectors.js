@@ -26,7 +26,8 @@ const FeeAmountSelectors = ({
   nativeAssetSymbol,
   feeSpeed,
   decimals,
-  nativeRate
+  nativeRate,
+  className
 }) => {
 
   const selectFeeSpeed = speed => {
@@ -41,7 +42,7 @@ const FeeAmountSelectors = ({
   }
     
   return (
-    <div className={styles.wrapper}>
+    <div className={cn(styles.wrapper, className)}>
       {
         SPEEDS.map(speed => {
           const isETH = symbol === 'ETH' && nativeAssetSymbol === 'ETH'

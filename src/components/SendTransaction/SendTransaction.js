@@ -1,7 +1,9 @@
 import { useEffect, useState, useMemo, useRef } from 'react'
 import { ethers } from 'ethers'
 import { getProvider } from 'ambire-common/src/services/provider'
+import cn from 'classnames'
 
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 import { useToasts } from 'hooks/toasts'
 import {
   getDefaultFeeToken,
@@ -12,7 +14,6 @@ import DetailsPanel from './DetailsPanel/DetailsPanel'
 import TransactionPanel from './TransactionPanel/TransactionPanel'
 
 import styles from './SendTransaction.module.scss'
-import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 
 const DEFAULT_SPEED = 'fast'
 const REESTIMATE_INTERVAL = 15000
@@ -151,7 +152,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.container}>
+      <div className={cn(styles.container, {[styles.sdk]: isSDK})}>
         {!isSDK ? (<BackButton onDismiss={onDismiss} />): null}
         <div className={styles.containerBody}>
           <TransactionPanel

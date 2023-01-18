@@ -9,6 +9,7 @@ import { getWallet } from "lib/getWallet";
 import { fetchPost } from "lib/fetch";
 import { getProvider } from 'ambire-common/src/services/provider'
 
+import { useSDKContext } from 'components/SDKProvider/SDKProvider';
 import { useToasts } from 'hooks/toasts';
 import { Button, TextInput } from 'components/common'
 import { isTokenEligible } from 'components/SendTransaction/helpers'
@@ -54,6 +55,7 @@ const Actions = ({
   onBroadcastedTxn,
   resolveMany
   }) => {
+  const { isSDK } = useSDKContext()
   const { addToast } = useToasts()
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
   // reset this every time the signing status changes
@@ -402,7 +404,7 @@ const Actions = ({
             ></TextInput>
           }
         </div>
-        <div className={styles.buttons}>
+        <div className={cn(styles.buttons, {[styles.sdkButtons]: isSDK})}>
           <Button
             danger
             disabled={signingStatus?.inProgress}
@@ -428,7 +430,7 @@ const Actions = ({
     </div>)
   }
 
-  return (<div className={styles.buttons}>
+  return (<div className={cn(styles.buttons, {[styles.sdkButtons]: isSDK})}>
       {rejectButton}
       <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus?.inProgress} onClick={approveTxn}>
         {signingStatus && signingStatus.inProgress ? 'Signing...' : 'Sign and Send'}
