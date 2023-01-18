@@ -113,6 +113,13 @@
       &.sdk {
         margin-top: 0;
         padding: 15px 15px 80px 15px;
+
+        .containerBody {
+          // .panel > .content(in the Panel component)
+          .panel > div {
+            gap: 0;
+          }
+        }
       }
 
       .containerBody {
