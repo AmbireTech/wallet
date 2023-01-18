@@ -1,4 +1,8 @@
+import cn from 'classnames'
+
 import { networkIconsById } from 'consts/networks'
+
+import { useSDKContext } from 'components/SDKProvider/SDKProvider'
 
 import styles from './AccountAndNetwork.module.scss'
 
@@ -14,17 +18,21 @@ const formatAddress = (fullStr, strLen) => {
 	return fullStr.substr(0, frontChars) + separator + fullStr.substr(fullStr.length - backChars)
 }
 
-const AccountAndNetwork = ({ address, avatar, networkName, networkId, maxAddressLength = 20 }) => (
-	<div className={styles.wrapper}>
-		<div className={styles.account}>
-			<img className={styles.avatar} alt="avatar" src={avatar} />
-			<p className={styles.address}>{formatAddress(address, maxAddressLength)}</p>
+const AccountAndNetwork = ({ address, avatar, networkName, networkId, maxAddressLength = 20 }) => {
+	const { isSDK } = useSDKContext()
+
+	return (
+		<div className={cn(styles.wrapper, {[styles.sdk]: isSDK})}>
+			<div className={styles.account}>
+				<img className={styles.avatar} alt="avatar" src={avatar} />
+				<p className={styles.address}>{formatAddress(address, maxAddressLength)}</p>
+			</div>
+			<p className={styles.network}>
+				on {networkName}
+				<img className={styles.icon} src={networkIconsById[networkId]} alt={networkName} />
+			</p>
 		</div>
-		<p className={styles.network}>
-			on {networkName}
-			<img className={styles.icon} src={networkIconsById[networkId]} alt={networkName} />
-		</p>
-	</div>
-)
+	)
+}
 
 export default AccountAndNetwork

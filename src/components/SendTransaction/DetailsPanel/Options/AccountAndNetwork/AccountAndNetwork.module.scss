@@ -14,6 +14,12 @@
 
 @media (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
+    margin-bottom: 15px;
+
+    &.sdk {
+      margin-bottom: 5px;
+    }
+    
     .title {
       text-align: center;
     }

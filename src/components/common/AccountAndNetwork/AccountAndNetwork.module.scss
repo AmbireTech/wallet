@@ -50,6 +50,25 @@
     flex-direction: column;
     gap: 10px;
 
+    &.sdk {
+      align-items: flex-start;
+      gap: 5px;
+      
+      .account {
+        flex-direction: row;
+        gap: 10px;
+
+        .avatar {
+          width: 32px;
+          height: 32px;
+        }
+      }
+
+      .network {
+        align-self: flex-end;
+      }
+    }
+
     .account {
       flex-direction: column;
 
