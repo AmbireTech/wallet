@@ -356,17 +356,17 @@ const Actions = ({
 
   const isRecoveryMode = signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
   if (signingStatus && signingStatus.quickAcc) {
-    return (<div className={styles.wrapper}>
+    return (<div className={cn(styles.wrapper, {[styles.sdk]: isSDK})}>
       {
         signingStatus.confCodeRequired ?
           <div className={styles.confirmationCodeInfo}>
             <div className={styles.confirmationCodeInfoTitle}>Confirmation</div>
             <div className={styles.confirmationCodeInfoMessage}>
-              {signingStatus.confCodeRequired === 'otp' ? <p>Please enter your OTP code and your password.</p> : null}
+              {signingStatus.confCodeRequired === 'otp' ? "Please enter your OTP code and your password." : null}
               {signingStatus.confCodeRequired === 'email' ?
                 (isRecoveryMode
-                  ? <p>A confirmation code was sent to your email. Please enter it to initiate the recovery.</p>
-                  : <p>A confirmation code was sent to your email. Please enter it along with your password.</p>)
+                  ? "A confirmation code was sent to your email. Please enter it to initiate the recovery."
+                  : "A confirmation code was sent to your email. Please enter it along with your password.")
                       : null
 	      }
             </div>

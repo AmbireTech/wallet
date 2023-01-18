@@ -112,6 +112,33 @@
   .wrapper {
     text-align: center;
 
+    &.sdk {
+      padding-top: 20px;
+
+      .confirmationCodeInfo {
+        margin-bottom: 10px;
+        
+        .confirmationCodeInfoTitle {
+          margin-bottom: 10px;
+        }
+        .confirmationCodeInfoMessage {
+          font-size: 12px;
+        }
+      }
+
+      .quickAccSigningForm {
+        .inputsContainer {
+          flex-direction: row;
+
+          & > div {
+            input {
+              height: 50px;
+            }
+          }
+        }
+      }
+    }
+
     .quickAccSigningForm {
       .inputsContainer {
         flex-direction: column;
