@@ -2,6 +2,8 @@ import { Bundle } from 'adex-protocol-eth/js'
 import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { ethers } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
+const ERC20 = new Interface(require("adex-protocol-eth/abi/ERC20"))
 // It costs around 19k to send a token, if that token was interacted with before in the same transaction,
 // because of SLOAD costs - they depend on whether a slot has been read
 // however, it costs 30k if the token has not been interacted with
@@ -152,23 +154,19 @@ export function makeBundle(account, networkId, requests) {
 }
 
 export function addMockedTxnToBundle(bundle, selectedNetwork, selectedAcc) {
-  const tempBundle = bundle
-  const mockTxn = {
-    to: accountPresets.feeCollector,
-    value: ethers.utils.parseUnits('0.0006969696', 18).toHexString(),
-    data: '0x'
-  }
+  const tempBundle = new Bundle({ ...bundle })
+  const mockedValue = '0.' + '89'.repeat(9)
+  const mockTxn = 
+    [
+      '0xCAE1F94F6fCF3777A73aBC6850BaE16d0DBBCc3c',
+      "0x0",
+      ERC20.encodeFunctionData("transfer", [
+        accountPresets.feeCollector,
+        toHexAmount(mockedValue, 18),
+      ])
+    ]
   
-  const req = {
-    id: `transfer_${Date.now()}`,
-    type: 'eth_sendTransaction',
-    chainId: selectedNetwork.chainId,
-    account: selectedAcc,
-    txn: mockTxn,
-    meta: null
-}
-  tempBundle.txns = [...tempBundle.txns, toBundleTxn(req, selectedAcc)]
-  tempBundle.extraGas += req.extraGas
-
+  tempBundle.txns = [...tempBundle.txns, mockTxn]
+    
   return tempBundle
 }

@@ -100,16 +100,17 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
     // track whether the effect has been unmounted
     let unmounted = false
 
-    // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
-    // We may want to change this if we make a check if the currently replaced txn was already mined
     let bundleToEstimate
-    if (network.id === 'arbitrum') {
+    if (network.id === 'arbitrum' && !currentAccGasTankState.isEnabled) {
       bundleToEstimate = addMockedTxnToBundle(bundle, network, account.id)
     } else {
-      bundleToEstimate = { ...bundle }
+      bundleToEstimate = bundle
     }
+    
+    // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
+    // We may want to change this if we make a check if the currently replaced txn was already mined
     const reestimate = () => (relayerURL
-        ? bundle.estimate({ relayerURL, fetch, replacing: !!bundleToEstimate.minFeeInUSDPerGas, getNextNonce: true, gasTank: currentAccGasTankState.isEnabled })
+        ? bundleToEstimate.estimate({ relayerURL, fetch, replacing: !!bundleToEstimate.minFeeInUSDPerGas, getNextNonce: true, gasTank: currentAccGasTankState.isEnabled })
         : bundle.estimateNoRelayer({ provider: getProvider(network.id) })
     )
       .then((estimation) => {
