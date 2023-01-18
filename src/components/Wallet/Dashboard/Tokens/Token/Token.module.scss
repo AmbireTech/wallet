@@ -1,0 +1,190 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 30px;
+  background-color: $c-mirage;
+  border-radius: 12px;
+
+  h3 {
+    font-weight: 300;
+    font-size: 20px;
+    margin: 0;
+  }
+
+  .body {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+  }
+
+  .infoAndActions {
+    display: flex;
+    align-items: flex-end;
+    flex: 3.7;
+    .baseInfo {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      flex: 1.5;
+      font-weight: 500;
+      color: $c-titan-white;
+      
+      .iconWrapper {
+        border-radius: 12px;
+        background-color: rgba($c-titan-white, 0.04);
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        
+        img, .iconFailed {
+          width: 24px;
+          height: 24px;
+          border-radius: 12px;
+        }
+
+        .iconFailed {
+          border-radius: 0;
+        }
+      }
+  
+      .balanceAndSymbol {
+        .symbol {
+          margin: 0;
+          font-size: 20px;
+          font-weight: 500;
+        }
+        .balance {
+          margin: 0;
+          font-size: 16px;
+          color: $c-turquoise;
+          font-weight: 400;
+        }
+        .balanceEstimated {
+          color: $warning-color;
+        }
+      }
+    }
+
+    .priceAndValue {
+      display: flex;
+      align-items: flex-end;
+      flex: 2.2;
+      .price {
+        color: $c-heliotrope;
+        flex: 1.2;
+        font-size: 16px;
+      }
+      .value {
+        flex: 1;
+        color: $c-titan-white;
+        opacity: 1;
+      }
+    }
+  }
+
+
+  .actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+
+    .action {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 50px;
+      padding: 0 20px;
+      gap: 5px;
+      background-color: rgba($c-titan-white, 0.04);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: .3s ease-out opacity;
+      opacity: 1;
+      
+      &:hover {
+        opacity: .6;
+      }
+
+      svg {
+        width: 28px;
+        height: 28px;
+      }
+
+      p {
+        font-size: 14px;
+      }
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: 768px) {
+  .wrapper {
+    padding: 20px 15px;
+    border: 1px solid $c-martinique;
+
+    .body {
+      flex-direction: column;
+      gap: 25px;
+    }
+
+    .infoAndActions {
+      justify-content: space-between;
+      width: 100%;
+
+      .baseInfo {
+        display: flex;
+        flex: 1;
+        max-width: 60%;
+        gap: 10px;
+
+        .balanceAndSymbol {
+          flex: 1;
+          .symbol {
+            font-weight: 500;
+            font-size: 16px;
+            word-wrap: break-word;
+          }
+
+          .balance {
+            font-size: 14px;
+          }
+        }
+      }
+
+      .priceAndValue {
+        flex: 1;
+        flex-direction: column-reverse;
+        align-items: flex-end;
+        
+        .value {
+          font-size: 16px;
+        }
+
+        .price {
+          font-size: 14px;
+          align-self: auto;
+        }
+      }
+    }
+    .actions {
+      gap: 20px;
+      width: 100%;
+      .action {
+        width: 100%;
+        height: 50px;
+
+        svg {
+          width: 32px;
+          height: 32px;
+        }
+      }
+    }
+  }
+}

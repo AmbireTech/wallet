@@ -1,9 +1,10 @@
-import styles from './Pagination.module.scss'
 import cn from 'classnames'
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 import { Button } from 'components/common'
 import { useHistory, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
+
+import styles from './Pagination.module.scss'
 
 // Pagination component based on url. necessary to be independent and synced
 const Pagination = ({ items, setPaginatedItems, itemsPerPage, url, parentPage = null }) => {
