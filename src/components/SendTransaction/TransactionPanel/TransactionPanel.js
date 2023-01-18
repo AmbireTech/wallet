@@ -40,7 +40,7 @@ const TransactionPanel = ({
                 // pasing an unused property to make it update
                 minute={min}
                 onDismiss={
-                  bundle.requestIds &&
+                  bundle.requestIds && !isSDK &&
                   (() =>
                     resolveMany([bundle.requestIds[i]], {
                       message: REJECT_MSG,
