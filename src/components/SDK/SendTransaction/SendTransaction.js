@@ -43,7 +43,7 @@ export default function SendTransaction({selectedAcc, selectedNetwork, addReques
     }, [hasLoaded, addRequest, req])
 
     useEffect(() => {
-        if (hasLoaded && showingTxDialogRef.current && !showingTxDialog && internalRequests.length === 0) {
+        if (hasLoaded && showingTxDialogRef.current && !showingTxDialog && internalRequests?.length === 0) {
             setHasLoaded(false)
         }
 
