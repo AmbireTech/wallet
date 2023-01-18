@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Yearn } from '@yfi/sdk'
 import { MdInfo } from "react-icons/md"
 import { ToolTip } from "components/common"
@@ -72,8 +72,33 @@ const customVaultMetadata = {
 const useYearn = ({ tokens, networkDetails, provider, currentNetwork }) => {
     const [tokensItems, setTokensItems] = useState([])
     const [details, setDetails] = useState([])
+    const [vaults, setVaults] = useState([])
 
     const getTokenFromPortfolio = useCallback(tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}, [tokens])
+
+    const toTokensItems = useCallback((type, vaults) => {
+        return vaults.map(vault => {
+            let token 
+            if (type === 'deposit') {
+               token = vault.token
+            } else {
+                token = vault.yToken
+            }
+            const { apy } = vault
+            const { address, symbol, decimals } = token
+            const { balance, balanceRaw } = getTokenFromPortfolio(address)
+            return {
+                ...vault,
+                type,
+                label: `${symbol} (${apy}% APY)`,
+                symbol,
+                decimals,
+                tokenAddress: address,
+                balance: balance || 0,
+                balanceRaw: balanceRaw || '0',
+            }
+        })
+    }, [getTokenFromPortfolio])
 
     const loadVaults = useCallback(async () => {
         const yearn = new Yearn(networkDetails.chainId, { provider })
@@ -104,46 +129,12 @@ const useYearn = ({ tokens, networkDetails, provider, currentNetwork }) => {
             }
         })
 
-        const depositTokens = vaults.map(vault => {
-            const { apy, token } = vault
-            const { address, symbol, decimals } = token
-            const { balance, balanceRaw } = getTokenFromPortfolio(address)
-            return {
-                ...vault,
-                type: 'deposit',
-                label: `${symbol} (${apy}% APY)`,
-                symbol,
-                decimals,
-                tokenAddress: token.address,
-                balance: balance || 0,
-                balanceRaw: balanceRaw || '0',
-            }
-        })
 
-        const withdrawTokens = vaults.map(vault => {
-            const { apy, yToken } = vault
-            const { address, symbol, decimals } = yToken
-            const { balance, balanceRaw } = getTokenFromPortfolio(address)
-            return {
-                ...vault,
-                type: 'withdraw',
-                label: `${symbol} (${apy}% APY)`,
-                symbol,
-                decimals,
-                tokenAddress: yToken.address,
-                balance: balance || 0,
-                balanceRaw: balanceRaw || '0',
-            }
-        })
 
         // Prevent race conditions
         if (currentNetwork.current !== networkDetails.id) return
-
-        setTokensItems([
-            ...depositTokens,
-            ...withdrawTokens
-        ])
-    }, [getTokenFromPortfolio, provider, networkDetails, currentNetwork])
+        setVaults(vaults)
+    }, [provider, networkDetails, currentNetwork])
 
     const onTokenSelect = useCallback(address => {
         const selectedToken = tokensItems.find(t => t.tokenAddress === address)
@@ -159,6 +150,18 @@ const useYearn = ({ tokens, networkDetails, provider, currentNetwork }) => {
             ['Type', 'Variable Rate'],
         ])
     }, [tokensItems])
+
+    useEffect(() => {
+        const depositTokenItems = toTokensItems('deposit', vaults)
+        const withdrawTokenItems = toTokensItems('withdraw', vaults)
+        
+        setTokensItems([
+            ...depositTokenItems,
+            ...withdrawTokenItems
+        ])
+        
+        return () => setTokensItems([])
+    }, [vaults, toTokensItems])
 
     return {
         icon: YEARN_ICON,

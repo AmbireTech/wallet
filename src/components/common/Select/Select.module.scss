@@ -1,0 +1,191 @@
+@import 'variables.scss';
+
+.select {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+    user-select: none;
+    font-weight: bold;
+    cursor: pointer;
+    min-width: 210px;
+
+    &InputContainer {
+        border-radius: 0;
+    }
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+
+    label {
+        font-weight: 500;
+    }
+
+    .icon {
+        width: 24px;
+        height: 24px;
+        flex: 0 0 auto;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 12px;
+        background-color: theme(background-icon);
+        background-size: contain;
+        background-position: center center;
+        background-repeat: no-repeat;
+        overflow: hidden;
+
+        img {
+            height: 100%;
+        }
+    }
+
+    .label {
+        white-space: pre;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        font-weight: 400;
+        flex-grow: 1;
+    }
+
+    .selectContainer {
+        position: relative;
+        cursor: pointer;
+
+        .selectInput {
+            position: relative;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 0 20px;
+            font-size: 16px;
+            font-weight: bold;
+            background-color: theme(background-primary);
+            border-radius: 12px;
+
+            .separator {
+                flex-grow: 1;
+            }
+
+            .handle {
+                cursor: pointer;
+                @include flex-center-center;
+                height: 32px;
+                width: 32px;
+                background-color: theme(background-icon);
+                border-radius: 12px;
+                transition: all 0.1s ease-in-out;
+
+                &.open {
+                    transform: scaleY(-1);
+                }
+            }
+        }
+
+        .selectMenu {
+            z-index: 97;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            min-height: 50px;
+            max-height: 250px;
+            width: 100%;
+            border-radius: 12px;
+            background-color: theme(background-primary);
+            box-shadow: 0px 4px 10px #00000073;
+            border: 1px solid theme(border-secondary);
+            overflow: hidden;
+            overflow-y: auto;
+            scrollbar-width: thin;
+
+            .selectSearchInput {
+                width: 100%;
+                position: sticky;
+                top: 0;
+                z-index: 49;
+
+                div {
+                    border-radius: 0;
+                }
+
+                input {
+                    height: 50px !important;
+                    font-size: 15px;
+                    padding-left: 20px;
+                    box-shadow: none !important;
+                }
+            }
+
+            .option {
+                height: 50px;
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 12px;
+                padding: 0 20px;
+                padding-right: 40px;
+                font-size: 16px;
+                font-weight: 500;
+                opacity: 0.8;
+                cursor: pointer;
+
+                .dragHandle {
+                    min-width: 14px;
+                }
+                &[draggable="true"] .dragHandle {
+                    cursor: grab;
+                    cursor: -moz-grab;
+                    cursor: -webkit-grab;
+                }
+                
+                &[draggable="true"]:active .dragHandle {
+                    cursor: grabbing;
+                    cursor: -moz-grabbing;
+                    cursor: -webkit-grabbing;
+                }
+                
+                &:hover {
+                    background-color: theme(background-terniary);
+                }
+                
+                &.active {
+                    font-weight: bold;
+                    opacity: 1;
+                    
+                    &::after {
+                        content: "";
+                        position: absolute;
+                        right: 15px;
+                        height: 8px;
+                        width: 8px;
+                        background-color: theme(highlight-secondary);
+                        border-radius: 100%;
+                    }
+                }
+                
+                &.disabled {
+                    opacity: 0.6;
+                    cursor: no-drop;
+                }
+            }
+        }
+    }
+
+    &.searchable {
+        .selectContainer {
+            .selectMenu {
+                max-height: 300px;
+            }
+        }
+    }
+
+    &.monospace {
+        .value, .option {
+            font-family: 'Ubuntu Mono';
+            font-size: 17px;
+        }
+    }
+}

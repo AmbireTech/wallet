@@ -1,38 +1,25 @@
-import './Collectibles.scss'
+import { useCallback, useEffect, useState } from 'react'
+import { useHistory } from 'react-router-dom'
 
-import { NavLink } from 'react-router-dom'
-import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
+import { useModals } from 'hooks'
 import { Loading } from 'components/common'
-import { useMemo, useState, useEffect } from 'react'
-import { useHistory, useParams } from 'react-router-dom/cjs/react-router-dom.min'
-import { Button } from 'components/common'
-import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
+import AddOrHideButton from 'components/Wallet/Dashboard/AddOrHideButton/AddOrHideButton'
+import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
+import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
+import Collectible from './Collectible/Collectible'
+import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCollectibleModal'
 
-const Collectibles = ({ portfolio, isPrivateMode }) => {
-    const params = useParams()
+const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => {
+    const { showModal } = useModals()
     const history = useHistory()
-    const maxCollectiblesPerPage = 15
-    const maxPages = Math.ceil(portfolio.collectibles.length / maxCollectiblesPerPage)
-    const defaultPage = useMemo(() => Math.min(Math.max(Number(params.page), 1), maxPages) || 1, [params.page, maxPages])
-    const [page, setPage] = useState(defaultPage)
-    const collectiblesList = portfolio.collectibles.slice((page - 1) * maxCollectiblesPerPage, page * maxCollectiblesPerPage)
-
-    const paginationControls = (
-        <div className='pagination-controls'>
-          <div className='pagination-title'>Page</div>
-          <Button clear mini onClick={() => page > 1 && setPage(page => page - 1)}><HiOutlineChevronLeft/></Button>
-          <div className='pagination-current'>{ page } <span>/ { maxPages }</span></div>
-          <Button clear mini onClick={() => page < maxPages && setPage(page => page + 1)}><HiOutlineChevronRight/></Button>
-        </div>
-    )
-    
-    useEffect(() => history.replace(`/wallet/dashboard/collectibles/${page}`), [page, history])
-    useEffect(() => setPage(defaultPage), [defaultPage])
+    const collectiblesList = portfolio.collectibles
+    const [isHideCollectiblesModalOpen, setIsHideCollectiblesModalOpen] = useState(false)
     
     const handleUri = uri => {
         if (!uri) return ''
         uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
 
+        if (uri.split('/').length === 1) return 'https://ipfs.io/ipfs/' + uri
         if (uri.split('/')[0] === 'data:image') return uri
         if (uri.startsWith('ipfs://')) return uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/')
         if (uri.split('/')[2].endsWith('mypinata.cloud')) return 'https://ipfs.io/ipfs/' + uri.split('/').slice(4).join('/')
@@ -40,42 +27,57 @@ const Collectibles = ({ portfolio, isPrivateMode }) => {
         return uri
     }
 
-    if (portfolio.isCurrNetworkProtocolsLoading) return <Loading />;
+    useEffect(() => history.replace(`/wallet/dashboard/collectibles`), [history])
+    
+    const openHideCollectibleModal = useCallback(() => setIsHideCollectiblesModalOpen(true), [])
+
+    useEffect(() => {
+        if(isHideCollectiblesModalOpen) {
+            showModal(
+                <HideCollectibleModal
+                    portfolio={portfolio} 
+                    setIsHideCollectiblesModalOpen={setIsHideCollectiblesModalOpen} 
+                    handleUri={handleUri}
+                />
+            )
+        }
+    }, [portfolio, isHideCollectiblesModalOpen, showModal])
+
+    if (portfolio.loading) return <Loading />;
 
     if (!portfolio.collectibles.length || isPrivateMode) {
         return (
             <CollectiblesPlaceholder
                 isPrivateMode={isPrivateMode}
                 collectiblesLength={portfolio.collectibles.length}
+                onClickShowCollectible={openHideCollectibleModal}
+                footer={footer}
             />
         );
     }
 
     return (
-        <div id="collectibles">
-            <div className='collectibles-wrapper'>
-                {
-                    collectiblesList.map(({ network, address, collectionName, collectionImg, assets }) => (assets || []).map(({ tokenId, assetName, assetImg, balanceUSD }) => (
-                        <div className="collectible" key={tokenId}>
-                            <NavLink to={`/wallet/nft/${network}/${address}/${tokenId}`}>
-                                <div className="artwork" style={{backgroundImage: `url(${handleUri(assetImg)})`}}/>
-                                <div className="info">
-                                    <div className="collection">
-                                        <div className="collection-icon" style={{backgroundImage: `url(${collectionImg})`}}></div>
-                                        <span className="collection-name">{ collectionName }</span>
-                                    </div>
-                                    <div className="details">
-                                        <div className="name">{ assetName }</div>
-                                        <div className="value"><span className="purple-highlight">$</span> {balanceUSD.toFixed(2) }</div>
-                                    </div>
-                                </div>
-                            </NavLink>
-                        </div>
-                    )))
-                }
-            </div>    
-            {paginationControls}
-        </div>        
+        <CollectiblesWrapper 
+            wrapperEndChildren={<>
+                <AddOrHideButton onClick={openHideCollectibleModal}>Hide Collectible</AddOrHideButton>
+                { footer }
+            </>
+            }
+        >
+            {
+                collectiblesList.map(({ network, address, collectionName, assets, balanceUSD }) => (assets || []).map(({ tokenId, data: { name, image } }) => (
+                    <Collectible
+                        key={tokenId}
+                        href={`/wallet/nft/${selectedNetwork.id}/${address}/${tokenId}`}
+                        collectionIcon={image}
+                        collectionName={collectionName}
+                        name={name}
+                        image={handleUri(image)}
+                        price={balanceUSD.toFixed(2)}
+                    />
+                )))
+            }
+        </CollectiblesWrapper>  
     )
 }
 

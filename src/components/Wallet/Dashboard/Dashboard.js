@@ -1,88 +1,76 @@
-import './Dashboard.scss'
+import cn from 'classnames'
+import { useLayoutEffect, useState, useMemo } from 'react'
+import { useParams } from 'react-router-dom'
 
-import { useEffect, useLayoutEffect, useState } from 'react'
-import { useHistory, useParams } from 'react-router-dom'
-
-import { Chart, Loading, Segments } from 'components/common'
+import { Loading, Panel } from 'components/common'
 import Balances from './Balances/Balances'
-import Protocols from './Protocols/Protocols'
+import Tokens from './Tokens/Tokens'
 import Collectibles from './Collectibles/Collectibles'
-import { MdOutlineInfo } from 'react-icons/md'
 
 import Promotions from './Promotions/Promotions'
+import Tabs from 'components/common/Tabs/Tabs'
+import Chart from './Chart/Chart'
 import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 
-const chartSegments = [
-    {
-        value: 'Tokens'
-    },
-    {
-        value: 'Protocols'
-    }
-]
+import styles from './Dashboard.module.scss'
 
-const tabSegments = [
-    {
-        value: 'tokens'
-    },
-    {
-        value: 'collectibles'
-    }
-]
-
+const Footer = ({selectedAccount, selectedNetwork}) => <div className={styles.footer}>
+    <span className={styles.missingTokenNotice}>
+        If you don't see a specific token that you own, please check the
+        {' '}
+        <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">
+            Block Explorer
+        </a>
+    </span>
+</div>
 
 export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
-    const history = useHistory()
-    const { tabId, page = 1 } = useParams()
+    const { tabId } = useParams()
 
+    const balance = useMemo(() => portfolio.balance, [portfolio.balance])
+    const tokens = useMemo(() => portfolio.tokens, [portfolio.tokens])
     const [chartTokensData, setChartTokensData] = useState([]);
-    const [chartProtocolsData, setChartProtocolsData] = useState([]);
-    const [chartType, setChartType] = useState([]);
-    const [tab, setTab] = useState(tabId || tabSegments[0].value);
+    const defaultTab = tabId ? (tabId === 'tokens' ? 1 : 2) : 1
 
     const currentAccount = accounts.find(a => a.id.toLowerCase() === selectedAccount.toLowerCase())
 
     const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
-    const isBalancesCachedCurrentNetwork = portfolio.cachedBalancesByNetworks.length ? 
-        portfolio.cachedBalancesByNetworks.find(({network}) => network === selectedNetwork.id) : false
-
-    useEffect(() => {
-        if (!tab || tab === tabSegments[0].value) return history.replace(`/wallet/dashboard`)
-        history.replace(`/wallet/dashboard/${tab}${tab === tabSegments[1].value ? `/${page}` : ''}`)
-    }, [tab, history, page])
+    const isBalancesCachedCurrentNetwork = portfolio.cache || false
 
     useLayoutEffect(() => {
-        const tokensData = portfolio.tokens
+        const tokensData = tokens
             .map(({ label, symbol, balanceUSD }) => ({
                 label: label || symbol,
-                value: Number(((balanceUSD / portfolio.balance.total.full) * 100).toFixed(2))
+                value: Number(((balanceUSD / balance.total.full) * 100).toFixed(2)),
+                balanceUSD
             }))
             .filter(({ value }) => value > 0);
+        
+        if (portfolio?.balance?.total?.full && tokensData) {
+                setChartTokensData({
+                    empty: false,
+                    data: tokensData?.sort((a, b) => b.value - a.value)
+                })
+        } else {
+            setChartTokensData({
+                empty: true,
+                data: [{
+                    label: "You don't have any tokens",
+                    balanceUSD: 1,
+                    value: 0
+                }],
+                tokensLength: tokens?.length,
+                allTokensWithoutPrice: tokens?.length && tokens.every(t => !t.price)
+            })
+        }
+    }, [balance, tokens, portfolio?.balance?.total?.full]);
 
-        const totalProtocols = portfolio.protocols.map(({ assets }) =>
-            assets
-                .map(({ balanceUSD }) => balanceUSD)
-                .reduce((acc, curr) => acc + curr, 0))
-            .reduce((acc, curr) => acc + curr, 0)
-
-        const protocolsData = portfolio.protocols
-            .map(({ label, assets }) => ({
-                label,
-                value: Number(((assets.map(({ balanceUSD }) => balanceUSD).reduce((acc, curr) => acc + curr, 0) / totalProtocols) * 100).toFixed(2))
-            }))
-            .filter(({ value }) => value > 0)
-
-        setChartTokensData(tokensData);
-        setChartProtocolsData(protocolsData)
-    }, [portfolio.balance, portfolio.tokens, portfolio.protocols]);
-
-    useEffect(() => portfolio.requestOtherProtocolsRefresh(), [portfolio])
 
     return (
-        <section id="dashboard">
+        <section className={styles.wrapper}>
             { isBalancesCachedCurrentNetwork && (
                 <OutdatedBalancesMsg 
                     selectedNetwork={selectedNetwork}
@@ -112,71 +100,77 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 />
               )
             }
-            <div id="overview">
-                <div id="balance" className="panel">
-                    <div className="title">Balance</div>
-                    <div className="content">
-                        <Balances
-                            portfolio={portfolio}
-                            selectedNetwork={selectedNetwork}
-                            setNetwork={setNetwork}
-                            hidePrivateValue={privateMode.hidePrivateValue}
-                            relayerURL={relayerURL}
-                            selectedAccount={selectedAccount}
-                            match={match}
-                        />
-                    </div>
-                </div>
-                <div id="chart" className="panel">
-                    <div className="title">
-                        Balance by
-                        <Segments small defaultValue={chartSegments[0].value} segments={chartSegments} onChange={setChartType}/>
-                    </div>
-                    <div className="content">
-                        {
-                            chartType === chartSegments[0].value ?
-                                portfolio.isCurrNetworkBalanceLoading ?
-                                    <Loading/>
-                                    :
-                                    privateMode.hidePrivateContent(<Chart data={chartTokensData} size={200}/>)
-                                :
-                                portfolio.isCurrNetworkProtocolsLoading ?
-                                    <Loading/>
-                                    :
-                                    privateMode.hidePrivateContent(<Chart data={chartProtocolsData} size={200}/>)
-                        }
-                    </div>
-                </div>
-            </div>
-            <div id="table" className="panel">
-                <div className="title">
-                    Assets
-                    <Segments small defaultValue={tab} segments={tabSegments} onChange={setTab}></Segments>
-                </div>
-                <div className="content">
+            <div className={styles.overview}>
+                <Panel 
+                    className={cn(styles.chart, styles.panel, styles.topPanels)}
+                >
                     {
-                        tab === tabSegments[0].value ?
-                            <Protocols
-                                portfolio={portfolio}
-                                network={selectedNetwork}
-                                account={selectedAccount}
+                        portfolio.isCurrNetworkBalanceLoading ?
+                        <Loading/> :
+                        privateMode.hidePrivateContent(
+                            <Chart 
+                                selectedNetwork={selectedNetwork} 
+                                data={chartTokensData} 
+                                size={200} 
+                                className={styles.chart} 
                                 hidePrivateValue={privateMode.hidePrivateValue}
-                                userSorting={userSorting}
-                                setUserSorting={setUserSorting}
+                                portfolio={portfolio}
                             />
-                            :
-                            <Collectibles portfolio={portfolio} isPrivateMode={privateMode.isPrivateMode} />
+                        )
                     }
-                </div>
-                <div className="footer">
-                    <div id="missing-token-notice">
-                        <MdOutlineInfo/>
-                        <span>
-                            If you don't see a specific token that you own, please check the <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">Block Explorer</a>
-                        </span>
-                    </div>
-                </div>
+                </Panel>
+                <Panel 
+                    className={cn(styles.balance, styles.panel, styles.topPanels)} 
+                    titleClassName={styles.panelTitle} 
+                    title="You also have">
+                    <Balances
+                        portfolio={portfolio}
+                        selectedNetwork={selectedNetwork}
+                        setNetwork={setNetwork}
+                        hidePrivateValue={privateMode.hidePrivateValue}
+                        relayerURL={relayerURL}
+                        selectedAccount={selectedAccount}
+                        match={match}
+                    />
+                </Panel>
             </div>
+                <Tabs
+                    firstTabLabel="Tokens"
+                    secondTabLabel="Collectibles"
+                    firstTab={
+                        <Tokens
+                            portfolio={portfolio}
+                            network={selectedNetwork}
+                            account={selectedAccount}
+                            hidePrivateValue={privateMode.hidePrivateValue}
+                            userSorting={userSorting}
+                            setUserSorting={setUserSorting}
+                            footer={
+                                <Footer 
+                                    selectedAccount={selectedAccount} 
+                                    selectedNetwork={selectedNetwork}
+                                />
+                            }
+                        />
+                    }
+                    secondTab={
+                        <Collectibles 
+                            portfolio={portfolio} 
+                            isPrivateMode={privateMode.isPrivateMode} 
+                            selectedNetwork={selectedNetwork} 
+                            footer={
+                                <Footer 
+                                    selectedAccount={selectedAccount} 
+                                    selectedNetwork={selectedNetwork}
+                                />
+                            }
+                        />
+                    }
+                    panelClassName={styles.assetsPanel}
+                    tabClassName={styles.tab}
+                    shadowClassName={styles.tabsShadow}
+                    defaultTab={defaultTab}
+                />
         </section>
     )
 }

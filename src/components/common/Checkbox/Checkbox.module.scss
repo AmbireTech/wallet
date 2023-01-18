@@ -1,0 +1,72 @@
+@import 'variables.scss';
+
+.checkboxContainer {
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  width: 100%;
+  cursor: pointer;
+  margin: 20px 0px;
+  user-select: none;
+  color: theme(text-primary);
+
+  &.disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &:not(.disabled):hover {
+    input, .checkbox-mark {
+      background-color: #7B7597;
+    }
+  }
+
+  .label {
+    flex: 1;
+    font-size: 14px;
+  }
+
+  input {
+    position: absolute;
+    opacity: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    top: 0;
+    left: 0;
+
+    &:checked ~ .checkboxMark {
+      background-color: $c-turquoise;
+      border-color: $c-turquoise;
+
+      &:after {
+        display: block;
+      }
+    }
+  }
+
+  .checkboxMark {
+    display: block;
+    position: relative;
+    height: 24px;
+    width: 24px;
+    border: 3px solid #51588C;
+    border-radius: 3px;
+    background-color: transparent;
+    box-sizing: border-box;
+
+    &:after {
+      content: "";
+      position: absolute;
+      display: none;
+      left: 6px;
+      top: 0px;
+      width: 5px;
+      height: 14px;
+      border: solid #000;
+      border-width: 0 3px 3px 0;
+      transform: rotate(45deg);
+    }
+  }
+}

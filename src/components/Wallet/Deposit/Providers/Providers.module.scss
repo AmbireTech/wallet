@@ -1,0 +1,102 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px!important;
+
+    .provider {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding: 16px 35px 16px 53px;
+        border-radius: 12px;
+        background-color: $c-ebony-clay;
+        border: 1px solid transparent;
+        box-shadow: $box-shadow;
+        cursor: pointer;
+        transition: all 0.3s ease-out;
+        gap: 57px!important;
+
+        .logo {
+            display: block;
+            max-width: 30%;
+            min-width: 100px;
+
+            img, svg {
+                width: 100%;
+            }
+        }
+
+        .details {
+            flex: 1;
+            text-align: left;
+
+            .type {
+                margin-bottom: 8px;
+                font-size: 12px;
+            }
+            .fees,
+            .limits,
+            .currencies {
+                color: $c-blue-bell;
+                font-size: 12px;
+            }
+        }
+
+        &:not(.disabled):hover {
+            background: $c-ebony-clay-light;
+            border: 1px solid $c-fiord;
+
+            .logo {
+                opacity: 1;
+            }
+        }
+
+        &.disabled {
+            opacity: 0.3;
+            pointer-events: none;
+            cursor: default;
+        }
+    }
+
+    .networkWarning {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        label {
+            font-size: 12px;
+            opacity: 0.8;
+            text-align: left;
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        .provider {
+            flex-direction: column;
+            gap: 20px!important;
+            padding: 30px;
+
+            .logo {
+                max-width: 80%;
+            }
+
+            .details {
+                text-align: center;
+
+                .type {
+                    margin-bottom: 0.25em;
+                }
+            }
+        }
+    }
+}

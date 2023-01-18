@@ -1,23 +1,23 @@
-import './GuardarianDepositProviderModal.scss'
-
 import { Button, Loading, Modal, TextInput, Select } from 'components/common'
 import {useState, useMemo, useCallback} from 'react'
-import { MdOutlineClose } from 'react-icons/md'
 import useGuardarian from './useGuardarian'
-import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import { ToolTip } from 'components/common'
+import { ToolTip, NumberInput } from 'components/common'
 import { fetchGet } from 'lib/fetch';
 import { popupCenter } from 'lib/popupHelper'
 import url from 'url'
 
+import { ReactComponent as GuardarianIcon } from 'resources/payment-providers/guardarian-horizontal.svg' 
 
-const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio }) => {
-    const { hideModal } = useModals()
+import styles from './GuardarianDepositProviderModal.module.scss'
+
+const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNetwork, portfolio, initMode = 'buy', selectedAsset = null }) => {
     const { addToast } = useToasts()
-    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode: 'buy', tokens: portfolio.tokens, walletAddress, addToast })
-    const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
+    const guardarian = useGuardarian({relayerURL, selectedNetwork, initMode, tokens: portfolio.tokens, walletAddress, addToast, selectedAsset })
 
+    const selectedToken = guardarian?.cryptoList?.data?.find(({ value }) => value === guardarian.from)
+    const selectedTokenInPortfolio = portfolio?.tokens?.find(({ address, symbol }) => address === selectedToken?.address || symbol === selectedToken?.value)
+    const [sendTransactionLoading, setSendTransactionLoading] = useState(false)
     const getCurrentTokenFromBalance = useCallback(() => {
         if (portfolio.tokens && guardarian?.cryptoCurrencies?.data && guardarian.mode === 'sell') {
             const token = guardarian?.cryptoCurrencies?.data?.find(t => t.ticker === guardarian.from)
@@ -54,15 +54,6 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
         return ''
     }, [guardarian, getCurrentTokenFromBalance])
 
-    const switchMode = () => {
-        // On switching mode, reset from/to, because the next form gets obsolete field values
-        // and can result in wrong API calls (fired in `useGuardarian` useEffect)
-        guardarian.setMode((prevMode) => prevMode === 'buy' ? 'sell' : 'buy')
-        guardarian.setAmount('')
-        guardarian.setFrom('')
-        guardarian.setTo(guardarian.mode === 'buy' ? guardarian.DEFAULT_CRYPTO[guardarian.NETWORK_MAPPING[guardarian.network]] : '')
-    }
-
     function changeFrom(value) {
         guardarian.setFrom(value)
     }
@@ -94,9 +85,100 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                 setSendTransactionLoading(false)
             })
     }
+    const setMaxAmount = () => {
+        onInputAmount(selectedTokenInPortfolio?.balance)
+    }
 
-    const buttons = <>
-        <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
+    return (
+        <Modal 
+            className={styles.wrapper}
+            title={guardarian.mode === 'buy' ? 'Buy' : 'Sell'}
+        >
+            <div className={styles.inputCurrenciesWrapper}>
+                <div className={styles.currenciesRowWrapper}>
+                    <label className={styles.inputLabel}>You send</label>
+                    <p className={styles.inputLabel}>
+                    { guardarian?.marketInfo?.data?.min && `Min: ${guardarian?.marketInfo?.data?.min}`}
+                    </p>
+                </div>
+            <div className={styles.currenciesRowWrapper}>
+
+            <div className={styles.amount}>
+                <NumberInput
+                    value={guardarian.amount}
+                    onInput={onInputAmount}
+                    button={guardarian.mode === "sell" && selectedTokenInPortfolio ? "MAX" : ""}
+                    onButtonClick={() => setMaxAmount()}
+                />
+            </div>
+            <div className={styles.currency}>
+                { (guardarian.mode === 'buy' && !guardarian?.fiatList?.isLoading) || (guardarian?.mode === 'sell' && !guardarian?.cryptoList?.isLoading)
+                ? <Select 
+                className={styles.select}
+                selectInputClassName={styles.selectInput}
+                iconClassName={styles.selectIcon}
+                searchable 
+                defaultValue={guardarian.from} 
+                items={guardarian.mode === 'buy' ? guardarian.fiatList.data : guardarian.cryptoList.data} 
+                onChange={({value}) => changeFrom(value)}/>
+                : <div className={styles.loadingWrapper}><Loading /> </div>}
+            </div>
+            </div>
+        </div>
+        { (validationMsg !== '') && (<p className={styles.validationMsg}>{ validationMsg }</p>) }
+
+            <div className={styles.estimationInfoWrapper}>
+                <div className={styles.extraFees}>
+                    <ToolTip label='All the exchange fees are added into the rate. There are no extra costs.'>
+                        <p>No extra fees</p>
+                    </ToolTip>
+                </div>
+                <div className={styles.estimationRate}>
+                    <ToolTip label='This is expected rate. Guardarian guarantees to pick up the best possible rate on the moment of the exchange'>
+                    <p>
+                        Estimation rate: {' '}
+                        <span>
+
+                        { !guardarian.estimateInfo.isLoading && guardarian?.estimateInfo?.data && validationMsg === ''
+                        ? (<>
+                        { 1 + guardarian?.estimateInfo?.data?.from_currency} ≈ {guardarian?.estimateInfo?.data?.estimated_exchange_rate} {guardarian?.estimateInfo?.data?.to_currency}
+                    </>)
+                    : <></>}
+                        </span>
+                    </p>
+                </ToolTip>
+                </div>
+            </div> 
+        <div className={styles.inputCurrenciesWrapper}>
+            <div className={styles.currenciesRowWrapper}>
+
+            <div className={styles.amount}> 
+                <label className={styles.inputLabel}>You get</label>
+            </div>
+            </div>
+            <div className={styles.currenciesRowWrapper}>
+                {!guardarian.estimateInfo.isLoading ? <TextInput
+                    value={guardarian?.estimateInfo?.data ? guardarian?.estimateInfo?.data?.value : ''}
+                    disabled
+                    /> : <TextInput
+                    value='Loading...'
+                    disabled
+                    className={styles.loadingInput}
+                    />}
+            <div className={styles.currency}>
+            { (guardarian?.mode === 'buy' && !guardarian?.cryptoList?.isLoading) || (guardarian?.mode === 'sell' && !guardarian?.fiatList?.isLoading)
+                ? <Select
+                    selectInputClassName={styles.selectInput}
+                    className={styles.select}
+                    iconClassName={styles.selectIcon}
+                    searchable 
+                    defaultValue={guardarian?.to}
+                    items={guardarian?.mode === 'sell' ? guardarian?.fiatList?.data : guardarian?.cryptoList?.data} 
+                    onChange={({value}) => changeTo(value)}/> 
+                    : <div className={styles.loadingWrapper}><Loading /> </div>}
+            </div>
+            </div>
+        </div>
         <Button 
             disabled={
                 validationMsg !== '' 
@@ -106,79 +188,15 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                 || guardarian?.amount === ''
                 || sendTransactionLoading
             } 
-            onClick={sendTxn}>{guardarian.mode === 'buy' ? 'Buy' : 'Sell'}</Button>
-    </>
-
-    return (
-        <Modal id="guardarian-modal" title="Guardarian" buttons={buttons}>
-            <div className='buy-sell-btns-wrapper'>
-                <div className={guardarian.mode === 'buy' ? 'button active' : 'button'} onClick={switchMode}>Buy</div>
-                <div className={guardarian.mode === 'sell' ? 'button active' : 'button'} onClick={switchMode}>Sell</div>    
-                
-            </div>
-            
-            <div className='input-currencies-wrapper'>
-            <div className='amount'>
-                <TextInput
-                    value={guardarian.amount}
-                    label="You send"
-                    placeholder="Input amount"
-                    onInput={onInputAmount}
-                />
-            </div>
-            <div className='currency'>
-                { (guardarian.mode === 'buy' && !guardarian?.fiatList?.isLoading) || (guardarian?.mode === 'sell' && !guardarian?.cryptoList?.isLoading)
-                ? <Select 
-                    searchable 
-                    defaultValue={guardarian.from} 
-                    items={guardarian.mode === 'buy' ? guardarian.fiatList.data : guardarian.cryptoList.data} 
-                    onChange={({value}) => changeFrom(value)}/>
-                : <div className='loading-wrapper'><Loading /> </div>}
-            </div>
-        </div>
-        { (validationMsg !== '') && (<p style={{ color: 'red' }}>{ validationMsg }</p>) }
-
-            <div className='estimation-info-wrapper'>
-                <div className='extra-fees'>
-                    <ToolTip label='All the exchange fees are added into the rate. There are no extra costs.'>
-                        No extra fees
-                    </ToolTip>
-                </div>
-                <div className='estimation-rate'>
-                    <ToolTip label='This is expected rate. Guardarian guarantees to pick up the best possible rate on the moment of the exchange'>
-                    Estimation rate: {' '}
-                { !guardarian.estimateInfo.isLoading && guardarian?.estimateInfo?.data && validationMsg === ''
-                    ? (<>
-                        { 1 + guardarian?.estimateInfo?.data?.from_currency} ≈ {guardarian?.estimateInfo?.data?.estimated_exchange_rate} {guardarian?.estimateInfo?.data?.to_currency}
-                    </>)
-                    : <></>}
-                </ToolTip>
-                </div>
-            </div> 
-        <div className='input-currencies-wrapper'>
-            <div className='amount'> 
-                { !guardarian.estimateInfo.isLoading
-                    ? (<TextInput
-                        value= {guardarian?.estimateInfo?.data ? guardarian?.estimateInfo?.data?.value : ''}
-                        disabled
-                        label="You get"
-                    />) 
-                    : (
-                        <>
-                            <label>You get</label>
-                            <div className='loading-wrapper'><Loading /> </div>
-                        </>
-                    )}
-            </div>
-            <div className='currency'>
-            { (guardarian?.mode === 'buy' && !guardarian?.cryptoList?.isLoading) || (guardarian?.mode === 'sell' && !guardarian?.fiatList?.isLoading)
-                ? <Select 
-                    searchable 
-                    defaultValue={guardarian?.to}
-                    items={guardarian?.mode === 'sell' ? guardarian?.fiatList?.data : guardarian?.cryptoList?.data} 
-                    onChange={({value}) => changeTo(value)}/> 
-                : <div className='loading-wrapper'><Loading /> </div>}
-            </div>
+            onClick={sendTxn}
+            className={styles.button}
+            primaryGradient
+        >
+            {guardarian.mode === 'buy' ? 'Buy' : 'Sell'}
+        </Button>
+        <div className={styles.poweredBy}>
+            <label className={styles.poweredByLabel}>Powered by: </label>
+            <GuardarianIcon className={styles.poweredByLogo} />
         </div>
         </Modal>
     )

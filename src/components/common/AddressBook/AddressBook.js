@@ -1,14 +1,18 @@
-import './AddressBook.scss'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import cn from 'classnames'
+
+import { resolveENSDomain } from 'lib/ensDomains'
+import { resolveUDomain } from 'lib/unstoppableDomains'
+import { Button, DropDown, TextInput } from 'components/common'
+import AddressList from './AddressList/AddressList'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
-import { Button, DropDown, TextInput } from 'components/common'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import AddressList from './AddressList/AddressList'
-import { resolveUDomain } from 'lib/unstoppableDomains'
-import { resolveENSDomain } from 'lib/ensDomains'
+import { ReactComponent as AddressBookIcon } from './images/address-book.svg'
 
-const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork }) => {
+import styles from './AddressBook.module.scss'
+
+const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork, className }) => {
     const [address, setAddress] = useState('')
     const [name, setName] = useState('')
     const [isOpen, setOpenMenu] = useState(false)
@@ -72,26 +76,26 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     }, [address, selectedNetwork.unstoppableDomainsChain])
 
     return (
-        <DropDown title={<><FaAddressCard />Address Book</>} className="address-book" open={isOpen} onChange={onDropDownChange}>
-            <div className="heading">
-                <div className="title">
+        <DropDown title={<><AddressBookIcon />Address Book</>} className={cn(styles.addressBook, className || '')} menuClassName={styles.menu} handleClassName={styles.handle} open={isOpen} onChange={onDropDownChange}>
+            <div className={styles.heading}>
+                <div className={styles.title}>
                     <FaAddressCard /> Address Book
                 </div>
                 {
                     !openAddAddress ?
-                        <div className="button" onClick={() => setOpenAddAddress(true)}>
+                        <div className={styles.button} onClick={() => setOpenAddAddress(true)}>
                             <MdOutlineAdd />
                         </div>
                         :
-                        <div className="button" onClick={() => setOpenAddAddress(false)}>
+                        <div className={styles.button} onClick={() => setOpenAddAddress(false)}>
                             <MdClose />
                         </div>
                 }
             </div>
             {
                 openAddAddress ?
-                    <div id="add-address" className="content">
-                        <div className="fields">
+                    <div className={cn(styles.addAddress, styles.content)}>
+                        <div className={styles.fields}>
                             <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)} />
                             <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)} />
                         </div>
@@ -101,15 +105,16 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                     </div>
                     :
                     !addresses.length ?
-                        <div className="content">
-                            Your Address Book is empty.
+                        <div className={styles.content}>
+                            <p className={styles.emptyText}>Your Address Book is empty.</p>
                         </div>
                         :
-                        <div className="content">
+                        <div className={styles.content}>
                             <AddressList
                                 addresses={addresses}
                                 onSelectAddress={selectAddress}
                                 removeAddress={removeAddress}
+                                addressClassName={styles.address}
                             />
                         </div>
             }

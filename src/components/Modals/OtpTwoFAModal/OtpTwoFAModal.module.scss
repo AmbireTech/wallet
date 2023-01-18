@@ -1,0 +1,157 @@
+@import 'variables.scss';
+
+.button {
+    width: 100%;
+    flex: unset!important;
+}
+
+.modal {
+    max-width: 600px;
+}
+
+.wrapper {
+    .timer {
+        justify-content: center;
+        margin-bottom: 20px;
+    }
+    .timerResetMsg {
+        text-align: center;
+        margin-bottom: 35px;
+        font-size: 20px;
+        color: $danger-color;
+    }
+
+    .imgWrapper {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 43px;
+        
+        img {
+            padding: 8px;
+            background-color: $c-white;
+            width: 156px;
+            border-radius: 12px;
+        }
+    }
+
+    .imgMsg {
+        text-align: center;
+        margin-bottom: 69px;
+
+        div { 
+            color: $c-turquoise;
+        }
+
+        .clickHere {
+            cursor: pointer;
+            color: rgba($c-titan-white, .8);
+            font-size: 14px;
+
+            button {
+                background-color: transparent;
+                border: none;
+                cursor: pointer;
+                color: $c-heliotrope;
+                font-family: 'Poppins';
+            }
+        }
+    
+        .clickHere:hover {
+            opacity: 1;
+        }
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+        
+        h4 {
+            margin: 0;
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 400;
+        }
+        
+
+        .emailWrapper {
+            .emailBody {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 10px;
+    
+                & > button, div {
+                    flex: 0 1 50%!important;
+                }
+            }
+        }
+
+        button { 
+            width: 100%;
+            flex: 0 1 100% !important;
+        }
+    }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .button { 
+        height: 50px!important;
+    }
+
+    .modal {
+        max-height: 90vh;
+        padding-bottom: 70px!important;
+        :global(.buttons) {
+            height: 70px;
+            padding: 20px 24px;
+            padding-top: 0;
+        }
+    }
+
+    .wrapper {
+        .imgWrapper {
+            margin-bottom: 20px;
+            img {
+                width: 140px;
+            }
+        }
+
+        .imgMsg {
+            margin-bottom: 42px;
+        }
+
+        form {
+            .emailWrapper {
+                .emailBody {
+                    justify-content: flex-start;
+                    flex-direction: column;
+
+                    & > button, div {
+                        flex: unset!important;
+                    }
+
+                    .emailInput {
+                        width: 100%;
+
+                        input {
+                            height: 50px;
+                        }
+                    }
+
+                    button {
+                        height: 50px;
+                    }
+                }
+            }
+            .authenticatorWrapper {
+                & > div {
+                    flex: unset!important;
+                }
+                input {
+                    height: 50px;
+                }
+            }
+        }
+    }
+}

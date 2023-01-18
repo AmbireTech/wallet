@@ -1,19 +1,23 @@
 export const fetch = require('node-fetch')
 
-export async function fetchPost (url, body) {
-	const r = await fetch(url, {
-		headers: { 'content-type': 'application/json' },
-		method: 'POST',
-		body: JSON.stringify(body)
-	})
-	return r.json()
+export async function fetchPost (url, body, params = { headers: {} }) {
+  const r = await fetch(url, {
+    headers: { 
+      'content-type': 'application/json' ,
+      ...params.headers
+    },
+    method: 'POST',
+    body: JSON.stringify(body)
+  })
+  return r.json()
 }
 
-export const fetchGet = async url => {
+export const fetchGet = async (url, params = { headers: {} }) => {
   const response = await fetch(url, {
     method: 'GET',
     headers: {
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
+      ...params.headers
     }
   });
   if (response.status !== 200) throw new Error('Failed to fetch')

@@ -2,7 +2,7 @@
 
 .stepper {
   display: flex;
-  //background: $input-background-color-darker;
+  //background: $c-mirage;
   padding: 16px;
   margin-bottom: 16px;
 
@@ -27,43 +27,43 @@
 
     &.stepPrev {
       .stepStatus {
-        border-color: $primary-accent-color;
-        background: $input-background-color;
+        border-color: $c-turquoise;
+        background: $c-mirage;
       }
 
       .stepBarPrev {
-        background: $primary-accent-color
+        background: $c-turquoise
       }
       .stepBarNext {
-        background: $primary-accent-color
+        background: $c-turquoise
       }
     }
 
     &.stepCurrent {
       .stepStatus {
-        border-color: $primary-accent-color;
-        background: $primary-accent-color;
+        border-color: $c-turquoise;
+        background: $c-turquoise;
       }
 
       .stepBarPrev {
-        background: $primary-accent-color;
+        background: $c-turquoise;
       }
       .stepBarNext {
-        background: mix($primary-accent-color, $input-background-color, 50%);
+        background: mix($c-turquoise, $c-mirage, 50%);
       }
     }
 
     &.stepNext {
       .stepStatus {
-        background: $input-background-color;
-        border-color: mix($primary-accent-color, $input-background-color, 50%);
+        background: $c-mirage;
+        border-color: mix($c-turquoise, $c-mirage, 50%);
       }
 
       .stepBarPrev {
-        background: mix($primary-accent-color, $input-background-color, 50%);
+        background: mix($c-turquoise, $c-mirage, 50%);
       }
       .stepBarNext {
-        background: mix($primary-accent-color, $input-background-color, 50%);
+        background: mix($c-turquoise, $c-mirage, 50%);
       }
     }
 

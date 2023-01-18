@@ -1,48 +1,37 @@
-import './GasTankBalanceByTokensModal.scss'
-
-import { Button, Modal } from 'components/common'
-import { MdOutlineClose } from 'react-icons/md'
-import { useModals } from 'hooks'
+import { Modal } from 'components/common'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 
+import styles from './GasTankBalanceByTokensModal.module.scss'
+
 const GasTankBalanceByTokensModal = ({ data }) => {
-    const { hideModal } = useModals()
-    const buttons = <>
-        <Button clear icon={<MdOutlineClose/>} onClick={() => hideModal()}>Close</Button>
-    </>
     
     return (
-        <Modal id="gas-tank-balance-by-tokens-modal" title="GAS TANK BALANCE BY TOKENS" buttons={buttons}>
-           <div className='content'>
-                <div className='row'>
-                    <div className='logo'> </div>
-                    <div className='item'>
-                        <span>Token</span>
-                    </div>
-                    <div className='balance'>
-                        <span>Amount</span>
-                    </div>
-                    <div className='balance'>
-                        <span>Balance</span>
-                    </div>
-                </div>
+        <Modal 
+            className={styles.wrapper} 
+            title="Gas Tank Balance by Tokens" 
+        >
+           <div className={styles.content}>
                 {
                     data && data.sort((a, b) => b.balance - a.balance).map((item, key) => {
                         return (
-                            <div className='row' key={key}>
-                                <div className='logo'>
-                                    <img width="25px" height='25px' alt='logo' src={item.icon || getTokenIcon(item.network, item.address)} /> 
+                            <div className={styles.token} key={key}>
+                                <div className={styles.iconAndName}>
+                                    <div className={styles.icon}>
+                                        <img alt="" src={item.icon || getTokenIcon(item.network, item.address)} /> 
+                                    </div>
+                                    <p className={styles.name}>
+                                        { item.symbol.toUpperCase() }
+                                    </p>
                                 </div>
-                                <div className='item'>
-                                    <span>{ item.symbol.toUpperCase() }</span>
-                                </div>
-                                <div className='balance'>
-                                    <span>{ formatFloatTokenAmount(item.balance, true, 6) }</span>
-                                </div>
-                                <div className='balance'>
-                                    <span>$ {formatFloatTokenAmount(item.balanceInUSD, true, 6) }</span>
-                                </div>
+                                <div className={styles.amountAndValue}>
+                                    <p className={styles.amount}>
+                                        { formatFloatTokenAmount(item.balance, true, 6) }
+                                    </p>
+                                    <p className={styles.value}>
+                                        ${formatFloatTokenAmount(item.balanceInUSD, true, 6) }
+                                    </p>
+                                </div>    
                             </div>
                         )
                     })

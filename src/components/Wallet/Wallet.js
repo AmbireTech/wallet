@@ -1,6 +1,6 @@
 import "./Wallet.scss"
 
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
+import { Suspense, useCallback, useEffect, useMemo, useRef } from 'react'
 import { Switch, Route, Redirect, useLocation, useRouteMatch } from "react-router-dom"
 import PluginGnosisSafeApps from 'components/Plugins/GnosisSafeApps/GnosisSafeApps'
 import { useModals, usePermissions, useLocalStorage } from 'hooks'
@@ -14,23 +14,23 @@ import SideBar from "./SideBar/SideBar"
 import { Loading } from "components/common"
 import DappsCatalog from "./DappsCatalog/DappsCatalog"
 // Pages
-const Transfer = lazy(() => import("./Transfer/Transfer"))
-const Dashboard = lazy(() => import("./Dashboard/Dashboard"))
-const Swap = lazy(() => import("./Swap/Swap"))
-const Earn = lazy(() => import("./Earn/Earn"))
-const Security = lazy(() => import("./Security/Security"))
-const Transactions = lazy(() => import('./Transactions/Transactions'))
-const Collectible = lazy(() => import("./Collectible/Collectible"))
-const CrossChain = lazy(() => import("./CrossChain/CrossChain"))
-const OpenSea = lazy(() => import("./OpenSea/OpenSea"))
-const Deposit = lazy(() => import("./Deposit/Deposit"))
-const Gas = lazy(() => import("./Gas/Gas"))
+import Transfer from "./Transfer/Transfer"
+import Dashboard from "./Dashboard/Dashboard"
+import Swap from "./Swap/Swap"
+import Earn from "./Earn/Earn"
+import Security from "./Security/Security"
+import Transactions from './Transactions/Transactions'
+import Collectible from "./Collectible/Collectible"
+import CrossChain from "./CrossChain/CrossChain"
+import OpenSea from "./OpenSea/OpenSea"
+import Deposit from "./Deposit/Deposit"
+import Gas from "./Gas/Gas"
 
 export default function Wallet(props) {
   const { showModal } = useModals()
   const { isClipboardGranted, isNoticationsGranted, arePermissionsLoaded, modalHidden } = usePermissions()
   const { pathname } = useLocation()
-  const walletContainer = useRef()
+  const walletContainerInner = useRef()
   const { isDappMode } = props.dappsCatalog
   const routeMatch = useRouteMatch('/wallet/dapps')
 
@@ -116,7 +116,7 @@ export default function Wallet(props) {
       />
     },
     {
-      path: '/transactions/:page?',
+      path: '/transactions/:page?/(messages)?/:page?',
       component: <Transactions
         relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
@@ -125,6 +125,7 @@ export default function Wallet(props) {
         eligibleRequests={props.eligibleRequests}
         showSendTxns={props.showSendTxns}
         setSendTxnState={props.setSendTxnState}
+        privateMode={props.privateMode}
       />
     },
     {
@@ -181,8 +182,6 @@ export default function Wallet(props) {
         relayerURL={props.relayerURL}
         portfolio={props.portfolio}
         selectedAccount={props.selectedAcc}
-        userSorting={props.userSorting}
-        setUserSorting={props.setUserSorting}
         setGasTankState={props.setGasTankState}
         gasTankState={props.gasTankState}
       />
@@ -220,8 +219,12 @@ export default function Wallet(props) {
 
   useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
 
+  // On pathname change (i.e. navigating to different page), always scroll to top
   useEffect(() => {
-    const scrollTimeout = setTimeout(() => walletContainer.current && walletContainer.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
+    // Removes scroll top when we navigate from Tokens to Collectibles and vice-versa
+    if (pathname === '/wallet/dashboard/collectibles' || pathname === '/wallet/dashboard') return
+
+    const scrollTimeout = setTimeout(() => walletContainerInner.current && walletContainerInner.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
     return () => clearTimeout(scrollTimeout)
   }, [pathname])
 
@@ -235,10 +238,10 @@ export default function Wallet(props) {
   return (
     <div id="wallet">
       <SideBar match={props.match} portfolio={props.portfolio} hidePrivateValue={props.privateMode.hidePrivateValue} relayerURL={props.relayerURL} selectedNetwork={props.network} dappsCatalog={props.dappsCatalog} />
-      <TopBar {...props} />
 
-      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''} ref={walletContainer}>
-        <div id="wallet-container-inner">
+      <div id="wallet-container" className={dapModeSidebar ? 'dapp-mode' : ''}>
+        <TopBar {...props} />
+        <div id="wallet-container-inner" ref={walletContainerInner}>
           <Suspense fallback={<Loading />}>
             <Switch>
               {

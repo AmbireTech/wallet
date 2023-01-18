@@ -1,4 +1,4 @@
-import { getProvider } from 'lib/provider'
+import { rpcProviders } from 'config/providers'
 import { BigNumber, utils, Contract } from 'ethers'
 import { useEffect, useState, useCallback } from 'react'
 import useConstants from './useConstants'
@@ -17,9 +17,8 @@ const STAKING_POOL_EVENT_TYPES = {
     shareTokensTransferOut: 'shareTokensTransferOut',
 }
 
-const ethProvider = getProvider('ethereum')
-
 const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
+    const ethProvider = rpcProviders['ethereum-ambire-earn']
     const { getAdexToStakingTransfersLogs } = useConstants()
     const WALLET_ADDR = addresses.stakingTokenAddress
     const [details, setDetails] = useState({})
@@ -296,8 +295,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
         let remainingTime
         if (leavePendingToUnlockOrReadyToWithdraw && latestLog) {
             const { unlocksAt } = leavePendingToUnlockOrReadyToWithdraw
-            const { timestamp } = await ethProvider.getBlock(latestLog.blockNumber)
-            remainingTime = (unlocksAt.toString()) - (Date.now() - (timestamp * 1000))
+            remainingTime = (unlocksAt.toString() * 1000) - Date.now()
             if (remainingTime <= 0) remainingTime = 0
         } else {
             remainingTime = null
@@ -389,7 +387,9 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
 
                 return {
                     blockNumber: log.blockNumber,
-                    shareValue: maxTokens
+                    shareValue: shares.isZero()
+                    ? ZERO
+                    : maxTokens
                         .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
                         .div(shares),
                 }
@@ -402,7 +402,9 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
                 const { shares, maxTokens } = parsedRageLeaveLog.args
 
                 return {
-                    shareValue: maxTokens
+                    shareValue: shares.isZero()
+                    ? ZERO
+                    : maxTokens
                         .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
                         .div(shares),
                     blockNumber: log.blockNumber,
@@ -414,9 +416,11 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
                 const { shares, maxTokens } = parsedLog.args
                 return {
                     blockNumber: log.blockNumber,
-                    shareValue: maxTokens
+                    shareValue: shares.isZero()
+                    ? ZERO 
+                    : maxTokens
                         .mul(POOL_SHARES_TOKEN_DECIMALS_MUL)
-                        .div(shares),
+                        .div(shares)
                 }
             })
 
@@ -659,7 +663,7 @@ const useAmbireEarnDetails = ({accountId, addresses, tokenLabel}) => {
             ),
             remainingTime: stats.remainingTime,
         }
-    }, [WALLET_ADDR, accountId, getAdexToStakingTransfersLogs])
+    }, [WALLET_ADDR, accountId, getAdexToStakingTransfersLogs, ethProvider])
 
     useEffect(() => {
         const getData = async (addresses, tokenLabel) => {

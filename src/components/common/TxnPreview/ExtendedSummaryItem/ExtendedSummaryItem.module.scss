@@ -1,0 +1,64 @@
+@import "variables";
+
+$txn-height: 65px;
+$extended-summary-height: 36px;
+
+.action {
+  display: flex;
+  align-items: center;
+  height: $extended-summary-height;
+  color: theme(highlight-secondary);
+  font-size: 14px;
+
+  &.unknown {
+    color: #d06f1b;
+  }
+
+  &.cancel {
+    color: #c33a3a;
+  }
+}
+
+.word {
+  font-size: 13px;
+  color: theme(text-secondary);
+}
+
+.token,
+.address,
+.network,
+.erc721 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  flex-wrap: wrap;
+  color: theme(text-primary);
+
+  .icon {
+    height: 36px;
+    width: 36px;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: theme(background-icon);
+  }
+}
+
+.externalLink {
+  width: 24px;
+  height: 24px;
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .token,
+  .address,
+  .network,
+  .erc721,
+  .word,
+  .action,
+  .externalLink {
+    align-items: center;
+    text-align: center;
+    margin: 0 auto;
+  }
+}

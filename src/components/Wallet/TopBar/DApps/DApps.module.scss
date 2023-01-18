@@ -1,0 +1,161 @@
+@import 'variables.scss';
+
+.wrapper {
+    .content {
+        cursor: pointer;
+    }
+
+    .title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        
+        label {
+            font-size: 14px;
+        }
+    }
+
+    .menu {
+        width: 400px;
+    }
+
+    .dappList {
+        max-height: calc(65px * 5);
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    .dappsItem {
+        width: 100%;
+        box-sizing: border-box;
+        overflow: hidden;
+
+        .icon {
+            position: relative;
+            flex: 0 0 auto;
+            @include flex-center-center;
+            height: 40px;
+            width: 40px;
+            border-radius: 100%;
+            overflow: hidden;
+            color: rgba(255, 255, 255, 0.2);
+            background-color: rgba(0, 0, 0, 0.2);
+
+            .iconOverlay {
+                z-index: 49;
+                @include absolute-full-size;
+                background-size: contain;
+                background-position: center center;
+                background-repeat: no-repeat;
+            }
+
+            img {
+                width: 100%;
+            }
+        }
+
+        span {
+            flex: 0 1 auto;
+
+            .details {
+                max-width: 190px;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                cursor: pointer;
+
+                .name {
+                    overflow: hidden;
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+
+                .sessionWarning, .sessionError {
+                    @include flex-center-center;
+                    color: #fdc835;
+                }
+
+                .sessionError {
+                    color: $danger-color ;
+                }                
+            }
+        }
+
+        .separator {
+            flex-grow: 1;
+        }
+
+        button {
+            flex: 0 0 auto;
+            height: 25px;
+            padding: 0 10px;
+            font-size: 11px;
+            font-weight: bold;
+            border: 1px solid $c-titan-white;
+            text-transform: uppercase;
+            color: $c-titan-white;
+            background-color: transparent;
+            opacity: 1;
+            transition: all 0.1s ease-in-out;
+
+            &:hover {
+                background-color: $danger-color;
+                border-color: transparent;
+                cursor: pointer;
+            }
+        }
+    }
+
+    .connectDapp {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding: 10px;
+
+        .heading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-right: 6px;
+
+            .buttonClass {
+                width: 100%;
+            }
+
+            a {
+                display: flex;
+                align-items: center;
+            }
+        }
+
+        label {
+            font-size: 14px;
+            color: $c-titan-white;
+            font-weight: 300;
+            margin-bottom: 21px;
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        .title {
+            svg {
+                width: 32px;
+                height: 32px;
+            }
+        }    
+      
+        .menu {
+            min-width: unset;
+            width: 100%;
+        }
+        .dappsItem {
+            .details {
+                max-width: 130px !important;
+            }
+        }
+    }
+}

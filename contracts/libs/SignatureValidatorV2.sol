@@ -66,6 +66,8 @@ library SignatureValidator {
 			require(sig.length == 33, "SV_SPOOF_LEN");
 			sig.trimToSize(32);
 			return abi.decode(sig, (address));
-		};
+		}
+		// should be impossible to get here
+		return address(0);
 	}
 }

@@ -1,9 +1,9 @@
+import cn from 'classnames'
 import NETWORKS from 'consts/networks'
 import { TextInput, ToolTip } from 'components/common'
 import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeAppIframe'
-import './DappsCatalog.scss'
-import { useCallback, Fragment, useEffect, useState } from 'react'
-import { MdInfo, MdSearch, MdDelete, MdBuildCircle } from 'react-icons/md'
+import { useCallback, useEffect, useState } from 'react'
+import { MdInfo, MdDelete } from 'react-icons/md'
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import { Button } from 'components/common'
 import DAPPS_ICON from 'resources/dapps.svg'
@@ -15,6 +15,10 @@ import { canOpenInIframe, getManifestFromDappUrl } from 'ambire-common/src/servi
 import { useOneTimeQueryParam } from 'hooks/oneTimeQueryParam'
 import { useHistory } from 'react-router-dom'
 
+import { ReactComponent as SearchIcon } from 'resources/icons/search.svg'
+
+import styles from './DappsCatalog.module.scss'
+
 const CONNECTION_TYPE_LABEL = {
   'walletconnect': 'WalletConnect'
 }
@@ -24,7 +28,7 @@ const CATEGORY_LABEL = {
 }
 
 const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosisDisconnect }) => {
-  const dappUrl = useOneTimeQueryParam('dappUrl')
+  const dappUrl = useOneTimeQueryParam('dappUrlCatalog')
   const { addCustomDapp, loadDappFromUrl, isDappMode, currentDappData, toggleFavorite, favorites, filteredCatalog, onCategorySelect, categoryFilter, search, onSearchChange, categories, loadCurrentDappData, removeCustomDapp } = dappsCatalog
   const { showModal } = useModals()
   const [dappUrlFromLink, setDappUrlsFromLink] = useState('')
@@ -47,14 +51,14 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
 
   const getNetworkTooltipContent = useCallback((networks) => {
     return (
-      <div className='tooltipNetworks'>
+      <div className={styles.tooltipNetworks}>
         {
           networks?.map((n) => {
             const network = NETWORKS.find(an => an.id === n)
             if (network) {
               return (
-                <div key={network.id} className='tooltipNetwork'>
-                  <span className='tooltipNetwork-icon'
+                <div key={network.id} className={styles.tooltipNetwork}>
+                  <span className={styles.tooltipNetworkIcon}
                     style={{ backgroundImage: `url(${network.iconUrl})` }}>
                   </span>
                   <span>
@@ -127,10 +131,10 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [dappUrlFromLink, loadDappFromUrl, selectedAcc])
 
   return (
-    <section id='dappCatalog'>
+    <section className={styles.wrapper}>
       {isDappMode && currentDappData ?
         <GnosisSafeAppIframe
-          className='dapp-iframe'
+          className={styles.dappIframe}
           network={network}
           selectedApp={currentDappData}
           selectedAcc={selectedAcc}
@@ -139,133 +143,137 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
           gnosisDisconnect={gnosisDisconnect}
         />
         :
-        <Fragment>
-          <div className='filter-section'>
-            <div className='input-icon'>
-              <TextInput value={search} onChange={onSearchChange} placeholder='Search filter' icon={<MdSearch />} />
-            </div>
-            <div className='categories'>
-              {categories.map(c => {
-                return <span
-                  key={c.name}
-                  className={`category category-${c.name}${categoryFilter?.name === c.name ? ' selected' : ''}`}
-                  onClick={() => onCategorySelect(c)}>{CATEGORY_LABEL[c.name] || c.name}</span>
-              })}
-            </div>
-          </div>
-
-          <div className='catalogItems'>
-            <div className={`catalogItem add-custom-dapp`} >
-              <div className='tools'>
-                <ToolTip label={`Click here to see how create dApp for Ambire Wallet catalog`}>
-                  <a className="info-btn" href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
-                    target="_blank"
-                    rel="noreferrer noopener">
-                    <MdBuildCircle size={23} />
-                  </a>
-                </ToolTip>
-                <img className='custom-dapp' src={DAPPS_ICON} alt='add custom dapps' />
+        <div className={styles.dappCatalogInner}>
+          <div>
+            <div className={styles.filterSection}>
+              {/* <div className={styles.inputIcon}> */}
+              <TextInput className={styles.filterInput} inputContainerClass={styles.textInputContainer} value={search} onChange={onSearchChange} placeholder='Search filter' icon={<SearchIcon />} />
+              {/* </div> */}
+              <div className={styles.categories}>
+                {categories.map(c => {
+                  return <span
+                    key={c.name}
+                    className={cn(styles.category, styles[`category${c.name}`], { [styles.selected]: categoryFilter?.name === c.name })}
+                    onClick={() => onCategorySelect(c)}>{CATEGORY_LABEL[c.name] || c.name}</span>
+                })}
               </div>
-              <div className='custom-dapp-icon-wrapper'>
-                <img className='custom-dapp-icon' src={DAPPS_ICON} alt='add custom dapps icon' />
-              </div>
-              <Button border mini onClick={openCustomDappModal}>Add custom dApp</Button>
             </div>
-            {
-              sortFiltered(filteredCatalog).map(item => {
-                return <div className={`catalogItem${item.supported ? '' : ' not-supported'}`}
-                  onClick={() => item.supported && openDapp(item)}
-                  key={item.id}
-                >
 
-                  <div className='tools'>
-                    {item.featured &&
-                      <ToolTip label={`Hot dApp`}>
-                        <img className='icon hot-dapp' src={AMBIRE_ICON_HOT} alt='hot dApp icon' />
-                      </ToolTip>
-                    }
-                    {item.custom &&
-                      <ToolTip label={`Remove ${item.name} from your catalog`}>
-                        <MdDelete className='icon remove-dapp' onClick={(e) => onRemoveCustomClick(e, item)} />
-                      </ToolTip>
-                    }
-                    {item.custom &&
-                      <img className='custom-dapp icon' src={DAPPS_ICON} alt='custom dapp icon' />
-                    }
-                    <ToolTip label={`${favorites[item.url] ? 'Remove' : 'Add'} ${item.name} ${favorites[item.url] ? 'from' : 'to'} favorites`}>
-                      <span className={`favorite${favorites[item.url] ? ' selected' : ''}`} onClick={(e) => onFavoriteClick(e, item)}> {
-                        favorites[item.url]
-                          ? <AiFillStar className='icon' /> :
-                          <AiOutlineStar className='icon' />
+            <div className={styles.catalogItems}>
+              <div className={cn(styles.catalogItem, styles.addCustomDapp)} >
+                <div className={styles.tools}>
+                  {/* <ToolTip label={`Click here to see how create dApp for Ambire Wallet catalog`}>
+                    <a className={styles.infoBtn} href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
+                      target="_blank"
+                      rel="noreferrer noopener">
+                      <MdBuildCircle size={23} />
+                    </a>
+                  </ToolTip> */}
+                  <img className={styles.customDapp} src={DAPPS_ICON} alt='add custom dapps' />
+                </div>
+                <div className={styles.customDappIconWrapper}>
+                  <img className={styles.customDappIcon} src={DAPPS_ICON} alt='add custom dapps icon' />
+                </div>
+                <Button border mini onClick={openCustomDappModal}>Add custom dApp</Button>
+              </div>
+              {
+                sortFiltered(filteredCatalog).map(item => {
+                  return <div className={cn(styles.catalogItem, {[styles.notSupported]: !item.supported})}
+                    onClick={() => item.supported && openDapp(item)}
+                    key={item.id}
+                  >
 
-                      }</span>
-                    </ToolTip>
-                  </div>
-
-                  <div className='base-info'>
-                    <div className='logoSplit'>
-                      <div className='logo'>
-                        <img src={item.iconUrl || DAPPS_ICON} alt={item.name} />
-                      </div>
-                      <div className='content'>
-                        <span className='title'>{item.name}</span>
-                      </div>
-                    </div>
-                    <div className='description'>{item.description}</div>
-                  </div>
-
-                  <div>
-
-                    {!item.supported &&
-                      <div className='tag-row unsupported'>
-                        <span className='tag unsupported'>{network.id} unsupported</span>
-                      </div>
-                    }
-
-                    <div className='aligned-tag-rows'>
-                      {
-                        !!item.networks?.length &&
-                        <ToolTip htmlContent={getNetworkTooltipContent(item.networks)} >
-                          <div className='tag-row network-tag-row'>
-                            {/* NOTE: remove reverse if there is way to match the design without flex-direction: row-reverse; */}
-                            {
-                              item.networks?.length > 3 &&
-                              <span className='tag network-tag network-tag-more'>...</span>
-                            }
-                            {
-                              item.networks?.slice(0, 3).reverse().map((n) => {
-                                const network = NETWORKS.find(an => an.id === n)
-                                if (network) {
-                                  return <span key={network.id} className='tag network-tag'
-                                    style={{ backgroundImage: `url(${network.icon})` }}></span>
-                                }
-                                return null
-                              })
-                            }
-                          </div>
+                    <div className={styles.tools}>
+                      {item.featured &&
+                        <ToolTip label={`Hot dApp`} labelClassName={styles.tooltipLabel}>
+                          <img className={cn(styles.icon, styles.hotDapp)} src={AMBIRE_ICON_HOT} alt='hot dApp icon' />
                         </ToolTip>
                       }
+                      {item.custom &&
+                        <ToolTip label={`Remove ${item.name} from your catalog`} labelClassName={styles.tooltipLabel}>
+                          <MdDelete className={cn(styles.icon, styles.removeDapp)} onClick={(e) => onRemoveCustomClick(e, item)} />
+                        </ToolTip>
+                      }
+                      {item.custom &&
+                        <img className={cn(styles.customDapp, styles.icon)} src={DAPPS_ICON} alt='custom dapp icon' />
+                      }
+                      <ToolTip label={`${favorites[item.url] ? 'Remove' : 'Add'} ${item.name} ${favorites[item.url] ? 'from' : 'to'} favorites`} labelClassName={styles.tooltipLabel}>
+                        <span className={cn(styles.favorite, {[styles.selected]: favorites[item.url]})} onClick={(e) => onFavoriteClick(e, item)}> {
+                          favorites[item.url]
+                            ? <AiFillStar className={styles.icon} /> :
+                            <AiOutlineStar className={styles.icon} />
 
-                      <div className='tag-row tag-types'>
-                        <span className={`tag type-tag type-tag-${item.category}`}>{CONNECTION_TYPE_LABEL[item.category] || item.category}</span>
+                        }</span>
+                      </ToolTip>
+                    </div>
+
+                    <div className={styles.baseInfo}>
+                      <div className={styles.logoSplit}>
+                        <div className={styles.logo}>
+                          <img src={item.iconUrl || DAPPS_ICON} alt={item.name} />
+                        </div>
+                        <div className={styles.content}>
+                          <span className={styles.title}>{item.name}</span>
+                        </div>
+                      </div>
+                      <div className={styles.description}>{item.description}</div>
+                    </div>
+
+                    <div>
+
+                      {!item.supported &&
+                        <div className={cn(styles.tagRow, styles.unsupported)}>
+                          <span className={cn(styles.tag, styles.unsupported)}>{network.id} unsupported</span>
+                        </div>
+                      }
+
+                      <div className={styles.alignedTagRows}>
+                        {
+                          !!item.networks?.length &&
+                          <ToolTip htmlContent={getNetworkTooltipContent(item.networks)} >
+                            <div className={cn(styles.tagRow, styles.networkTagRow)}>
+                              {/* NOTE: remove reverse if there is way to match the design without flex-direction: row-reverse; */}
+                              {
+                                item.networks?.length > 3 &&
+                                <span className={cn(styles.tag, styles.networkTag, styles.networkTagMore)}>...</span>
+                              }
+                              {
+                                item.networks?.slice(0, 3).reverse().map((n) => {
+                                  const network = NETWORKS.find(an => an.id === n)
+                                  if (network) {
+                                    return <span key={network.id} className={cn(styles.tag, styles.networkTag)}
+                                      style={{ backgroundImage: `url(${network.icon})` }}></span>
+                                  }
+                                  return null
+                                })
+                              }
+                            </div>
+                          </ToolTip>
+                        }
+
+                        <div className={cn(styles.tagRow, styles.tagTypes)}>
+                          <span className={cn(styles.tag, styles.typeTag, styles[`typeTag${item.category}`])}>{CONNECTION_TYPE_LABEL[item.category] || item.category}</span>
+                        </div>
                       </div>
                     </div>
+
                   </div>
-
-                </div>
-              })
+                })
+              }
+            </div>
+          </div>
+          <div>
+            {
+              !(typeof filteredCatalog === 'object' && filteredCatalog.length > 0) ? <div className={styles.noDappFound}>
+                No dApp found in our list matching your criteria
+              </div> : null
             }
-          </div>
 
-          {
-            !filteredCatalog.length &&
-            <div className='no-dapp-found'>No dApp found in our list matching your criteria</div>
-          }
-
-          <div className='info-wc'>
-            <MdInfo /> Note: any dApp that supports WalletConnect can be connected as well
+            <div className={styles.infoWc}>
+              <MdInfo /> Note: any dApp that supports WalletConnect can be connected as well
+            </div>
           </div>
-        </Fragment>
+        </div>
       }
     </section>
   )

@@ -315,8 +315,8 @@ const AssetsMigrationPermitter = ({
       {
         readyTokensCount() < getConsolidatedTokensPure(selectedTokensWithAllowance).length
           ? <div
-            className='small-asset-notification mb-3 warning'>{`${getConsolidatedTokensPure(selectedTokensWithAllowance).length - readyTokensCount()} actions left to complete the migration`}</div>
-          : <div className='small-asset-notification mb-3 success'>
+            className='notification-hollow mb-3 warning'>{`${getConsolidatedTokensPure(selectedTokensWithAllowance).length - readyTokensCount()} actions left to complete the migration`}</div>
+          : <div className='notification-hollow mb-3 success'>
             Your tokens were migrated. You can close this window
           </div>
       }

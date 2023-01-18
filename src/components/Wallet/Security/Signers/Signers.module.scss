@@ -1,0 +1,53 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 21px;
+
+  .addSigner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px dashed $c-scampi;
+    border-radius: 12px;
+    max-width: 240px;
+    min-height: 320px;
+    width: 100%;
+    cursor: pointer;
+    transition: .3s ease-in-out all;
+    user-select: none;
+  
+    &Body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transition: .3s ease-in-out all;
+      color: $c-scampi;
+      
+      label {
+        cursor: pointer;
+        margin-top: 10px;
+        font-size: 20px;
+      }
+    }
+
+    &:hover {
+      border-color: $c-turquoise;
+
+      .addSignerBody {
+        color: $c-turquoise;
+      }
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    justify-content: center;
+  }
+}

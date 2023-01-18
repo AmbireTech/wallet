@@ -9,12 +9,12 @@ import {
   Redirect,
   Prompt
 } from 'react-router-dom'
-import { useState, useEffect, useMemo, useCallback, lazy, Suspense } from 'react'
+import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import ModalProvider from './components/ModalProvider/ModalProvider'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
-import useWalletConnect from './hooks/walletconnect'
+import useWalletConnect from './hooks/useWalletConnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
 import { useAttentionGrabber, 
@@ -27,10 +27,7 @@ import { useAttentionGrabber,
 } from './hooks'
 import { useToasts } from './hooks/toasts'
 import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
-import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 import useRewards from 'ambire-common/src/hooks/useRewards'
-import { Contract, utils } from 'ethers'
-import { getProvider } from './lib/provider'
 import allNetworks from './consts/networks'
 import { Loading } from 'components/common'
 import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
@@ -38,11 +35,18 @@ import useDapps from 'ambire-common/src/hooks/useDapps'
 import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
 
-const EmailLogin = lazy(() => import('./components/EmailLogin/EmailLogin'))
-const AddAccount = lazy(() => import('./components/AddAccount/AddAccount'))
-const Wallet = lazy(() => import('./components/Wallet/Wallet'))
-const SendTransaction = lazy(() => import('./components/SendTransaction/SendTransaction'))
-const SignMessage = lazy(() => import('./components/SignMessage/SignMessage'))
+import EmailLogin from './components/EmailLogin/EmailLogin'
+import AddAccount from './components/AddAccount/AddAccount'
+import Wallet from './components/Wallet/Wallet'
+import SendTransaction from './components/SendTransaction/SendTransaction'
+import SignMessage from './components/SignMessage/SignMessage'
+import { initRpcProviders } from 'ambire-common/src/services/provider'
+
+import { rpcProviders } from 'config/providers'
+import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
+
+// Initialize rpc providers for all networks
+initRpcProviders(rpcProviders)
 
 const relayerURL = process.env.REACT_APP_RELAYRLESS === 'true' 
                   ? null 
@@ -75,6 +79,7 @@ function AppInner() {
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
+  const [allRequests, setRequests] = useState([])
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
@@ -82,76 +87,49 @@ function AppInner() {
     initialUri: wcUri,
     allNetworks,
     setNetwork,
-    useStorage: useLocalStorage
+    useStorage: useLocalStorage,
+    setRequests: setRequests
   })
 
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
     selectedAccount: selectedAcc,
     network: network,
-    useStorage: useLocalStorage
+    useStorage: useLocalStorage,
+    setRequests: setRequests
   }, [selectedAcc, network])
 
-  // Attach meta data to req, if needed
-  const attachMeta = async req => {
-    let meta
+  
+  // Filter gnosisRequests and wcRequests by dateAdded,
+  // because they are saved in local storage and add them on first render
+  useEffect(() => {
+    const storageRequests = [...gnosisRequests, ...wcRequests]
+    if (storageRequests.length) {
+      const newRequests = storageRequests.filter(r => !allRequests.find(x => x.id === r.id) || r).sort((a, b) => a.dateAdded - b.dateAdded)
 
-    const WALLET_TOKEN_ADDRESS = '0x88800092ff476844f74dc2fc427974bbee2794ae'
-    const WALLET_STAKING_ADDRESS = '0x47cd7e91c3cbaaf266369fe8518345fc4fc12935'
-
-    //polygon tests
-    // const WALLET_TOKEN_ADDRESS = '0xe9415e904143e42007865e6864f7f632bd054a08'
-    // const WALLET_STAKING_ADDRESS = '0xec3b10ce9cabab5dbf49f946a623e294963fbb4e'
-
-    const shouldAttachMeta =  [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
-
-    if (shouldAttachMeta) {
-      const WALLET_STAKING_POOL_INTERFACE = new utils.Interface(WalletStakingPoolABI)
-      const provider = getProvider(network.id)
-      const stakingTokenContract = new Contract(WALLET_STAKING_ADDRESS, WALLET_STAKING_POOL_INTERFACE, provider)
-      const shareValue = await stakingTokenContract.shareValue()
-      const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
-
-      meta = {
-        xWallet: {
-          APY,
-          shareValue,
-          walletTokenUsdPrice,
-        },
-      }
+      setRequests(reqs => [...reqs, ...newRequests])
     }
-
-    if (!meta) return req
-
-    return { ...req, meta: { ...req.meta && req.meta, ...meta }}
-  }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  
+  const requests = useMemo(
+    () => allRequests
+      .filter(({ account }) => accounts.find(({ id }) => id === account)),
+    [accounts, allRequests]
+  )
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
-  const [internalRequests, setInternalRequests] = useState([])
   const addRequest = async req => {
-    const request = await attachMeta(req)
-
-    return setInternalRequests(reqs => [...reqs, request])
+    return setRequests(reqs => [...reqs, req])
   }
 
   // Merge all requests
-  const requests = useMemo(
-    () => [...internalRequests, ...wcRequests, ...gnosisRequests]
-      .filter(({ account }) => accounts.find(({ id }) => id === account)),
-    [wcRequests, internalRequests, gnosisRequests, accounts]
-  )
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
-    setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
-  }
+    setRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
 
-  // Portfolio: this hook actively updates the balances/assets of the currently selected user
-  const portfolio = usePortfolio({
-    currentNetwork: network.id,
-    account: selectedAcc,
-    useStorage: useLocalStorage
-  })
+  }
 
   const privateMode = usePrivateMode(useLocalStorage)
 
@@ -242,6 +220,20 @@ function AppInner() {
     ]
   })
 
+  // Portfolio: this hook actively updates the balances/assets of the currently selected user
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc,
+    useStorage: useLocalStorage,
+    relayerURL: relayerURL,
+    useRelayerData: useRelayerData,
+    eligibleRequests,
+    requests,
+    selectedAccount: accounts.find(x => x.id === selectedAcc),
+    sentTxn,
+    accounts
+  })
+
   // Show notifications for all requests
   useNotifications(requests, request => {
     onSelectAcc(request.account)
@@ -295,9 +287,9 @@ function AppInner() {
         account={accounts.find(x => x.id === selectedAcc)}
         everythingToSign={everythingToSign}
         totalRequests={everythingToSign.length}
-        connections={connections}
         relayerURL={relayerURL}
         network={network}
+        useStorage={useLocalStorage}
         resolve={outcome => resolveMany([everythingToSign[0].id], outcome)}
       ></SignMessage>)}
 
@@ -388,11 +380,13 @@ export default function App() {
   return (
     <Router>
       <ConstantsProvider>
-        <ToastProvider>
-          <ModalProvider>
-            <AppInner/>
-          </ModalProvider>
-        </ToastProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <ModalProvider>
+              <AppInner/>
+            </ModalProvider>
+          </ToastProvider>
+        </ThemeProvider>
       </ConstantsProvider>
     </Router>
   )

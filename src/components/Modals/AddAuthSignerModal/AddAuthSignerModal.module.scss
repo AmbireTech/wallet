@@ -1,0 +1,79 @@
+@import 'variables';
+
+.button {
+  flex: 0 1 100%!important;
+}
+
+.wrapper {
+  width: 100%;
+  max-width: 1000px;
+  padding-bottom: 100px!important;
+
+  .signerAddress {
+    margin: 20px 0;
+  }
+
+  :global(.buttons) {
+    padding: 30px 40px;
+    padding-top: 10px;
+    height: 100px;
+  }
+}
+
+.signers {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-items: stretch;
+  gap: 20px;
+
+  .signer {
+    position: relative;
+    top: 0;
+    padding: 50px 10px;
+    background: $c-mirage;
+    border: 1px solid $c-scampi;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: .3s ease-out all;
+    cursor: pointer;
+
+    svg {
+      color: $c-scampi;
+      width: 170px;
+      transition: .3s ease-out all;
+    }
+
+    &:hover {
+      border-color: $c-turquoise;
+      top: -4px;
+      color: $c-white;
+      svg {
+        color: $c-white;
+      }
+
+      svg.email {
+        color: $c-turquoise;
+      }
+      svg.metamask {
+        color: #EF801B;
+
+        :global(#decoration) {
+            color: $c-white;
+        }
+      }
+
+      svg.gridplus {
+        color: $c-white;
+        :global(#logo) {
+            color: $c-white;
+        }
+        :global(#decoration) {
+            color: $c-picton-blue;
+        }
+      }
+    }
+  }
+}

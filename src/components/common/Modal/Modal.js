@@ -1,9 +1,11 @@
 import './Modal.scss'
 
-import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
+import cn from 'classnames'
 
-const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, topLeft }) => {
+import { ReactComponent as CloseIcon } from 'resources/icons/close.svg'
+
+const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, topRight, className }) => {
     const { onHideModal } = useModals()
 
     const onCloseModal = () => {
@@ -12,15 +14,17 @@ const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, 
     }
 
     return (
-        <div id={id} className={`modal ${buttons ? 'buttons' : ''}`}>
+        <div id={id} className={cn('modal', className || '', { buttons: !!buttons })}>
             <div className="heading">
-                <div className="title"  style={topLeft ? { maxWidth: '360px' } : {}}>{ title }</div>
-                {topLeft && <div className="top-left">{ topLeft }</div>}
+                <div className="title-wrapper">
+                    <div className={cn('title', { centered: !isCloseBtnShown })} style={topRight ? { maxWidth: '360px' } : {}}>{ title }</div>
+                    {topRight && <div>{ topRight }</div>}
+                </div>
                 {isCloseBtnShown ? (<div className="close" onClick={onCloseModal}>
-                    <MdClose/>
+                    <CloseIcon />
                 </div>) : <></>}
             </div>
-            <div className="content">{ children }</div>
+            <div className={cn("content", { noPaddingTop: !isCloseBtnShown })}>{ children }</div>
             { buttons ? 
                 <div className="buttons">{ buttons }</div>
             : null}

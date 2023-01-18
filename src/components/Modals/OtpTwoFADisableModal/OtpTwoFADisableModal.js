@@ -1,4 +1,3 @@
-import './OtpTwoFADisableModal.scss'
 import { useModals } from 'hooks'
 import { fetchPost } from 'lib/fetch'
 import { Modal, Button, TextInput, Loading } from 'components/common'
@@ -6,6 +5,7 @@ import { useState, useEffect } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { ethers } from 'ethers'
 import { CountdownTimer } from 'components/common'
+import styles from './OtpTwoFADisableModal.module.scss'
 
 const TIMER_IN_SECONDS = 300
 
@@ -71,24 +71,24 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
     }
 
     return (
-        <Modal id='disable-otp-modal' 
+        <Modal 
+          className={styles.wrapper} 
           title="Disable Two Factor Authentication" 
-          topLeft={(<CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp}/>)}
+          buttons={!isLoading ? (<Button form="disable2faForm" className={styles.button} primaryGradient type="submit" disabled={isTimeIsUp}>Disable 2FA</Button>) : (<Button className={styles.button} primaryGradient disabled><Loading /></Button>)}
         >
-          <form onSubmit={handleSubmit}>
-            {isTimeIsUp && <div className='timer-reset-msg'>Please reopen the modal to reset the session.</div>}
+          <form onSubmit={handleSubmit} id="disable2faForm">
+            {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}
+            <CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp} className={styles.timer} />
             <div>
               <h4>Authenticator app code</h4>
                 <TextInput
-                    placeholder="Enter the code from authenticator app"
-                    onInput={setReceivedOTP}
-                    value={receivedOtp}
-                    pattern="[0-9]{6}"
-                    required
+                  className={styles.input}
+                  placeholder="Enter the code from authenticator app"
+                  onInput={setReceivedOTP}
+                  value={receivedOtp}
+                  pattern="[0-9]{6}"
+                  required
                 />
-            </div>
-            <div className="buttons">
-              {!isLoading ? (<Button type="submit" disabled={isTimeIsUp}>Disable 2FA</Button>) : (<Button disabled><Loading /></Button>)}
             </div>
           </form>
         </Modal>

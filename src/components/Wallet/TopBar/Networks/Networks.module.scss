@@ -1,0 +1,25 @@
+@import 'variables.scss';
+
+.select {
+  option {
+    font-size: 18px;
+    font-weight: 400;
+  }
+}
+
+.selectInput {
+  height: 50px!important;
+  padding: 0 10px!important;
+  background-color: $c-ebony-clay!important;
+}
+
+.iconClassName {
+  width: 32px!important;
+  height: 32px!important;
+  background-color: $c-mirage!important;
+}
+
+.labelClassName {
+  font-size: 14px;
+  font-weight: 300;
+}
