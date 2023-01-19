@@ -370,7 +370,9 @@ export default function App() {
             <Button variant="secondary">Ex-Clear, Now-Secondary</Button>
             <Button variant="text">Text</Button>
             <Button startIcon={<AiFillApple />} variant="primaryGradient">Icon + Text</Button>
+            <Button startIcon={<AiFillApple />} variant="primaryGradient" size="sm">Icon + Text(sm)</Button>
             <Button endIcon={<AiFillApple />} variant="primaryGradient">Text + Icon</Button>
+            <Button loading loadingText="Fetching tokens..." variant="primaryGradient">Loading custom text</Button>
             <Button disabled variant="primaryGradient">Disabled</Button>
             <Button disabled variant="primaryGradient" size="sm">Disabled Sm</Button>
             <Button loading variant="primaryGradient" size="sm">Loading Sm</Button>
