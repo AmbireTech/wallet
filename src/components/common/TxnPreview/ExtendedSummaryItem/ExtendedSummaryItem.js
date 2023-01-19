@@ -90,7 +90,7 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <span className={styles.toAddress}>{item.name}</span>
-        <span className={cn(styles.toAddress, styles.short)}>{item.name.substring(0, 5) + '...' + item.name.substring(-5, item.name.length)}</span>
+        <span className={cn(styles.toAddress, styles.short)}>{item.name.substring(0, 5) + '...' + item.name.substring(item.name.length-5, item.name.length)}</span>
         {canShowLink ? <ExternalLinkIcon /> : null}
       </a>
     )
