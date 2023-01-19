@@ -3,6 +3,8 @@
 $account-height: 60px;
 
 .wrapper {
+    max-width: 220px;
+    width: 100%;
     color: $c-titan-white;
 
     .content {
@@ -12,13 +14,16 @@ $account-height: 60px;
     .selectedAddress {
         display: flex;
         align-items: center;
-        gap: 10px;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 110px;
+        gap: 5px;
         
         p {
             margin: 0;
         }
 
-        svg {
+        .selectedAddressCopyIcon {
             width: 18px;
             transition: .3s ease-in-out opacity;
 
@@ -192,6 +197,12 @@ $account-height: 60px;
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
+        max-width: 100%;
+
+        .selectedAddress {
+            max-width: 140px;
+        }
+
         .menu {
             width: 100%;
 
