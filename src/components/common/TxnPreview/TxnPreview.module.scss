@@ -167,7 +167,9 @@ $extended-summary-height: 36px;
             .info {
                 gap: 10px;
 
-                .summaryContainer {                
+                .summaryContainer {      
+                    gap: 10px;
+                              
                     .expandTxn {
                         min-width: 32px;
                         min-height: 32px;
