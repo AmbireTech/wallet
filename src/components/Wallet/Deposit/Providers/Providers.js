@@ -48,7 +48,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             name: 'MoonPay',
             type: 'Credit / Debit card',
             fees: 'from 1%',
-            limits: 'up to 5000 EUR/day',
+            limits: '',
             currencies: 'EUR, USD, GBP and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
             isSellAvailable: true,
@@ -127,15 +127,15 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                                 { type }
                             </div>
                             {name !== 'Swappin' ? <>
-                                <div className={styles.fees}>
+                                { (fees !== '') && <div className={styles.fees}>
                                     Fees: { fees }
-                                </div>
-                                <div className={styles.limits}>
+                                </div> }
+                                { (limits !== '') && <div className={styles.limits}>
                                     Limits: { limits }
-                                </div>
-                                <div className={styles.currencies}>
+                                </div> }
+                                { (currencies !== '') && <div className={styles.currencies}>
                                     Currencies: { currencies }
-                                </div>
+                                </div> }
                             </>
                             :   <div className={styles.fees}>
                                     { description }
