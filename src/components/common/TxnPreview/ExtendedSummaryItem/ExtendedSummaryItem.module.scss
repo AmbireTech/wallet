@@ -54,20 +54,6 @@ $extended-summary-height: 36px;
   height: 24px;
 }
 
-// @media screen and (max-width: $mobile-breakpoint-max-width) {
-//   .token,
-//   .address,
-//   .network,
-//   .erc721,
-//   .word,
-//   .action,
-//   .externalLink {
-//     align-items: center;
-//     text-align: center;
-//     // margin: 0 auto;
-//   }
-// }
-
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .word {
     font-size: 11px;
