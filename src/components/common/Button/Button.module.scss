@@ -14,9 +14,9 @@
 
 .wrapper {
     @include flex-center-center;
-    gap: 10px;
+    gap: 0.5em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
     height: 60px;
-    padding: 0 20px;
+    padding: 0 1em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
     font-family: 'Poppins', sans-serif;
     font-size: 20px;
     font-weight: 500;
@@ -28,8 +28,8 @@
     cursor: pointer;
 
     svg {
-        width: 24px;
-        height: 24px;
+        width: 1.3em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
+        height: 1.3em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
         color: inherit;
     }
     
@@ -74,6 +74,17 @@
         }
     }
 
+    // Sizes
+    &.sm {
+        font-size: 16px;
+        height: 50px;
+    }
+
+    &.xsm {
+        height: 40px;
+        font-size: 14px;
+    }
+
     // Other states
     &.loading {
         @keyframes spin {
@@ -88,7 +99,7 @@
 
         .loadingInner {
             display: flex;
-            gap: 15px;
+            gap: 1em;
             align-items: center;
 
             .loadingText {
@@ -99,31 +110,6 @@
                 animation: spin 1.5s infinite ease-in-out;
             }
         }
-    }
-
-    // Sizes
-    &.sm {
-        font-size: 16px;
-        height: 50px;
-        padding: 0 15px;
-
-        &.loading {
-            .loadingInner {
-                gap: 10px;
-
-                svg {
-                    width: 16px;
-                    height: 16px;
-                }
-            }
-        }
-    }
-
-    &.xsm {
-        gap: 5px;
-        height: 40px;
-        padding: 0 10px;
-        font-size: 14px;
     }
 
     &:hover:not(.disabled) {
