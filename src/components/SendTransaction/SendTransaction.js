@@ -100,12 +100,9 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
     // track whether the effect has been unmounted
     let unmounted = false
 
-    let bundleToEstimate
-    if (network.id === 'arbitrum' && !currentAccGasTankState.isEnabled) {
-      bundleToEstimate = addMockedTxnToBundle(bundle, network, account.id)
-    } else {
-      bundleToEstimate = bundle
-    }
+    const bundleToEstimate = network.id === 'arbitrum' && !currentAccGasTankState.isEnabled
+      ? addMockedTxnToBundle(bundle, network, account.id)
+      : bundle
     
     // Note: currently, there's no point of getting the nonce if the bundle already has a nonce
     // We may want to change this if we make a check if the currently replaced txn was already mined
