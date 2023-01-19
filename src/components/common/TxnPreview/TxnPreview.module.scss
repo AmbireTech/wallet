@@ -187,5 +187,13 @@ $extended-summary-height: 36px;
                 }
             }
         }
+        .advanced {
+            gap: 5px;
+            padding-top: 5px;
+            
+            p {
+                font-size: 12px;
+            }
+        }
     }
 }
