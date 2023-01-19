@@ -1,7 +1,7 @@
 import React from "react"
 
 export type ButtonProps = {
-  variant: 'primary' | 'secondary' | 'text' | 'primaryGradient' | 'secondaryGradient' | 'terniaryGradient';
+  variant: 'primary' | 'secondary' | 'danger' | 'text' | 'primaryGradient' | 'secondaryGradient' | 'terniaryGradient';
   size?: 'xsm' | 'sm';
   loading?: boolean;
   startIcon?: React.ReactElement | React.ReactElement[];
