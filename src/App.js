@@ -44,10 +44,6 @@ import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
 
-// Temporary code to test the new Button component
-import { AiFillApple } from 'react-icons/ai'
-import { Button } from 'components/common'
-
 // Initialize rpc providers for all networks
 initRpcProviders(rpcProviders)
 
@@ -359,24 +355,7 @@ export default function App() {
       <ConstantsProvider>
         <ToastProvider>
           <ModalProvider>
-            {/* <AppInner/> */}
-            <Button>Default</Button>
-            <Button size="sm">Default Sm</Button>
-            <Button size="xsm">Default Xsm</Button>
-            <Button variant="primaryGradient">Primary Gradient</Button>
-            <Button variant="primaryGradient" size="sm">Primary Gradient Sm</Button>
-            <Button variant="primaryGradient" size="xsm">Primary Gradient Xsm</Button>
-            <Button variant="danger">Danger</Button>
-            <Button variant="secondary">Ex-Clear, Now-Secondary</Button>
-            <Button variant="text">Text</Button>
-            <Button startIcon={<AiFillApple />} variant="primaryGradient">Icon + Text</Button>
-            <Button startIcon={<AiFillApple />} variant="primaryGradient" size="sm">Icon + Text(sm)</Button>
-            <Button endIcon={<AiFillApple />} variant="primaryGradient">Text + Icon</Button>
-            <Button loading loadingText="Fetching tokens..." variant="primaryGradient">Loading custom text</Button>
-            <Button disabled variant="primaryGradient">Disabled</Button>
-            <Button disabled variant="primaryGradient" size="sm">Disabled Sm</Button>
-            <Button loading variant="primaryGradient" size="sm">Loading Sm</Button>
-            <Button loading variant="primaryGradient" size="xsm">Loading Xsm</Button>
+            <AppInner/>
           </ModalProvider>
         </ToastProvider>
       </ConstantsProvider>
