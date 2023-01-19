@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <g id="Exit" transform="translate(-1170 -166)">
+    <rect id="Rectangle_57" data-name="Rectangle 57" width="40" height="40" rx="12" transform="translate(1170 166)" fill="currentColor" opacity="0.05"/>
+    <path id="Line_16" data-name="Line 16" d="M10,11a1,1,0,0,1-.707-.293l-10-10a1,1,0,0,1,0-1.414,1,1,0,0,1,1.414,0l10,10A1,1,0,0,1,10,11Z" transform="translate(1185 181)" fill="currentColor"/>
+    <path id="Path_44" data-name="Path 44" d="M0,11a1,1,0,0,1-.707-.293,1,1,0,0,1,0-1.414l10-10a1,1,0,0,1,1.414,0,1,1,0,0,1,0,1.414l-10,10A1,1,0,0,1,0,11Z" transform="translate(1185 181)" fill="currentColor"/>
+  </g>
+</svg>
