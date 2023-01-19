@@ -99,7 +99,8 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
 
     // track whether the effect has been unmounted
     let unmounted = false
-
+    // On Arbitrum we're adding mocked txn with a dummy token
+    // only for the estimation call to relayer
     const bundleToEstimate = (network.id === 'arbitrum' && !currentAccGasTankState.isEnabled)
       ? addMockedTxnToBundle(bundle)
       : bundle
