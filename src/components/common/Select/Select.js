@@ -3,7 +3,7 @@ import styles from './Select.module.scss';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
-import { TextInput } from 'components/common';
+import { Image, TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
 
@@ -20,7 +20,6 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
         value: null,
         icon: null,
     });
-    const [failedImg, setFailedImg] = useState([])
 
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
 
@@ -49,22 +48,6 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
 
     useOnClickOutside(ref, () => setOpen(false));
 
-    const getIcon = ({ icon, fallbackIcon, label }) => {
-        if (!icon) return null
-        const url = failedImg.includes(icon) && fallbackIcon ? fallbackIcon : icon
-        return (
-            failedImg.includes(url)
-                ? <div className={`${styles.icon} ${iconClassName}`} />
-                : <img
-                    className={`${styles.icon} ${iconClassName}`}
-                    src={url}
-                    draggable="false"
-                    alt={label}
-                    onError={() => setFailedImg(failed => [...failed, url])}
-                />
-        )
-    }
-
     return (
         !native ?
             <div className={`${styles.select} ${monospace ? styles.monospace : ''} ${disabled ? styles.disabled : ''} ${searchable ? styles.searchable : ''} ${className || ''}`} ref={ref}>
@@ -79,7 +62,11 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                         <div className={styles.selectContainer}>
                             <div className={`${styles.selectInput} ${selectInputClassName}`} onClick={() => setOpen(!isOpen)}
                                 >
-                                {getIcon(selectedItem)}
+                                <Image
+                                    src={selectedItem.icon}
+                                    alt=""
+                                    className={cn(styles.icon, iconClassName)}
+                                />
                                 <div className={`${styles.label} ${labelClassName}`}>{selectedItem.label || selectedItem.value}</div>
                                 {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
                                 {/* <div className="separator"></div> */}
@@ -121,7 +108,11 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                                     onDragOver={(e) => e.preventDefault()}
                                                 >
                                                     {draggable && <MdDragIndicator className={styles.dragHandle} id={`${i}-handle`} />}
-                                                    {getIcon(item)}
+                                                    <Image
+                                                        src={item.icon}
+                                                        alt=""
+                                                        className={cn(styles.icon, iconClassName)}
+                                                    />
                                                     <div className={styles.label}>{item.label || item.value}</div>
                                                     {item.extra && <div className={styles.extra}>{item.extra}</div>}
                                                 </div>

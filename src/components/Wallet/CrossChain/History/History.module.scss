@@ -1,0 +1,9 @@
+@import 'variables.scss';
+
+.wrapper {  
+  .txStatuses {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+}

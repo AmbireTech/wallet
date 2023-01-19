@@ -15,7 +15,7 @@
   }
 
   .gasTankEnabled {
-    color: $c-turquoise;
+    color: theme(highlight-secondary);
   }
 
   .gasTankDisabled {
@@ -29,6 +29,7 @@
     text-align: center;
     gap: 20px;
     margin-bottom: 20px;
+    
     span {
       margin-bottom: 0;
     }

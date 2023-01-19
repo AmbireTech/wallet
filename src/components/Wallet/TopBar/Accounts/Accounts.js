@@ -55,7 +55,9 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         }
     })
 
-    const shortenedAddress = address => address.slice(0, 8) + '...' + address.slice(-3)
+    // On mobile screens we are showing more characters of the address,
+    // because we have more space there (the dropdowns take full width)
+    const shortenedAddress = address => address.slice(0, isMobileScreen ? 8 : 5) + '...' + address.slice(-3)
     const isActive = id => id === selectedAddress ? styles.active : ''
     const toIcon = seed => blockies.create({ seed }).toDataURL()
     const toIconBackgroundImage = seed => ({ backgroundImage: `url(${toIcon(seed)})`})
@@ -149,9 +151,9 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                     </div>
                     :
                     <div className={`${styles.account} ${isActive(id)} ${styles.confirmDeleteAccount}`} key={id}>
-                        <div className={styles.message}>
+                        <p className={styles.message}>
                             Are you sure you want to log out from this account ?
-                        </div>
+                        </p>
                         <div className={styles.buttons}>
                             <div className={cn(styles.button, styles.danger)} onClick={() => {
                                 setLogoutWarning(false)

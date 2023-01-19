@@ -1,8 +1,8 @@
 
-import RAMP_LOGO from 'resources/payment-providers/ramp.svg'
-import PAYTRIE_LOGO from 'resources/payment-providers/paytrie.svg'
-import TRANSAK_LOGO from 'resources/payment-providers/transak.svg'
-import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg'
+import RAMP_LOGO from 'resources/payment-providers/ramp.svg';
+import PAYTRIE_LOGO from 'resources/payment-providers/paytrie.svg';
+import TRANSAK_LOGO from 'resources/payment-providers/transak.svg';
+// import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg';
 import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 import SWAPPIN_LOGO from 'resources/payment-providers/swappin.svg'
 import MOONPAY_LOGO from 'resources/payment-providers/moonpay.svg'
@@ -15,7 +15,7 @@ import styles from './Providers.module.scss'
 import { ReactComponent as InfoIcon } from 'resources/icons/information.svg' 
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio,  sellMode = false, selectedAsset }) {
-    const { openRampNetwork, openPayTrie, openTransak, openKriptomat, openGuardarian, openSwappin, openMoonpay, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
+    const { openRampNetwork, openPayTrie, openTransak, openGuardarian, openSwappin, openMoonpay, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio }) // openKriptomat
     const initMode = sellMode ? 'sell' : 'buy'
     const providers = [
         {
@@ -30,18 +30,19 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             isBuyAvailable: true,
             onClick: () => openGuardarian(initMode, selectedAsset)
         },
-        {
-            logo: KRIPTOMAT_LOGO,
-            name: 'Kriptomat',
-            type: 'Credit Card',
-            fees: '2.45%',
-            limits: 'up to 5000 EUR/day',
-            currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'polygon', 'binance-smart-chain'],
-            isSellAvailable: false,
-            isBuyAvailable: true,
-            onClick: () => openKriptomat()
-        },
+        // DISABLED: Temporary until maintenance ends.
+        // {
+        //     logo: KRIPTOMAT_LOGO,
+        //     name: 'Kriptomat',
+        //     type: 'Credit Card',
+        //     fees: '2.45%',
+        //     limits: 'up to 5000 EUR/day',
+        //     currencies: 'USD, EUR, GBP',
+        //     networks: ['ethereum', 'polygon', 'binance-smart-chain'],
+        //     isSellAvailable: false,
+        //     isBuyAvailable: true,
+        //     onClick: () => openKriptomat()
+        // },
         {
             logo: MOONPAY_LOGO,
             name: 'MoonPay',
@@ -87,6 +88,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             isSellAvailable: false,
+            isBuyAvailable: true,
             onClick: () => openTransak()
         },
         {
@@ -101,13 +103,14 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             isBuyAvailable: false,
             onClick: () => openSwappin()
         }
-    ];
-    
-    const filteredProviders = providers.filter(p => sellMode ? p.isSellAvailable : p.isBuyAvailable)
-    const shouldBeDisabled = (networks) => {
-        return !networks.includes(networkDetails.id)
-    }
+    ]
 
+    const shouldBeDisabled = (networks) => {
+        return networks.includes(networkDetails.id) ? null : 'disabled'
+    }
+    const isNoteVisible = () => providers.find(i => !i.networks.includes(networkDetails.id))
+    const filteredProviders = providers.filter(p => sellMode ? p.isSellAvailable : p.isBuyAvailable)
+    
     return (
         <div className={styles.wrapper}>
             {
@@ -116,7 +119,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                     <div className={`${styles.provider} ${shouldBeDisabled(networks) && styles.disabled}`} key={name} onClick={onClick}>
 
                         <div className={styles.logo}>
-                            <img src={logo} alt={name}></img>
+                            <img src={logo} alt={name} />
                         </div>
                         { isLoading.includes(name) ? <div> <Loading/> </div> :
                         <div className={styles.details}>
@@ -145,15 +148,13 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                 )
             }
             {
-                networkDetails.id !== 'ethereum' ? 
+                !!isNoteVisible() && 
                     <label className={styles.networkWarning}>
                         <InfoIcon />
                         <label>
                             Some {sellMode ? 'sell' : 'deposit'} methods are unavailable on {networkDetails.name}. Switch to Ethereum for the widest support.
                         </label>
                     </label>
-                    :
-                    null
             }
         </div>
     )

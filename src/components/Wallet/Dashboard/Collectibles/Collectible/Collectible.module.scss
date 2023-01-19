@@ -1,0 +1,108 @@
+@import 'variables';
+
+$collectible-size: 204px;
+$details-size: 60px;
+
+.wrapper {
+  position: relative;
+  height: 264px;
+  width: $collectible-size;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.1s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  .purpleHighlight {
+    color: $c-heliotrope;
+  }
+
+  .artworkWrapper {
+    max-height: $collectible-size;
+    height: 100%;
+    .artwork {
+      width: 100%;
+      max-height: $collectible-size;
+      
+      &.fallbackImage {
+        background-color: $c-mirage;
+        padding: 25%;
+      }
+    }
+  }
+
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 5px;
+    padding: 10px;
+    height: $details-size;
+    background-color: $c-mirage;
+
+    .collection {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 12px;
+      font-weight: 500;
+      color: $c-titan-white;
+
+      .collectionIcon {
+        flex: 0 0 auto;
+        height: 18px;
+        width: 18px;
+        border-radius: 100%;
+        background-color: rgba($c-titan-white, 0.04);
+
+        &.fallbackImage {
+          padding: 2px;
+        }
+      }
+
+      .collectionName {
+        font-size: 12px;
+        margin: 0;
+        font-weight: 300;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .details {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+
+      .name {
+        flex: 0 1 auto;
+        margin: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 14px;
+        font-weight: 300;
+        color: $c-titan-white;
+      }
+
+      .value {
+        flex: 0 0 auto;
+        font-size: 12px;
+        margin: 0;
+        font-weight: 300;
+      }
+    }
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $box-shadow;
+  }
+}

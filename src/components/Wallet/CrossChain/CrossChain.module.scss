@@ -1,0 +1,39 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: row;
+    gap: 17px;
+    min-height: 100%;
+
+    .panel {
+        flex: 1;
+        padding: 40px;
+        padding-top: 36px;
+
+        & > div {
+            padding-top: 20px;
+        }
+    }
+}
+
+// Small screen
+@media screen and (max-width: $small-breakpoint-max-width) {
+    .wrapper {
+        min-height: auto;
+        flex-direction: column;
+
+        .panel {
+            padding: 30px;
+        }
+    }
+}
+
+// Mobile screen
+@media screen and (max-width: 600px) {
+    .wrapper {
+        .panel {
+            padding: 20px;
+        }
+    }
+}
