@@ -31,6 +31,7 @@ $account-height: 60px;
     .menu {
         background-color: $c-mirage;
         padding-top: 15px;
+        min-width: 560px;
         
 
         .list {
@@ -193,6 +194,7 @@ $account-height: 60px;
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
         .menu {
+            min-width: 100%;
             width: 100%;
 
             .confirmDeleteAccount {
