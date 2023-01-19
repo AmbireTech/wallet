@@ -1,7 +1,6 @@
 import { Bundle } from 'adex-protocol-eth/js'
 import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
-import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 const ERC20 = new Interface(require("adex-protocol-eth/abi/ERC20"))
 // It costs around 19k to send a token, if that token was interacted with before in the same transaction,
@@ -153,7 +152,7 @@ export function makeBundle(account, networkId, requests) {
   return bundle
 }
 
-export function addMockedTxnToBundle(bundle, selectedNetwork, selectedAcc) {
+export function addMockedTxnToBundle(bundle) {
   const tempBundle = new Bundle({ ...bundle })
   const mockedValue = '0.' + '89'.repeat(9)
   const mockTxn = 
