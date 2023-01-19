@@ -39,7 +39,8 @@ const Button: FC<ButtonProps> = ({
 			title={title}
 			// used with <form>
 			type={type}
-			form={form}>
+			form={form}
+		>
 			{startIcon && startIcon}
 			{!loading ? (
 				children
