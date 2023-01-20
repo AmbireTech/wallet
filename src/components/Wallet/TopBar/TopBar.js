@@ -49,8 +49,8 @@ const TopBar = ({
 
   const dappModeTopBar = useMemo(() => isDappMode && routeMatch && currentDappData, [currentDappData, isDappMode, routeMatch])
 
-  const account = accounts.find(({ id }) => id === selectedAcc)
-  const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
+  const account = useMemo(() => accounts.find(({ id }) => id === selectedAcc), [accounts, selectedAcc])
+  const accountIcon = useMemo(() => blockies.create({ seed: account ? account.id : null }).toDataURL(), [blockies, account])
   
   const visualEnv =
     (process.env.REACT_APP_VISUAL_ENV === 'dev')
