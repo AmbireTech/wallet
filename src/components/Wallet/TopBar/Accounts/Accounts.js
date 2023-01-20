@@ -73,10 +73,10 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         addToast('Copied to clipboard!')
     }, [addToast])
 
-    const copySelectedAddress = (e) => {
+    const copySelectedAddress = useCallback(e => {
         e.stopPropagation()
         copyAddress(selectedAddress)
-    }
+    }, [copyAddress, selectedAddress])
 
     const onSelectAccount = useCallback(id => {
         onSelectAcc(id)
