@@ -88,10 +88,11 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
             className={styles.wrapper}
             menuClassName={styles.menu}
             icon={toIcon(selectedAddress)}
-            title={<div className={styles.selectedAddress}>
+            title={<>
                 <p>{hidePrivateValue(shortenedAddress(selectedAddress))}</p>
                 <Copy onClick={copySelectedAddress} className={styles.selectedAddressCopyIcon} />
-            </div>}
+            </>}
+            titleClassName={styles.selectedAddress}
             open={closed} 
             onOpen={() => setClosed(false)}
         >
