@@ -9,7 +9,7 @@ import { getTokenIcon } from 'lib/icons'
 import styles from './ExtendedSummaryItem.module.scss'
 
 const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
-  if (item.length <= 1) return null
+  if (item.length === 1) return item
 
   if (i === 0) return <div className={cn(styles.action, styles[item.toLowerCase()])}>{item}</div>
 

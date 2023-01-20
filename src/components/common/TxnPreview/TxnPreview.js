@@ -42,9 +42,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
               <div className={styles.summary}>
                 {extendedSummary.map(entry => { // If entry is extended summary parse it
                   if(Array.isArray(entry)) {
-                    const entryWithNoSingleLetter = entry.filter(entry => entry.length !== 1)
-                    // We merge the single letter entries to a single word and then push it to the original array
-                    return entryWithNoSingleLetter.concat(entry.filter(entry => entry.length === 1).reduce((accumulator, currentValue) => accumulator + currentValue, [])).map((item, i) => (
+                    return entry.map((item, i) => (
                       <ExtendedSummaryItem 
                         key={`item-${i}`}
                         item={item}
