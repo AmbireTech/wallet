@@ -82,21 +82,84 @@ const UniswapV3Pool = (humanizerInfo) => {
     [ifaceV3.getSighash('mint')]: (txn, network, opts = {}) => {
         const [ params ] = ifaceV3.parseTransaction(txn).args
         // @TODO: consider fees
-        return !opts.extended 
+        return opts.extended 
           ? [`Supplying ${token(humanizerInfo, params.token0, params.amount0Desired)} and ${token(humanizerInfo, params.token1, params.amount1Desired)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
           : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from))
     },
-    [ifaceV3.getSighash('refundETH')]: (txn, network, opts = {}) => {
+    // TOD fix bellow
+    [ifaceV3.getSighash('decreaseLiquidity')]: (txn, network, opts = {}) => {
+      const [ params ] = ifaceV3.parseTransaction(txn).args
+      console.log('-'.repeat(40))
+      console.log('decreaseLiquidity')
+      console.log('params', params)
+      console.log('-'.repeat(40))
+      
+      // amount0Min: BigNumber {_hex: '0x00', _isBigNumber: true}
+      // amount1Min: BigNumber {_hex: '0x00', _isBigNumber: true}
+      // deadline: BigNumber {_hex: '0x63ca8bd9', _isBigNumber: true}
+      // liquidity: BigNumber {_hex: '0x2e035871f8', _isBigNumber: true}
+      // tokenId: BigNumber {_hex: '0x09e8ba', _isBigNumber: true}
+      // @TODO: consider fees
+      return opts.extended 
+        ? [`Decrease Liquidity from ${token(humanizerInfo, params.tokenId, params.amount0Min)} to ${token(humanizerInfo, params.tokenId, params.amount1Min)}`]
+        : toExtended('DecreaseLiquidity', 'and', token(humanizerInfo, params.tokenId, params.amount0Min, true), token(humanizerInfo, params.tokenId, params.amount1Min, true), [])
+    },
+    // [ifaceV3.getSighash('collect')]: (txn, network, opts = {}) => {
+    //   const [ params ] = ifaceV3.parseTransaction(txn).args
+    //   console.log('-'.repeat(40))
+    //   console.log('collect')
+    //   console.log('ifaceV3.parseTransaction(txn).args', ifaceV3.parseTransaction(txn).args)
+    //   console.log('-'.repeat(40))
+    //   // amount0Max: BigNumber {_hex: '0xffffffffffffffffffffffffffffffff', _isBigNumber: true}
+    //   // amount1Max: BigNumber {_hex: '0xffffffffffffffffffffffffffffffff', _isBigNumber: true}
+    //   // recipient: "0x0000000000000000000000000000000000000000"
+    //   // tokenId: BigNumber {_hex: '0x09e8ba', _isBigNumber: true}
+    //   // @TODO: consider fees
+    //   return opts.extended 
+    //     ? [`Supplying ${token(humanizerInfo, params.token0, params.amount0Desired)} and ${token(humanizerInfo, params.token1, params.amount1Desired)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+    //     : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from))
+    // },
+    // [ifaceV3.getSighash('unwrapWETH9')]: (txn, network, opts = {}) => {
+    //   const [ params ] = ifaceV3.parseTransaction(txn).args
+    //   console.log('-'.repeat(40))
+    //   console.log('unwrapWETH9')
+    //   console.log('ifaceV3.parseTransaction(txn).args', ifaceV3.parseTransaction(txn).args)
+    //   console.log('-'.repeat(40))
+    //   // amountMinimum: BigNumber {_hex: '0x00', _isBigNumber: true}
+    //   // recipient: "0x8D230560d5d68D6027dc1e721cE75ec9dE4d8443"
+    //   // @TODO: consider fees
+    //   return opts.extended 
+    //     ? [`Supplying ${token(humanizerInfo, params.token0, params.amount0Desired)} and ${token(humanizerInfo, params.token1, params.amount1Desired)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+    //     : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from))
+    // },
+    // [ifaceV3.getSighash('sweepToken')]: (txn, network, opts = {}) => {
+    //   const [ params ] = ifaceV3.parseTransaction(txn).args
+    //   console.log('-'.repeat(40))
+    //   console.log('sweepToken')
+    //   console.log('ifaceV3.parseTransaction(txn).args', ifaceV3.parseTransaction(txn).args)
+    //   console.log('-'.repeat(40))
+
+    //   // amountMinimum: BigNumber {_hex: '0x00', _isBigNumber: true}
+    //   // recipient: "0x8D230560d5d68D6027dc1e721cE75ec9dE4d8443"
+    //   // token: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
+    //   // @TODO: consider fees
+    //   return opts.extended 
+    //     ? [`Supplying ${token(humanizerInfo, params.token0, params.amount0Desired)} and ${token(humanizerInfo, params.token1, params.amount1Desired)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+    //     : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from))
+    // },
+    
+  
+    // [ifaceV3.getSighash('refundETH')]: (txn, network, opts = {}) => {
         
-        const test = ifaceV3.parseTransaction(txn).args
-        const [ params ] = ifaceV3.parseTransaction(txn).args
-        console.log('TEST', test)
-        debugger
-        // @TODO: consider fees
-        return !opts.extended 
-          ? [`Supplying ${token(humanizerInfo, params.token0, params.amount0Desired)} and ${token(humanizerInfo, params.token1, params.amount1Desired)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
-          : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from))
-    }
+    //     const test = ifaceV3.parseTransaction(txn).args
+    //     const [ params ] = ifaceV3.parseTransaction(txn).args
+    //     console.log('TEST', test)
+        
+    //     // @TODO: consider fees
+    //     return !opts.extended 
+    //       ? [`Supplying ${token(humanizerInfo, params.token0, params.amount0Desired)} and ${token(humanizerInfo, params.token1, params.amount1Desired)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+    //       : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from))
+    // }
   }
 }
 
