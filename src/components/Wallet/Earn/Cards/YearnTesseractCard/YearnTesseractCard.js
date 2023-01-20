@@ -32,7 +32,7 @@ const YearnTesseractCard = ({ networkId, accountId, tokens, addRequest }) => {
     const unavailable = !(networkId === 'ethereum' || networkId === 'fantom')
     const name = 'Yearn' 
     const networkDetails = networks.find(({ id }) => id === networkId)
-    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account: accountId, txn, extraGas })
     const provider = useMemo(() => {
         return (networkDetails.id === 'ethereum')
         ? rpcProviders['ethereum-ambire-earn']

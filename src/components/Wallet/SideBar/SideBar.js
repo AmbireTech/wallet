@@ -26,7 +26,8 @@ const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
 const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
   const networkBalance = portfolio.balance.total.full
-  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : networkBalance.toFixed(2)
+  const allTokensWithoutPrice = portfolio?.tokens.length && portfolio?.tokens.every(t => !t.price)
+  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : (allTokensWithoutPrice && !networkBalance ? ' -' : networkBalance.toFixed(2))
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog

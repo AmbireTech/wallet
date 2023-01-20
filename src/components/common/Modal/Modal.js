@@ -24,7 +24,7 @@ const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, 
                 </div>
                 {isCloseBtnShown && <CloseIcon className="heading-icon" onClick={onCloseModal} />}
             </div>
-            <div className="content">{ children }</div>
+            <div className={cn("content", { noPaddingTop: !isCloseBtnShown })}>{ children }</div>
             { buttons ? 
                 <div className="buttons">{ buttons }</div>
             : null}
