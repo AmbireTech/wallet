@@ -3,11 +3,13 @@ import {useToasts} from 'hooks/toasts'
 
 import {Methods} from '@gnosis.pm/safe-apps-sdk'
 import {GnosisConnector} from 'lib/GnosisConnector'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
+
+import { rpcProviders } from 'config/providers'
 
 const STORAGE_KEY = 'gnosis_safe_state'
 
-export default function useGnosisSafe({selectedAccount, network, verbose = 0, useStorage}) {
+export default function useGnosisSafe({selectedAccount, network, verbose = 0, useStorage, setRequests }) {
   // One connector at a time
   const connector = useRef(null)
 
@@ -22,7 +24,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
     network
   }
 
-  const [requests, setRequests] = useStorage({
+  const [stateStorage, setStateStorage] = useStorage({
     key: STORAGE_KEY,
     defaultValue: [],
     setInit: initialRequests => !Array.isArray(initialRequests) ? [] : initialRequests
@@ -93,7 +95,12 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
       const method = msg.data.params.call
       const callTx = msg.data.params.params
 
-      const provider = getProvider(stateRef.current.network.id)
+      // NOTE: swap only provider
+      const provider =  connector?.current?.app?.name === 'Ambire swap' ?
+        (rpcProviders[`${stateRef.current.network.id}-ambire-swap`] || getProvider(stateRef.current.network.id))
+        : getProvider(stateRef.current.network.id)
+      // const provider = getProvider(stateRef.current.network.id)
+
       let result
       if (method === "eth_call") {
         result = await provider.call(callTx[0], callTx[1]).catch(err => {
@@ -182,6 +189,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         const id = 'gs_' + data.id + ':' + ix
         const request = {
           id,
+          dateAdded: new Date().valueOf(),
           forwardId: msg.data.id,
           type: 'eth_sendTransaction',
           isBatch: txs.length > 1,
@@ -190,6 +198,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
           account: stateRef.current.selectedAccount
         }
         //is reducer really needed here?
+        setStateStorage(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
         setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
       }
     }
@@ -214,6 +223,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
 
       const request = {
         id,
+        dateAdded: new Date().valueOf(),
         forwardId: msg.data.id,
         type: message.signType === 'eth_signTypedData_v4' ? 'eth_signTypedData_v4' : 'personal_sign',
         txn: message.signType === 'eth_signTypedData_v4' ? JSON.parse(message.message) : message,
@@ -227,6 +237,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         } : null
       }
 
+      setStateStorage(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
       setRequests(prevRequests => prevRequests.find(x => x.id === request.id) ? prevRequests : [...prevRequests, request])
     }
 
@@ -245,7 +256,7 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
         return {}
       }
     })
-  }, [uniqueId, addToast, verbose, setRequests])
+  }, [uniqueId, addToast, verbose, setStateStorage, setRequests])
 
 
   const disconnect = useCallback(() => {
@@ -255,10 +266,11 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
 
 
   const resolveMany = (ids, resolution) => {
-    for (let req of requests.filter(x => ids.includes(x.id))) {
+    for (let req of stateStorage.filter(x => ids.includes(x.id))) {
       if (!req.isBatch || req.id.endsWith(':0')) {
         const replyData = {
           id: req.forwardId,
+          dateAdded: new Date().valueOf(),
           success: null,
           txId: null,
           error: null
@@ -285,11 +297,12 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
       }
     }
 
+    setStateStorage(prevRequests => prevRequests.filter(x => !ids.includes(x.id)))
     setRequests(prevRequests => prevRequests.filter(x => !ids.includes(x.id)))
   }
 
   return {
-    requests,
+    requests: stateStorage,
     resolveMany,
     connect,
     disconnect

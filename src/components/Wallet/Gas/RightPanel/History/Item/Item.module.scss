@@ -1,0 +1,139 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  font-size: 14px;
+  text-align: center;
+  padding-left: 20px;
+
+  p {
+    margin: 0;
+  }
+
+  .icon {
+    width: 24px;
+    height: 24px;
+    color: $c-titan-white;
+    fill: $c-titan-white;
+  }
+
+  .iconAndDate {
+    flex: 2.5 0 0;
+    display: flex;
+    align-items: center;
+
+    .gasTank {
+      display: flex;
+      flex: 1 0 0;
+  
+      svg {
+        width: 32px;
+        height: 32px;
+        
+        * [fill] {
+          fill: $c-titan-white;
+          color: $c-titan-white;
+        }
+      }
+    }
+
+    .date {
+      flex: 1.5 0;
+      font-weight: 300;
+      text-align: left;
+    }
+  }
+
+  .balanceAndLink {
+    flex: 2.5 0 0;
+    display: flex;
+    align-items: center;
+
+    .balance {
+      display: flex;
+      flex: 1.5 0;
+      align-items: center;
+      justify-content: left;
+      font-weight: 300;
+      gap: 10px;
+   
+      .tokenIcon {
+        position: relative;
+        flex: 0 0 auto;
+        @include flex-center-center;
+        height: 32px;
+        width: 32px;
+        border-radius: 12px;
+        background-color: rgba($c-titan-white, 0.05);
+        overflow: hidden;
+        margin-left: 12px;
+    
+        img {
+          height: 18px;
+          width: 18px;
+          user-select: none;
+        }
+      }
+
+      .name {
+        font-size: 14px;
+        font-weight: 300;
+        margin: 0;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    position: relative;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 0;
+    margin-left: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba($c-scampi, 0.2);
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: none;
+    }
+
+    .icon {
+      width: 20px;
+      height: 20px;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+
+    .iconAndDate, .balanceAndLink {
+      width: 100%;
+      flex: unset;
+      justify-content: space-between;
+    }
+
+    .iconAndDate {
+      .gasTank {
+        display: none;
+      }
+
+      .date {
+        text-align: left;
+        font-size: 12px;
+        font-weight: 300;
+        opacity: .7;
+      }
+    }
+
+    .balanceAndLink {
+      .balance {
+        .tokenIcon {
+          margin-left: 0;
+        }
+      }
+    }
+  }
+}

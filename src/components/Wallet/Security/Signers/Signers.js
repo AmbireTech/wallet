@@ -83,7 +83,7 @@ const Signers = ({
 
   const onMakeDefaultBtnClicked = async (account, address, isQuickAccount) => {
     if (isQuickAccount) {
-      return addToast((<span>To make this signer default, please <a href='#/email-login'>please login with the email</a></span>), {url: '/#/email-login', error: true})
+      return addToast((<span>To make this signer default, <a href='#/email-login'>please login with the email</a></span>), {url: '/#/email-login', error: true})
     } else {
       onAddAccount({ ...account, signer: { address: address }, signerExtra: null })
       addToast(
@@ -110,6 +110,7 @@ const Signers = ({
     try {
       addRequest({
         id: `setPriv_${txn.data}`,
+        dateAdded: new Date().valueOf(),
         type: 'eth_sendTransaction',
         txn: txn,
         chainId: selectedNetwork.chainId,

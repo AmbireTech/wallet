@@ -1,14 +1,5 @@
-$tertiary-accent-color: #C3D4F6;
-$danger-color: #fd1a64;
-$warning-color: #ffbc00;
-$info-color: #7189ff;
-$info-background-color: #EDE2FF;
-
-$ambire-dark-blue: #6000FF;
-$ambire-purple: #AF50FF;
-
 $sidebar-desktop-width: 260px;
-$sidebar-desktop-small-width: 120px;
+$sidebar-desktop-small-width: 150px;
 $sidebar-small-breakpoint: 1439px; // We want to show the bigger sidebar for MacBook Pro (1440px). That's the reason we trigger the smaller sidebar at 1px below.
 $sidebar-mobile-height: 80px;
 
@@ -61,11 +52,32 @@ $c-manatee: #88899d;
 $c-blue-bell: #898dcb;
 $c-scampi: #6770B3;
 $c-heliotrope: #ae60ff;
+$c-electric-violet: #6000FF;
 $c-turquoise: #27e8a7;
+$c-blue-lagoon: #007D8A;
 $c-aquamarine: #80ffdb;
 $c-picton-blue: #47AEE9;
 $c-half-spanish-white: #fef5db;
 $c-titan-white: #ebecff;
 $c-white: #ffffff;
 
-$text-container-color:mix($c-titan-white, $c-ebony-clay, 60%);
+$tertiary-accent-color: #C3D4F6;
+$success-color: $c-turquoise;
+$success-background-color: #C8FFFE;
+$danger-color: #fd1a64;
+$danger-background-color: #FEE2E8;
+$warning-color: #ffbc00;
+$warning-background-color: $c-half-spanish-white;
+$success-background-color: #C8FFFE;
+$info-color: #7189ff;
+$info-background-color: #EDE2FF;
+$alert-text-color: $c-martinique-light;
+
+$ambire-dark-blue: #6000FF;
+$ambire-purple: #AF50FF;
+
+$text-container-color: mix($c-titan-white, $c-ebony-clay, 60%);
+
+@function theme($color-name) {
+    @return var(--#{$color-name});
+}

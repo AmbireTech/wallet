@@ -37,12 +37,14 @@ jobs:
         folder: build
         cname: wallet.ambire.com
         clean-exclude: |
+            pr-preview
             staging
             relayerless
-            redesign
             paperbackup
             portfolio-v2
-            uniswap
+            moonpay
+            walletconnect2
+            sdk-login
 
 
 

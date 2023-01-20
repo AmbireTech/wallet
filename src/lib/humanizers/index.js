@@ -12,7 +12,7 @@ import WALLETSupplyController from './WALLETSupplyController'
 import AmbireBatcher from './AmbireBatcher'
 import WALLETStakingPool from './WALLETStakingPool'
 import AaveWethGatewayV2 from './AaveWethGatewayV2'
-import Swappin from './Swappin'
+import OneInch from './OneInch'
 
 const all = ({humanizerInfo, tokenList}) => ({
 	...UniRouters(humanizerInfo),
@@ -29,7 +29,7 @@ const all = ({humanizerInfo, tokenList}) => ({
 	...WALLETSupplyController(),
 	...AmbireBatcher(humanizerInfo, tokenList),
 	...WALLETStakingPool(humanizerInfo),
-	...Swappin(humanizerInfo)
+	...OneInch(humanizerInfo)
 })
 
 export default all

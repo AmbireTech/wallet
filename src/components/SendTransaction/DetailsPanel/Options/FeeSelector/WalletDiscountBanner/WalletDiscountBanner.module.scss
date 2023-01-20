@@ -1,0 +1,28 @@
+@import 'variables';
+
+.row {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.wrapper {
+  font-size: 18px;
+  font-weight: 500;
+  padding: 10px;
+  background-color: $ambire-purple;
+  justify-content: space-between;
+  gap: 15px;
+
+  .button {
+    margin-left: 5px;
+  }
+
+  .swapInfo {
+    font-size: 18px;
+    .link {
+      color: theme(highlight-secondary);
+    }
+  }
+}

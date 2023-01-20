@@ -12,7 +12,7 @@ import { useDragAndDrop, useCheckMobileScreen } from 'hooks'
 import { ToolTip } from 'components/common'
 import cn from 'classnames'
 
-import { ReactComponent as LogOut } from './icons/log-out.svg'
+import { ReactComponent as LogOut } from 'resources/icons/log-out.svg'
 import { ReactComponent as Copy } from 'resources/icons/copy.svg'
 
 const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hidePrivateValue, userSorting, setUserSorting }) => {
@@ -57,7 +57,9 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         sortedAccounts.length > 1 && sortType === 'custom' && !isMobileScreen
     ), [sortedAccounts, sortType, isMobileScreen])
 
-    const shortenedAddress = useCallback(address => address.slice(0, 5) + '...' + address.slice(-3), [])
+    // On mobile screens we are showing more characters of the address,
+    // because we have more space there (the dropdowns take full width)
+    const shortenedAddress = useCallback(address => address.slice(0, isMobileScreen ? 8 : 5) + '...' + address.slice(-3), [isMobileScreen])
     const isActive = useCallback(id => id === selectedAddress ? styles.active : '', [selectedAddress])
     const toIcon = useCallback(seed => blockies.create({ seed }).toDataURL(), [blockies])
     const toIconBackgroundImage = useCallback(seed => ({ backgroundImage: `url(${toIcon(seed)})`}), [toIcon])
@@ -71,6 +73,11 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         addToast('Copied to clipboard!')
     }, [addToast])
 
+    const copySelectedAddress = (e) => {
+        e.stopPropagation()
+        copyAddress(selectedAddress)
+    }
+
     const onSelectAccount = useCallback(id => {
         onSelectAcc(id)
         setClosed(true)
@@ -80,8 +87,11 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
         <DropDown 
             className={styles.wrapper}
             menuClassName={styles.menu}
-            icon={toIcon(selectedAddress)} 
-            title={hidePrivateValue(shortenedAddress(selectedAddress))} 
+            icon={toIcon(selectedAddress)}
+            title={<div className={styles.selectedAddress}>
+                <p>{hidePrivateValue(shortenedAddress(selectedAddress))}</p>
+                <Copy onClick={copySelectedAddress} className={styles.selectedAddressCopyIcon} />
+            </div>}
             open={closed} 
             onOpen={() => setClosed(false)}
         >
@@ -143,9 +153,9 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                     </div>
                     :
                     <div className={`${styles.account} ${isActive(id)} ${styles.confirmDeleteAccount}`} key={id}>
-                        <div className={styles.message}>
+                        <p className={styles.message}>
                             Are you sure you want to log out from this account ?
-                        </div>
+                        </p>
                         <div className={styles.buttons}>
                             <div className={cn(styles.button, styles.danger)} onClick={() => {
                                 setLogoutWarning(false)

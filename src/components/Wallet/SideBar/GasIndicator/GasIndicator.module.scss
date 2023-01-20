@@ -1,0 +1,98 @@
+@import 'variables.scss';
+
+.wrapper {
+  margin-top: 8px;
+  background: #292B43;
+  border-radius: 12px;
+  padding: 4px 8px;
+  font-size: 12px;
+  display: inline-flex;
+  margin-left: auto;
+  gap: 12px;
+  color: $c-titan-white;
+
+  .gasPrice {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    
+    span {
+      color: $c-titan-white;
+      font-family: 'Poppins', sans-serif;
+      opacity: 0.5;
+      margin-left: 2px;
+      font-weight: 300;
+      font-size: 12px;
+    }
+    
+    svg {
+      width: 15px;
+      height: 15px;
+      color: $c-turquoise;
+    }
+  }
+
+  .nativePrice {
+    padding-right: 12px;
+    border-right: 1px solid $c-turquoise;
+  }
+}
+
+
+@media screen and (max-width: $sidebar-small-breakpoint) {
+  .wrapper {
+    margin-top: 8px;
+    background: #292B43;
+    padding: 8px;
+    font-size: 11.5px;
+    border-radius: 12px 0 0 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+
+    .nativePrice {
+      padding-right: 12px;
+      border-right: 0;
+      padding-bottom: 4px;
+      border-bottom: 1px solid $c-turquoise;
+    }
+
+    .gasPrice {
+      text-align: left;
+      padding-top: 4px;
+
+      span {
+        margin-left: 4px;
+      }
+
+      svg {
+        padding-top: 1px;
+        width: 15px;
+        height: 15px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .gasInfo {
+    display: flex;
+    position: absolute;
+    right: 24px;
+    top: 14px;
+
+    .nativePrice {
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom: 0;
+      border-right: 1px solid $c-turquoise;
+    }
+
+    .gasPrice {
+      padding-top: 0;
+    }
+  }
+}

@@ -1,11 +1,12 @@
 .button {
+  font-weight: 300;
   width: 208px;
   font-size: 14px!important;
-  padding: 15px 16px!important;
+  padding: 15px 16px;
 
   span {
     white-space: nowrap;
-    overflow: hidden !important;
+    overflow: hidden;
     text-overflow: ellipsis;
     max-width: 65px;
   }

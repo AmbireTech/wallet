@@ -16,6 +16,10 @@
         }
     }
 
+    .tab {
+        font-size: 20px;
+    }
+
     .topPanels {
         padding: 15px 50px;
         gap: 0;
@@ -26,9 +30,12 @@
         display: flex;
         justify-content: space-between;
         gap: 17px;
+        max-height: 300px;
     }
 
     .footer {
+        margin-top: 15px;
+        margin-bottom: 40px;
         .missingTokenNotice {
             font-size: 15px;
             color: $c-titan-white;
@@ -70,19 +77,53 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
-        gap: 15px;
+        gap: 30px;
+        padding: 20px;
+
+        .panel {
+            background-color: transparent;
+            border: none;
+
+            .panelTitle {
+                margin-left: 20px;
+                margin-bottom: 15px;
+            }
+        }
+
+        .topPanels {
+            max-height: unset;
+            padding: 0;
+        }
 
         .overview {
-            gap: 15px;
+            gap: 30px;
+            max-height: unset;
         }
 
         .chart {
             flex-direction: column;
         }
 
-        .topPanels {
-            overflow-y: auto;
-            max-height: 500px;
+        .assetsPanel {
+            background-color: transparent;
+            border: none;
+        }
+
+        .tabsShadow {
+            display: none;
+        }
+
+        .tab {
+            border-left: none!important;
+            border-right: none!important;
+
+            &:first-child {
+                margin-right: 10px;
+            }
+
+            &:nth-child(2) {
+                margin-left: 10px;
+            }
         }
 
         .footer {
@@ -90,6 +131,7 @@
 
             .missingTokenNotice {
                 align-items: flex-start;
+                font-weight: 300;
             }
         }
     }

@@ -13,7 +13,7 @@ import ERC721Abi from 'ambire-common/src/constants/abis/ERC721Abi'
 import networks from 'consts/networks'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
 import { BsXLg } from 'react-icons/bs'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
 import { resolveUDomain } from 'lib/unstoppableDomains'
@@ -22,8 +22,11 @@ import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 const ERC721 = new Interface(ERC721Abi)
 
 const handleUri = uri => {
+    if (!uri) return ''
     uri = uri.startsWith('data:application/json') ? uri.replace('data:application/json;utf8,', '') : uri
 
+    if (uri.split('/').length === 1) return 'https://ipfs.io/ipfs/' + uri
+    if (uri.split('/')[0] === 'data:image') return uri
     if (uri.startsWith('ipfs://')) return uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/')
     if (uri.split('/')[2].endsWith('mypinata.cloud')) return 'https://ipfs.io/ipfs/' + uri.split('/').slice(4).join('/')
         
@@ -65,6 +68,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         try {
             let req = {
                 id: `transfer_nft_${Date.now()}`,
+                dateAdded: new Date().valueOf(),
                 type: 'eth_sendTransaction',
                 chainId: selectedNetwork.chainId,
                 account: selectedAcc,

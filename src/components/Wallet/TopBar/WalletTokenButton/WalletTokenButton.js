@@ -20,7 +20,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
       })
 
     const { currentClaimStatus, pendingTokensTotal, vestingEntry } = claimableWalletToken
-    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId }, { rewards: rewardsData.rewards })
+    const showWalletTokenModal = useDynamicModal(WalletTokenModal, { claimableWalletToken, accountId, network }, { rewards: rewardsData.rewards })
     const renderRewardsButtonText = useCallback(() => {
         // The rewards value depends on both - the currentClaimStatus and the
         // rewards data. Therefore - require both data sets to be loaded.
@@ -37,7 +37,10 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
         const isCurrentClaimStatusLoadingAndNoPrevData =
           currentClaimStatus.loading && !currentClaimStatus.lastUpdated
         const isRewardsDataLoadingAndNoPrevData = rewardsIsLoading && !rewardsLastUpdated
-        if (isCurrentClaimStatusLoadingAndNoPrevData || isRewardsDataLoadingAndNoPrevData) {
+        const isMatchingRewardsDataAccWithCurrAcc = rewardsData?.rewards?.accountAddr?.toLowerCase() === accountId.toLowerCase() 
+        if (isCurrentClaimStatusLoadingAndNoPrevData
+            || isRewardsDataLoadingAndNoPrevData
+            || !isMatchingRewardsDataAccWithCurrAcc) {
           return (<span><Loading/></span>)
         }
         
@@ -52,7 +55,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
         }
     
         return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
-    }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry])
+    }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry, accountId, rewardsData.rewards.accountAddr])
 
     return (
         !relayerURL ?
@@ -65,7 +68,6 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
                 border
                 onClick={showWalletTokenModal}
                 className={styles.button}
-                style={{ textTransform: 'none'}}
             >
                 { renderRewardsButtonText() }  
             </Button>

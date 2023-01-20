@@ -1,0 +1,41 @@
+@import 'variables';
+
+.wrapper {
+  max-width: 680px;
+  width: 100%;
+
+  :global(.content) {
+    overflow-x: auto;
+  }
+
+  .description {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: left;
+    font-size: 16px;
+    color: $c-titan-white;
+    user-select: none;
+
+    .feesInfo {
+      margin: 0;
+      margin-bottom: 12px;
+    }
+  }
+  
+  .error {
+    color: $danger-color;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .description {
+      .feesInfo {
+        font-size: 14px;
+        text-align: center;
+      }
+    }   
+  }
+}
+
