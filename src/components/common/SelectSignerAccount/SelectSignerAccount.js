@@ -3,7 +3,7 @@ import styles from './SelectSignerAccount.module.scss'
 import { useState } from 'react'
 import { Info } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'
-import PaginationButtons from "../Pagination/PaginationButtons";
+import PaginationButtons from 'components/common/Pagination/PaginationButtons'
 
 const SelectSignerAccount = ({
     signersToChoose,
