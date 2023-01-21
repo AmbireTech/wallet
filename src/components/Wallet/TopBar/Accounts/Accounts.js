@@ -59,7 +59,13 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
 
     // On mobile screens we are showing more characters of the address,
     // because we have more space there (the dropdowns take full width)
-    const shortenedAddress = useCallback(address => address.slice(0, isMobileScreen ? 8 : 5) + '...' + address.slice(-3), [isMobileScreen])
+    const shortenedAddress = useCallback(address => {
+        let maxCharsMobile = 15
+        if (isSDK) {
+            maxCharsMobile = 28
+        }
+        return address.slice(0, isMobileScreen ? maxCharsMobile : 5) + '...' + address.slice(-3)
+    }, [isMobileScreen, isSDK])
     const isActive = useCallback(id => id === selectedAddress ? styles.active : '', [selectedAddress])
     const toIcon = useCallback(seed => blockies.create({ seed }).toDataURL(), [blockies])
     const toIconBackgroundImage = useCallback(seed => ({ backgroundImage: `url(${toIcon(seed)})`}), [toIcon])

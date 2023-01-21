@@ -200,7 +200,9 @@ $account-height: 60px;
         max-width: 100%;
 
         .selectedAddress {
-            max-width: 140px;
+            max-width: unset;
+            flex: 1;
+            justify-content: flex-start;
         }
 
         .menu {
