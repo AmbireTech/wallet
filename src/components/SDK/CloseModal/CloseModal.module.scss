@@ -4,7 +4,7 @@
   max-width: 315px;
   padding-top: 0;
   width: 100%;
-  height: 280px;
+  height: 260px;
 
   :global(.content) {
     padding: 18px 11px;
@@ -52,6 +52,6 @@
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
-    height: 280px !important;
+    height: 260px !important;
   }
 }
