@@ -10,5 +10,9 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .emailLogin {
     padding: 0!important;
+
+    & > div {
+      max-width: 100%!important;
+    }
   }
 }
