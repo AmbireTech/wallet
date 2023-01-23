@@ -112,7 +112,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                         <div className={styles.content}>
                             <Addresses
                                 addresses={addresses}
-                                onSelectAddress={selectAddress}
+                                selectAddress={selectAddress}
                                 removeAddress={removeAddress}
                                 addressClassName={styles.address}
                             />

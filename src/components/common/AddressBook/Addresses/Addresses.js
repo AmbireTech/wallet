@@ -16,7 +16,7 @@ const handleSearch = ({ addresses, query }) => {
 	})
 }
 
-export default function Addresses({ addresses, selectAddress, removeAddress }) {
+export default function Addresses({ addresses, selectAddress, removeAddress, addressClassName }) {
 	const [query, setQuery] = useState('')
 
 	return (
@@ -32,7 +32,7 @@ export default function Addresses({ addresses, selectAddress, removeAddress }) {
 				addresses={handleSearch({ addresses, query })}
 				onSelectAddress={selectAddress}
 				removeAddress={removeAddress}
-				addressClassName={styles.address}
+				addressClassName={addressClassName}
 			/>
 		</div>
 	)
