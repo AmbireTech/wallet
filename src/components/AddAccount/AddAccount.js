@@ -49,7 +49,7 @@ TrezorConnect.manifest({
 const EMAIL_AND_TIMER_REFRESH_TIME = 5000
 const RESEND_EMAIL_TIMER_INITIAL = 60000
 
-export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData, accounts }) {
+export default function AddAccount({ relayerURL, selectedAcc, onAddAccount, utmTracking, pluginData, accounts }) {
   const { theme } = useThemeContext()
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
@@ -62,7 +62,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   const [resendTimeLeft, setResendTimeLeft] = useState(null)
   const [isEmailResent, setEmailResent] = useState(false)
   const [isEmailConfirmed, setEmailConfirmed] = useState(false)
-  console.log(accounts)
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
     try {
@@ -461,8 +460,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   })
 
   const importFromPaperBackup = () => {
+    const selectedAccount = accounts.find(a => a.id === selectedAcc)
     showModal(<PaperImportModal
       accounts={accounts}
+      selectedAccount={selectedAccount}
       onAddAccount={onAddAccount}
       relayerURL={relayerURL}
       newAccount

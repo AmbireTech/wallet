@@ -1,0 +1,73 @@
+@import 'variables.scss';
+
+.modal {
+  .stepper {
+    margin-top: -40px;
+  }
+
+  &>.content {
+    padding-bottom: 48px;
+  }
+
+  min-height: 300px;
+
+  .heading {
+    margin-bottom: 48px;
+  }
+
+  .instructions {
+    margin-bottom: 12px;
+
+    span {
+      color: $c-turquoise;
+    }
+
+    .unimportant {
+      color: $text-container-color;
+    }
+  }
+
+  
+  .buttonHolder {
+    margin-top: 24px;
+  }
+
+  .buttons .full {
+    flex-basis: 100%;
+  }
+
+  .identities-selector {
+    background: $c-mirage-dark;
+
+    p {
+      display: flex;
+      text-align: left;
+      gap: 12px;
+      align-items: center;
+
+      svg {
+        font-size: 24px;
+      }
+
+    }
+
+    .identities-selector-holder {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .identities-selector-holder div {
+      cursor: pointer;
+      font-family: monospace;
+      padding: 8px;
+      background: darken($c-mirage-dark, 4%);
+
+      &:hover {
+        background: darken($c-mirage-dark, 2%);
+      }
+    }
+
+  }
+
+}

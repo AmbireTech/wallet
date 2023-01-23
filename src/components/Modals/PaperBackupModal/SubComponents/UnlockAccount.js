@@ -3,6 +3,8 @@ import { useCallback, useState, useRef, useEffect } from 'react'
 import { Wallet } from 'ethers'
 import { MdClose } from 'react-icons/md'
 
+import styles from './SubComponents.module.scss'
+
 const UnlockAccount = ({ selectedAccount, accounts, setModalSteps, setMnemonic, setError, setModalButtons, hideModal }) => {
 
   const [isLoading, setIsLoading] = useState(false)
@@ -66,13 +68,13 @@ const UnlockAccount = ({ selectedAccount, accounts, setModalSteps, setMnemonic, 
 
   return (
     <>
-      <div className='instructions'>
+      <div className={styles.instructions}>
         Enter the passphrase for <span>{selectedAccount.email}</span> to continue
       </div>
 
       <TextInput password onChange={(val) => setPassphrase(val)} ref={textFieldRef} placeholder='Passphrase'/>
 
-      <div className='buttonHolder'>
+      <div className={styles.buttonHolder}>
         <Button
           full
           disabled={isLoading}

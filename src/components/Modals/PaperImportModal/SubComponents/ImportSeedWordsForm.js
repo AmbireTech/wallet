@@ -4,6 +4,8 @@ import { FaTimes, FaCheck, FaSync, FaInfoCircle } from 'react-icons/fa'
 import { Wallet } from 'ethers'
 import { fetchGet } from 'lib/fetch'
 
+import styles from './SubComponents.module.scss'
+
 const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAddress, setFoundAddress, setWallet, relayerURL, newAccount, retrievedIdentity, setRetrievedIdentity, hideModal, setModalButtons }) => {
 
   // we don't want to pass because we want to display the error further down in the modal instead
@@ -146,7 +148,6 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
     fetchGet(url)
       .then(result => {
         if (result.success) {
-          debugger
           if (result.identities.length === 1) {
             setRetrievedIdentity(result.identities[0])
           } else {
@@ -171,13 +172,13 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
       const existing = accounts && accounts.find(a => a.id.toLowerCase() === retrievedIdentity.id.toLowerCase() && !!a.primaryKeyBackup)
 
       if (existing) {
-        setModalButtons([<Button full clear onClick={() => hideModal()} >
+        setModalButtons(<Button clear className={styles.button} onClick={() => hideModal()} >
           Close
-        </Button>])
+        </Button>)
       } else {
-        setModalButtons([<Button full onClick={onValidate} >
+        setModalButtons(<Button className={styles.button} onClick={onValidate} >
           Continue
-        </Button>])
+        </Button>)
       }
     }
   }, [accounts, hideModal, onValidate, retrievedIdentity, setModalButtons])
@@ -195,6 +196,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
       textFieldRef?.current?.focus()
     }, 100)
   }, [])
+
 
   const renderRetrievedIdentityFeedback = useCallback(() => {
     if (retrievedIdentity !== null) {
@@ -234,14 +236,14 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
   }, [retrievedIdentity, newAccount, selectedAccount, accounts])
 
   return <div>
-    <div className='instructions'>
+    <div className={styles.instructions}>
       Type in the words in the order they appear on your paper backup.<br />
-      <span className='unimportant'>Press <i>enter</i> or <i>space</i> after each word
+      <span className={styles.unimportant}>Press <i>enter</i> or <i>space</i> after each word
       to validate it</span>
     </div>
     {
       (words.length < 12 || modifyingIndex !== null) &&
-      <div className='seedWordsForm'>
+      <div className={styles.seedWordsForm}>
         <TextInput
           placeholder={`Word #${modifyingIndex !== null ? (modifyingIndex + 1) : (words.length + 1)}`}
           value={currentWord}
@@ -257,7 +259,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
     {
       !!words.length &&
       <div
-        className={`importedSeedWordsList${modifyingIndex !== null ? ' modifyMode' : ''}`}
+        className={`${styles.importedSeedWordsList} ${modifyingIndex !== null ? styles.modifyMode : ''}`}
         onClick={() => {
           if (modifyingIndex !== null) {
             setModifyingIndex(null)
@@ -268,7 +270,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
         {
           words.map((w, index) => {
             return <div
-              className={`importedSeedWord${previewDeletionIndex !== null && previewDeletionIndex <= index ? ' deletable' : ''}${modifyingIndex === index ? ' modifiable' : ''}`}
+              className={`${styles.importedSeedWord} ${previewDeletionIndex !== null && previewDeletionIndex <= index ? styles.deletable : ''}${modifyingIndex === index ? styles.modifiable : ''}`}
               onClick={() => {
                 if (modifyingIndex === null) {
                   modifyWord(index)
@@ -276,18 +278,18 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
               }}
               key={index}
             >
-              <span className='index'>{index + 1}</span>
-              <span className='word'>{modifyingIndex === index ? (currentWord) : w}</span>
+              <span className={styles.index}>{index + 1}</span>
+              <span className={styles.word}>{modifyingIndex === index ? (currentWord) : w}</span>
               {
                 modifyingIndex === index
-                  ? <span className='modifying'
+                  ? <span className={styles.modifying}
                           onClick={(e) => {
                             e.stopPropagation()
                             validateModification()
                           }}>
                       <FaCheck/>
                     </span>
-                  : <span className='close'
+                  : <span className={styles.close}
                           onClick={(e) => {
                             deleteWord(index)
                             e.stopPropagation()
@@ -305,7 +307,7 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
           // Please someone fixes this in CSS (pixel perfect aligned cols when items not 3 in a row)
           words.length % 3 !== 0 &&
           [...Array(3 - words.length % 3)].map(a => {
-            return <span className='empty'></span>
+            return <span className={styles.empty}></span>
           })
         }
       </div>
@@ -313,16 +315,16 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
 
     {
       (foundAddress && modifyingIndex === null) &&
-      <div className='foundAddressContainer'>
+      <div className={styles.foundAddressContainer}>
         <b>Signer Account</b>
-        <div className='address'>{foundAddress}</div>
+        <div className={styles.address}>{foundAddress}</div>
         {
           ((retrievedIdentity === null && possibleRetrievedIdentities === null) && !networkFetchError) &&
           <Loading />
         }
         {
           networkFetchError &&
-          <div className='error-message networkFetchError'>
+          <div className={`error-message ${styles.networkFetchError}`}>
             Network error while getting matching account: {networkFetchError}
             <Button full small icon={<FaSync />} onClick={checkMatchingIdentity}>Try again</Button>
           </div>
@@ -330,12 +332,12 @@ const ImportSeedWordsForm = ({ accounts, selectedAccount, setModalSteps, foundAd
         {
           possibleRetrievedIdentities
           ? (
-            <div className='identities-selector'>
-              <p className='notification-hollow info'>
+            <div className={styles.identitiesSelector}>
+              <p className={`${styles.notificationHollow} ${styles.info}`}>
                 <FaInfoCircle /> Multiple wallets found for this signer.
                 Please select the wallet to import.
               </p>
-              <div className='identities-selector-holder'>
+              <div className={styles.identitiesSelectorHolder}>
                 {possibleRetrievedIdentities.map(identity => {
                   return (<div onClick={() => pickPossibleIdentity(identity)}>{identity.id}</div>)
                 })}

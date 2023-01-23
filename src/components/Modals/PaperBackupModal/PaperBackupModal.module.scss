@@ -1,0 +1,42 @@
+@import 'variables.scss';
+
+
+.modal {
+  .stepper {
+    margin-top: -40px;
+  }
+  
+  .button {
+    width: 100%;
+    flex: unset!important;
+  }
+
+  min-height: 300px;
+
+  .heading {
+    margin-bottom: 24px;
+  }
+
+  .seedWordsList {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+
+    .seedWordsList-cell {
+
+      border-radius: 8px;
+      background-color: $c-mirage;
+      padding: 4px 0 4px 12px;
+
+      flex: 1 1 30%;
+      display: flex;
+      gap: 8px;
+
+      .seedWordsList-index {
+        width: 18px;
+        color: $text-container-color;
+      }
+
+    }
+  }
+}

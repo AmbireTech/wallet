@@ -5,7 +5,7 @@ import { ReactComponent as ImportIcon } from 'resources/icons/import.svg'
 
 import styles from './Backup.module.scss'
 
-import { BsFileEarmarkTextFill, BsFileEarmarkArrowDownFill, BsFileEarmarkArrowUpFill, BsFileMedicalFill } from "react-icons/bs"
+import { BsFileEarmarkArrowUpFill, BsFileMedicalFill } from "react-icons/bs"
 
 import { PaperBackupModal, PaperImportModal } from 'components/Modals'
 import useModals from 'hooks/modals'

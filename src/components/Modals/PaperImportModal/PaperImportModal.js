@@ -5,7 +5,7 @@ import { useState } from 'react'
 import ImportSeedWordsForm from './SubComponents/ImportSeedWordsForm'
 import SetSeedWordsPassword from './SubComponents/SetSeedWordsPassword'
 
-import './PaperImportModal.scss'
+import styles from './PaperImportModal.module.scss'
 
 const PaperImportModal = ({ accounts, onAddAccount, selectedAccount, relayerURL, newAccount }) => {
 
@@ -35,8 +35,10 @@ const PaperImportModal = ({ accounts, onAddAccount, selectedAccount, relayerURL,
   }
 
   return (
-    <Modal id='paper-import-modal' title={getModalTitle()} buttons={modalButtons}>
-      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
+    <Modal className={styles.modal} title={getModalTitle()} buttons={modalButtons}>
+      <div className={styles.stepper}>
+        <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
+      </div>
       <div>
         {
           error && <div className='error-message'>

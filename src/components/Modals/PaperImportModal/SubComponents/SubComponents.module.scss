@@ -1,26 +1,6 @@
 @import 'variables.scss';
 
-#paper-import-modal {
-
-  .buttons button {
-    flex: 0 1 100%!important;
-  }
-
-  .stepper {
-    margin-top: -40px;
-  }
-
-  &>.content {
-    padding-bottom: 48px;
-  }
-
-  min-height: 300px;
-
-  .heading {
-    margin-bottom: 48px;
-  }
-
-  .instructions {
+.instructions {
     margin-bottom: 12px;
 
     span {
@@ -30,9 +10,14 @@
     .unimportant {
       color: $text-container-color;
     }
-  }
+}
 
-  .importedSeedWordsList {
+.button {
+  width: 100%;
+  flex: unset!important;
+}
+
+.importedSeedWordsList {
     margin-top: 24px;
     display: flex;
     flex-wrap: wrap;
@@ -131,7 +116,7 @@
     }
   }
 
-  .foundAddressContainer {
+.foundAddressContainer {
     margin: 24px 0;
     padding: 12px;
     background: $c-mirage-dark;
@@ -139,53 +124,9 @@
     border-radius: 12px;
 
     .address {
-      margin-top: 4px;
-      font-size: 16px;
-      font-family: monospace;
-      margin-bottom: 16px;
+        margin-top: 4px;
+        font-size: 16px;
+        font-family: monospace;
+        margin-bottom: 16px;
     }
-  }
-
-  .buttonHolder {
-    margin-top: 24px;
-  }
-
-  .buttons .full {
-    flex-basis: 100% !important;
-  }
-
-  .identities-selector {
-    background: $c-mirage-dark;
-
-    p {
-      display: flex;
-      text-align: left;
-      gap: 12px;
-      align-items: center;
-
-      svg {
-        font-size: 24px;
-      }
-
-    }
-
-    .identities-selector-holder {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .identities-selector-holder div {
-      cursor: pointer;
-      font-family: monospace;
-      padding: 8px;
-      background: darken($c-mirage-dark, 4%);
-
-      &:hover {
-        background: darken($c-mirage-dark, 2%);
-      }
-    }
-
-  }
-
 }

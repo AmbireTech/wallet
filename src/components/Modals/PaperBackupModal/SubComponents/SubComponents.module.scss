@@ -1,58 +1,47 @@
 @import 'variables.scss';
 
-#paper-backup-modal {
-
-  .buttons button {
-    flex: 0 1 100%!important;
-  }
-
-  min-height: 300px;
-
-  .heading {
-    margin-bottom: 24px;
-  }
-
-  .stepper {
-    margin-top: -40px;
-  }
-
-  .instructions {
+.instructions {
     padding: 12px;
     margin-bottom: 12px;
 
     span {
       color: $c-turquoise;
     }
-  }
+}
 
-  .buttonHolder {
+.buttonHolder {
     margin-top: 24px;
-  }
+}
 
-  .seedWordsList {
+.button {
+    width: 100%;
+    flex: unset!important;
+}
+
+.seedWordsList {
     display: flex;
     flex-wrap: wrap;
     gap: 12px;
 
-    .seedWordsList-cell {
+    .seedWordsListCell {
 
-      border-radius: 8px;
-      background-color: $c-mirage;
-      padding: 4px 0 4px 12px;
+        border-radius: 8px;
+        background-color: $c-mirage;
+        padding: 4px 0 4px 12px;
 
-      flex: 1 1 30%;
-      display: flex;
-      gap: 8px;
+        flex: 1 1 30%;
+        display: flex;
+        gap: 8px;
 
-      .seedWordsList-index {
-        width: 18px;
-        color: $text-container-color;
-      }
+        .seedWordsListIndex {
+            width: 18px;
+            color: $text-container-color;
+        }
 
     }
-  }
+}
 
-  .wordsSelectorContainer {
+.wordsSelectorContainer {
     background: $c-mirage;
     border-radius: 12px;
     padding: 16px;
@@ -153,16 +142,11 @@
       }
     }
 
-    .error-message {
+    .errorMessage {
       margin-top: 8px;
     }
 
     .visualCheckmark {
       color: $c-mirage-dark;
     }
-  }
-
-  .buttons .full {
-    flex-basis: 100% !important;
-  }
 }

@@ -3,6 +3,8 @@ import { Button, TextInput } from 'components/common'
 import { useRef, useEffect, useState, useCallback } from 'react'
 import { validateImportedAccountProps } from 'lib/validations/importedAccountValidations'
 
+import styles from './SubComponents.module.scss'
+
 const SetSeedWordsPassword = ({ wallet, setError, onAddAccount, hideModal, retrievedIdentity, setModalButtons }) => {
 
   const [passphrase, setPassphrase] = useState('')
@@ -55,6 +57,7 @@ const SetSeedWordsPassword = ({ wallet, setError, onAddAccount, hideModal, retri
     setModalButtons([
       <Button
         full
+        className={styles.button}
         onClick={onValidate}>
         Update account
       </Button>
@@ -63,7 +66,7 @@ const SetSeedWordsPassword = ({ wallet, setError, onAddAccount, hideModal, retri
 
   return (
     <>
-      <div className='instructions'>
+      <div className={styles.instructions}>
         Secure your Ambire account with a password
       </div>
 

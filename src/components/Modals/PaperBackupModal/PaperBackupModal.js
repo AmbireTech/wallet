@@ -3,7 +3,7 @@ import { Modal, Stepper } from 'components/common'
 
 import { useLayoutEffect, useState } from 'react'
 
-import './PaperBackupModal.scss'
+import styles from './PaperBackupModal.module.scss'
 import SeedWordsList from './SubComponents/SeedWordsList'
 import UnlockAccount from './SubComponents/UnlockAccount'
 import VerifySeedWords from './SubComponents/VerifySeedWords'
@@ -42,11 +42,13 @@ const PaperBackupModal = ({ selectedAccount, accounts, modalCloseHandler, onAddA
   }, [setBeforeCloseModalHandler, modalCloseHandler])
 
   return (
-    <Modal id='paper-backup-modal' title={getModalTitle()} buttons={modalButtons}>
-      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
+    <Modal className={styles.modal} title={getModalTitle()} buttons={modalButtons}>
+      <div className={styles.stepper}>
+        <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
+      </div>
       <div>
         {
-          error && <div className='error-message'>
+          error && <div className={`error-message ${styles.errorMessage}`}>
             {error}
           </div>
         }

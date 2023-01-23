@@ -3,6 +3,8 @@ import { useCallback, useEffect, useState } from 'react'
 import { MdClose } from 'react-icons/md'
 import { FaCheck } from 'react-icons/fa'
 
+import styles from './SubComponents.module.scss'
+
 const VerifySeedWords = ({ words, setModalButtons, hideModal, onAddAccount, selectedAccount, accounts }) => {
 
   const [error, setError] = useState(null)
@@ -85,12 +87,12 @@ const VerifySeedWords = ({ words, setModalButtons, hideModal, onAddAccount, sele
         console.error('could not find account for ' + selectedAccount.id)
       }
 
-      setModalButtons([<Button
+      setModalButtons(<Button
         full
         icon={<MdClose/>}
-        className={'primary'}
+        className={`primary ${styles.button}`}
         onClick={() => hideModal()}
-      >Close</Button>])
+      >Close</Button>)
     }
   }, [wordIndex, setModalButtons, hideModal, accounts, selectedAccount, onAddAccount])
 
@@ -102,24 +104,24 @@ const VerifySeedWords = ({ words, setModalButtons, hideModal, onAddAccount, sele
   }
 
   return <div>
-    <div className='instructions'>
+    <div className={styles.instructions}>
       To make sure your backup is perfect, please verify your backup by clicking on the correct word
     </div>
 
-    <div className='wordsSelectorContainer'>
-      <div className='wordRequestedTitle'>
+    <div className={styles.wordsSelectorContainer}>
+      <div className={styles.wordRequestedTitle}>
         Select the word as it appears on your backup
       </div>
 
-      <div className={`wordsSelector${animationNextWord ? ' nextWordFade' : ''}`}>
-        <div className='wordIndex'>
+      <div className={`${styles.wordsSelector} ${animationNextWord ? styles.nextWordFade : ''}`}>
+        <div className={styles.wordIndex}>
           Word <span>#{wordIndex + 1}</span>
         </div>
-        <div className={`wordChoices${selectedWordFeedback.correct ? ' animated' : ''}`}>
+        <div className={`${styles.wordChoices} ${selectedWordFeedback.correct ? styles.animated : ''}`}>
           {
             getWordChoices().map((w, index) => {
               return (<span
-                className={`wordChoice${w.selected ? (' selected ' + (w.correct ? 'correct' : 'incorrect')) : ''}`}
+                className={`${styles.wordChoice} ${w.selected ? (' selected ' + (w.correct ? styles.correct : styles.incorrect)) : ''}`}
                 onClick={() => selectWord(w.word, index)}>{w.word}
               </span>)
             })
@@ -127,13 +129,13 @@ const VerifySeedWords = ({ words, setModalButtons, hideModal, onAddAccount, sele
         </div>
         {
           selectedWordFeedback.correct &&
-          <div className='visualCheckmark'><FaCheck/></div>
+          <div className={styles.visualCheckmark}><FaCheck/></div>
         }
       </div>
 
       {
         error &&
-        <div className='error-message'>
+        <div className={`${styles.errorMessage} error-message`}>
           {error}
         </div>
       }
