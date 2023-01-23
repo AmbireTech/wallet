@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import { ethers } from 'ethers'
 import BigNumber from 'bignumber.js'
 
-import { Button } from 'components/common'
+import { Button, Image } from 'components/common'
 
 import { FaCheck, FaHourglass } from 'react-icons/fa'
 import { GiToken } from 'react-icons/gi'
@@ -10,26 +9,16 @@ import { GiToken } from 'react-icons/gi'
 import styles from './Token.module.scss'
 
 const Token = ({ data, sendToken, isSendDisabled }) => {
-  // @TODO Implement Image component 
-  const [failedImg, setFailedImg] = useState([])
-
   return (
     <div className={styles.wrapper}>
-      {!data.icon || failedImg.includes(data.icon) ? (
-        <GiToken size={18} />
-      ) : (
-        <div className={styles.iconWrapper}>
-          <img
+      <div className={styles.iconWrapper}>
+        <Image
             src={data.icon}
-            draggable="false"
             alt="Token Icon"
-            onError={(err) => {
-              setFailedImg((failed) => [...failed, data.icon])
-            }}
-            className={styles.icon}
-          />
-        </div>
-      )}
+            imageClassName={styles.icon}
+            fallback={<GiToken className={styles.icon} />}
+        />
+      </div>
       <p className={styles.name}>{data.name}</p>
       <p className={styles.amount}>
         {new BigNumber(data.amount).div(10 ** data.decimals).toFixed()}{' '}
