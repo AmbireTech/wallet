@@ -153,7 +153,6 @@
 @media screen and (max-width: 1280px) {
   .wrapper {
     .donut {
-      max-width: 160px;
       height: 160px;
   
       .networkInfo {
@@ -173,7 +172,6 @@
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
     .donut {
-      max-width: 200px;
       height: 200px;
     }
     
