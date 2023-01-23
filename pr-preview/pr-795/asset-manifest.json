@@ -1,19 +1,19 @@
 {
   "files": {
-    "main.css": "./static/css/main.4f703e4f.chunk.css",
-    "main.js": "./static/js/main.c672797e.chunk.js",
-    "main.js.map": "./static/js/main.c672797e.chunk.js.map",
-    "runtime-main.js": "./static/js/runtime-main.af11121e.js",
-    "runtime-main.js.map": "./static/js/runtime-main.af11121e.js.map",
+    "main.css": "./static/css/main.299da5be.chunk.css",
+    "main.js": "./static/js/main.73b1bd5a.chunk.js",
+    "main.js.map": "./static/js/main.73b1bd5a.chunk.js.map",
+    "runtime-main.js": "./static/js/runtime-main.447ceda8.js",
+    "runtime-main.js.map": "./static/js/runtime-main.447ceda8.js.map",
     "static/css/2.aea5e128.chunk.css": "./static/css/2.aea5e128.chunk.css",
-    "static/js/2.054a2f57.chunk.js": "./static/js/2.054a2f57.chunk.js",
-    "static/js/2.054a2f57.chunk.js.map": "./static/js/2.054a2f57.chunk.js.map",
-    "static/js/3.92e260b5.chunk.js": "./static/js/3.92e260b5.chunk.js",
-    "static/js/3.92e260b5.chunk.js.map": "./static/js/3.92e260b5.chunk.js.map",
+    "static/js/2.14c33a0d.chunk.js": "./static/js/2.14c33a0d.chunk.js",
+    "static/js/2.14c33a0d.chunk.js.map": "./static/js/2.14c33a0d.chunk.js.map",
+    "static/js/3.4ee753d7.chunk.js": "./static/js/3.4ee753d7.chunk.js",
+    "static/js/3.4ee753d7.chunk.js.map": "./static/js/3.4ee753d7.chunk.js.map",
     "index.html": "./index.html",
     "static/css/2.aea5e128.chunk.css.map": "./static/css/2.aea5e128.chunk.css.map",
-    "static/css/main.4f703e4f.chunk.css.map": "./static/css/main.4f703e4f.chunk.css.map",
-    "static/js/2.054a2f57.chunk.js.LICENSE.txt": "./static/js/2.054a2f57.chunk.js.LICENSE.txt",
+    "static/css/main.299da5be.chunk.css.map": "./static/css/main.299da5be.chunk.css.map",
+    "static/js/2.14c33a0d.chunk.js.LICENSE.txt": "./static/js/2.14c33a0d.chunk.js.LICENSE.txt",
     "static/media/aave.58aec338.svg": "./static/media/aave.58aec338.svg",
     "static/media/add.50379121.svg": "./static/media/add.50379121.svg",
     "static/media/address-book.e4b981ed.svg": "./static/media/address-book.e4b981ed.svg",
@@ -100,10 +100,10 @@
     "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.af11121e.js",
+    "static/js/runtime-main.447ceda8.js",
     "static/css/2.aea5e128.chunk.css",
-    "static/js/2.054a2f57.chunk.js",
-    "static/css/main.4f703e4f.chunk.css",
-    "static/js/main.c672797e.chunk.js"
+    "static/js/2.14c33a0d.chunk.js",
+    "static/css/main.299da5be.chunk.css",
+    "static/js/main.73b1bd5a.chunk.js"
   ]
 }
