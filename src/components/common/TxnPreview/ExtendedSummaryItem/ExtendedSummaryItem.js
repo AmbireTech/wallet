@@ -44,7 +44,7 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
   }
 
   if (item.type === 'address') {
-    const shortenedAddress = item.address.substring(0, 8) + '...' + item.address.substring(item.name.length - 3, item.name.length)
+    const shortenedAddress = item.address.substring(0, 8) + '...' + item.address.substring(item.address.length - 3, item.address.length)
 
     return (
       <a
@@ -55,12 +55,12 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <ToolTip disabled={!item.address} label={item.address}>
-          <span className={styles.toAddress}>{item.name ? item.name : item.address}</span>
-          {item.name ? (<span className={cn(styles.toAddress, styles.short)}>
-            {item.name}
-          </span>) : (<span className={cn(styles.toAddress, styles.short)}>
-            {item.address.length > 14 ? shortenedAddress : item.address}
-          </span>)}
+          <span className={styles.toAddress}>
+            {item.name ? item.name : item.address}
+          </span>
+          <span className={cn(styles.toAddress, styles.short)}>
+            {item.name ? item.name : ((item.address.length > 14) ? shortenedAddress : item.address)}
+          </span>
           {item.address ? <ExternalLinkIcon className={styles.externalLink} /> : null}
         </ToolTip>
       </a>
