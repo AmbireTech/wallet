@@ -4,7 +4,7 @@ import cn from 'classnames'
 import { resolveENSDomain } from 'lib/ensDomains'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { Button, DropDown, TextInput } from 'components/common'
-import AddressList from './AddressList/AddressList'
+import Addresses from './Addresses/Addresses'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
@@ -110,7 +110,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                         </div>
                         :
                         <div className={styles.content}>
-                            <AddressList
+                            <Addresses
                                 addresses={addresses}
                                 onSelectAddress={selectAddress}
                                 removeAddress={removeAddress}
