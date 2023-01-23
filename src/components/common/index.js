@@ -1,4 +1,5 @@
 import AddressBook from './AddressBook/AddressBook';
+import AddressList from './AddressList/AddressList';
 import AddressWarning from './AddressWarning/AddressWarning';
 import Alert from "components/common/Alert/Alert";
 import Button from './Button/Button';
@@ -33,6 +34,7 @@ import RemoteLottie from './RemoteLottie/RemoteLottie'
 
 export {
     AddressBook,
+    AddressList,
     AddressWarning,
     Alert,
     Button,
