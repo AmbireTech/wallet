@@ -1,7 +1,7 @@
 import { Interface } from 'ethers/lib/utils'
 import { token } from 'lib/humanReadableTransactions'
 
-const vaultNames = { ethereum: 'Yearn', polygon: 'Tesseract' }
+const vaultNames = { ethereum: 'Yearn', polygon: 'Tesseract', fantom: 'Yearn' }
 const tokenPrefixes = { ethereum: 'y', polygon: 'tv' }
 // add 'y' or 'tv' prefix, eg '10 USDC' will become '10 yUSDC' to signify vault tokens
 const addTokenPrefix = (token, network) => token.split(' ').map((x, i) => i === 1 ? tokenPrefixes[network]+x : x).join(' ')
