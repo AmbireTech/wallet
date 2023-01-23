@@ -9,7 +9,7 @@ import { GiToken } from 'react-icons/gi'
 
 import styles from './Token.module.scss'
 
-const Token = ({ data, sendToken }) => {
+const Token = ({ data, sendToken, isSendDisabled }) => {
   // @TODO Implement Image component 
   const [failedImg, setFailedImg] = useState([])
 
@@ -43,7 +43,7 @@ const Token = ({ data, sendToken }) => {
                 <FaHourglass /> Sending...
               </div>
             ) : (
-              <Button small primaryGradient onClick={() => sendToken(data.address)}>
+              <Button small primaryGradient onClick={() => sendToken(data.address)} disabled={isSendDisabled}>
                 Send
               </Button>
             )}

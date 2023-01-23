@@ -370,7 +370,7 @@ const AssetsMigrationPermitter = ({
         tokensTransfers,
         tokensPendingStatus
       ).map((item, index) => (
-        <Token data={item} sendToken={sendToken} key={index}/>
+        <Token data={item} sendToken={sendToken} key={index} isSendDisabled={!hasCorrectAccountAndChainId}/>
       ))}
     </div>
   )
