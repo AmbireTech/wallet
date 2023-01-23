@@ -2,9 +2,13 @@
 
 .panel {
   padding: 0;
+
+  .tab {
+    position: relative;
+  }
 }
 
-.tabs {
+.buttons {
   display: flex;
   position: relative;
 
@@ -64,7 +68,7 @@
 }
 
 @media screen and (max-width: 1400px) {
-  .tabs {
+  .buttons {
     .button {
       font-size: 22px;
     }
@@ -73,7 +77,7 @@
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-  .tabs {
+  .buttons {
     .button {
       font-size: 16px;
     }
