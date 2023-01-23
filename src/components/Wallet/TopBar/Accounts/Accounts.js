@@ -99,7 +99,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
           <div className={styles.list}>
             {!isMobileScreen && <div className={styles.sortButtons}>
                 <ToolTip label='Sorted accounts by drag and drop'>
-                    <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer"
+                    <MdDragIndicator color={sortType === "custom" ? "#27e8a7" : ""} cursor="pointer"
                     onClick={() => setUserSorting(prev => ({
                         ...prev,
                         accounts: {
@@ -109,7 +109,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
                     }))} />
                 </ToolTip>
                 <ToolTip label='Sorted accounts by default'>
-                    <MdOutlineSort color={sortType === "default" ? "#80ffdb" : ""} cursor="pointer"
+                    <MdOutlineSort color={sortType === "default" ? "#27e8a7" : ""} cursor="pointer"
                     onClick={() => setUserSorting(prev => ({
                         ...prev,
                         accounts: {
