@@ -1,13 +1,22 @@
+@import 'variables';
+
 .button {
   font-weight: 300;
-  width: 208px;
-  font-size: 14px!important;
-  padding: 15px 16px;
+  width: 13rem;
+  font-size: .875rem!important;
+  padding: .9375rem 1rem;
+  height: 50px!important;
 
   span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    max-width: 65px;
+    max-width: 4.0625rem;
+  }
+}
+
+@include xs-breakpoint {
+  .button {
+    height: 40px!important;
   }
 }

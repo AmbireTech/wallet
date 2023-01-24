@@ -3,28 +3,29 @@
 .wrapper {
     position: sticky;
     z-index: 49;
-    padding: 45px $layout-spacing 40px 0;
+    padding: 2.8125rem $layout-spacing 2.5rem 0;
     display: flex;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 30px 0;
+    gap: 1.875rem 0;
     width: 100%;
     color: $c-titan-white;
-    min-height: 96px;    
+    min-height: 6rem;    
     
     &.visualEnv {
-        margin-top: 12px;
+        margin-top: .75rem;
+
         .envBar
         {
             color: $c-titan-white;
             text-align: center;
-            font-size: 10px;
-            line-height: 11px;
+            font-size: .625rem;
+            line-height: .6875rem;
             font-weight: bold;
-            height: 12px;
+            height: .75rem;
             width: 100%;
             position: absolute;
-            top: -12px;
+            top: -0.75rem;
             left: 0;
             display: block;
 
@@ -58,33 +59,33 @@
     .mobileMenu {
         display: none;
         align-items: center;
-        gap: 1em;
-        padding: 0 20px;
+        gap: .9375rem;
+        padding: 0 1.25rem;
 
         .logo {
-            width: 100px;
+            width: 6.25rem;
         }
 
         .mobileMenuRight {
             display: flex;
-            gap: 15px;
+            gap: .9375rem;
             align-items: center;
 
             .icon {
-                height: 25px;
-                width: 25px;
+                height: 1.5625rem;
+                width: 1.5625rem;
                 background-color: $c-mirage;
                 border-radius: 8px;
             }
     
             .menuButton {
                 @include flex-center-center;
-                font-size: 30px;
-                margin-left: 10px;
+                font-size: 1.875rem;
+                margin-left: .625rem;
 
                 .menuIcon {
-                    width: 40px;
-                    height: 40px;
+                    width: 2.5rem;
+                    height: 2.5rem;
                     display: flex;
                     align-items: center;
                     justify-content: center;
@@ -99,7 +100,7 @@
         display: flex;
         justify-content: flex-end;
         align-items: center;
-        gap: 30px;
+        gap: 1.875rem;
         flex-wrap: wrap;
         max-width: $max-container-width;
         width: 100%;
@@ -108,12 +109,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 20px;
+            gap: 1.25rem;
         }
     }
 
     &.dappMode {
-        padding: 20px;
+        padding: 1.25rem;
         align-items: center;
 
         .mobileMenu {
@@ -125,7 +126,7 @@
 
 @media screen and (max-width: 1650px) {
     .wrapper {
-        padding: 45px $layout-spacing / 3 40px 0;
+        padding: 2.8125rem $layout-spacing / 3 2.5rem 0;
     }
 }
 
@@ -134,14 +135,14 @@
 @media screen and (max-width: 1500px) {
     .wrapper {
         .container {
-            gap: 15px;
+            gap: 1.3125rem;
         }
     }
 }
 @media screen and (max-width: 1280px) {
     .wrapper {
         .container {
-            gap: 7px;
+            gap: .4375rem;
         }
     }
 }
@@ -174,7 +175,7 @@
         z-index: 50;
         box-shadow: 0 4px 10px #00000073;
         border: 1px solid $c-fiord;
-        padding: 20px 0;
+        padding: 1.25rem 0;
         background-color: $c-fiord;
 
         .mobileMenu {
@@ -182,26 +183,26 @@
             align-items: center;
             justify-content: space-between;
             width: 100%;
-            padding: 0 10px;
+            padding: 0 .625rem;
         }
 
         .container {
             position: absolute;
             flex-direction: column;
             align-items: stretch;
-            top: 93px;
+            top: 5.8125rem;
             left: 0;
             right: 0;
-            gap: 10px;
+            gap: .625rem;
             display: none;
-            padding: 10px 10px;
+            padding: .625rem .625rem;
             box-shadow: $box-shadow;
             background-color: $c-fiord;
 
             .privacyAndRewards {
                 display: flex;
                 justify-content: flex-end;
-                gap: 20px;
+                gap: 1.25rem;
             }
 
             .dropdown {

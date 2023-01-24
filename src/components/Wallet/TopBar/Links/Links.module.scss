@@ -6,22 +6,22 @@
 
         .title {
             position: relative;
-            font-size: 22px;
+            font-size: 1.375rem;
         }
     }
 
     .item {
         height: 50px;
-        padding-left: 16px;
-        padding-right: 22px;
+        padding-left: 1rem;
+        padding-right: 1.375rem;
         background-color: $c-mirage;
         
         a {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 18px;
-            line-height: 27px;
+            gap: .625rem;
+            font-size: 1.125rem;
+            line-height: 1.6875rem;
             color: $c-titan-white;
             white-space: nowrap;
             font-weight: 400;
