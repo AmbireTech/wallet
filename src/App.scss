@@ -33,6 +33,23 @@
 html {
   min-width: 100%;
   height: 100%;
+  font-size: 16px;
+
+  @include xl-breakpoint {
+    font-size: 15px;
+  }
+  @include lg-breakpoint {
+    font-size: 14px;
+  }
+  @include md-breakpoint {
+    font-size: 13px;
+  }
+  @include sm-breakpoint {
+    font-size: 12px;
+  }
+  @include xs-breakpoint {
+    font-size: 11.5px;
+  }
 }
 
 body {
