@@ -2,13 +2,13 @@
 
 .wrapper {
     height: 60px;
-    border-radius: 12px;
+    border-radius: .75rem;
     @include flex-center-center;
-    gap: 10px;
-    padding: 0 20px;
+    gap: .625rem;
+    padding: 0 1.25rem;
     border: none;
     font-family: 'Poppins', sans-serif;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 500;
     background-color: transparent;
     color: $c-turquoise;
@@ -23,7 +23,7 @@
 
     &.small {
         height: 50px;
-        font-size: 17px;
+        font-size: 1.0625rem;
     }
 
     &.full {
@@ -31,10 +31,10 @@
     }
 
     &.mini {
-        gap: 5px;
+        gap: .3125rem;
         height: 40px;
-        padding: 0 10px;
-        font-size: 14px;
+        padding: 0 .625rem;
+        font-size: .875rem;
     }
 
     &.danger {
@@ -108,7 +108,7 @@
         background: 0;
         border: none;
         color: theme(text-primary);
-        font-size: 1em;
+        font-size: 1rem;
         display: inline-flex;
     }
 
