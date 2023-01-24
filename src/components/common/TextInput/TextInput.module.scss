@@ -6,7 +6,7 @@ $input-height: 60px;
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: .625rem;
 
     label {
         font-weight: 500;
@@ -28,14 +28,14 @@ $input-height: 60px;
                 align-items: center;
                 justify-content: center;
                 width: 60px;
-                font-size: 24px;
+                font-size: 1.5rem;
                 color: theme(text-primary);
                 border-bottom: 2px solid transparent;
                 transition: all 0.1s ease-in-out;
             }
 
             input {
-                padding-left: 48px;
+                padding-left: 3rem;
 
                 &:focus ~ .textInputContainerIcon {
                     border-bottom-color: theme(border-input);
@@ -66,9 +66,9 @@ $input-height: 60px;
             width: 100%;
             color: theme(text-secondary);
             font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-            padding: 18px;
-            padding-left: 20px;
+            font-size: 1rem;
+            padding: 1.125rem;
+            padding-left: 1.25rem;
             opacity: 1;
             border: none;
             text-overflow: ellipsis;
@@ -88,7 +88,7 @@ $input-height: 60px;
     }
 
     .info {
-        font-size: 15px;
+        font-size: .9375rem;
         padding: 0 0.4rem;
         opacity: 0.5;
     }
