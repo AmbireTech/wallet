@@ -19,12 +19,11 @@
         flex-direction: row;
         align-items: center;
         gap: 0.75em;
-        padding-left: 10px;
-        padding-right: 10px;
+        padding: 0 .625rem;
 
         .icon {
-            height: 32px;
-            width: 32px;
+            height: 2rem;
+            width: 2rem;
             background-size: cover;
             border-radius: 12px;
         }
@@ -32,13 +31,13 @@
         .title {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-size: 14px;
+            gap: .625rem;
+            font-size: .875rem;
         }
 
         .badge {
-            height: 20px;
-            width: 20px;
+            height: 1.25rem;
+            width: 1.25rem;
             @include flex-center-center;
             font-size: 12px;
             font-weight: bold;
@@ -54,8 +53,8 @@
         .handle {
             cursor: pointer;
             @include flex-center-center;
-            height: 32px;
-            width: 32px;
+            height: 2rem;
+            width: 2rem;
             background-color: rgba($c-titan-white, 0.05);
             border-radius: 12px;
             transition: all 0.1s ease-in-out;
