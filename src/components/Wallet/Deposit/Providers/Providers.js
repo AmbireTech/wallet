@@ -2,7 +2,7 @@
 import RAMP_LOGO from 'resources/payment-providers/ramp.svg';
 import PAYTRIE_LOGO from 'resources/payment-providers/paytrie.svg';
 import TRANSAK_LOGO from 'resources/payment-providers/transak.svg';
-import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg';
+// import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg';
 import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 import SWAPPIN_LOGO from 'resources/payment-providers/swappin.svg'
 // import MOONPAY_LOGO from 'resources/payment-providers/moonpay.svg'
@@ -15,7 +15,7 @@ import styles from './Providers.module.scss'
 import { ReactComponent as InfoIcon } from 'resources/icons/information.svg' 
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio,  sellMode = false, selectedAsset }) {
-    const { openRampNetwork, openKriptomat, openPayTrie, openTransak, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
+    const { openRampNetwork, openPayTrie, openTransak, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio }) // openKriptomat
     const initMode = sellMode ? 'sell' : 'buy'
     const providers = [
         {
@@ -30,18 +30,19 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             isBuyAvailable: true,
             onClick: () => openGuardarian(initMode, selectedAsset)
         },
-        {
-            logo: KRIPTOMAT_LOGO,
-            name: 'Kriptomat',
-            type: 'Credit Card',
-            fees: '2.45%',
-            limits: 'up to 5000 EUR/day',
-            currencies: 'USD, EUR, GBP',
-            networks: ['ethereum', 'polygon', 'binance-smart-chain'],
-            isSellAvailable: false,
-            isBuyAvailable: true,
-            onClick: () => openKriptomat()
-        },
+        // DISABLED: Temporary until maintenance ends.
+        // {
+        //     logo: KRIPTOMAT_LOGO,
+        //     name: 'Kriptomat',
+        //     type: 'Credit Card',
+        //     fees: '2.45%',
+        //     limits: 'up to 5000 EUR/day',
+        //     currencies: 'USD, EUR, GBP',
+        //     networks: ['ethereum', 'polygon', 'binance-smart-chain'],
+        //     isSellAvailable: false,
+        //     isBuyAvailable: true,
+        //     onClick: () => openKriptomat()
+        // },
         // DISABLED: The Moonpay ready to use, but at this moment we will not release it.
         // {
         //     logo: MOONPAY_LOGO,
@@ -88,7 +89,6 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             isSellAvailable: false,
-            isBuyAvailable: true,
             onClick: () => openTransak()
         },
         {
