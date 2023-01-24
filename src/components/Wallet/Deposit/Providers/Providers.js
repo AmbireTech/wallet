@@ -15,7 +15,7 @@ import styles from './Providers.module.scss'
 import { ReactComponent as InfoIcon } from 'resources/icons/information.svg' 
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio,  sellMode = false, selectedAsset }) {
-    const { openRampNetwork, openPayTrie, openTransak, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio }) // openKriptomat
+    const { openRampNetwork, openKriptomat, openPayTrie, openTransak, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio })
     const initMode = sellMode ? 'sell' : 'buy'
     const providers = [
         {
