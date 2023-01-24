@@ -12,6 +12,24 @@
     justify-content: center;
     position: relative;
 
+    // Specific style for inner steps of the stepper line
+    &:not(:first-child):not(:last-child) {
+      // Inner steps items (name and status) should be centered.
+      // Otherwise the step name and status are positioned/aligned closer to the previous step,
+      // instead of having an equal margin from the prev and next steps.
+      align-items: center;
+
+      &.stepCurrent {
+        // Active progress bar width should end on the status position.
+        // Having in mind that we centered the name and status on the above line,
+        // the progress bar should also ends in the middle of the step.
+        // The other half of the progress bar will have the inactive color.
+        .stepBar {
+          background: linear-gradient(90deg, $c-turquoise 50%, mix($c-turquoise, $c-mirage, 50%) 50%);
+        }
+      }
+    }
+
     &:nth-last-child(1) {
       .stepStatus {
         margin-left: auto;
