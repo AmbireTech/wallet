@@ -22,7 +22,7 @@
     }
 
     .colExpand {
-        flex-basis: 40px;
+        flex-basis: 36px;
     }
 
     .headerContainer {
@@ -43,7 +43,8 @@
         .subContainerVisible {
         display: flex;
         gap: 16px;
-
+        cursor: pointer;
+        font-size: 14px;
         border-radius: 12px;
         position: relative;
         align-items: center;
@@ -61,12 +62,12 @@
 
             .dappIcon {
             display: flex;
-            width: 40px;
-            height: 40px;
-            padding: 4px;
+            width: 36px;
+            height: 36px;
+            padding: 8px;
             justify-content: center;
             align-items: center;
-            background-color: rgba(235, 236, 255, 0.05);
+            background-color: rgba($c-titan-white, 0.05);
             border-radius: 12px;
             }
         }
@@ -74,16 +75,12 @@
         .signatureExpand {
             cursor: pointer;
             border-radius: 12px;
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background-color: rgba(235, 236, 255, 0.05);
-
-            &:hover {
-            background-color: rgba(235, 236, 255, 0.1);
-            }
+            background-color: rgba($c-titan-white, 0.05);
         }
 
         .colSigtype {
@@ -100,23 +97,25 @@
         }
 
         .subContainerExpanded {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         user-select: text;
-        padding: 16px 0 0 16px;
+        padding-top: 15px;
 
         & > div {
-
-            margin: 16px 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
 
             b {
             font-weight: normal;
             }
 
             .messageContent {
-            padding-top: 4px;
             color: $c-scampi;
-            font-family: monospace;
             white-space: break-spaces;
-            font-size: 16px;
+            font-size: 13.5px;
             overflow-wrap: break-word;
             }
         }

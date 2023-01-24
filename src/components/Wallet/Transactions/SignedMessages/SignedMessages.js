@@ -49,12 +49,17 @@ const SignedMessages = React.memo(
             paginatedMessages.map((m, index) => {
               const hash = id(JSON.stringify(m));
               return (
-                <div className={styles.subContainer} key={index}>
-                  <div className={styles.subContainerVisible}>
+                <div className={styles.subContainer} key={hash}>
+                  <div className={styles.subContainerVisible} onClick={() => {
+                  setExpansions((prev) => ({
+                    ...prev,
+                    [hash]: !prev[hash],
+                  }));
+                }}>
                     <div className={cn(styles.dapp, styles.colDapp)}>
                       <div className={styles.dappIcon}>
                         {m.dApp?.icons[0] ? (
-                          <Image src={m.dApp.icons[0]} size={32} />
+                          <Image src={m.dApp.icons[0]} size={24} />
                         ) : (
                           <AiFillAppstore style={{ opacity: 0.5 }} />
                         )}
@@ -92,24 +97,18 @@ const SignedMessages = React.memo(
                     </div>
                     <div
                       className={cn(styles.colExpand, styles.signatureExpand)}
-                      onClick={() => {
-                        setExpansions((prev) => ({
-                          ...prev,
-                          [hash]: !prev[hash],
-                        }));
-                      }}
                     >
                       {expansions[hash] ? <FaChevronUp /> : <FaChevronDown />}
                     </div>
                   </div>
                   {expansions[hash] && (
                     <div className={styles.subContainerExpanded}>
-                      <div>
+                      {(m.signer?.address || m.signer?.quickAcc) ? <div>
                         <b>Signer</b>
                         <div className={styles.messageContent}>
                           {m.signer.address || m.signer.quickAcc}
                         </div>
-                      </div>
+                      </div> : null}
                       <div>
                         <b>Message</b>
                         <div className={styles.messageContent}>
