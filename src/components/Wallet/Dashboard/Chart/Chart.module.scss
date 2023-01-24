@@ -142,19 +142,20 @@
 @media screen and (max-width: 1800px) {
   .wrapper {
     gap: 40px;
+
     .legend {
-      &Title {
+      .legendTitle {
         font-size: 20px;
       }
     }
   }
 }
 
-@media screen and (max-width: 1280px) {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
     .donut {
-      height: 160px;
-  
+      height: auto;
+
       .networkInfo {
         .networkIcon {
           width: 28px;
@@ -166,14 +167,6 @@
         }
       }
     }
-  }
-}
-
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-  .wrapper {
-    .donut {
-      height: 200px;
-    }
     
     .noTokensWrapper {
       padding: 20px;
@@ -183,12 +176,12 @@
     }
 
     .legend {
-      &Title {
+      .legendTitle {
         margin-left: 20px;
         margin-bottom: 15px;
       }
-      &Items {
-        padding: 20px;
+      .legendItems {
+        padding: 10px 20px;
         background: $c-ebony-clay;
         border: 1px solid $c-fiord;
         border-radius: 12px;
