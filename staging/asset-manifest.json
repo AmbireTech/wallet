@@ -1,8 +1,8 @@
 {
   "files": {
     "main.css": "./static/css/main.e06e08c1.chunk.css",
-    "main.js": "./static/js/main.cc6f38c7.chunk.js",
-    "main.js.map": "./static/js/main.cc6f38c7.chunk.js.map",
+    "main.js": "./static/js/main.ac25a5a2.chunk.js",
+    "main.js.map": "./static/js/main.ac25a5a2.chunk.js.map",
     "runtime-main.js": "./static/js/runtime-main.c4e020bd.js",
     "runtime-main.js.map": "./static/js/runtime-main.c4e020bd.js.map",
     "static/css/2.aea5e128.chunk.css": "./static/css/2.aea5e128.chunk.css",
@@ -59,7 +59,6 @@
     "static/media/information.71bd71de.svg": "./static/media/information.71bd71de.svg",
     "static/media/invisible.a56ad71b.svg": "./static/media/invisible.a56ad71b.svg",
     "static/media/issue.d79f17ab.svg": "./static/media/issue.d79f17ab.svg",
-    "static/media/kriptomat.6b5104a5.svg": "./static/media/kriptomat.6b5104a5.svg",
     "static/media/ledger.svg": "./static/media/ledger.cdb38f76.svg",
     "static/media/log-out.4b7ed97c.svg": "./static/media/log-out.4b7ed97c.svg",
     "static/media/EmailLogin.module.scss": "./static/media/login-bg.d8e7cfbc.png",
@@ -105,6 +104,6 @@
     "static/css/2.aea5e128.chunk.css",
     "static/js/2.40e30a6c.chunk.js",
     "static/css/main.e06e08c1.chunk.css",
-    "static/js/main.cc6f38c7.chunk.js"
+    "static/js/main.ac25a5a2.chunk.js"
   ]
 }
