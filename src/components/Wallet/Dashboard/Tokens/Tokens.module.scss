@@ -14,6 +14,11 @@
     .dragHandle {
         margin-right: 15px;
     }
+
+    .sortButtons {
+        display: flex;
+        align-items: flex-end;
+    }
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {

@@ -99,7 +99,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                         tokenLabelChildren={sortedTokens.length > 1 && !isMobileScreen &&  (
                             <div className={styles.sortButtons}>
                                 <ToolTip label='Sorted tokens by drag and drop'>
-                                    <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
+                                    <MdDragIndicator color={sortType === "custom" ? "#27e8a7" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
                                         ...prev,
                                         tokens: {
                                             ...prev.tokens,
@@ -108,7 +108,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                     }))} />
                                 </ToolTip>
                                 <ToolTip label='Sorted tokens by DESC balance'>
-                                    <MdOutlineSort color={sortType === "decreasing" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
+                                    <MdOutlineSort color={sortType === "decreasing" ? "#27e8a7" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
                                         ...prev,
                                         tokens: {
                                             ...prev.tokens,
