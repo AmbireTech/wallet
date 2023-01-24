@@ -4,11 +4,11 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 7px;
+    gap: .4375rem;
     user-select: none;
     font-weight: bold;
     cursor: pointer;
-    min-width: 210px;
+    min-width: 13.125rem;
 
     &InputContainer {
         border-radius: 0;
@@ -24,8 +24,8 @@
     }
 
     .icon {
-        width: 24px;
-        height: 24px;
+        width: 1.5rem;
+        height: 1.5rem;
         flex: 0 0 auto;
         display: flex;
         align-items: center;
@@ -59,9 +59,9 @@
             height: 60px;
             display: flex;
             align-items: center;
-            gap: 12px;
-            padding: 0 20px;
-            font-size: 16px;
+            gap: .75rem;
+            padding: 0 1.25rem;
+            font-size: 1rem;
             font-weight: bold;
             background-color: theme(background-primary);
             border-radius: 12px;
@@ -73,8 +73,8 @@
             .handle {
                 cursor: pointer;
                 @include flex-center-center;
-                height: 32px;
-                width: 32px;
+                height: 2rem;
+                width: 2rem;
                 background-color: theme(background-icon);
                 border-radius: 12px;
                 transition: all 0.1s ease-in-out;
@@ -90,8 +90,8 @@
             position: absolute;
             top: 60px;
             left: 0;
-            min-height: 50px;
-            max-height: 250px;
+            min-height: 3.125rem;
+            max-height: 15.625rem;
             width: 100%;
             border-radius: 12px;
             background-color: theme(background-primary);
@@ -113,8 +113,8 @@
 
                 input {
                     height: 50px !important;
-                    font-size: 15px;
-                    padding-left: 20px;
+                    font-size: .9375rem;
+                    padding-left: 1.25rem;
                     box-shadow: none !important;
                 }
             }
@@ -124,16 +124,16 @@
                 display: flex;
                 align-items: center;
                 justify-content: flex-start;
-                gap: 12px;
-                padding: 0 20px;
-                padding-right: 40px;
-                font-size: 16px;
+                gap: .75rem;
+                padding: 0 1.25rem;
+                padding-right: 2.5rem;
+                font-size: 1rem;
                 font-weight: 500;
                 opacity: 0.8;
                 cursor: pointer;
 
                 .dragHandle {
-                    min-width: 14px;
+                    min-width: .875rem;
                 }
                 &[draggable="true"] .dragHandle {
                     cursor: grab;
@@ -158,9 +158,9 @@
                     &::after {
                         content: "";
                         position: absolute;
-                        right: 15px;
-                        height: 8px;
-                        width: 8px;
+                        right: .9375rem;
+                        height: .5rem;
+                        width: .5rem;
                         background-color: theme(highlight-secondary);
                         border-radius: 100%;
                     }
@@ -177,7 +177,7 @@
     &.searchable {
         .selectContainer {
             .selectMenu {
-                max-height: 300px;
+                max-height: 18.75rem;
             }
         }
     }
@@ -185,7 +185,7 @@
     &.monospace {
         .value, .option {
             font-family: 'Ubuntu Mono';
-            font-size: 17px;
+            font-size: 1.0625rem;
         }
     }
 }

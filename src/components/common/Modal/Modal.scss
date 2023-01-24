@@ -12,8 +12,8 @@ $buttons-height: 160px;
     width: $modal-width;
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding-top: 40px;
+    gap: .625rem;
+    padding-top: 2.5rem;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
@@ -27,14 +27,14 @@ $buttons-height: 160px;
     .heading {
         display: flex;
         align-items: flex-start;
-        padding: 0 40px;
+        padding: 0 2.5rem;
         justify-content: space-between;
 
         .title-wrapper {
             display: flex;
-            gap: 10px 30px;
+            gap: .625rem 1.875rem;
             .title {
-                font-size: 25px;
+                font-size: 1.5625rem;
                 &.centered {
                     text-align: center;
                     margin: 0 auto;
@@ -44,12 +44,12 @@ $buttons-height: 160px;
         }
 
         .close {
-            height: 40px;
-            width: 40px;
+            height: 2.5rem;
+            width: 2.5rem;
             background-color: rgba($c-titan-white, 0.05);
             border-radius: 12px;
             @include flex-center-center;
-            font-size: 20px;
+            font-size: 1.25rem;
 
             &:hover {
                 cursor: pointer;
@@ -61,7 +61,7 @@ $buttons-height: 160px;
     .content {
         height: 100%;
         position: relative;
-        padding: 40px;
+        padding: 2.5rem;
         padding-bottom: 0;
         overflow: hidden;
         overflow-y: auto;
@@ -79,9 +79,9 @@ $buttons-height: 160px;
         width: 100%;
         display: flex;
         box-sizing: border-box;
-        gap: 10px;
-        padding: 50px 40px;
-        height: 160px;
+        gap: .625rem;
+        padding: 3.125rem 2.5rem;
+        height: 10rem;
 
         button {
             height: 60px;
@@ -109,23 +109,23 @@ $buttons-height: 160px;
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .modal {
-        max-width: 600px;
+        max-width: 37.5rem;
         height: 100% !important;
         width: 100% !important;
 
         .heading {
-            padding: 0 30px;
+            padding: 0 1.875rem;
             .title-wrapper {
                 flex-direction: column;
             }
         }
 
         .content {
-            padding: 30px;
+            padding: 1.875rem;
         }
 
         .buttons {
-            padding: 30px;
+            padding: 1.875rem;
         }
     }
 }
