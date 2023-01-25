@@ -1,0 +1,52 @@
+@import 'variables';
+
+.wrapper {
+  @include flex-center-center;
+  height: 40px;
+  width: 40px;
+  padding: 8px;
+  background-color: rgba($c-titan-white, 0.05);
+  border-radius: 12px;
+
+  &.noBackground {
+    background-color: transparent;
+  }
+
+  &.sm {
+    height: 32px;
+    width: 32px;
+    padding: 4px;
+  }
+
+  img, svg {
+    max-width: 100%;
+  }
+}
+
+@include md-breakpoint {
+  .wrapper {
+    width: 35px;
+    height: 35px;
+    padding: 5px;
+
+    &.sm {
+      height: 30px;
+      width: 30px;
+      padding: 2px;
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    width: 30px;
+    height: 30px;
+    padding: 3px;
+
+    &.sm {
+      height: 28px;
+      width: 28px;
+      border-radius: 10px;
+    }
+  }
+}
