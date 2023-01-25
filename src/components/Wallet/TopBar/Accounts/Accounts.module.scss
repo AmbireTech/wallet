@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-$account-height: 60px;
+$account-height: 3.75rem;
 
 .wrapper {
     max-width: 13.75rem;
@@ -135,8 +135,8 @@ $account-height: 60px;
                     .button {
                         display: block;
                         flex: 0 0 auto;
-                        height: 60px;
-                        width: 50px;
+                        height: 3.75rem;
+                        width: 3.125rem;
                         @include flex-center-center;
                         color: $c-titan-white;
                         font-size: 2.5rem;

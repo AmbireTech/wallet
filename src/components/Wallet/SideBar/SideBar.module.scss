@@ -5,7 +5,7 @@
   z-index: 49;
   height: 100%;
   width: $sidebar-desktop-width;
-  padding-top: 45px;
+  padding-top: 2.8125rem;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
@@ -15,11 +15,11 @@
 
   &:after {
     content: '';
-    width: 2px;
+    width: .125rem;
     height: 100%;
     position: absolute;
     top: 0;
-    right: -1px;
+    right: -0.0625rem;
     background: rgb(61,68,106);
     background: linear-gradient(180deg, rgba(61,68,106,1) 0%, rgba(53,58,91,1) 25%, rgba(100,111,174,1) 50%, rgba(58,63,99,1) 75%, rgba(37,40,63,1) 100%);
   }
@@ -42,25 +42,25 @@
     .outsideHandler {
       display: block;
       position: fixed;
-      left: $sidebar-desktop-width;;
-      bottom: 0px;
-      top: 0px;
-      right: 0px;
+      left: $sidebar-desktop-width;
+      bottom: 0;
+      top: 0;
+      right: 0;
     }
   }
 
   .sidebarLogo {
-    max-width: 138px;
-    margin: 0 0 30px 1em;
+    max-width: 8.625rem;
+    margin: 0 0 1.875rem 1rem;
   }
 
   .ambireLogo {
     display: flex;
     flex-direction: row;
     justify-content: space-between;
-    height: 75px;
-    padding: 15px;
-    gap: 8px;
+    height: 4.6875rem;
+    padding: .9375rem;
+    gap: .5rem;
     .logo, .icon {
       height: 100%;
       width: 100%;
@@ -81,12 +81,12 @@
   }
 
   .balance {
-    margin-bottom: 80px;
-    padding-left: 1em;
+    margin-bottom: 5rem;
+    padding-left: 1rem;
 
     label {
-      font-size: 15px;
-      line-height: 23px;
+      font-size: .9375rem;
+      line-height: 1.4375rem;
       color: $c-titan-white;
       text-transform: uppercase;
     }
@@ -106,19 +106,19 @@
     .item {
       display: flex;
       align-items: center;
-      gap: 27px;
-      padding: 12px;
-      line-height: 30px;
+      gap: 1.6875rem;
+      padding: .75rem;
       cursor: pointer;
       color: $c-manatee;
-      font-size: 14px;
-      line-height: 21px;
+      font-size: .875rem;
+      line-height: 1.3125rem;
       text-align: center;
       white-space: nowrap;
       transition: all 0.1s ease-in-out;
 
       svg {
-        font-size: 30px;
+        width: 1.875rem;
+        height: 1.875rem;
         color: $c-manatee;
         transition: color 0.1s ease-in-out;
       }
@@ -134,8 +134,8 @@
 
       .badge-wrapper {
         font-weight: bold;
-        width: 30px;
-        height: 30px;
+        width: 1.875rem;
+        height: 1.875rem;
         text-align: center;
         border: 1px solid $danger-color;
         border-radius: 50%;
@@ -143,8 +143,8 @@
       }
 
       .opensea-icon {
-        height: 30px;
-        width: 30px;
+        height: 1.875rem;
+        width: 1.875rem;
         background-size: contain;
         background-image: url('../../../resources/opensea.svg');
         filter: grayscale(1);
@@ -177,11 +177,11 @@
   }
 
   .dollarSign {
-    margin-right: 5px;
+    margin-right: .3125rem;
   }
 
   .balanceDollarAmount {
-    font-size: 2em;
+    font-size: 2rem;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -192,7 +192,7 @@
   .wrapper {
     .balance {
       .balanceDollarAmount {
-        font-size: 2em !important;
+        font-size: 2rem !important;
       }
     }
   }
@@ -203,8 +203,8 @@
     width: $sidebar-desktop-small-width;
 
     .sidebarLogo {
-      margin: 0 8px;
-      margin-bottom: 25px;
+      margin: 0 .5rem;
+      margin-bottom: 1.5625rem;
     }
 
     &.dappMode {
@@ -214,10 +214,10 @@
     }
 
     .balance {
-      font-size: 0.8em !important;
+      font-size: 0.8rem !important;
 
       label {
-        font-size: 1.1em !important;
+        font-size: 1.1rem !important;
       }
     }
 
@@ -233,7 +233,7 @@
 
     nav {
       .item {
-        gap: 5px;
+        gap: .3125rem;
         flex-direction: column;
         justify-content: center;
       }
@@ -273,14 +273,24 @@
        .item {
         gap: 0;
         height: 100%;
-        width: 95px;
-        font-size: 13px;
+        width: 9.3125rem;
+        font-size: .8125rem;
         font-weight: 500;
         padding: 0;
 
         svg {
-          font-size: 25px;
+          font-size: 1.5625rem;
         }
+      }
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    nav {
+      .item {
+        width: 6.5rem;
       }
     }
   }
