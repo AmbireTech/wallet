@@ -32,6 +32,8 @@ const colors = [
   "#B68500"
 ]
 
+const formatDate = (date) => new Date(date).toLocaleTimeString('en-us', { day: 'numeric', year: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'})
+
 const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
 const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }) => {
@@ -84,8 +86,6 @@ const Chart = ({ portfolio, hidePrivateValue, selectedNetwork, data, className }
       }
     },
   }), [data.empty])
-
-  const formatDate = (date) => new Date(date).toLocaleTimeString('en-us', { day: 'numeric', year: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false })
 
   return (
     <div className={cn(styles.wrapper, className)}>
