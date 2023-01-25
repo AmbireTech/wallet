@@ -1,9 +1,9 @@
 $xsBreakpoint: 450px;
 $smBreakpoint: 768px;
 $mdBreakpoint: 1024px;
-$lgBreakpoint: 1290px;
-$xlBreakpoint: 1440px;
-$xxlBreakpoint: 1680px;
+$lgBreakpoint: 1280px;
+$xlBreakpoint: 1500px;
+$xxlBreakpoint: 1720px;
 
 @mixin xs-breakpoint {
 	@media only screen and (max-width: $xsBreakpoint) {
