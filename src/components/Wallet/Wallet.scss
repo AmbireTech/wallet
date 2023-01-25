@@ -16,7 +16,7 @@
 
     &.dapp-mode {
         #wallet-container-inner {
-            padding: 20px 10px 10px;
+            padding: 1.25rem .625rem .625rem;
         }
     }
 
@@ -25,7 +25,7 @@
         width: 100%;
         overflow-y: auto;
         padding: 0 $layout-spacing;
-        padding-bottom: 40px;
+        padding-bottom: 2.5rem;
     }
 
     .placeholder-overlay {
@@ -37,10 +37,10 @@
         right: 0;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 1.25rem;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
+        font-size: 1.375rem;
         font-weight: bold;
         text-align: center;
         color: $c-titan-white;
@@ -56,7 +56,7 @@
     #wallet-container {
         #wallet-container-inner {
             padding: 0 $layout-spacing / 3;
-            padding-bottom: 30px;
+            padding-bottom: 1.875rem;
         }
     }
 }
@@ -66,7 +66,7 @@
 
         #wallet-container-inner {
             padding: 0 $layout-spacing / 4;
-            padding-bottom: 30px;
+            padding-bottom: 1.875rem;
         }
     }
 }
@@ -82,7 +82,7 @@
         }
 
         #wallet-container-inner {
-            padding: 40px 10px 20px;
+            padding: 2.5rem .625rem 1.25rem;
         }
     }
 }
@@ -91,7 +91,7 @@
 @media screen and (min-width: $wide-breakpoint-min-width) {
     #wallet-container & :not(.dapp-mode) {
         #wallet-container-inner {
-            max-width: 1500px;
+            max-width: 93.75rem;
         }
     }
 }
