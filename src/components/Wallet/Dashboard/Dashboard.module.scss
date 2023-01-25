@@ -3,25 +3,25 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 17px;
+    gap: 1.0625rem;
 
     .panel {
         flex: 0 1 50%;
 
         .panelTitle {
-            font-size: 25px;
+            font-size: 1.5625rem;
             font-weight: 400;
             color: $c-titan-white;
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
     }
 
     .tab {
-        font-size: 20px;
+        font-size: 1.25rem;
     }
 
     .topPanels {
-        padding: 15px 50px;
+        padding: .9375rem 3.125rem;
         gap: 0;
         overflow: hidden;
     }
@@ -29,15 +29,15 @@
     .overview {
         display: flex;
         justify-content: space-between;
-        gap: 17px;
-        max-height: 300px;
+        gap: 1.0625rem;
+        max-height: 18.75rem;
     }
 
     .footer {
-        margin-top: 15px;
-        margin-bottom: 40px;
+        margin-top: .9375rem;
+        margin-bottom: 2.5rem;
         .missingTokenNotice {
-            font-size: 15px;
+            font-size: .9375rem;
             color: $c-titan-white;
 
             a {
@@ -47,46 +47,40 @@
 
         .powered {
             text-align: right;
-            font-size: 12px;
-            padding: 0 10px;
+            font-size: .75rem;
+            padding: 0 .625rem;
             opacity: 0.5;
         }
     }
 }
 
-@media screen and (max-width: 1800px) {
+@include xxl-breakpoint {
     .wrapper {
         .panel {
             .panelTitle {
-                font-size: 20px;
-                margin-bottom: 23px;
+                font-size: 1.25rem;
+                margin-bottom: 1.4375rem;
             }
         }
         .topPanels {
-            padding: 15px 30px;
+            padding: .9375rem 1.875rem;
         }
-    }
-}
-
-@media screen and (max-width: 1200px) {
-    .overview {
-        flex-direction: column;
     }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
-        gap: 30px;
-        padding: 20px;
+        gap: 1.875rem;
+        padding: 1.25rem;
 
         .panel {
             background-color: transparent;
             border: none;
 
             .panelTitle {
-                margin-left: 20px;
-                margin-bottom: 15px;
+                margin-left: 1.25rem;
+                margin-bottom: .9375rem;
             }
         }
 
@@ -96,8 +90,9 @@
         }
 
         .overview {
-            gap: 30px;
+            gap: 1.875rem;
             max-height: unset;
+            flex-direction: column;
         }
 
         .chart {
@@ -118,11 +113,11 @@
             border-right: none!important;
 
             &:first-child {
-                margin-right: 10px;
+                margin-right: .625rem;
             }
 
             &:nth-child(2) {
-                margin-left: 10px;
+                margin-left: .625rem;
             }
         }
 

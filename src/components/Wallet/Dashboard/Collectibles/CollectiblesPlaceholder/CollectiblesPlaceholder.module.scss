@@ -10,9 +10,9 @@
         text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
 
         h2 {
-            font-size: 22px;
+            font-size: 1.375rem;
             margin: 0;
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
 
         p {
@@ -25,12 +25,12 @@
 .blur {
     filter: blur(15px);
     opacity: .4;
-    padding-bottom: 50px;
+    padding-bottom: 3.125rem;
 }
 
-@media (max-width: 768px) {
+@include sm-breakpoint {
     .placeholderOverlay {
         align-items: flex-start;
-        padding-top: 100px;
+        padding-top: 6.25rem;
     }
 }

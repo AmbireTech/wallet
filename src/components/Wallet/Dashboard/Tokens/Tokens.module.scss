@@ -3,16 +3,16 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    margin: 0 50px;
-    margin-bottom: 20px;
+    gap: 1.875rem;
+    margin: 0 3.125rem;
+    margin-bottom: 1.25rem;
     border-radius: 12px;
     overflow: hidden;
     color: $c-scampi;
-    margin-top: 3px;
+    margin-top: .1875rem;
 
     .dragHandle {
-        margin-right: 15px;
+        margin-right: .9375rem;
     }
 
     .sortButtons {
@@ -21,9 +21,9 @@
     }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
-        gap: 20px;
+        gap: 1.25rem;
         margin: 0;
     }
 }

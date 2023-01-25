@@ -3,13 +3,13 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  padding: 20px 30px;
+  padding: 1.25rem 1.875rem;
   background-color: $c-mirage;
   border-radius: 12px;
 
   h3 {
     font-weight: 300;
-    font-size: 20px;
+    font-size: 1.25rem;
     margin: 0;
   }
 
@@ -26,7 +26,7 @@
     .baseInfo {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 1.25rem;
       flex: 1.5;
       font-weight: 500;
       color: $c-titan-white;
@@ -34,15 +34,15 @@
       .iconWrapper {
         border-radius: 12px;
         background-color: rgba($c-titan-white, 0.04);
-        width: 40px;
-        height: 40px;
+        width: 2.5rem;
+        height: 2.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
         
         img, .iconFailed {
-          width: 24px;
-          height: 24px;
+          width: 1.5rem;
+          height: 1.5rem;
           border-radius: 12px;
         }
 
@@ -54,12 +54,12 @@
       .balanceAndSymbol {
         .symbol {
           margin: 0;
-          font-size: 20px;
+          font-size: 1.25rem;
           font-weight: 500;
         }
         .balance {
           margin: 0;
-          font-size: 16px;
+          font-size: 1rem;
           color: $c-turquoise;
           font-weight: 400;
         }
@@ -76,7 +76,7 @@
       .price {
         color: $c-heliotrope;
         flex: 1.2;
-        font-size: 16px;
+        font-size: 1rem;
       }
       .value {
         flex: 1;
@@ -91,16 +91,16 @@
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 10px;
+    gap: .625rem;
     flex: 1;
 
     .action {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 50px;
-      padding: 0 20px;
-      gap: 5px;
+      height: 3.125rem;
+      padding: 0 1.25rem;
+      gap: .3125rem;
       background-color: rgba($c-titan-white, 0.04);
       border-radius: 12px;
       cursor: pointer;
@@ -112,26 +112,26 @@
       }
 
       svg {
-        width: 28px;
-        height: 28px;
+        width: 1.75rem;
+        height: 1.75rem;
       }
 
       p {
-        font-size: 14px;
+        font-size: .875rem;
       }
     }
   }
 }
 
 // Mobile
-@media screen and (max-width: 768px) {
+@include sm-breakpoint {
   .wrapper {
-    padding: 20px 15px;
+    padding: 1.25rem .9375rem;
     border: 1px solid $c-martinique;
 
     .body {
       flex-direction: column;
-      gap: 25px;
+      gap: 1.5625rem;
     }
 
     .infoAndActions {
@@ -140,20 +140,21 @@
 
       .baseInfo {
         display: flex;
-        flex: 1;
+        flex: 1.5;
         max-width: 60%;
-        gap: 10px;
+        gap: .625rem;
 
         .balanceAndSymbol {
           flex: 1;
+
           .symbol {
             font-weight: 500;
-            font-size: 16px;
+            font-size: 1.2rem;
             word-wrap: break-word;
           }
 
           .balance {
-            font-size: 14px;
+            font-size: 1.1rem;
           }
         }
       }
@@ -164,25 +165,26 @@
         align-items: flex-end;
         
         .value {
-          font-size: 16px;
+          font-size: 1.2rem;
         }
 
         .price {
-          font-size: 14px;
+          font-size: 1.1rem;
           align-self: auto;
         }
       }
     }
     .actions {
-      gap: 20px;
+      gap: 1.25rem;
       width: 100%;
+      
       .action {
         width: 100%;
-        height: 50px;
+        height: 3.125rem;
 
         svg {
-          width: 32px;
-          height: 32px;
+          width: 2rem;
+          height: 2rem;
         }
       }
     }
