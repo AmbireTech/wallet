@@ -52,11 +52,6 @@
 
         .handle {
             cursor: pointer;
-            @include flex-center-center;
-            height: 2rem;
-            width: 2rem;
-            background-color: rgba($c-titan-white, 0.05);
-            border-radius: 12px;
             transition: all 0.1s ease-in-out;
             margin-left: auto;
 

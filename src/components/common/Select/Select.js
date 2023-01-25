@@ -3,7 +3,7 @@ import styles from './Select.module.scss';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
-import { Image, TextInput } from 'components/common';
+import { Icon, Image, TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
 
@@ -70,9 +70,9 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                 <div className={`${styles.label} ${labelClassName}`}>{selectedItem.label || selectedItem.value}</div>
                                 {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
                                 {/* <div className="separator"></div> */}
-                                <div className={cn(styles.handle, {[styles.open]: isOpen})}>
+                                <Icon size="sm" className={cn(styles.handle, {[styles.open]: isOpen})}>
                                     <ChevronDownIcon />
-                                </div>
+                                </Icon>
                             </div>
                             {
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>

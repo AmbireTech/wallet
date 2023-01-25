@@ -72,11 +72,11 @@
 
             .handle {
                 cursor: pointer;
-                @include flex-center-center;
-                height: 2rem;
-                width: 2rem;
-                background-color: theme(background-icon);
-                border-radius: 12px;
+                // @include flex-center-center;
+                // height: 2rem;
+                // width: 2rem;
+                // background-color: theme(background-icon);
+                // border-radius: 12px;
                 transition: all 0.1s ease-in-out;
 
                 &.open {
