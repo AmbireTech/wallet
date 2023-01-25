@@ -35,11 +35,14 @@ html {
   height: 100%;
   font-size: 16px;
 
-  @include xl-breakpoint {
+  @include xxl-breakpoint {
     font-size: 15px;
   }
-  @include lg-breakpoint {
+  @include xl-breakpoint {
     font-size: 14px;
+  }
+  @include lg-breakpoint {
+    font-size: 13.5px;
   }
   @include md-breakpoint {
     font-size: 13px;
@@ -95,7 +98,7 @@ a {
   text-align: left;
 
   svg {
-    margin-right: 5px;
+    margin-right: .3125rem;
   }
 }
 
@@ -105,10 +108,10 @@ a {
 }
 
 select {
-  border: 0px;
-  outline: 0px;
+  border: 0;
+  outline: 0;
   color: $c-titan-white;
-  padding: 15px;
+  padding: .9375rem;
   background-color: rgba(0,0,0,0.3);
 }
 
@@ -116,16 +119,16 @@ select {
   position: relative;
   display: flex;
   flex-direction: column;
-  gap: 25px;
-  padding: 30px;
-  padding-top: 25px;
+  gap: 1.5625rem;
+  padding: 1.875rem;
+  padding-top: 1.5625rem;
   background-color: theme(background-terniary);
   box-sizing: border-box;
 
   .title {
     display: flex;
     justify-content: space-between;
-    font-size: 1.5em;
+    font-size: 1.5rem;
     font-weight: bold;
   }
 
@@ -133,7 +136,7 @@ select {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 1.5625rem;
   }
 }
 
@@ -147,36 +150,36 @@ select {
 }
 
 .mb-3{
-  margin-bottom: 12px;
+  margin-bottom: .75rem;
 }
 
 .mb-4{
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .mb-6{
-  margin-bottom: 48px;
+  margin-bottom: 3rem;
 }
 
 .mt-2{
-  margin-top: 8px;
+  margin-top: .5rem;
 }
 
 .mt-3{
-  margin-top: 12px;
+  margin-top: .75rem;
 }
 
 .mt-4{
-  margin-top: 16px;
+  margin-top: 1rem;
 }
 
 .ms-4 {
-  margin-left: 16px;
+  margin-left: 1rem;
 }
 
 .notification-hollow {
-  border-radius: 12px;
-  padding: 13px 10px;
+  border-radius: .75rem;
+  padding: .8125rem .625rem;
   background: mix($c-turquoise, $c-ebony-clay, 5%);
   border: 1px solid $c-turquoise;
   transition: .3s ease-out opacity;
@@ -211,14 +214,14 @@ select {
 .notification-banner {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 1rem;
 }
 
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .panel {
-    gap: 1em;
-    padding: 20px;
-    padding-top: 20px;
+    gap: 1rem;
+    padding: 1.25rem;
+    padding-top: 1.25rem;
   }
 }
