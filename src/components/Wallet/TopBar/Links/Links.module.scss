@@ -1,15 +1,10 @@
 @import 'variables.scss';
 
 .wrapper {
-    .content {
-        gap: 0.25em;
-
-        .title {
-            position: relative;
-            font-size: 1.375rem;
-        }
+    .titleIcon {
+        width: 2rem;
+        height: 2rem;
     }
-
     .item {
         height: 50px;
         padding-left: 1rem;
@@ -25,6 +20,11 @@
             color: $c-titan-white;
             white-space: nowrap;
             font-weight: 400;
+
+            .itemIcon {
+                width: 1.875rem;
+                height: 1.875rem;
+            }
         }
 
         &:hover {
