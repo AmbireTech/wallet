@@ -17,7 +17,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     const history = useHistory()
     const networkDetails = (network) => networks.find(({ id }) => id === network)
     const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
-    const otherBalancesLoading = Object.entries(portfolio.balancesByNetworksLoading).find(ntw => ntw[0] !== selectedNetwork.id && ntw[1])
+    const otherBalancesLoading = portfolio.balancesByNetworksLoading
     const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${selectedAccount}/getBalance` : null
     const { data: balancesRes, isLoading } = useRelayerData({ url: urlGetBalance })
     const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)    
@@ -33,7 +33,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
 
     // Used to add blur at the bottom of balances when scrollbar is visible
     const handleSetBlur = useCallback(() => {
-        if(!otherBalancesLoading && otherBalances) {
+        if(otherBalances || !otherBalancesLoading) {
             const el = otherBalancesRef.current
             if (!el) return
 
@@ -57,9 +57,9 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
 
     return (
         <div className={styles.wrapper}>
-            { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
+            { portfolio.isCurrNetworkBalanceLoading ? <Loading /> : (
                 <div className={styles.otherBalances} ref={otherBalancesRef} onScroll={handleSetBlur}>
-                    { otherBalances.length > 0 ? (
+                    { !otherBalances.length && otherBalancesLoading ? <div className={styles.loadingOtherBalancesWrapper}><Loading /></div> : otherBalances.length > 0 ? (
                         <>
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (

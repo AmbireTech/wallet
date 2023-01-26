@@ -132,7 +132,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     
     if (createResp.success) {
       utmTracking.resetUtm()
-    }
+    } 
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
       return
@@ -267,7 +267,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       throw new Error('No accounts connected')
     }
 
-    const addresses = accountsPermission.caveats[0].value
+    // Depending on the MM version, the addresses are returned by a different caveat identifier.
+    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
+    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
+    const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
 
     if (addresses.length === 1) return onEOASelected(addresses[0], {type: 'Web3'})
 
