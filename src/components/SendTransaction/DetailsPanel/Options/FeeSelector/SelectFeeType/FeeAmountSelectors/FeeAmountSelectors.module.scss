@@ -89,7 +89,7 @@
   }
 }
 
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
   .wrapper {
     grid-gap: 5px;
     .feeSquare {

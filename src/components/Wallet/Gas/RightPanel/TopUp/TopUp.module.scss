@@ -107,7 +107,7 @@
   }
 }
 
-@media screen and (max-width: 37.5rem) {
+@include sm-breakpoint {
   .wrapper {
     .titleWrapper {
       flex-direction: column;

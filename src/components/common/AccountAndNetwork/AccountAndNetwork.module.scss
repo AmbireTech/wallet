@@ -45,7 +45,7 @@
 }
 
 
-@media (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     flex-direction: column;
     gap: .625rem;

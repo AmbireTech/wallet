@@ -129,7 +129,7 @@
   }
 }
 
-@media screen and (max-width: 37.5rem) {
+@include sm-breakpoint {
   .wrapper {
     flex-direction: column;
     gap: 1.25rem;

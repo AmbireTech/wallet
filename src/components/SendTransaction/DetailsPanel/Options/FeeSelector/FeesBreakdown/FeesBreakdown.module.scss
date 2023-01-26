@@ -30,7 +30,7 @@
   }
 }
 
-@media (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .fee {
     flex-direction: column;
     text-align: center;

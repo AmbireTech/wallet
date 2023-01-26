@@ -146,13 +146,6 @@
         }
     }
 }
-@media screen and (max-width: 1280px) {
-    .wrapper {
-        .container {
-            gap: .4375rem;
-        }
-    }
-}
 
 @media screen and (max-width: $sidebar-small-breakpoint) {
     .wrapper {

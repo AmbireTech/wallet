@@ -39,7 +39,7 @@
   }
 }
 
-@media screen and (max-width: 37.5rem) {
+@include sm-breakpoint {
   .wrapper {
     .body {
       gap: .625rem;
