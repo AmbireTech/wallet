@@ -27,7 +27,6 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
 
   const networkDetails = networks.find(({ id }) => id === network)
   const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
-console.log('extendedSummary ===>', extendedSummary);
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
   
   return (
