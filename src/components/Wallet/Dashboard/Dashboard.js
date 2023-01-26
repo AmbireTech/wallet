@@ -10,7 +10,7 @@ import Collectibles from './Collectibles/Collectibles'
 import Promotions from './Promotions/Promotions'
 import Tabs from 'components/common/Tabs/Tabs'
 import Chart from './Chart/Chart'
-import AssetsMigrationBanner from 'components/Wallet/AssetsMigration/AssetsMigrationBanner'
+import AssetsMigrationBanner from 'components/common/AssetsMigrationBanner/AssetsMigrationBanner'
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
@@ -48,7 +48,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 balanceUSD
             }))
             .filter(({ value }) => value > 0);
-        
+
         if (portfolio?.balance?.total?.full && tokensData) {
                 setChartTokensData({
                     empty: false,
@@ -146,21 +146,21 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             userSorting={userSorting}
                             setUserSorting={setUserSorting}
                             footer={
-                                <Footer 
-                                    selectedAccount={selectedAccount} 
+                                <Footer
+                                    selectedAccount={selectedAccount}
                                     selectedNetwork={selectedNetwork}
                                 />
                             }
                         />
                     }
                     secondTab={
-                        <Collectibles 
-                            portfolio={portfolio} 
-                            isPrivateMode={privateMode.isPrivateMode} 
-                            selectedNetwork={selectedNetwork} 
+                        <Collectibles
+                            portfolio={portfolio}
+                            isPrivateMode={privateMode.isPrivateMode}
+                            selectedNetwork={selectedNetwork}
                             footer={
-                                <Footer 
-                                    selectedAccount={selectedAccount} 
+                                <Footer
+                                    selectedAccount={selectedAccount}
                                     selectedNetwork={selectedNetwork}
                                 />
                             }
