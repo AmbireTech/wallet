@@ -91,16 +91,16 @@
 }
 
 .ambire-loading-animation-128 {
-    width: 8rem;
-    height: 8rem;
+    width: 128px;
+    height: 128px;
     background: url('/resources/ambire-loader-animation-sprite-160.png') left center;
     animation: ambire-160 1s steps(29) infinite;
-    filter: drop-shadow(0 0 .625rem $ambire-dark-blue);
+    filter: drop-shadow(0 0 10px $ambire-dark-blue);
 }
 
 @keyframes ambire-160 {
     100% {
-        background-position: -290rem;
+        background-position: -4640px;
     }
 }
 
