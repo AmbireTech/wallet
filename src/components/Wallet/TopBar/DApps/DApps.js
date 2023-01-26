@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import { useHistory } from 'react-router-dom'
 
 import { checkClipboardPermission } from 'lib/permissions'
@@ -114,4 +114,4 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     )
 }
 
-export default DApps
+export default React.memo(DApps)

@@ -1,4 +1,5 @@
 import AddressBook from './AddressBook/AddressBook';
+import AddressList from './AddressList/AddressList';
 import AddressWarning from './AddressWarning/AddressWarning';
 import Alert from "components/common/Alert/Alert";
 import Button from './Button/Button';
@@ -30,9 +31,12 @@ import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
 import Image from './Image/Image';
 import RemoteLottie from './RemoteLottie/RemoteLottie'
+import Info from './Info/Info';
+import Note from './Note/Note';
 
 export {
     AddressBook,
+    AddressList,
     AddressWarning,
     Alert,
     Button,
@@ -63,5 +67,7 @@ export {
     Pagination,
     Panel,
     Image,
-    RemoteLottie
+    RemoteLottie,
+    Info,
+    Note,
 };

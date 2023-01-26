@@ -1,14 +1,26 @@
-import './AssetsMigration.scss'
 import { useEffect, useState } from 'react'
-import AssetsMigrationSelector from './AssetsMigrationSelector'
-import AssetsMigrationPermitter from './AssetsMigrationPermitter'
-import AssetsMigrationNative from './AssetsMigrationNative'
+
 import { PERMITTABLE_COINS } from 'consts/permittableCoins'
-import { MdClose, MdOutlineNavigateBefore } from 'react-icons/md'
+
 import { Button } from 'components/common'
+import AssetsMigrationSelector from './AssetsMigrationSelector/AssetsMigrationSelector'
+import AssetsMigrationPermitter from './AssetsMigrationPermitter/AssetsMigrationPermitter'
+import AssetsMigrationNative from './AssetsMigrationNative/AssetsMigrationNative'
 
-const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideModal, relayerURL, portfolio, setModalButtons, setModalSteps, setBeforeCloseModalHandler }) => {
+import styles from './AssetsMigration.module.scss'
 
+const AssetsMigration = ({
+  addRequest,
+  selectedAccount,
+  accounts,
+  network,
+  hideModal,
+  relayerURL,
+  portfolio,
+  setModalButtons,
+  setModalSteps,
+  setBeforeCloseModalHandler,
+}) => {
   const [selectedTokensWithAllowance, setSelectedTokensWithAllowance] = useState([])
   const [nativeTokenData, setNativeTokenData] = useState(null)
   const [hasERC20Tokens, setHasERC20Tokens] = useState(false)
@@ -22,9 +34,8 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
 
   const [gasSpeed, setGasSpeed] = useState(null)
 
-
   //to get signer
-  const currentAccount = accounts.find(a => a.id === selectedAccount)
+  const currentAccount = accounts.find((a) => a.id === selectedAccount)
 
   //clear error and reset tokens
   useEffect(() => {
@@ -43,8 +54,8 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
       setIsSelectionConfirmed(false)
 
       //the non permittable, promise wait all
-      setNativeTokenData(selectedTokensWithAllowance.find(t => t.native))
-      setHasERC20Tokens(!!selectedTokensWithAllowance.find(t => !t.native))
+      setNativeTokenData(selectedTokensWithAllowance.find((t) => t.native))
+      setHasERC20Tokens(!!selectedTokensWithAllowance.find((t) => !t.native))
     }
   }, [isSelectionConfirmed, currentAccount, selectedTokensWithAllowance, network, selectedAccount])
 
@@ -56,8 +67,8 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
     }
 
     setModalSteps({
-      steps: stepperSteps.map(s => ({ name: s })),
-      stepIndex
+      steps: stepperSteps.map((s) => ({ name: s })),
+      stepIndex,
     })
   }, [nativeTokenData, setModalSteps, step, stepperSteps])
 
@@ -65,18 +76,17 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
     const beforeCloseHandle = () => {
       setShowCloseConfirmation(true)
       setModalButtons([
-        (<Button
-          icon={<MdOutlineNavigateBefore/>}
-          className={'clear buttonComponent'}
+        <Button
+          clear
           onClick={() => setShowCloseConfirmation(false)}
-          key='0'
-        >Back</Button>),
-        (<Button
-          icon={<MdClose/>}
-          className={'danger buttonComponent'}
-          onClick={() => hideModal()}
-          key='1'
-        >Close</Button>)
+          key="0"
+          className={styles.button}
+        >
+          Back
+        </Button>,
+        <Button danger onClick={() => hideModal()} key="1" className={styles.button}>
+          Close
+        </Button>,
       ])
     }
 
@@ -87,18 +97,15 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
 
   return (
     <div>
-      {
-        error && <div className={'mt-3 error'}>{error}</div>
-      }
-      <div id='assets-migration'>
-        {
-          showCloseConfirmation &&
-          <div className='notification-hollow warning mt-4'>
+      {error && <div className={styles.error}>{error}</div>}
+      <div>
+        {showCloseConfirmation && (
+          <div className="notification-hollow warning mt-4">
             By closing this window, your progress will be lost. Are you sure you want to close this window?
           </div>
-        }
-        {
-          step === 0 && <AssetsMigrationSelector
+        )}
+        {step === 0 && (
+          <AssetsMigrationSelector
             hidden={showCloseConfirmation}
             signerAccount={currentAccount.signer.address}
             identityAccount={selectedAccount}
@@ -115,8 +122,8 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             setStepperSteps={setStepperSteps}
             setGasSpeed={setGasSpeed}
           />
-        }
-        {step === 1 && nativeTokenData &&
+        )}
+        {step === 1 && nativeTokenData && (
           <AssetsMigrationNative
             hidden={showCloseConfirmation}
             signer={currentAccount.signer}
@@ -136,8 +143,8 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             setBeforeCloseModalHandler={setBeforeCloseModalHandler}
             gasSpeed={gasSpeed}
           />
-        }
-        {step === 2 &&
+        )}
+        {step === 2 && (
           <AssetsMigrationPermitter
             hidden={showCloseConfirmation}
             signer={currentAccount.signer}
@@ -154,7 +161,7 @@ const AssetsMigration = ({ addRequest, selectedAccount, accounts, network, hideM
             gasSpeed={gasSpeed}
             relayerURL={relayerURL}
           />
-        }
+        )}
       </div>
     </div>
   )

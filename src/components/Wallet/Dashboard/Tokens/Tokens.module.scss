@@ -5,7 +5,6 @@
     flex-direction: column;
     gap: 30px;
     margin: 0 50px;
-    margin-bottom: 20px;
     border-radius: 12px;
     overflow: hidden;
     color: $c-scampi;
@@ -13,6 +12,11 @@
 
     .dragHandle {
         margin-right: 15px;
+    }
+
+    .sortButtons {
+        display: flex;
+        align-items: flex-end;
     }
 }
 

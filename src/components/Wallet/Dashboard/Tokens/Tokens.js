@@ -1,5 +1,5 @@
 import { useHistory } from 'react-router-dom'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 
 import { useModals, useCheckMobileScreen, useDragAndDrop } from 'hooks'
@@ -15,14 +15,10 @@ import styles from './Tokens.module.scss'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import Pending from './Token/Pending/Pending'
 
-const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting, footer }) => {
+const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting, footer, addOrHideTokenModal, setAddOrHideTokenModal }) => {
     const history = useHistory()
     const { showModal } = useModals()
 
-    const [addOrHideTokenModal, setAddOrHideTokenModal] = useState({
-        isOpen: false,
-        defaultSection: 'Add Token'
-    })
     const { isCurrNetworkBalanceLoading, tokens } = portfolio
     
     const sortType = userSorting.tokens?.sortType || 'decreasing'
@@ -99,7 +95,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                         tokenLabelChildren={sortedTokens.length > 1 && !isMobileScreen &&  (
                             <div className={styles.sortButtons}>
                                 <ToolTip label='Sorted tokens by drag and drop'>
-                                    <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
+                                    <MdDragIndicator color={sortType === "custom" ? "#27e8a7" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
                                         ...prev,
                                         tokens: {
                                             ...prev.tokens,
@@ -108,7 +104,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                     }))} />
                                 </ToolTip>
                                 <ToolTip label='Sorted tokens by DESC balance'>
-                                    <MdOutlineSort color={sortType === "decreasing" ? "#80ffdb" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
+                                    <MdOutlineSort color={sortType === "decreasing" ? "#27e8a7" : ""} cursor="pointer" onClick={() => setUserSorting(prev => ({
                                         ...prev,
                                         tokens: {
                                             ...prev.tokens,
