@@ -95,7 +95,7 @@
     height: 8rem;
     background: url('/resources/ambire-loader-animation-sprite-160.png') left center;
     animation: ambire-160 1s steps(29) infinite;
-    filter: drop-shadow(0rem 0rem .625rem $ambire-dark-blue);
+    filter: drop-shadow(0 0 .625rem $ambire-dark-blue);
 }
 
 @keyframes ambire-160 {

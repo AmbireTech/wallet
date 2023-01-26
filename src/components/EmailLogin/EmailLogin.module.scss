@@ -24,7 +24,7 @@
 
     button, input {
         font-size: 1rem;
-        border: 0rem;
+        border: 0;
         background: none; /* #282c34; */
         padding: 1rem;
         box-sizing: border-box;
@@ -45,7 +45,7 @@
     }
 
     input:focus {
-        outline: 0rem;
+        outline: 0;
     }
 
     button {
@@ -76,7 +76,7 @@
 
     input {
         color: theme(text-secondary);
-        margin: 2rem 0rem;
+        margin: 2rem 0;
         border-bottom: 2px solid theme(border-input);
         width: 100%;
         font-size: 1rem;
@@ -89,7 +89,7 @@
     .logo {
         width: 100%;
         max-width: 15.75rem;
-        margin: 0rem auto;
+        margin: 0 auto;
         height: 6.875rem;
     }
 
@@ -106,7 +106,7 @@
     } 
 
     .signersToChoose {
-        margin: 0rem auto;
+        margin: 0 auto;
         display: block;
         line-height: 2rem;
         font-size: 1.5rem;

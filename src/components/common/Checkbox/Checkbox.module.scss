@@ -7,7 +7,7 @@
   gap: 1.25rem;
   width: 100%;
   cursor: pointer;
-  margin: 1.25rem 0rem;
+  margin: 1.25rem 0;
   user-select: none;
   color: theme(text-primary);
 
@@ -61,7 +61,7 @@
       position: absolute;
       display: none;
       left: .375rem;
-      top: 0rem;
+      top: 0;
       width: .3125rem;
       height: .875rem;
       border: solid #000;
