@@ -5,7 +5,7 @@
   width: 13rem;
   font-size: .875rem!important;
   padding: .9375rem 1rem;
-  height: 50px!important;
+  height: 3.125rem!important;
 
   span {
     white-space: nowrap;
@@ -17,6 +17,6 @@
 
 @include xs-breakpoint {
   .button {
-    height: 40px!important;
+    height: 2.5rem!important;
   }
 }

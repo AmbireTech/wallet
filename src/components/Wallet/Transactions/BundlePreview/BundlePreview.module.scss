@@ -3,22 +3,22 @@
 .bundle {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 25px;
+    gap: .625rem;
+    padding: 1.5625rem;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
-    margin-bottom: 25px;
+    margin-bottom: 1.5625rem;
 
     .actions {
         display: flex;
         justify-content: flex-end;
-        gap: 15px;
+        gap: .9375rem;
 
         button {
             color: $c-titan-white;
             border: 0;
-            padding: 15px 30px;
+            padding: .9375rem 1.875rem;
 
             &.cancel {
                 color: $danger-color;
@@ -37,29 +37,29 @@
     .details {
         display: flex;
         flex-wrap: wrap;
-        gap: 50px;
-        padding: 0 10px;
+        gap: 3.125rem;
+        padding: 0 .625rem;
         margin: 0;
-        margin-top: 20px;
+        margin-top: 1.25rem;
         list-style-type: none;
 
         li {
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: .5rem;
             overflow: hidden;
 
             label {
                 display: flex;
                 align-items: center;
-                gap: 10px;
-                font-size: 17px;
+                gap: .625rem;
+                font-size: 1.0625rem;
                 font-weight: bold;
             }
 
             p {
                 margin: 0;
-                font-size: 16px;
+                font-size: 1rem;
                 font-weight: 500;
                 opacity: 0.7;
                 white-space: nowrap;

@@ -3,7 +3,7 @@
 .migration-banner {
   display: flex;
   flex-direction: row;
-  padding: 16px;
+  padding: 1rem;
   background: $c-ebony-clay;
   border: 1px solid $c-fiord;
   border-radius: 12px;
@@ -25,7 +25,7 @@
     text-decoration: underline;
 
     &.link-margin {
-      margin-top: 8px;
+      margin-top: .5rem;
     }
   }
 }

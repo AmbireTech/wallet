@@ -2,7 +2,7 @@
 
 #collectible {
     display: flex;
-    gap: 30px;
+    gap: 1.875rem;
 
     .address {
         font-family: 'Ubuntu Mono';
@@ -21,7 +21,7 @@
             }
 
             .contract {
-                font-size: 15px;
+                font-size: .9375rem;
                 font-weight: 500;
                 opacity: 0.6;
                 overflow: hidden;
@@ -41,20 +41,20 @@
     .metadata {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: .625rem;
         overflow: hidden;
 
         .collection {
-            font-size: 15px;
+            font-size: .9375rem;
             font-weight: bold;
         }
 
         .image {
             z-index: 47;
-            height: 250px;
-            width: 250px;
+            height: 15.625rem;
+            width: 15.625rem;
             @include flex-center-center;
-            font-size: 40px;
+            font-size: 2.5rem;
             color: rgba(255, 255, 255, 0.5);
             background-size: contain;
             background-position: center center;
@@ -65,16 +65,16 @@
         .info {
             display: flex;
             flex-direction: column;
-            gap: 2px;
+            gap: .125rem;
 
             .name {
-                font-size: 18px;
+                font-size: 1.125rem;
                 font-weight: bold;
                 color: $c-titan-white;
             }
 
             .description {
-                font-size: 15px;
+                font-size: .9375rem;
                 font-weight: 500;
                 color: $c-titan-white;
                 opacity: 0.6;
@@ -85,9 +85,9 @@
             display: flex;
             flex-direction: column;
             align-items: flex-start;
-            gap: 5px;
-            margin-top: 10px;
-            font-size: 15px;
+            gap: .3125rem;
+            margin-top: .625rem;
+            font-size: .9375rem;
             font-weight: 500;
             opacity: 0.6;
             overflow: hidden;
@@ -96,11 +96,11 @@
             .address {
                 display: flex;
                 align-items: center;
-                gap: 8px;
+                gap: .5rem;
 
                 .icon {
-                    height: 14px;
-                    width: 14px;
+                    height: .875rem;
+                    width: .875rem;
                     border-radius: 100%;
                 }
             }
@@ -116,17 +116,18 @@
 
             input {
                 border-radius: 12px 0 0 12px;
-                padding-right: 280px;
+                padding-right: 17.5rem;
             }
         }
 
         #udomains-logo {
             position: absolute;
-            top: 18px;
-            right: 275px;
-            height: 25px;
-            width: 25px;
+            top: 1.125rem;
+            right: 17.1875rem;
+            height: 1.5625rem;
+            width: 1.5625rem;
             background-image: url('/resources/ud-logo-inactive.png');
+            background-size: cover;
         }
 
         .ud-logo-active {
@@ -135,11 +136,12 @@
 
         #ens-logo {
             position: absolute;
-            top: 18px;
-            right: 240px;
-            height: 25px;
-            width: 25px;
+            top: 1.125rem;
+            right: 15rem;
+            height: 1.5625rem;
+            width: 1.5625rem;
             background-image: url('/resources/ens-logo-inactive.png');
+            background-size: cover;
         }
 
         .ens-logo-active {
@@ -153,40 +155,36 @@
     }
 }
 
-@media screen and (max-width: 1300px) {
+// Mobile
+@include lg-breakpoint {
     #collectible {
         flex-direction: column;
-        gap: 15px;
-    }
-}
-
-// Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-    #collectible {
+        gap: .9375rem;
+    
         #recipient-address {
             flex-direction: column;
-            gap: 10px;
+            gap: .625rem;
 
             .recipient-input {
                 input {
-                    padding-right: 50px;
+                    padding-right: 3.125rem;
                 }
             }
             
             #udomains-logo {
                 position: absolute;
-                top: 18px;
-                right: 50px;
-                height: 25px;
-                width: 25px;
+                top: 1.125rem;
+                right: 3.125rem;
+                height: 1.5625rem;
+                width: 1.5625rem;
             }
 
             #ens-logo {
                 position: absolute;
-                top: 18px;
-                right: 15px;
-                height: 25px;
-                width: 25px;
+                top: 1.125rem;
+                right: .9375rem;
+                height: 1.5625rem;
+                width: 1.5625rem;
             }
 
             .address-book {

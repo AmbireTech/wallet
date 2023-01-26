@@ -3,28 +3,28 @@
 .wrapper {
   .title {
     margin: 0;
-    font-size: 16px;
+    font-size: 1rem;
     text-transform: uppercase;
     font-weight: 400;
     color: $c-turquoise;
-    margin-bottom: 28px;
+    margin-bottom: 1.75rem;
   }
 
   .itemsWrapper {
     background-color: $c-mirage;
     border-radius: 12px;
-    padding: 17px 0;
-    margin-bottom: 20px;
+    padding: 1.0625rem 0;
+    margin-bottom: 1.25rem;
 
     .items {
       display: flex;
       flex-direction: column;
-      gap: 18px;
-      max-height: 185px;
+      gap: 1.125rem;
+      max-height: 11.5625rem;
       overflow: hidden;
       overflow-y: auto;
-      padding-right: 20px;
-      margin-right: 11px;
+      padding-right: 1.25rem;
+      margin-right: .6875rem;
     }
   }
 
@@ -38,14 +38,14 @@
   .wrapper {
     .itemsWrapper {
       .items {
-        max-height: 320px;
-        gap: 12px;
+        max-height: 20rem;
+        gap: .75rem;
       }
     }
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 37.5rem) {
   .wrapper {
     .title {
       text-align: center;

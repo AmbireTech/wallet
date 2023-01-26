@@ -8,46 +8,46 @@
   .titleWrapper {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 10px;
+    gap: .625rem;
+    margin-bottom: .625rem;
 
     &.noRoutes {
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem;
     }
 
     .title {
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 400;
       margin: 0;
     }
   }
 
   .routes {
-    gap: 12px;
+    gap: .75rem;
 
     .route {
       background-color: $c-mirage;
       border-radius: 12px;
-      padding: 20px;
+      padding: 1.25rem;
       align-items: flex-start;
     }
   }
   
   .noRoutesPlaceholder {
     margin: 0;
-    max-width: 480px;
-    font-size: 14px;
+    max-width: 30rem;
+    font-size: .875rem;
     font-weight: 300;
     opacity: 0.9;
   }
 }
 
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
   .wrapper {
     .routes {   
       .route {
         flex-direction: column;
-        padding: 15px;
+        padding: .9375rem;
       }
     }
   }

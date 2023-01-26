@@ -3,8 +3,8 @@
 .signedMessages {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 24px;
+    gap: .625rem;
+    padding: 1.5rem;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
@@ -22,27 +22,27 @@
     }
 
     .colExpand {
-        flex-basis: 40px;
+        flex-basis: 2.5rem;
     }
 
     .headerContainer {
-        padding: 8px 16px;
+        padding: .5rem 1rem;
         color: $c-scampi;
         display: flex;
-        gap: 16px;
+        gap: 1rem;
         justify-content: space-between;
     }
 
     .subContainer {
         border-radius: 12px;
-        padding: 16px;
+        padding: 1rem;
         overflow: hidden;
         background-color: $c-mirage;
         color: $c-titan-white;
 
         .subContainerVisible {
         display: flex;
-        gap: 16px;
+        gap: 1rem;
 
         border-radius: 12px;
         position: relative;
@@ -51,7 +51,7 @@
 
         .dapp {
             display: flex;
-            gap: 16px;
+            gap: 1rem;
             align-items: center;
             flex-basis: 30%;
 
@@ -61,9 +61,9 @@
 
             .dappIcon {
             display: flex;
-            width: 40px;
-            height: 40px;
-            padding: 4px;
+            width: 2.5rem;
+            height: 2.5rem;
+            padding: .25rem;
             justify-content: center;
             align-items: center;
             background-color: rgba(235, 236, 255, 0.05);
@@ -74,8 +74,8 @@
         .signatureExpand {
             cursor: pointer;
             border-radius: 12px;
-            width: 40px;
-            height: 40px;
+            width: 2.5rem;
+            height: 2.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -101,22 +101,22 @@
 
         .subContainerExpanded {
         user-select: text;
-        padding: 16px 0 0 16px;
+        padding: 1rem 0 0 1rem;
 
         & > div {
 
-            margin: 16px 0;
+            margin: 1rem 0;
 
             b {
             font-weight: normal;
             }
 
             .messageContent {
-            padding-top: 4px;
+            padding-top: .25rem;
             color: $c-scampi;
             font-family: monospace;
             white-space: break-spaces;
-            font-size: 16px;
+            font-size: 1rem;
             overflow-wrap: break-word;
             }
         }

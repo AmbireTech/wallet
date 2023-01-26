@@ -3,25 +3,25 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 20px!important;
+    gap: 1.25rem!important;
 
     .provider {
         display: flex;
         justify-content: flex-start;
         align-items: center;
-        padding: 16px 35px 16px 53px;
+        padding: 1rem 2.1875rem 1rem 3.3125rem;
         border-radius: 12px;
         background-color: $c-ebony-clay;
         border: 1px solid transparent;
         box-shadow: $box-shadow;
         cursor: pointer;
         transition: all 0.3s ease-out;
-        gap: 57px!important;
+        gap: 3.5625rem!important;
 
         .logo {
             display: block;
             max-width: 30%;
-            min-width: 100px;
+            min-width: 6.25rem;
 
             img, svg {
                 width: 100%;
@@ -33,14 +33,14 @@
             text-align: left;
 
             .type {
-                margin-bottom: 8px;
-                font-size: 12px;
+                margin-bottom: .5rem;
+                font-size: .75rem;
             }
             .fees,
             .limits,
             .currencies {
                 color: $c-blue-bell;
-                font-size: 12px;
+                font-size: .75rem;
             }
         }
 
@@ -63,15 +63,15 @@
     .networkWarning {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: .625rem;
 
         svg {
-            width: 20px;
-            height: 20px;
+            width: 1.25rem;
+            height: 1.25rem;
         }
 
         label {
-            font-size: 12px;
+            font-size: .75rem;
             opacity: 0.8;
             text-align: left;
         }
@@ -83,8 +83,8 @@
     .wrapper {
         .provider {
             flex-direction: column;
-            gap: 20px!important;
-            padding: 30px;
+            gap: 1.25rem!important;
+            padding: 1.875rem;
 
             .logo {
                 max-width: 80%;

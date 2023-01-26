@@ -3,7 +3,7 @@
 .wrapper {
   p {
     margin: 0;
-    margin-bottom: 15px;
+    margin-bottom: .9375rem;
     font-weight: 300;
     opacity: .7;
   }
@@ -11,26 +11,26 @@
   .saveAlert {
     // opacity: 1;
     // color: $c-heliotrope;
-    // padding: 10px;
+    // padding: .625rem;
     // background-color: $c-mirage;
-    // border-radius: 12px;
-    margin-bottom: 60px;
+    // border-radius: .75rem;
+    margin-bottom: 3.75rem;
   }
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
     p {
-      margin-bottom: 10px;
+      margin-bottom: .625rem;
     }
     
     .saveAlert {
-      margin-bottom: 30px;
+      margin-bottom: 1.875rem;
     }
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 37.5rem) {
   .wrapper {
     text-align: center;
   }

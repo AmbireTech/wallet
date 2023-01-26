@@ -6,8 +6,8 @@
         display: flex;
         align-items: center;
         align-self: flex-end;
-        gap: 15px;
-        font-size: 15px;
+        gap: .9375rem;
+        font-size: .9375rem;
         font-weight: 500;
 
         .pagination-current {
@@ -19,30 +19,30 @@
 
     .panel {
       .title {
-        gap: 10px;
-        font-size: 25px;
+        gap: .625rem;
+        font-size: 1.5625rem;
       }
     }
 
     .bundle {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        padding: 25px;
+        gap: .625rem;
+        padding: 1.5625rem;
         background: $c-ebony-clay;
         border: 1px solid $c-fiord;
         border-radius: 12px;
-        margin-bottom: 25px;
+        margin-bottom: 1.5625rem;
 
         .actions {
             display: flex;
             justify-content: flex-end;
-            gap: 15px;
+            gap: .9375rem;
 
             button {
                 color: $c-titan-white;
                 border: 0;
-                padding: 15px 30px;
+                padding: .9375rem 1.875rem;
 
                 &.cancel {
                     color: $danger-color;
@@ -58,12 +58,12 @@
     }
 
     .panel {
-        gap: 10px;
+        gap: .625rem;
         padding: 0;
         background-color: transparent !important;
 
         .panelHeading {
-            height: 75px;
+            height: 4.6875rem;
             z-index: 47;
             display: flex;
             flex-direction: row;
@@ -76,12 +76,17 @@
               flex-direction: row;
 
               .title {
-                  margin-right: 30px;
+                  margin-right: 1.875rem;
+
+                  svg {
+                    width: 2rem;
+                    height: 2rem;
+                  }
 
                   button {
                     all: unset;
                     cursor: pointer;
-                    padding-bottom: 5px;
+                    padding-bottom: .3125rem;
                   }
 
                   .inactive {
@@ -114,18 +119,18 @@
         }
 
         .content {
-            gap: 25px;
+            gap: 1.5625rem;
         }
     }
 
     .waitingTransactions {
         .bundle {
-            gap: 25px;
+            gap: 1.5625rem;
 
             .bundleList {
                 display: flex;
                 flex-direction: column;
-                gap: 10px;
+                gap: .625rem;
             }
         }
     }
@@ -133,7 +138,7 @@
     .pending {
         .bundlePreview {
             padding: 0;
-            padding-bottom: 20px;
+            padding-bottom: 1.25rem;
         }
     }
 
@@ -151,38 +156,38 @@
       display: flex;
       justify-content: flex-end;
       .paginationControls {
-        margin-top: 10px;
-        margin-bottom: 25px;
+        margin-top: .625rem;
+        margin-bottom: 1.5625rem;
       }
     }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .transactions {
         .panel {
             .content {
-                gap: 15px;
+                gap: .9375rem;
             }
 
             .panelHeading {
               .buttons {
                 .title {
-                  font-size: 16px;
+                  font-size: 1rem;
                 }
               }
             }
         }
 
         .bundle {
-            padding: 15px;
-            padding-bottom: 25px;
+            padding: .9375rem;
+            padding-bottom: 1.5625rem;
 
               button {
                 color: $c-titan-white;
                 border: 0;
-                padding: 20px 40px;
-                font-size: 16px;
+                padding: 1.25rem 2.5rem;
+                font-size: 1rem;
 
                 &.cancel {
                     color: $danger-color;
@@ -197,15 +202,15 @@
         }
 
         .bundlePreview .details {
-            gap: 25px;
+            gap: 1.5625rem;
         }
 
         .panel-heading {
-            top: -20px !important;
+            top: -1.25rem !important;
             height: auto !important;
             flex-direction: column;
             justify-content: center !important;
-            gap: 10px;
+            gap: .625rem;
             padding: 1em 0;
 
             .title {
@@ -219,21 +224,21 @@
     }
 }
 
-@media screen and (max-width: 550px) {
+@include sm-breakpoint {
   .transactions {
     .panel {
       .panelHeading {
         flex-direction: column;
         justify-content: space-between;
-        margin-bottom: 50px;
+        margin-bottom: 3.125rem;
         .buttons {
           flex-direction: row;
           justify-content: center;
-          margin-bottom: 30px;
+          margin-bottom: 1.875rem;
 
           .title {
             white-space: nowrap;
-            margin-right: 10px;
+            margin-right: .625rem;
 
             .inactive {
               text-overflow: ellipsis;
@@ -283,7 +288,7 @@
               display: flex;
               flex-direction: row;
               justify-content: space-between;
-              font-size: 12px;
+              font-size: .75rem;
               width: 100%;
 
               .colSigtypeLabel {
@@ -296,7 +301,7 @@
               display: flex;
               flex-direction: row;
               justify-content: space-between;
-              font-size: 12px;
+              font-size: .75rem;
               width: 100%;
 
               .colDateLabel {
@@ -324,7 +329,7 @@
   }
 }
 
-@media screen and (max-width: 450px) {
+@media screen and (max-width: 28.125rem) {
   .transactions {
     .panel {
       .panelHeading {
@@ -332,11 +337,11 @@
           .title {
             .inactive {
               &.txnBtn {
-                width: 130px;
+                width: 8.125rem;
               }
 
               &.msgBtn {
-                width: 90px;
+                width: 5.625rem;
               }
             }
           }
@@ -346,22 +351,22 @@
   }
 }
 
-@media screen and (max-width: 400px) {
+@include xs-breakpoint {
   .transactions {
     .panel {
       .panelHeading {
         .buttons {
           .title {
-            font-size: 14px;
+            font-size: .875rem;
 
             .inactive {
 
               &.txnBtn {
-                width: 90px;
+                width: 5.625rem;
               }
 
               &.msgBtn {
-                width: 60px;
+                width: 3.75rem;
               }
             }
           }

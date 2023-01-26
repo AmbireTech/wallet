@@ -1,15 +1,15 @@
 @import 'variables.scss';
 
 .addressesButton {
-    max-width: 400px;
+    max-width: 25rem;
     width: 100%;
     margin: 0 auto;
 }
 
 .wrapper {
-    gap: 57px;
-    padding: 40px;
-    padding-top: 15px;
+    gap: 3.5625rem;
+    padding: 2.5rem;
+    padding-top: .9375rem;
     flex: 1;
 
     .addressList {
@@ -18,7 +18,7 @@
     }
 
     .title {
-        font-size: 25px;
+        font-size: 1.5625rem;
         font-weight: 400;
     }
 
@@ -27,8 +27,8 @@
     }
 
     .item {
-        height: 65px;
-        padding-left: 20px !important;
+        height: 4.0625rem;
+        padding-left: 1.25rem !important;
 
         &:nth-child(odd) {
             background-color: rgba(0, 0, 0, 0.025);
@@ -50,7 +50,7 @@
 
         .button {
             flex: 0 0 auto;
-            width: 60px;
+            width: 3.75rem;
         }
 
         &:hover {
@@ -60,7 +60,7 @@
 }
 @media screen and (max-width: $small-breakpoint-max-width) {
     .wrapper {
-        padding-top: 30px;
+        padding-top: 1.875rem;
         .title {
             text-align: center;
             width: auto;
@@ -72,15 +72,15 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
-        padding: 20px;
+        padding: 1.25rem;
         .title {
-            font-size: 20px;
+            font-size: 1.25rem;
         }
         .item {
-            padding-left: 15px !important;
+            padding-left: .9375rem !important;
 
             .details {
-                padding-right: 5px;
+                padding-right: .3125rem;
             }
         }
     }

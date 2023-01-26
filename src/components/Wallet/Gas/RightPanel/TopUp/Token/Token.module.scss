@@ -4,8 +4,8 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 20px;
-  height: 60px;
+  padding: .625rem 1.25rem;
+  height: 3.75rem;
   border-radius: 12px;
   color: $c-titan-white;
   background-color: $c-mirage;
@@ -37,24 +37,24 @@
         position: relative;
         flex: 0 0 auto;
         @include flex-center-center;
-        height: 40px;
-        width: 40px;
+        height: 2.5rem;
+        width: 2.5rem;
         border-radius: 12px;
         background-color: rgba($c-titan-white, 0.05);
         overflow: hidden;
 
         img {
-          height: 24px;
-          width: 24px;
+          height: 1.5rem;
+          width: 1.5rem;
           user-select: none;
         }
       }
 
       .name {
-        font-size: 20px;
+        font-size: 1.25rem;
         font-weight: 500;
         margin: 0;
-        margin-left: 12px;
+        margin-left: .75rem;
       }
     }
 
@@ -71,12 +71,12 @@
 
       .currency {
         display: flex;
-        gap: 5px;
-        font-size: 16px;
+        gap: .3125rem;
+        font-size: 1rem;
       }
 
       .dollar {
-        font-size: 14px;
+        font-size: .875rem;
         color: $c-turquoise;
       }
     }
@@ -86,24 +86,24 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    height: 40px;
-    padding: 0 18px;
+    gap: .3125rem;
+    height: 2.5rem;
+    padding: 0 1.125rem;
     background-color: rgba($c-titan-white, 0.04);
     border-radius: 12px;
-    font-size: 14px;
+    font-size: .875rem;
     opacity: 1;
     transition: 0.3s ease-out opacity;
     cursor: not-allowed;
   }
 }
 
-@media screen and (max-width: 600px) {
+@media screen and (max-width: 37.5rem) {
   .wrapper {
     flex-direction: column;
     height: auto;
-    gap: 10px;
-    padding: 15px;
+    gap: .625rem;
+    padding: .9375rem;
 
     .body {
       width: 100%;
@@ -111,8 +111,8 @@
 
       .baseInfo {
         .name {
-          font-size: 16px;
-          margin-left: 8px;
+          font-size: 1rem;
+          margin-left: .5rem;
         }
       }
 
