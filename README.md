@@ -430,3 +430,25 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix / Now the wallet token is on first position in a fee assets list
 * Fix / Change github Workflow on deploy to not remove stagings folders
 * Fix / Multiple requests on earn page in Aave card
+
+### v0.6.1
+* Assets Migration - redesign, increased gasLimit for native and erc20 tokens.
+* Lattice pairing - redesign + reusing the repetitve logic into a hook.
+* Choosing a Signer list (on Add Account and Security) - redesign.
+* Signed Messages - improve responsiveness, code readability and markup.
+* Addressbook search.
+* Disable Code Splitting.
+* Github workflow for auto deploying PR previews.
+* Memoizing DApps, Balances, Link components, because of performance reasons.
+* Modified Unirouter humanizer. Now it's showing "Swap X.X USDT for at least X.XXX matic" instead of "Swap 3.0 USDT for at least 3.760145095713324034 matic and send it to "0xxxxx" Unwrap at least X.X matic"
+* Restore email confirmation in permission modal - because of already existing, old accounts which would be not confirmed yet.
+* Arbitrum gas limit mod.
+* Fix Dashboard last update value to 23hour format.
+* Fix Metamask addresses query (MM 9.8.4) - depending on the MM version, the addresses are returned by a different caveat identifier.
+* Fix Tabs shadow overlaping with content.
+* Fix Movr humanizer bug.
+* Fix Dashboard tokens sort icons color and alignment.
+* Fix Accounts menu on logout when logged in with a single account (Topbar).
+* Fix Topbar accounts twitching when toggling private mode.
+* Fix Collectible name is missing from data and add fallback.
+* Change Dashboard text to trigger Add token modal - If you don't see a specific token that you own, please add it manually.

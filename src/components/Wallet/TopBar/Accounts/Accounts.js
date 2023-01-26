@@ -61,7 +61,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
     // because we have more space there (the dropdowns take full width)
     const shortenedAddress = useCallback(address => address.slice(0, isMobileScreen ? 8 : 5) + '...' + address.slice(-3), [isMobileScreen])
     const isActive = useCallback(id => id === selectedAddress ? styles.active : '', [selectedAddress])
-    const toIcon = useCallback(seed => blockies.create({ seed }).toDataURL(), [blockies])
+    const toIcon = useCallback(seed => blockies.create({ seed }).toDataURL(), [])
     const toIconBackgroundImage = useCallback(seed => ({ backgroundImage: `url(${toIcon(seed)})`}), [toIcon])
     const walletType = useCallback(signerExtra => {
         if (signerExtra && signerExtra.type === 'ledger') return 'Ledger'

@@ -1,3 +1,5 @@
+import React from 'react'
+
 export default function usePrivateMode(useStorage) {
     const [ isPrivateMode, setIsPrivateMode ] = useStorage({ key: 'isPrivateMode' })
 
@@ -5,9 +7,10 @@ export default function usePrivateMode(useStorage) {
         setIsPrivateMode(!isPrivateMode)
     }
 
-    const hidePrivateValue = (value) => isPrivateMode ?
+    const hidePrivateValue = React.useCallback((value) => isPrivateMode ?
 		(typeof value === 'string' && value.startsWith('0x') ? value.replace(/./gi, '*') : '**')
-		: value;
+		: value, [isPrivateMode])
+
     const hidePrivateContent = (content) => isPrivateMode ? <div className='private-content'>{content}</div> : content;
 
     return {

@@ -141,21 +141,21 @@
 
 @include xxl-breakpoint {
   .wrapper {
-    gap: 2.5rem;
+    gap: 40px;
+
     .legend {
-      &Title {
+      .legendTitle {
         font-size: 1.25rem;
       }
     }
   }
 }
 
-@include lg-breakpoint {
+@media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
     .donut {
-      max-width: 10rem;
-      height: 10rem;
-  
+      height: auto;
+
       .networkInfo {
         .networkIcon {
           width: 1.75rem;
@@ -167,15 +167,6 @@
         }
       }
     }
-  }
-}
-
-@include lg-breakpoint {
-  .wrapper {
-    .donut {
-      max-width: 12.5rem;
-      height: 12.5rem;
-    }
     
     .noTokensWrapper {
       padding: 1.25rem;
@@ -185,12 +176,12 @@
     }
 
     .legend {
-      &Title {
+      .legendTitle {
         margin-left: 1.25rem;
         margin-bottom: .9375rem;
       }
-      &Items {
-        padding: 1.25rem;
+      .legendItems {
+        padding: .625rem 1.25rem;
         background: $c-ebony-clay;
         border: 1px solid $c-fiord;
         border-radius: 12px;

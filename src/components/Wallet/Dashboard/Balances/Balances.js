@@ -7,11 +7,11 @@ import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
 import BalanceItem from './BalanceItem/BalanceItem'
-import { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
-const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
+const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount }) => {
     const otherBalancesRef = useRef()
     const history = useHistory()
     const networkDetails = (network) => networks.find(({ id }) => id === network)
@@ -53,7 +53,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     useEffect(() => {
         handleSetBlur()    
     }, [otherBalancesLoading, otherBalances, handleSetBlur])
-    
+
     return (
         <div className={styles.wrapper}>
             { portfolio.isCurrNetworkBalanceLoading ? <Loading /> : (
@@ -102,4 +102,16 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     )
 }
 
-export default Balances
+const areEqual = (prevProps, nextProps) => {
+    return prevProps.selectedNetwork.id === nextProps.selectedNetwork.id &&
+        prevProps.selectedAccount === nextProps.selectedAccount &&
+        prevProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0) ===
+        nextProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0)
+        &&
+        prevProps.portfolio.balancesByNetworksLoading ===
+        nextProps.portfolio.balancesByNetworksLoading
+        &&
+        prevProps.portfolio.isCurrNetworkBalanceLoading === nextProps.portfolio.isCurrNetworkBalanceLoading
+}
+
+export default React.memo(Balances, areEqual)

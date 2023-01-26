@@ -1,10 +1,9 @@
 import styles from './SelectSignerAccount.module.scss'
 
 import { useState } from 'react'
-import { Button } from 'components/common'
+import { Info } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from 'react-icons/md'
-import cn from 'classnames'
+import PaginationButtons from 'components/common/Pagination/PaginationButtons'
 
 const SelectSignerAccount = ({
     signersToChoose,
@@ -41,11 +40,8 @@ const SelectSignerAccount = ({
     }
 
     const formatAddress = addr => {
-        return addr.slice(0, 5) + '...' + addr.slice(addr.length - 4, addr.length)
+        return addr.slice(0, 15) + '...' + addr.slice(addr.length - 4, addr.length)
     }
-
-    const prevBtnDisabled = currentPage === 0
-    const nextBtnDisabled = currentPage === pages.length - 1
 
     const onAddressClicked = (addr, index) => {
         onSignerAddressClicked({
@@ -56,53 +52,41 @@ const SelectSignerAccount = ({
 
     return (
         <div className={styles.wrapper}>
-            {showTitle && <div className={styles.title}>Select a signer account</div>}
-            <div className={styles.intro}>{description}</div>
+            {showTitle && <div className={styles.title}>Choose Address</div>}
             <div className={styles.signers}>
-                <ul>
-                    {signersToChoose
-                        ? pages[currentPage].map((addr, index) => (
-                            <li
-                                key={addr}
-                                className={cn({
-                                    [styles.oddRow]: !(index % 2)}
-                                )}
-                                onClick={() =>
-                                    onAddressClicked(addr, currentPage * pageSize + index)
-                                }
-                            >
-                              <span className={styles.indexRow}>
-                                {currentPage * pageSize + index + 1}
-                              </span>
-                                <span>
-                                    {formatAddress(addr)}
-                                </span>
-                                <a
-                                    href={selectedNetwork.explorerUrl + '/address/' + addr}
-                                    target='_blank'
-                                    rel='noreferrer'
-                                    onClick={e => e.stopPropagation()}
-                                >
-                                    <HiOutlineExternalLink size={25} />
-                                </a>
-                            </li>
-                        ))
-                        : null}
-                </ul>
-                { pages.length > 1 && <>
-                    <div className={styles.pages}>
-                        {currentPage + 1}/{pages.length}
+                {!!signersToChoose && pages[currentPage].map((addr, index) => (
+                    <div
+                        key={addr}
+                        className={styles.signer}
+                        onClick={() => onAddressClicked(addr, currentPage * pageSize + index)}
+                    >
+                        <span>
+                            { formatAddress(addr) }
+                        </span>
+                        <a
+                            href={selectedNetwork.explorerUrl + '/address/' + addr}
+                            target='_blank'
+                            rel='noreferrer'
+                            onClick={e => e.stopPropagation()}
+                            className={styles.link}
+                        >
+                            <HiOutlineExternalLink size={25} />
+                        </a>
                     </div>
-                    <div className={cn(styles.buttons, 'buttons')}>
-                        <Button disabled={prevBtnDisabled} icon={<MdKeyboardArrowLeft/>} small clear type="button" onClick={prevPage}>
-                            Previous page
-                        </Button>
-                        <Button disabled={nextBtnDisabled} iconAfter={<MdKeyboardArrowRight/>} small clear type="button" onClick={nextPage}>
-                            Next page
-                        </Button>
-                    </div>
-                </>}
+                ))}
             </div>
+
+            <Info className={styles.info}>{ description }</Info>
+
+            { <div className={styles.pagination}>
+                <PaginationButtons
+                    page={currentPage}
+                    items={signersToChoose}
+                    itemsPerPage={pageSize}
+                    onPrev={prevPage}
+                    onNext={nextPage}
+                />
+            </div>}
         </div>
     )
 }

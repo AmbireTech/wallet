@@ -2,14 +2,15 @@
 
 .wrapper {
     display: flex;
+    height: 100%;
     flex-direction: column;
 
     .title {
-        font-size: 1.375rem;
-    }
-
-    .content {
-        overflow: visible !important;
+        color: $c-scampi;
+        font-size: 1.125rem;
+        font-weight: 500;
+        text-align: center;
+        padding-bottom: 1.5625rem;
     }
 
     .intro {
@@ -17,45 +18,44 @@
     }
 
     .signers {
-        background: transparent;
-    }
-
-    ul {
-        padding: 0;
-        line-height: 2.5em !important;
         display: flex;
         flex-direction: column;
-        align-items: flex-start;
+        gap: .625rem;
 
-        .oddRow {
-            background: $c-ebony-clay;
-        }
-
-        li {
+        .signer {
             display: flex;
-            padding: 0 1.25rem;
+            justify-content: space-between;
+            padding: .75rem 1.25rem;
             cursor: pointer;
+            background: $c-mirage;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: border-color 0.3s ease;
 
-            .indexRow {
-                width: 1.5625rem;
+            .link {
+                display: flex;
+                align-items: center;
+
+                svg {
+                    width: 1rem;
+                    height: 1rem;
+                }
             }
 
-            svg {
-                margin-bottom: -0.3125rem;
+            &:hover {
+                border: 1px solid $c-turquoise;
             }
         }
     }
 
-    .pages {
-        text-align: center;
-        padding-top: 1.25rem;
+    .info {
+        margin-top: auto;
+        margin-bottom: 1.25rem;
     }
 
-    .buttons {
-        position: inherit;
-
-        button {
-            flex: 0 1 50% !important;
-        }
+    .pagination {
+        margin-bottom: 1.875rem;
+        display: flex;
+        justify-content: flex-end;
     }
 }

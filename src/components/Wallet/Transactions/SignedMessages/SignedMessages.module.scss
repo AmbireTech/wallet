@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-.signedMessages {
+.wrapper {
     display: flex;
     flex-direction: column;
     gap: .625rem;
@@ -9,117 +9,36 @@
     border: 1px solid $c-fiord;
     border-radius: 12px;
 
-    .colDapp {
-        flex-basis: 30%;
-    }
-
-    .colSigtype {
-        flex-basis: 30%;
-    }
-
-    .colDate {
-        flex-basis: 30%;
-    }
-
-    .colExpand {
-        flex-basis: 2.5rem;
-    }
-
-    .headerContainer {
+    .header {
+        display: flex;
+        justify-content: space-between;
         padding: .5rem 1rem;
         color: $c-scampi;
-        display: flex;
-        gap: 1rem;
-        justify-content: space-between;
-    }
 
-    .subContainer {
-        border-radius: 12px;
-        padding: 1rem;
-        overflow: hidden;
-        background-color: $c-mirage;
-        color: $c-titan-white;
-
-        .subContainerVisible {
-        display: flex;
-        gap: 1rem;
-
-        border-radius: 12px;
-        position: relative;
-        align-items: center;
-        justify-content: space-between;
+        h3 {
+            font-size: 1rem;
+            font-weight: 400;
+            margin: 0;
+            flex: 1;
+        }
 
         .dapp {
-            display: flex;
-            gap: 1rem;
-            align-items: center;
-            flex-basis: 30%;
-
-            .colExpandMobile {
-            display: none;
-            }
-
-            .dappIcon {
-            display: flex;
-            width: 2.5rem;
-            height: 2.5rem;
-            padding: .25rem;
-            justify-content: center;
-            align-items: center;
-            background-color: rgba(235, 236, 255, 0.05);
-            border-radius: 12px;
-            }
+            flex: 1.2;
         }
 
-        .signatureExpand {
-            cursor: pointer;
-            border-radius: 12px;
-            width: 2.5rem;
-            height: 2.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background-color: rgba(235, 236, 255, 0.05);
-
-            &:hover {
-            background-color: rgba(235, 236, 255, 0.1);
-            }
-        }
-
-        .colSigtype {
-            .colSigtypeLabel {
-            display: none;
-            }
-        }
-
-        .colDate {
-            .colDateLabel {
-            display: none;
-            }
-        }
-        }
-
-        .subContainerExpanded {
-        user-select: text;
-        padding: 1rem 0 0 1rem;
-
-        & > div {
-
-            margin: 1rem 0;
-
-            b {
-            font-weight: normal;
-            }
-
-            .messageContent {
-            padding-top: .25rem;
-            color: $c-scampi;
-            font-family: monospace;
-            white-space: break-spaces;
-            font-size: 1rem;
-            overflow-wrap: break-word;
-            }
-        }
+        .placeholder {
+            width: 2.25rem;
+            height: .0625rem;
         }
     }
+}
+
+@include sm-breakpoint {
+    .wrapper {
+        padding: .625rem;
+        
+        .header {
+            display: none;
+        }
     }
+}

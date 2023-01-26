@@ -36,12 +36,23 @@
     .footer {
         margin-top: .9375rem;
         margin-bottom: 2.5rem;
+
         .missingTokenNotice {
             font-size: .9375rem;
             color: $c-titan-white;
 
-            a {
+            .footerButton, a {
                 color: $c-heliotrope;
+            }
+
+            .footerButton {
+                background-color: transparent;
+                border: none;
+                font-family: inherit;
+                display: inline;
+                cursor: pointer;
+                padding: 0;
+                font-size: inherit;
             }
         }
 
@@ -51,6 +62,7 @@
             padding: 0 .625rem;
             opacity: 0.5;
         }
+
     }
 }
 

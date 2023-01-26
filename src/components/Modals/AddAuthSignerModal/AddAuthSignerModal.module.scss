@@ -1,17 +1,9 @@
 @import 'variables';
 
-.button {
-  flex: 0 1 100%!important;
-}
-
 .wrapper {
   width: 100%;
-  max-width: 62.5rem;
-  padding-bottom: 6.25rem!important;
-
-  .signerAddress {
-    margin: 1.25rem 0;
-  }
+  height: 100%;
+  max-width: 36.25rem;
 
   :global(.buttons) {
     padding: 1.875rem 2.5rem;
@@ -20,17 +12,31 @@
   }
 }
 
+.subtitle {
+  color: $c-scampi;
+  font-size: 18px;
+  font-weight: 500;
+  text-align: center;
+  padding: 25px 0;
+}
+
+.chooseSignerSubtitle {
+  padding-top: 0;
+}
+
 .signers {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: stretch;
+  justify-content: center;
+  align-items: center;
   gap: 1.25rem;
+  box-sizing: border-box;
 
   .signer {
     position: relative;
     top: 0;
-    padding: 3.125rem .625rem;
+    flex: calc(50% - 20px);
+    height: 10rem;
     background: $c-mirage;
     border: 1px solid $c-scampi;
     border-radius: 12px;
@@ -42,7 +48,6 @@
 
     svg {
       color: $c-scampi;
-      width: 10.625rem;
       transition: .3s ease-out all;
     }
 
@@ -75,5 +80,31 @@
         }
       }
     }
+  }
+}
+
+.manualSigner {
+  padding: 1.25rem;
+  margin-bottom: 1.875rem;
+  background: $c-mirage;
+  border: 1px solid $c-scampi;
+  border-radius: 12px;
+
+  .signerAddress {
+    margin: 0 0 1.25rem;
+
+    input {
+      background: $c-ebony-clay;
+    }
+  }
+
+  .errorMessage {
+    color: $danger-color;
+    margin: 0 0 1.25rem;
+
+  }
+
+  .button {
+    width: 100%;
   }
 }

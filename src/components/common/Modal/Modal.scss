@@ -13,7 +13,7 @@ $buttons-height: 10rem;
     display: flex;
     flex-direction: column;
     gap: .625rem;
-    padding-top: 2.5rem;
+    padding-top: 1.875rem;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
@@ -43,17 +43,13 @@ $buttons-height: 10rem;
             }
         }
 
-        .close {
-            height: 2.5rem;
-            width: 2.5rem;
-            background-color: rgba($c-titan-white, 0.05);
-            border-radius: 12px;
-            @include flex-center-center;
-            font-size: 1.25rem;
+        .heading-icon {
+            cursor: pointer;
 
             &:hover {
-                cursor: pointer;
-                background-color: rgba($c-titan-white, 0.02);
+                #background {
+                    opacity: 0.025;
+                }
             }
         }
     }
@@ -61,7 +57,7 @@ $buttons-height: 10rem;
     .content {
         height: 100%;
         position: relative;
-        padding: 2.5rem;
+        padding: 1.875rem 2.5rem;
         padding-bottom: 0;
         overflow: hidden;
         overflow-y: auto;
@@ -129,6 +125,7 @@ $buttons-height: 10rem;
 
         .buttons {
             padding: 1.875rem;
+            padding: 1.25rem 1.875rem;
         }
     }
 }
