@@ -34,9 +34,9 @@
 }
 
 // Mobile
-// @media screen and (max-width: $mobile-breakpoint-max-width) {
-//     .wrapper {
-//         gap: 16px;
-//         padding: 20px;
-//     }
-// }
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        gap: 1rem;
+        padding: 1.25rem;
+    }
+}

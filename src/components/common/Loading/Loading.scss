@@ -25,7 +25,7 @@
 }
 
 .progress-bar {
-    height: 6px;
+    height: .375rem;
     background: linear-gradient(90deg, $ambire-purple 0%, $ambire-dark-blue 30%, $ambire-dark-blue 70%, $ambire-purple 100%);
     width: 100%;
     overflow: hidden;
@@ -59,7 +59,7 @@
     background: $c-ebony-clay;
     border-radius: 12px;
     @include flex-center-center;
-    font-size: 2rem;
+    font-size: 32px;
 }
 
 @keyframes pulse {
@@ -91,16 +91,16 @@
 }
 
 .ambire-loading-animation-128 {
-    width: 128px;
-    height: 128px;
+    width: 8rem;
+    height: 8rem;
     background: url('/resources/ambire-loader-animation-sprite-160.png') left center;
     animation: ambire-160 1s steps(29) infinite;
-    filter: drop-shadow(0px 0px 10px $ambire-dark-blue);
+    filter: drop-shadow(0rem 0rem .625rem $ambire-dark-blue);
 }
 
 @keyframes ambire-160 {
     100% {
-        background-position: -4640px;
+        background-position: -290rem;
     }
 }
 

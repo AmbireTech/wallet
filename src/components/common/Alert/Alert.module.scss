@@ -9,12 +9,12 @@
     z-index: 1;
     bottom: 0;
     width: 99%;
-    height: 40px;
+    height: 2.5rem;
     transform: translateX(-50%);
     background: rgba($c-mirage, 0.8);
     mix-blend-mode: multiply;
     border-radius: 10px;
-    filter: blur(5px);
+    filter: blur(.3125rem);
   }
 
   .alertWrapper {
@@ -26,19 +26,19 @@
       display: flex;
       align-items: center;
       z-index: 2;
-      gap: 20px;
-      padding: 13px 20px;
-      padding-left: 13px;
+      gap: 1.25rem;
+      padding: .8125rem 1.25rem;
+      padding-left: .8125rem;
       color: $c-martinique-light;
       border-left: 7px solid;
 
       &.alertIconNextToTitle {
-        padding-left: 20px;
+        padding-left: 1.25rem;
       }
 
       svg {
-        width: 34px;
-        height: 34px;
+        width: 2.125rem;
+        height: 2.125rem;
       }
 
       &.success {
@@ -67,17 +67,17 @@
         .titleWrapper {
           display: flex;
           align-items: center;
-          gap: 20px;
+          gap: 1.25rem;
 
           .title {
             margin: 0;
-            font-size: 20px;
+            font-size: 1.25rem;
           }
         }
 
         .text {
           margin: 0;
-          font-size: 16px;
+          font-size: 1rem;
           text-align: left;
 
           .link {
@@ -90,16 +90,16 @@
       &.small {
         .body {
           .titleWrapper {
-            gap: 10px;
+            gap: .625rem;
 
             .title {
-              font-size: 16px;
+              font-size: 1rem;
               font-weight: 400;
             }
           }
 
           .text {
-            font-size: 14px;
+            font-size: .875rem;
           }
         }
       }
@@ -107,31 +107,31 @@
   }
 }
 
-@media screen and (max-width: 1600px) {
+@media screen and (max-width: 100rem) {
   .wrapper {
     .alertWrapper {
       .alert {
         svg {
-          width: 30px;
-          height: 30px;
+          width: 1.875rem;
+          height: 1.875rem;
         }
 
         .body {
           .titleWrapper {
-            gap: 15px;
+            gap: .9375rem;
 
             .title {
-              font-size: 18px;
+              font-size: 1.125rem;
             }
           }
 
           .text {
-            font-size: 14px;
+            font-size: .875rem;
           }
         }
 
         .close {
-          margin-left: 30px;
+          margin-left: 1.875rem;
           cursor: pointer;
           color: $warning-color;
           background-color: transparent;
@@ -141,16 +141,16 @@
 
         // Sizes
         &.small {
-          gap: 10px;
+          gap: .625rem;
           
           .body {
             .titleWrapper {
               .title {
-                font-size: 15px;
+                font-size: .9375rem;
               }
             }
             .text {
-              font-size: 13px;
+              font-size: .8125rem;
             }
           }
         }
@@ -159,14 +159,14 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint{
   .wrapper {
     .alertWrapper {
       .alert {
         display: flex;
         flex-direction: column;
-        padding: 20px;
-        gap: 10px;
+        padding: 1.25rem;
+        gap: .625rem;
         border-left: 0;
         border-top: 7px solid;
         text-align: center;
@@ -188,34 +188,34 @@
         }
 
         svg {
-          width: 28px;
-          height: 28px;
+          width: 1.75rem;
+          height: 1.75rem;
         }
 
         .body {
           display: flex;
           flex-direction: column;
-          gap: 10px;
+          gap: .625rem;
           margin-left: 0;
 
           .titleWrapper {
             flex-direction: column;
             justify-content: flex-start;
-            gap: 5px;
+            gap: .3125rem;
 
             .title {
-              font-size: 16px;
+              font-size: 1rem;
             }
           }
 
           .text {
-            font-size: 12px;
+            font-size: .75rem;
             text-align: center;
           }
         }
 
         .close {
-          margin-left: 30px;
+          margin-left: 1.875rem;
           cursor: pointer;
           color: $warning-color;
           background-color: transparent;

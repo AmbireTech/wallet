@@ -1,11 +1,11 @@
 @import 'variables.scss';
 
 .wrapper {
-    height: 60px;
-    border-radius: .75rem;
+    height: 3.75rem;
+    border-radius: 12px;
     @include flex-center-center;
-    gap: .625rem;
-    padding: 0 1.25rem;
+    gap: .625em;
+    padding: 0 1.25em;
     border: none;
     font-family: 'Poppins', sans-serif;
     font-size: 1.25rem;
@@ -22,7 +22,7 @@
     }
 
     &.small {
-        height: 50px;
+        height: 3.125rem;
         font-size: 1.0625rem;
     }
 
@@ -31,9 +31,7 @@
     }
 
     &.mini {
-        gap: .3125rem;
-        height: 40px;
-        padding: 0 .625rem;
+        height: 2.5rem;
         font-size: .875rem;
     }
 
@@ -135,5 +133,11 @@
         &:active {
             opacity: 0.6;
         }
+    }
+}
+
+@include lg-breakpoint {
+    .wrapper {
+        font-size: 1rem;
     }
 }

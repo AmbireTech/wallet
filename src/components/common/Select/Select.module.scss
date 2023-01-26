@@ -4,7 +4,7 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: .4375rem;
+    gap: .4375em;
     user-select: none;
     font-weight: bold;
     cursor: pointer;
@@ -56,11 +56,11 @@
 
         .selectInput {
             position: relative;
-            height: 60px;
+            height: 3.75rem;
             display: flex;
             align-items: center;
-            gap: .75rem;
-            padding: 0 1.25rem;
+            gap: .75em;
+            padding: 0 1.25em;
             font-size: 1rem;
             font-weight: bold;
             background-color: theme(background-primary);
@@ -72,13 +72,11 @@
 
             .handle {
                 cursor: pointer;
-                // @include flex-center-center;
-                // height: 2rem;
-                // width: 2rem;
-                // background-color: theme(background-icon);
-                // border-radius: 12px;
                 transition: all 0.1s ease-in-out;
 
+                svg {
+                    width: 8px;
+                }
                 &.open {
                     transform: scaleY(-1);
                 }
@@ -88,7 +86,7 @@
         .selectMenu {
             z-index: 97;
             position: absolute;
-            top: 60px;
+            top: 3.75rem;
             left: 0;
             min-height: 3.125rem;
             max-height: 15.625rem;
@@ -112,21 +110,21 @@
                 }
 
                 input {
-                    height: 50px !important;
+                    height: 3.125rem !important;
                     font-size: .9375rem;
-                    padding-left: 1.25rem;
+                    padding-left: 1.25em;
                     box-shadow: none !important;
                 }
             }
 
             .option {
-                height: 50px;
+                height: 3.125rem;
                 display: flex;
                 align-items: center;
                 justify-content: flex-start;
-                gap: .75rem;
-                padding: 0 1.25rem;
-                padding-right: 2.5rem;
+                gap: .75em;
+                padding: 0 1.25em;
+                padding-right: 2.5em;
                 font-size: 1rem;
                 font-weight: 500;
                 opacity: 0.8;

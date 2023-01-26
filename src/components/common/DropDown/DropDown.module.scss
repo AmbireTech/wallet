@@ -2,7 +2,7 @@
 
 .dropdown {
     position: relative;
-    height: 50px;
+    height: 3.125rem;
     background-color: $c-ebony-clay;
     user-select: none;
     border: 1px solid $c-fiord;
@@ -55,6 +55,10 @@
             transition: all 0.1s ease-in-out;
             margin-left: auto;
 
+            svg {
+                width: 8px;
+            }
+
             &.open {
                 transform: scaleY(-1);
             }
@@ -65,7 +69,7 @@
         z-index: 97;
         min-width: 100%;
         position: absolute;
-        top: 60px;
+        top: 3.75rem;
         border-radius: 12px;
         right: 0;
         display: flex;

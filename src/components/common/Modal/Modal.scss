@@ -1,8 +1,8 @@
 @import 'variables.scss';
 
-$modal-height: 800px;
-$modal-width: 580px;
-$buttons-height: 160px;
+$modal-height: 50rem;
+$modal-width: 36.25rem;
+$buttons-height: 10rem;
 
 .modal {
     z-index: 52;
@@ -84,7 +84,6 @@ $buttons-height: 160px;
         height: 10rem;
 
         button {
-            height: 60px;
             flex: 0 1 50%;
         }
     }
@@ -117,6 +116,10 @@ $buttons-height: 160px;
             padding: 0 1.875rem;
             .title-wrapper {
                 flex-direction: column;
+
+                .title {
+                    font-size: 1.25rem;
+                }
             }
         }
 

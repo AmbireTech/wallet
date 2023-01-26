@@ -3,8 +3,8 @@
 .stepper {
   display: flex;
   //background: $c-mirage;
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
 
   .step {
     flex-grow: 1;
@@ -14,13 +14,13 @@
     position: relative;
 
     .stepStatus {
-      //font-size: 16px;
+      //font-size: 1rem;
       margin: auto;
       display: block;
-      width: 10px;
-      height: 10px;
+      width: .625rem;
+      height: .625rem;
       text-align: center;
-      border-radius: 50px;
+      border-radius: 3.125rem;
       z-index: 2;
       border: 2px solid transparent;
     }
@@ -69,9 +69,9 @@
 
     .stepBar {
       position: absolute;
-      height: 2px;
+      height: .125rem;
       z-index: 1;
-      top: 4px;
+      top: .25rem;
 
       &.stepBarPrev {
         width: 50%;
@@ -85,10 +85,10 @@
     }
 
     .stepName {
-      padding-top: 4px;
+      padding-top: .25rem;
       text-align: center;
       font-weight: normal;
-      font-size: 12px;
+      font-size: .75rem;
     }
   }
 }

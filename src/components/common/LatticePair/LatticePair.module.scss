@@ -1,8 +1,8 @@
-@import '../../../variables.scss';
+@import 'variables.scss';
 
 .wrapper {
     .title {
-        font-size: 22px;
+        font-size: 1.375rem;
     }
 
     .content {
@@ -18,7 +18,7 @@
     }
 
     button {
-        margin-top: 20px;
+        margin-top: 1.25rem;
         align-self: center;
     }
 }
