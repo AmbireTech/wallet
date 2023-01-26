@@ -25,6 +25,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
 
     const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
+    // Because of already existing, old accounts which would be not confirmed yet.
     const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
     const buttonDisabled = isAccountNotConfirmed || (!modalHidden && areBlockedPermissions)
     const sendConfirmationEmail = async () => {
