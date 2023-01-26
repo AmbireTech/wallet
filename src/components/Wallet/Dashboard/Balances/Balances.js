@@ -12,7 +12,7 @@ import isEqual from 'react-fast-compare'
 
 import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
-const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
+const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount }) => {
     const otherBalancesRef = useRef()
     const history = useHistory()
     const networkDetails = (network) => networks.find(({ id }) => id === network)
@@ -100,20 +100,17 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
 }
 
 const areEqual = (prevProps, nextProps) => {
-    return prevProps.selectedNetwork === nextProps.selectedNetwork &&
-        prevProps.relayerURL === nextProps.relayerURL &&
+    return isEqual(prevProps.selectedNetwork, nextProps.selectedNetwork) &&
         prevProps.selectedAccount === nextProps.selectedAccount &&
         prevProps.setNetwork === nextProps.setNetwork &&
         prevProps.hidePrivateValue === nextProps.hidePrivateValue &&
-        prevProps.match === nextProps.match &&
         isEqual(
-            prevProps.portfolio.otherBalances.filter(({ network, total }) => network !== prevProps.selectedNetwork.id && total.full > 0),
-            nextProps.portfolio.otherBalances.filter(({ network, total }) => network !== nextProps.selectedNetwork.id && total.full > 0)
+            prevProps.portfolio.otherBalances.length && prevProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0),
+            nextProps.portfolio.otherBalances.length && nextProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0)
         ) &&
-        isEqual(
-            Object.entries(prevProps.portfolio.balancesByNetworksLoading).find(ntw => ntw[0] !== prevProps.selectedNetwork.id && ntw[1]),
-            Object.entries(nextProps.portfolio.balancesByNetworksLoading).find(ntw => ntw[0] !== nextProps.selectedNetwork.id && ntw[1])
-        ) &&
+        prevProps.portfolio.balancesByNetworksLoading ===
+        nextProps.portfolio.balancesByNetworksLoading
+        &&
         prevProps.portfolio.isCurrNetworkBalanceLoading === nextProps.portfolio.isCurrNetworkBalanceLoading
 }
 
