@@ -8,7 +8,6 @@ import { useHistory } from 'react-router-dom'
 import networks from 'consts/networks'
 import BalanceItem from './BalanceItem/BalanceItem'
 import React, { useCallback, useEffect, useRef } from 'react'
-import isEqual from 'react-fast-compare'
 
 import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
@@ -30,7 +29,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
             truncated
         }
     }
-
+    console.count('<baalnces />')
     // Used to add blur at the bottom of balances when scrollbar is visible
     const handleSetBlur = useCallback(() => {
         if(otherBalances || !otherBalancesLoading) {
@@ -100,14 +99,11 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
 }
 
 const areEqual = (prevProps, nextProps) => {
-    return isEqual(prevProps.selectedNetwork, nextProps.selectedNetwork) &&
+    return prevProps.selectedNetwork.id === nextProps.selectedNetwork.id &&
         prevProps.selectedAccount === nextProps.selectedAccount &&
-        prevProps.setNetwork === nextProps.setNetwork &&
-        prevProps.hidePrivateValue === nextProps.hidePrivateValue &&
-        isEqual(
-            prevProps.portfolio.otherBalances.length && prevProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0),
-            nextProps.portfolio.otherBalances.length && nextProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0)
-        ) &&
+        prevProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0) ===
+        nextProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0)
+        &&
         prevProps.portfolio.balancesByNetworksLoading ===
         nextProps.portfolio.balancesByNetworksLoading
         &&
