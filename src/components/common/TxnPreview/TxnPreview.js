@@ -27,7 +27,7 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
 
   const networkDetails = networks.find(({ id }) => id === network)
   const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
-
+console.log('extendedSummary ===>', extendedSummary);
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
   
   return (
@@ -50,8 +50,9 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
                         feeAssets={feeAssets}
                       />
                     ))
-                  }
-                    else return entry
+                  } else if (typeof entry !== 'string') {
+                    return `operation with address ${txn[0]} (unable to parse)`
+                  } else return entry 
                 })}
               </div>
             </div>
