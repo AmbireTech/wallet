@@ -9,6 +9,7 @@ import { ledgerGetAddresses, PARENT_HD_PATH } from "lib/ledgerWebHID"
 import { latticeConnect, latticeGetAddresses, latticeInit } from "lib/lattice"
 import { validateAddAuthSignerAddress } from "lib/validations/formValidations"
 import { isFirefox } from "lib/isFirefox"
+import humanizeError from "lib/errors/metamask"
 
 import { useToasts } from "hooks/toasts"
 import { Button, Modal, TextInput } from "components/common"
@@ -205,6 +206,10 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       await fn()
     } catch (e) {
       console.error(e)
+
+      const humanizedError = humanizeError(e)
+      if (humanizedError) return addToast(humanizedError, { error: true})
+
       addToast(`Unexpected error: ${e.message || e}`, { error: true})
     }
   }
