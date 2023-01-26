@@ -450,4 +450,5 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix Dashboard tokens sort icons color and alignment.
 * Fix Accounts menu on logout when logged in with a single account (Topbar).
 * Fix Topbar accounts twitching when toggling private mode.
+* Fix Collectible name is missing from data and add fallback.
 * Change Dashboard text to trigger Add token modal - If you don't see a specific token that you own, please add it manually.
