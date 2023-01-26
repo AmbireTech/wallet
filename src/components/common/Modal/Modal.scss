@@ -106,7 +106,7 @@ $buttons-height: 10rem;
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .modal {
         max-width: 37.5rem;
         height: 100% !important;

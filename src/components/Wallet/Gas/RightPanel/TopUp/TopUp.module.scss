@@ -93,7 +93,7 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .list {
       max-height: 26.875rem;

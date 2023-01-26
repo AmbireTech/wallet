@@ -54,7 +54,7 @@ $arrow-size: .9375rem;
         }
     }
 
-    @media screen and (max-width: $mobile-breakpoint-max-width) {
+    @include lg-breakpoint {
         .tooltipLabel {
             transition-delay: 400ms;
         }

@@ -139,7 +139,7 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .deposit {
         gap: 1em;
 

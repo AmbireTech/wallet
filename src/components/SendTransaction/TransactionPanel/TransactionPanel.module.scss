@@ -13,7 +13,7 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .titleWrapper {
       flex-direction: column;

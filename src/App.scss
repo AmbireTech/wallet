@@ -215,7 +215,7 @@ select {
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .panel {
     gap: 1rem;
     padding: 1.25rem;

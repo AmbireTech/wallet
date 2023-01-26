@@ -72,7 +72,7 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     #wallet-container {
         overflow-y: auto;
         padding-bottom: $sidebar-mobile-height !important;

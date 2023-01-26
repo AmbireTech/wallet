@@ -137,7 +137,7 @@ $heading-height: 2.8125rem;
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .addressBook {
         .menu {
             width: 100%;

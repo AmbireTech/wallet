@@ -135,7 +135,7 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     gap: 1.875rem;
     padding: 1.25rem;

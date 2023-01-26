@@ -49,7 +49,7 @@ $extended-summary-height: 36px;
   height: 24px;
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .token,
   .address,
   .network,

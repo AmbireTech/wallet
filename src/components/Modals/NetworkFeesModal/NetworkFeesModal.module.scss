@@ -28,7 +28,7 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .description {
       .feesInfo {

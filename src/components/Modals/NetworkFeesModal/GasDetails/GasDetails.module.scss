@@ -101,7 +101,7 @@ $thead-background-color: darken($c-ebony-clay, 2%);
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .tableTitle {
       text-align: center;

@@ -18,7 +18,7 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     p {
       margin-bottom: .625rem;

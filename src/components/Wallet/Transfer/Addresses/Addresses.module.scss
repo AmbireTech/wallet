@@ -70,7 +70,7 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         padding: 1.25rem;
         .title {
