@@ -65,14 +65,14 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => 
             }
         >
             {
-                collectiblesList.map(({ network, address, collectionName, assets, balanceUSD }) => (assets || []).map(({ tokenId, data: { name, image } }) => (
+                collectiblesList.map(({ network, address, collectionName, assets, balanceUSD }) => (assets || []).map(({ tokenId, name, data }) => (
                     <Collectible
                         key={tokenId}
                         href={`/wallet/nft/${selectedNetwork.id}/${address}/${tokenId}`}
-                        collectionIcon={image}
+                        collectionIcon={data.image}
                         collectionName={collectionName}
-                        name={name}
-                        image={handleUri(image)}
+                        name={data.name || name || collectionName}
+                        image={handleUri(data.image)}
                         price={balanceUSD.toFixed(2)}
                     />
                 )))
