@@ -6,7 +6,7 @@
   box-sizing: border-box;
   
   &::-webkit-scrollbar {
-    width: 8px;
+    width: .5rem;
     background: theme(scrollbar-background);
   }
   
@@ -19,11 +19,11 @@
   &::-webkit-scrollbar-thumb {
     background-color: theme(scrollbar-thumb-background);
     border-radius: 13px;
-    max-height: 70px;
+    max-height: 4.375rem;
   }
 
   &::-moz-scrollbar-thumb {
-    border-radius: 10px;
+    border-radius: .625rem;
   }
 
   scrollbar-width: thin;
@@ -49,9 +49,6 @@ html {
   }
   @include sm-breakpoint {
     font-size: 12px;
-  }
-  @include xs-breakpoint {
-    font-size: 11.5px;
   }
 }
 
