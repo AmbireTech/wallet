@@ -140,52 +140,99 @@ const uniV3Mapping = (humanizerInfo) => {
   const ifaceV3 = new Interface(humanizerInfo.abis.UniV3Router)
 
   return {
-    [ifaceV3.getSighash('multicall')]: (txn, network) => {
+    [ifaceV3.getSighash('multicall')]: (txn, network, opts = {}) => {
       const args = ifaceV3.parseTransaction(txn).args
       const calls = args[args.length - 1]
       const mappingResult = uniV32Mapping(humanizerInfo)
       // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
       // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
-      const parsed = calls.map(data => {
-        const sigHash = data.slice(0, 10)
-        const humanizer = mappingResult[sigHash]
-        return humanizer ? humanizer({ ...txn, data }, network) : null
-      }).flat().filter(x => x)
-      return parsed.length ? parsed : [`Unknown Uni V3 interaction`]
+      let parsed
+      if (calls.length === 2) {
+        const mergedCalls = calls.map(data => {
+          const sigHash = data.slice(0, 10)
+          const humanizer = mappingResult[sigHash]
+          const result = humanizer ? humanizer({ ...txn, data }, network, opts) : null
+          
+          return result
+        })
+        
+        parsed = !opts.extended 
+          ? [`${mergedCalls[0].words[0]} ${token(humanizerInfo, mergedCalls[0].params.tknIn, mergedCalls[0].params.amount)} ${mergedCalls[0].words[1]} ${nativeToken(network, mergedCalls[1].params)}`] 
+          : toExtended(
+              mergedCalls[0].words[0],
+              mergedCalls[0].words[1], 
+              token(humanizerInfo, mergedCalls[0].params.tknIn, mergedCalls[0].params.amount, true),
+              nativeToken(network, mergedCalls[1].params, true)
+            )
+      } else {
+        parsed = calls.map(data => {
+          const sigHash = data.slice(0, 10)
+          const humanizer = mappingResult[sigHash]
+          const result = humanizer ? humanizer({ ...txn, data }, network, opts) : null
+          
+          return result ? result.parsed : null
+        }).flat().filter(x => x)
+      }
+      
+      return (parsed.length ? parsed : [`Unknown Uni V3 interaction`])
     },
     // NOTE: selfPermit is not supported cause it requires an ecrecover signature
     [ifaceV3.getSighash('exactInputSingle')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV3.parseTransaction(txn).args
       // @TODO: consider fees
-      return !opts.extended 
-        ? [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
-        : toExtended('Swap', 'for at least', token(humanizerInfo, params.tokenIn, params.amountIn, true), token(humanizerInfo, params.tokenOut, params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined))
+      return {
+        parsed: !opts.extended 
+          ? [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+          : toExtended('Swap', 'for at least', token(humanizerInfo, params.tokenIn, params.amountIn, true), token(humanizerInfo, params.tokenOut, params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined)),
+        params: { amount: params.amountIn, tknIn: params.tokenIn },
+        words: ['Swap', 'for at least']
+      }
     },
     [ifaceV3.getSighash('exactInput')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV3.parseTransaction(txn).args
       const path = parsePath(params.path)
-      return !opts.extended 
-        ? [`Swap ${token(humanizerInfo, path[0], params.amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
-        : toExtended('Swap', 'for at least', token(humanizerInfo, path[0], params.amountIn, true), token(humanizerInfo, path[path.length - 1], params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined))
+
+      return {
+        parsed: !opts.extended
+          ? [`Swap ${token(humanizerInfo, path[0], params.amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+          : toExtended('Swap', 'for at least', token(humanizerInfo, path[0], params.amountIn, true), token(humanizerInfo, path[path.length - 1], params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined)),
+        params: { amount: params.amountIn, tknIn: path[0] },
+        words: ['Swap', 'for at least']
+      }
     },
     [ifaceV3.getSighash('exactOutputSingle')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV3.parseTransaction(txn).args
-      return !opts.extended 
-        ? [`Swap up to ${token(humanizerInfo, params.tokenIn, params.amountInMaximum)} for ${token(humanizerInfo, params.tokenOut, params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
-        : toExtended('Swap up to', 'for', token(humanizerInfo, params.tokenIn, params.amountInMaximum, true), token(humanizerInfo, params.tokenOut, params.amountOut, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined))
+
+      return {
+        parsed: !opts.extended
+          ? [`Swap up to ${token(humanizerInfo, params.tokenIn, params.amountInMaximum)} for ${token(humanizerInfo, params.tokenOut, params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+          : toExtended('Swap up to', 'for', token(humanizerInfo, params.tokenIn, params.amountInMaximum, true), token(humanizerInfo, params.tokenOut, params.amountOut, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined)),
+        params: { amount: params.amountInMaximum, tknIn: params.tokenIn },
+        words: ['Swap up to', 'for']
+      }
     },
     [ifaceV3.getSighash('exactOutput')]: (txn, network, opts = {}) => {
       const [ params ] = ifaceV3.parseTransaction(txn).args
       const path = parsePath(params.path)
-      return !opts.extended 
-        ? [`Swap up to ${token(humanizerInfo, path[path.length - 1], params.amountInMaximum)} for ${token(humanizerInfo, path[0], params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
-        : toExtended('Swap up to', 'for', token(humanizerInfo, path[path.length - 1], params.amountInMaximum, true), token(humanizerInfo, path[0], params.amountOut, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined))
+
+      return {
+        parsed: !opts.extended
+          ? [`Swap up to ${token(humanizerInfo, path[path.length - 1], params.amountInMaximum)} for ${token(humanizerInfo, path[0], params.amountOut)}${recipientText(humanizerInfo, params.recipient, txn.from)}${deadlineText(params.deadline, opts.mined)}`]
+          : toExtended('Swap up to', 'for', token(humanizerInfo, path[path.length - 1], params.amountInMaximum, true), token(humanizerInfo, path[0], params.amountOut, true), recipientText(humanizerInfo, params.recipient, txn.from), deadlineText(params.deadline, opts.mined)),
+        params: { amount: params.amountInMaximum, tknIn: path[path.length - 1] },
+        words: ['Swap up to', 'for']
+      }
     },
     [ifaceV3.getSighash('unwrapWETH9')]: (txn, network, opts = {}) => {
       const [ amountMin, recipient ] = ifaceV3.parseTransaction(txn).args
-      return !opts.extended
-        ? [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(humanizerInfo,recipient, txn.from)}`]
-        : toExtendedUnwrap('Unwrap at least', network, amountMin, recipientText(humanizerInfo,recipient, txn.from, true))
+
+      return {
+        parsed: !opts.extended
+          ? [`Unwrap at least ${nativeToken(network, amountMin)}${recipientText(humanizerInfo,recipient, txn.from)}`]
+          : toExtendedUnwrap('Unwrap at least', network, amountMin, recipientText(humanizerInfo,recipient, txn.from, true)),
+        params: amountMin,
+        words: ['Unwrap at least']
+      }
     },
   }
 }
@@ -201,7 +248,7 @@ const uniV32Mapping = (humanizerInfo) => {
       // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
       // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
       let parsed
-      if (calls.length > 1) {
+      if (calls.length === 2) {
         const mergedCalls = calls.map(data => {
           const sigHash = data.slice(0, 10)
           const humanizer = mappingResult[sigHash]
