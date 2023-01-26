@@ -69,10 +69,10 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => 
                     <Collectible
                         key={tokenId}
                         href={`/wallet/nft/${selectedNetwork.id}/${address}/${tokenId}`}
-                        collectionIcon={data.image}
+                        collectionIcon={data && data.image}
                         collectionName={collectionName}
-                        name={data.name || name || collectionName}
-                        image={handleUri(data.image)}
+                        name={(data && data.name) || name || collectionName}
+                        image={handleUri(data && data.image)}
                         price={balanceUSD.toFixed(2)}
                     />
                 )))
