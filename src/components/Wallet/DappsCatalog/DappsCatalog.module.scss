@@ -373,7 +373,7 @@ $gap: .75rem;
   }
 }
 
-@include xl-breakpoint {
+@media screen and (max-width: $small-breakpoint-max-width) {
   .wrapper {
     .catalogItems {
       grid-template-columns: repeat(3, 1fr [col-start]);
@@ -384,7 +384,7 @@ $gap: .75rem;
   }
 }
 
-@media screen and (max-width: 62.5rem) {
+@media screen and (max-width: 1000px) {
   .wrapper {
     .catalogItems {
       grid-template-columns: repeat(2, 1fr [col-start]);
