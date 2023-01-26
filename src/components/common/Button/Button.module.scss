@@ -19,6 +19,11 @@
     .iconButton {
         @include flex-center-center;
         color: $c-turquoise !important;
+
+        svg {
+            width: 2em;
+            height: 2em;
+        }
     }
 
     &.small {
