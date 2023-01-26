@@ -40,7 +40,7 @@ const SelectSignerAccount = ({
     }
 
     const formatAddress = addr => {
-        return addr.slice(0, 5) + '...' + addr.slice(addr.length - 4, addr.length)
+        return addr.slice(0, 15) + '...' + addr.slice(addr.length - 4, addr.length)
     }
 
     const onAddressClicked = (addr, index) => {
