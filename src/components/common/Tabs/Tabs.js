@@ -8,11 +8,12 @@ const Tabs = ({
   secondTabLabel,
   firstTab,
   secondTab,
+  className,
   panelClassName,
-  tabClassName,
+  buttonClassName,
   shadowClassName,
   footer,
-  defaultTab
+  defaultTab,
 }) => {
   const [currentTab, setCurrentTab] = useState(defaultTab || 1)
 
@@ -21,23 +22,25 @@ const Tabs = ({
 
   return (
     <Panel className={cn(styles.panel, panelClassName)}>
-      <div className={styles.tabs}>
+      <div className={styles.buttons}>
         <button 
           onClick={handleOpenFirst}
-          className={cn(styles.button, tabClassName, {[styles.active]: currentTab === 1})}
+          className={cn(styles.button, buttonClassName, {[styles.active]: currentTab === 1})}
         >
           {firstTabLabel}
         </button>
         <button 
           onClick={handleOpenSecond}
-          className={cn(styles.button, tabClassName, {[styles.active]: currentTab === 2})}
+          className={cn(styles.button, buttonClassName, {[styles.active]: currentTab === 2})}
         >
           {secondTabLabel}
         </button>
         <div className={cn(styles.shadow, shadowClassName)}></div>
       </div>
-      {currentTab === 1 ? firstTab : secondTab}
-      {footer}
+      <div className={cn(styles.tab, className)}>
+        {currentTab === 1 ? firstTab : secondTab}
+        {footer}
+      </div>
     </Panel>
   )
 }

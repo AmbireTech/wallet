@@ -167,7 +167,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                         />
                     }
                     panelClassName={styles.assetsPanel}
-                    tabClassName={styles.tab}
+                    buttonClassName={styles.tab}
                     shadowClassName={styles.tabsShadow}
                     defaultTab={defaultTab}
                 />
