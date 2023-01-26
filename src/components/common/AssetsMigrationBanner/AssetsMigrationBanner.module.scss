@@ -3,6 +3,7 @@
 .wrapper {
   display: flex;
   flex-direction: row;
+  gap: 1.25rem;
   padding: 1.25rem;
   background: $c-ebony-clay;
   border: .0625rem solid $c-fiord;
@@ -12,7 +13,7 @@
     margin: 0;
     display: flex;
     flex-direction: column;
-    flex-grow: 1;
+    flex: 1;
 
     .link {
       cursor: pointer;
@@ -28,5 +29,7 @@
 
   .close {
     cursor: pointer;
+    width: 2.5rem;
+    height: 2.5rem;
   }
 }
