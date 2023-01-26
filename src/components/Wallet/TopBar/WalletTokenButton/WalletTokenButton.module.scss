@@ -5,18 +5,11 @@
   width: 13rem;
   font-size: .875rem!important;
   padding: .9375rem 1rem;
-  height: 3.125rem!important;
 
   span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 4.0625rem;
-  }
-}
-
-@include xs-breakpoint {
-  .button {
-    height: 2.5rem!important;
   }
 }
