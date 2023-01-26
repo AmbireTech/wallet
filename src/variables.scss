@@ -1,16 +1,12 @@
 @import 'breakpoints';
 
-$sidebar-desktop-width: 16.25rem;
 $sidebar-desktop-small-width: 9.375rem;
 $sidebar-small-breakpoint: 1439px; // We want to show the bigger sidebar for MacBook Pro (90rem). That's the reason we trigger the smaller sidebar at .0625rem below.
 $sidebar-mobile-height: 5rem;
 
-$topbar-dapp-mode-height: 3.75rem;
-$topbar-mobile-dapp-mode-height: 3.125rem;
 // We want to target Tablets and mobile Landscape here too, because we don't have a specific design for these resolutions yet.
 // That's the reason we set a higher breakpoint value (1279px) to target both tablets and mobile.
 // Keep in mind that with this setup, the desktop design will be triggered for 1280x720, which is also our goal.
-$mobile-breakpoint-max-width: 1279px; // this is the breakpoint, where the mobile design is triggered
 $small-breakpoint-max-width: 1439px;
 $wide-breakpoint-min-width: 1920px;
 
@@ -39,7 +35,6 @@ $box-shadow: 0px 5px 10px #00000026;
 }
 
 $layout-spacing: 9.375rem;
-$max-container-width: 105.625rem;
 
 // Redesign variables. Later we will apply them in the current variables naming pattern.
 $c-ebony-clay: #24263d;
