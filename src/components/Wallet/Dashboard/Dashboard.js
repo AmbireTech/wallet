@@ -29,7 +29,7 @@ const Footer = ({ selectedAccount, selectedNetwork, isAddBtnShown, onFooterButto
     </span>
 </div>
 
-export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, match, showSendTxns }) {
+export default function Dashboard({ portfolio, selectedNetwork, selectedAccount, setNetwork, privateMode, rewardsData,  userSorting, setUserSorting, accounts, addRequest, relayerURL, useStorage, showSendTxns }) {
     const { tabId } = useParams()
 
     const balance = useMemo(() => portfolio.balance, [portfolio.balance])
@@ -142,7 +142,6 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                         hidePrivateValue={privateMode.hidePrivateValue}
                         relayerURL={relayerURL}
                         selectedAccount={selectedAccount}
-                        match={match}
                     />
                 </Panel>
             </div>
