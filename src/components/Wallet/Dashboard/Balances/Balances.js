@@ -29,7 +29,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
             truncated
         }
     }
-    console.count('<baalnces />')
+
     // Used to add blur at the bottom of balances when scrollbar is visible
     const handleSetBlur = useCallback(() => {
         if(otherBalances || !otherBalancesLoading) {
