@@ -1,5 +1,5 @@
 import { useHistory } from 'react-router-dom'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect } from 'react'
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md'
 
 import { useModals, useCheckMobileScreen, useDragAndDrop } from 'hooks'
@@ -15,14 +15,10 @@ import styles from './Tokens.module.scss'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import Pending from './Token/Pending/Pending'
 
-const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting, footer }) => {
+const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, setUserSorting, footer, addOrHideTokenModal, setAddOrHideTokenModal }) => {
     const history = useHistory()
     const { showModal } = useModals()
 
-    const [addOrHideTokenModal, setAddOrHideTokenModal] = useState({
-        isOpen: false,
-        defaultSection: 'Add Token'
-    })
     const { isCurrNetworkBalanceLoading, tokens } = portfolio
     
     const sortType = userSorting.tokens?.sortType || 'decreasing'

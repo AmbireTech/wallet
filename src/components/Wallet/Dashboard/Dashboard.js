@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import { useLayoutEffect, useState, useMemo } from 'react'
+import { useLayoutEffect, useState, useMemo, useCallback } from 'react'
 import { useParams } from 'react-router-dom'
 
 import { Loading, Panel } from 'components/common'
@@ -17,13 +17,15 @@ import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 
 import styles from './Dashboard.module.scss'
 
-const Footer = ({selectedAccount, selectedNetwork}) => <div className={styles.footer}>
+const Footer = ({ selectedAccount, selectedNetwork, isAddBtnShown, onFooterButtonClick }) => <div className={styles.footer}>
     <span className={styles.missingTokenNotice}>
-        If you don't see a specific token that you own, please check the
-        {' '}
-        <a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">
+        If you don't see a specific token that you own, please
+        {!isAddBtnShown ? ` check the ` : " "}
+        {!isAddBtnShown ? (<a href={`${selectedNetwork.explorerUrl}/address/${selectedAccount}`} target="_blank" rel="noreferrer">
             Block Explorer
-        </a>
+        </a>) : (<button className={styles.footerButton} onClick={onFooterButtonClick}>
+            add it manually
+        </button>)}
     </span>
 </div>
 
@@ -39,6 +41,11 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     const { hasPendingReset, recoveryLock, isPasswordRecoveryCheckLoading } = usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork)
     const isBalancesCachedCurrentNetwork = portfolio.cache || false
+    // Add/Hide token modal state
+    const [addOrHideTokenModal, setAddOrHideTokenModal] = useState({
+        isOpen: false,
+        defaultSection: 'Add Token'
+    })
 
     useLayoutEffect(() => {
         const tokensData = tokens
@@ -68,6 +75,10 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
         }
     }, [balance, tokens, portfolio?.balance?.total?.full]);
 
+    // Open Add Token modal function
+    const openAddTokenModal = useCallback(() => {
+        setAddOrHideTokenModal({isOpen: true, defaultSection: 'Add Token'})
+    }, [])
 
     return (
         <section className={styles.wrapper}>
@@ -122,7 +133,8 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 <Panel 
                     className={cn(styles.balance, styles.panel, styles.topPanels)} 
                     titleClassName={styles.panelTitle} 
-                    title="You also have">
+                    title="You also have"
+                >
                     <Balances
                         portfolio={portfolio}
                         selectedNetwork={selectedNetwork}
@@ -145,10 +157,14 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                             hidePrivateValue={privateMode.hidePrivateValue}
                             userSorting={userSorting}
                             setUserSorting={setUserSorting}
+                            addOrHideTokenModal={addOrHideTokenModal}
+                            setAddOrHideTokenModal={setAddOrHideTokenModal}
                             footer={
                                 <Footer
                                     selectedAccount={selectedAccount}
                                     selectedNetwork={selectedNetwork}
+                                    onFooterButtonClick={openAddTokenModal}
+                                    isAddBtnShown
                                 />
                             }
                         />
@@ -162,6 +178,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                                 <Footer
                                     selectedAccount={selectedAccount}
                                     selectedNetwork={selectedNetwork}
+                                    isAddBtnShown={false}
                                 />
                             }
                         />
