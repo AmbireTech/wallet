@@ -1,15 +1,15 @@
 @import 'variables.scss';
 
 .wrapper {
-    max-width: 500px;
+    max-width: 31.25rem;
     height: auto!important;
     min-height: unset;
-    padding: 0 10px;
-    padding-top: 36px;
+    padding: 0 .625rem;
+    padding-top: 2.25rem;
 
     :global(.content) {
-        padding-top: 50px;
-        padding-bottom: 10px;
+        padding-top: 3.125rem;
+        padding-bottom: .625rem;
     }
     .validationMsg {
         color: $danger-color;
@@ -18,12 +18,12 @@
     .buySellBtnsWrapper {
         display: flex;
         flex-direction: row;
-        gap: 10px;
+        gap: .625rem;
         width: 30%;
-        padding-bottom: 20px;
+        padding-bottom: 1.25rem;
 
         .button {
-            padding: 10px 35px;
+            padding: .625rem 2.1875rem;
             background-color: $c-mirage;
             color: $c-titan-white;
             cursor: pointer;
@@ -39,28 +39,28 @@
         display: flex;
 
         background-color: $c-mirage;
-        padding: 4px 20px;
+        padding: .25rem 1.25rem;
         padding-bottom: 0;
         border-radius: 12px;
-        height: 95px;
+        height: 5.9375rem;
         flex-direction: column;
 
         .currenciesRowWrapper {
             display: flex;
             justify-content: space-between;
-            gap: 5px;
+            gap: .3125rem;
             align-items: center;
         }
         .inputLabel {
             margin: 0;
             color: $c-scampi;
-            font-size: 16px;
+            font-size: 1rem;
         }
 
         input {
             height: auto;
             padding: 0;
-            font-size: 20px;
+            font-size: 1.25rem;
             color: $c-titan-white;
         }
 
@@ -72,7 +72,7 @@
                     border-radius: 0;
                 }
                 input {
-                    padding-bottom: 4px;
+                    padding-bottom: .25rem;
                 }
             }
 
@@ -85,27 +85,27 @@
             flex: 0 1 50%;
 
             .select {
-                min-width: 45px;
+                min-width: 2.8125rem;
                 width: 100%;
                 .selectInput {
                     padding: 0;
-                    font-size: 20px;
-                    gap: 10px;
+                    font-size: 1.25rem;
+                    gap: .625rem;
                 }
 
                 .selectIcon {
                     background-color: $c-ebony-clay-light;
-                    padding: 8px;
+                    padding: .5rem;
                     border-radius: 12px;
-                    width: 40px;
-                    height: 40px;
+                    width: 2.5rem;
+                    height: 2.5rem;
                 }
             }
         }
 
         .loadingWrapper {
-            margin-top: 20px;
-            height: 40px;
+            margin-top: 1.25rem;
+            height: 2.5rem;
             width: 100%;
             background-color: $c-mirage;
             border-radius: 12px;
@@ -113,10 +113,10 @@
     }
 
     .estimationInfoWrapper {
-        margin-left: 15px;
-        margin-bottom: 10px;
+        margin-left: .9375rem;
+        margin-bottom: .625rem;
         position: relative;
-        margin-top: 10px;
+        margin-top: .625rem;
         display: flex;
         flex-direction: column;
 
@@ -127,64 +127,64 @@
             height: 100%;
             position: absolute;
             z-index: -1;
-            margin-left: 4px;
+            margin-left: .25rem;
             
         }
     }
 
     .extraFees, .estimationRate {
         position: relative;
-        padding-left: 25px;
+        padding-left: 1.5625rem;
         margin-top: 0;
-        margin-bottom: 12px;
+        margin-bottom: .75rem;
 
         &:before {
             content: '';
             background: #898DCB;
             border-radius: 50%;
-            width: 10px;
-            height: 10px;
+            width: .625rem;
+            height: .625rem;
             display: block;
             position: absolute;
             left: 0;
             top: 50%;
-            margin-top: -4px;
+            margin-top: -0.25rem;
             z-index: 1;
         }
 
         p {
             margin: 0;
-            font-size: 14px;
+            font-size: .875rem;
             font-weight: 300;
 
             span {
-                font-size: 16px;
+                font-size: 1rem;
             }
         }
     }
     .extraFees {
-        margin-top: 13px;
-        margin-bottom: 13px;
+        margin-top: .8125rem;
+        margin-bottom: .8125rem;
     }
     .button {
         width: 100%;
-        margin-top: 20px;
+        margin-top: 1.25rem;
     }
 
     .poweredBy {
         display: flex;
         justify-content: center;
-        gap: 10px;
-        margin-top: 120px;
-        padding-top: 10px;
+        gap: .625rem;
+        margin-top: 7.5rem;
+        padding-top: .625rem;
         border-top: 1px solid #3E436B;
         &Label {
-            font-size: 14px;
+            font-size: .875rem;
             color: #898DCB;
         }
 
         &Logo {
-            width: 144px;
+            width: 9rem;
         }
     }
 }

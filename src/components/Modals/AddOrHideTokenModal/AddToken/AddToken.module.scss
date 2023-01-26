@@ -2,18 +2,18 @@
 
 .wrapper {
   .addressInput {
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
 
     label {
-      margin-left: 20px;
+      margin-left: 1.25rem;
       font-weight: 400;
-      font-size: 14px;
+      font-size: .875rem;
     }
   }
   .addButton {
     width: 100%;
     font-weight: 400;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
   }
 
   // Token balance
@@ -29,12 +29,12 @@
   .extraTokensList {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: .625rem;
 
     .token {
       margin-bottom: 0;
       background-color: $c-mirage;
-      padding: 10px;
+      padding: .625rem;
       border-radius: 12px;
       flex-direction: row;
       width: 100%;

@@ -6,17 +6,17 @@
 
 .wrapper {
   width: 100%;
-  max-width: 1000px;
-  padding-bottom: 100px!important;
+  max-width: 62.5rem;
+  padding-bottom: 6.25rem!important;
 
   .signerAddress {
-    margin: 20px 0;
+    margin: 1.25rem 0;
   }
 
   :global(.buttons) {
-    padding: 30px 40px;
-    padding-top: 10px;
-    height: 100px;
+    padding: 1.875rem 2.5rem;
+    padding-top: .625rem;
+    height: 6.25rem;
   }
 }
 
@@ -25,12 +25,12 @@
   flex-wrap: wrap;
   justify-content: space-around;
   align-items: stretch;
-  gap: 20px;
+  gap: 1.25rem;
 
   .signer {
     position: relative;
     top: 0;
-    padding: 50px 10px;
+    padding: 3.125rem .625rem;
     background: $c-mirage;
     border: 1px solid $c-scampi;
     border-radius: 12px;
@@ -42,13 +42,13 @@
 
     svg {
       color: $c-scampi;
-      width: 170px;
+      width: 10.625rem;
       transition: .3s ease-out all;
     }
 
     &:hover {
       border-color: $c-turquoise;
-      top: -4px;
+      top: -0.25rem;
       color: $c-white;
       svg {
         color: $c-white;

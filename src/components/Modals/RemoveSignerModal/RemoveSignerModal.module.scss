@@ -1,18 +1,18 @@
 @import 'variables';
 
-.removeButton {
+NaNpxoveButton {
   border-color: $danger-color!important;
   color: $danger-color!important;
 }
 
 .wrapper {
-  min-height: 350px;
-  max-height: 500px;
-  max-width: 600px;
-  padding-bottom: 140px!important;
+  min-height: 21.875rem;
+  max-height: 31.25rem;
+  max-width: 37.5rem;
+  padding-bottom: 8.75rem!important;
 
   .animation {
-    width: 173px;
+    width: 10.8125rem;
     margin: 0 auto;
   }
   .text {
@@ -24,7 +24,7 @@
     padding-top: 0;
   }
   :global(.buttons) {
-    padding: 40px;
+    padding: 2.5rem;
     padding-top: 0;
     height: auto;
   }

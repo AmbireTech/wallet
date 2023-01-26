@@ -1,11 +1,11 @@
 @import 'variables';
 
 .modal {
-  padding-top: 15px;
-  max-width: 500px;
+  padding-top: .9375rem;
+  max-width: 31.25rem;
   width: 100%;
   min-height: unset;
-  height: 600px!important;
+  height: 37.5rem!important;
 }
 
 .closeButton {
@@ -15,17 +15,17 @@
 .collectibles {
     display: flex;
     flex-direction: column;
-    gap: 5px;
-    padding-top: 40px;
+    gap: .3125rem;
+    padding-top: 2.5rem;
 
     .collectible {
         display: flex;
         flex-direction: row;
         justify-content: space-between;
         align-items: center;
-        gap: 15px;
-        height: 50px;
-        padding: 8px 20px;
+        gap: .9375rem;
+        height: 3.125rem;
+        padding: .5rem 1.25rem;
         margin-bottom: 0;
         border-radius: 12px;
         background-color: $c-mirage;
@@ -35,23 +35,23 @@
             align-items: center;
             
             .iconWrapper {
-                width: 34px;
-                height: 34px;
+                width: 2.125rem;
+                height: 2.125rem;
                 background-color: rgba($c-titan-white, 0.04);
                 border-radius: 12px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-right: 10px;
+                margin-right: .625rem;
             }
             .icon {
-                width: 24px;
-                height: 24px;
+                width: 1.5rem;
+                height: 1.5rem;
                 border-radius: 12px;
             }
         
             .name {
-                font-size: 14px;
+                font-size: .875rem;
                 font-weight: 400;
                 margin: 0;
         

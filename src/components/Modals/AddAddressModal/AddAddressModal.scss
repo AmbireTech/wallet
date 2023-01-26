@@ -4,7 +4,7 @@
     width: 100%;
 
     input {
-        padding-right: 50px;
+        padding-right: 3.125rem;
     }
 }
 
@@ -12,17 +12,17 @@
     .content {
         display: flex;
         flex-direction: column;
-        gap: 25px;
+        gap: 1.5625rem;
 
         div {
             display: flex;
 
             #udomains-logo {
                 position: absolute;
-                top: 50px;
-                right: 55px;
-                height: 25px;
-                width: 25px;
+                top: 3.125rem;
+                right: 3.4375rem;
+                height: 1.5625rem;
+                width: 1.5625rem;
                 background-image: url('/resources/ud-logo-inactive.png');
                 z-index: 1;
             }
@@ -33,10 +33,10 @@
 
             #ens-logo {
                 position: absolute;
-                top: 50px;
-                right: 20px;
-                height: 25px;
-                width: 25px;
+                top: 3.125rem;
+                right: 1.25rem;
+                height: 1.5625rem;
+                width: 1.5625rem;
                 background-image: url('/resources/ens-logo-inactive.png');
             }
     
@@ -52,22 +52,22 @@
         .content {
             display: flex;
             flex-direction: column;
-            gap: 25px;
+            gap: 1.5625rem;
 
             #udomains-logo {
                 position: absolute;
-                top: 75px;
-                right: 85px;
-                height: 25px;
-                width: 25px;
+                top: 4.6875rem;
+                right: 5.3125rem;
+                height: 1.5625rem;
+                width: 1.5625rem;
             }
 
             #ens-logo {
                 position: absolute;
-                top: 75px;
-                right: 50px;
-                height: 25px;
-                width: 25px;
+                top: 4.6875rem;
+                right: 3.125rem;
+                height: 1.5625rem;
+                width: 1.5625rem;
             }
         }
     }

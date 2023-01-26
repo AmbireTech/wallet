@@ -4,8 +4,8 @@
     .content {
         display: flex;
         flex-direction: column;
-        gap: 30px;
-        padding-bottom: 30px;
+        gap: 1.875rem;
+        padding-bottom: 1.875rem;
 
         .intro {
             opacity: 0.6;
@@ -13,33 +13,33 @@
 
         .permission {
             display: flex;
-            gap: 30px;
+            gap: 1.875rem;
 
             .details {
                 display: flex;
                 flex-direction: column;
-                gap: 5px;
+                gap: .3125rem;
 
                 .name {
-                    font-size: 17px;
+                    font-size: 1.0625rem;
                     font-weight: 500;
 
                     .unavailable {
-                        padding-left: 5px;
-                        font-size: 15px !important;
+                        padding-left: .3125rem;
+                        font-size: .9375rem !important;
                         font-weight: bold !important;
                         color: $c-heliotrope;
                     }
                 }
 
                 .description {
-                    font-size: 15px;
+                    font-size: .9375rem;
                     opacity: 0.6;
                 }
 
                 .unavailable {
-                    padding-top: 5px;
-                    font-size: 15px !important;
+                    padding-top: .3125rem;
+                    font-size: .9375rem !important;
                     font-weight: bold !important;
                 }
             }
@@ -48,7 +48,7 @@
                 flex: 0 0 auto;
                 display: flex;
                 flex-direction: column;
-                gap: 1em;
+                gap: 1rem;
 
                 .check-icon {
                     svg {

@@ -4,13 +4,13 @@
     .content {
         display: flex;
         flex-direction: column;
-        padding-bottom: 50px;
+        padding-bottom: 3.125rem;
 
         .table {
             .wrapper {
                 display: flex;
                 justify-content: space-between;
-                padding: 20px;
+                padding: 1.25rem;
                 background-color: rgba(255, 255, 255, 0.04);
     
                 div {
@@ -30,13 +30,12 @@
             }
     
             .loading-wrapper {
-                min-height: 560px;
+                min-height: 35rem;
             }
         }
     }
     
     .buttons button {
         flex: 0 1 100% !important;
-        height: 100%;
     }
 }
