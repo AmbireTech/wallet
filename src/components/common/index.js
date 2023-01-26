@@ -31,6 +31,8 @@ import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
 import Image from './Image/Image';
 import RemoteLottie from './RemoteLottie/RemoteLottie'
+import Info from './Info/Info';
+import Note from './Note/Note';
 
 export {
     AddressBook,
@@ -65,5 +67,7 @@ export {
     Pagination,
     Panel,
     Image,
-    RemoteLottie
+    RemoteLottie,
+    Info,
+    Note,
 };

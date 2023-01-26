@@ -117,9 +117,9 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                 className={styles.select}
                 selectInputClassName={styles.selectInput}
                 iconClassName={styles.selectIcon}
-                searchable 
-                defaultValue={guardarian.from} 
-                items={guardarian.mode === 'buy' ? guardarian.fiatList.data : guardarian.cryptoList.data} 
+                searchable
+                defaultValue={guardarian.from}
+                items={guardarian.mode === 'buy' ? guardarian.fiatList.data : guardarian.cryptoList.data}
                 onChange={({value}) => changeFrom(value)}/>
                 : <div className={styles.loadingWrapper}><Loading /> </div>}
             </div>
@@ -152,7 +152,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
         <div className={styles.inputCurrenciesWrapper}>
             <div className={styles.currenciesRowWrapper}>
 
-            <div className={styles.amount}> 
+            <div className={styles.amount}>
                 <label className={styles.inputLabel}>You get</label>
             </div>
             </div>
@@ -161,7 +161,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                     value={guardarian?.estimateInfo?.data ? guardarian?.estimateInfo?.data?.value : ''}
                     disabled
                     /> : <TextInput
-                    value='Loading...'
+                    value='Info...'
                     disabled
                     className={styles.loadingInput}
                     />}
