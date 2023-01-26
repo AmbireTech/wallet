@@ -34,6 +34,8 @@ const getCoingeckoPriceByContract = (id, addresses) =>
     fetchGet(`${COINGECKO_API_URL}/coins/${id}/contract/${addresses}`
     )
 
+const getCoingeckoCoin = (id) => fetchGet(`${COINGECKO_API_URL}/coins/${id}`)
+
 export default function usePortfolio({ currentNetwork, account, useStorage, relayerURL, useRelayerData, eligibleRequests, requests, selectedAccount, sentTxn, accounts }) {
     const isVisible = usePageVisibility()
     
@@ -68,6 +70,7 @@ export default function usePortfolio({ currentNetwork, account, useStorage, rela
         getCoingeckoPrices,
         getCoingeckoPriceByContract,
         getCoingeckoAssetPlatforms,
+        getCoingeckoCoin,
         relayerURL,
         useRelayerData,
         eligibleRequests,
