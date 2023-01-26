@@ -3,10 +3,10 @@
 .wrapper {
   display: flex;
   flex-direction: row;
-  padding: 20px;
+  padding: 1.25rem;
   background: $c-ebony-clay;
-  border: 1px solid $c-fiord;
-  border-radius: 12px;
+  border: .0625rem solid $c-fiord;
+  border-radius: .75rem;
 
   .message {
     margin: 0;
@@ -21,7 +21,7 @@
       text-decoration: underline;
   
       &.linkMargin {
-        margin-top: 8px;
+        margin-top: .5rem;
       }
     }
   }

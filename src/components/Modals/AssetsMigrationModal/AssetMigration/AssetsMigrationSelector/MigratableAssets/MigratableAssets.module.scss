@@ -3,10 +3,10 @@
 .wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 30px 10px;
-  padding: 5px 15px;
+  gap: 1.875rem .625rem;
+  padding: .3125rem .9375rem;
   border-radius: 12px;
-  margin-bottom: 10px;
+  margin-bottom: .625rem;
   background-color: $c-mirage;
   border-bottom: 1px solid $c-mirage;
 
@@ -25,23 +25,23 @@
     .checkbox {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: .625rem;
       margin: 0;
   
       .checkboxLabel {
         display: flex;
         align-items: center;
-        gap: 5px;
+        gap: .3125rem;
     
         .tokenIcon {
-          width: 24px;
-          height: 24px;
+          width: 1.5rem;
+          height: 1.5rem;
         }
 
         .tokenName {
           white-space: nowrap;
-          padding-left: 4px;
-          padding-top: 0px;
+          padding-left: .25rem;
+          padding-top: 0rem;
         }
       }
 
@@ -54,26 +54,26 @@
   .amountWrapper {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: .9375rem;
     margin-left: auto;
 
     .amountUsd {
-      margin-left: 10px;
+      margin-left: .625rem;
     }
 
     .amountInput {
       input {
-        width: 200px;
-        height: 40px;
-        padding: 5px 10px;
+        width: 12.5rem;
+        height: 2.5rem;
+        padding: .3125rem .625rem;
       }
     }
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
-    padding: 15px 20px;
+    padding: .9375rem 1.25rem;
     flex-direction: column;
     justify-content: center;
 
@@ -98,7 +98,7 @@
       
       .amountInput {
         input {
-          max-width: 200px;
+          max-width: 12.5rem;
           width: 100%;
         }
       }

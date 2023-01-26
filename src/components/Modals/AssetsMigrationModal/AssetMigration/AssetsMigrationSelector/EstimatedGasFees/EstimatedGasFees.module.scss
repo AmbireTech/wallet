@@ -3,8 +3,8 @@
 .wrapper {
   .title {
     margin: 0;
-    margin-bottom: 20px;
-    font-size: 18px;
+    margin-bottom: 1.25rem;
+    font-size: 1.125rem;
     font-weight: 400;
     text-align: center;
   }
@@ -12,13 +12,13 @@
   .fees {
     display: flex;
     flex-wrap: wrap;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: .625rem;
+    margin-bottom: 1.25rem;
 
     .fee {
       flex: 1;
       text-align: center;
-      padding: 15px;
+      padding: .9375rem;
       background: $c-mirage;
       border: 1px solid $c-mirage;
       border-radius: 12px;
@@ -33,7 +33,7 @@
 
       .feeName {
         margin: 0;
-        font-size: 16px;
+        font-size: 1rem;
         text-transform: capitalize;
       }
     }
@@ -43,7 +43,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px 20px;
+    padding: .9375rem 1.25rem;
     background-color: $c-mirage;
     border-radius: 12px;
     opacity: .8;
@@ -54,7 +54,7 @@
 
     .detailsLabel {
       .actions {
-        padding-left: 8px;
+        padding-left: .5rem;
         color: $c-manatee;
       }
     }
@@ -65,21 +65,21 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .fees {
-      gap: 10px;
-      margin-bottom: 10px;
+      gap: .625rem;
+      margin-bottom: .625rem;
       
       .fee {
-        min-width: 100px;
+        min-width: 6.25rem;
       }
     }
 
     .details {
       flex-direction: column;
       justify-content: center;
-      gap: 15px;
+      gap: .9375rem;
     }
   }
 }

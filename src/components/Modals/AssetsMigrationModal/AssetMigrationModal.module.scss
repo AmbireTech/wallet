@@ -6,11 +6,11 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     :global(.buttons) {
       button {
-        font-size: 14px!important;
+        font-size: .875rem!important;
       }
     }
   }

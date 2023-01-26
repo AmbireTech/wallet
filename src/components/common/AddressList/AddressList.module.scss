@@ -8,7 +8,7 @@
         font-weight: 400;
         opacity: .9;
         text-align: left;
-        padding: 15px;
+        padding: .9375rem;
     }
 
     .item {
@@ -21,7 +21,7 @@
         padding: 0 !important;
         padding-left: .9375rem !important;
         cursor: pointer;
-        border-radius: 12px;
+        border-radius: .75rem;
 
         .inner {
             height: 100%;
@@ -66,7 +66,7 @@
                 }
 
                 .address {
-                    font-size: .9375rem;
+                    font-size: 15px;
                 }
             }
         }
@@ -79,7 +79,7 @@
             font-size: 1.0625rem;
             font-weight: bold;
             color: $c-titan-white;
-            border-radius: 0 12px 12px 0;
+            border-radius: 0 .75rem .75rem 0;
 
             &:not([disabled]):hover {
                 cursor: pointer;
