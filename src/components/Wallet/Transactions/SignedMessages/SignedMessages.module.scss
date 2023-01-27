@@ -9,6 +9,11 @@
     border: 1px solid $c-fiord;
     border-radius: $border-radius;
 
+    .emptyLabel {
+        margin: 0;
+        font-size: .875rem;
+    }
+
     .header {
         display: flex;
         justify-content: space-between;
