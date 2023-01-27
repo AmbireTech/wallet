@@ -9,11 +9,6 @@
   }
   
   .saveAlert {
-    // opacity: 1;
-    // color: $c-heliotrope;
-    // padding: .625rem;
-    // background-color: $c-mirage;
-    // border-radius: .75rem;
     margin-bottom: 3.75rem;
   }
 }
@@ -33,5 +28,9 @@
 @include sm-breakpoint {
   .wrapper {
     text-align: center;
+
+    p {
+      font-size: .875rem;
+    }
   }
 }
