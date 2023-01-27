@@ -3,13 +3,13 @@
 .wrapper {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-gap: 10px;
+  grid-gap: .625rem;
   width: 100%;
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
 
   .feeSquare {
     flex: 1;
-    padding: 12px 15px;
+    padding: .75rem .9375rem;
     border-radius: $border-radius;
     background-color: theme(background-primary);
     border: 1px solid transparent;
@@ -27,18 +27,18 @@
     }
 
     .speed {
-      margin-bottom: 7px;
-      font-size: 16px;
+      margin-bottom: .4375rem;
+      font-size: 1rem;
       font-weight: 400;
       text-transform: capitalize;
     }
 
     .feeEstimation {
-      font-size: 14px;
+      font-size: .875rem;
       font-weight: 300;
       opacity: 0.8;
 
-      max-width: 150px;
+      max-width: 9.375rem;
       width: 100%;
       overflow: hidden;
       white-space: nowrap;
@@ -66,8 +66,8 @@
 
     .discountBadge {
       position: absolute;
-      top: 4px;
-      right: 4px;
+      top: .25rem;
+      right: .25rem;
       color: theme(highlight-secondary);
     }
   }
@@ -75,15 +75,15 @@
 
 @include lg-breakpoint {
   .wrapper {
-    grid-gap: 5px;
+    grid-gap: .3125rem;
     
     .feeSquare {
       .speed {
-        font-size: 14px;
+        font-size: .875rem;
       }
 
       .feeEstimation {
-        font-size: 12px;
+        font-size: .75rem;
       }
     }
   }
@@ -91,18 +91,18 @@
 
 @include sm-breakpoint {
   .wrapper {
-    grid-gap: 5px;
+    grid-gap: .3125rem;
     .feeSquare {
-      padding: 6px;
+      padding: .375rem;
 
       .speed {
-        font-size: 12px;
+        font-size: .75rem;
       }
 
       .feeEstimation {
-        font-size: 11px;
-        max-width: 50px;
-        max-height: 30px;
+        font-size: .6875rem;
+        max-width: 3.125rem;
+        max-height: 1.875rem;
       }
     }
   }

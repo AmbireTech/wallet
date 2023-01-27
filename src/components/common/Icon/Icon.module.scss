@@ -1,5 +1,6 @@
 @import 'variables';
 
+// Keep this component with px values.
 .wrapper {
   @include flex-center-center;
   height: 40px;

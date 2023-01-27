@@ -52,10 +52,10 @@
     }
 }
 
-@media screen and (max-width: 1650px) {
+@include xxl-breakpoint {
     #wallet-container {
         #wallet-container-inner {
-            padding: 0 $layout-spacing / 3;
+            padding: 0 $layout-spacing / 2.5;
             padding-bottom: 1.875rem;
         }
     }

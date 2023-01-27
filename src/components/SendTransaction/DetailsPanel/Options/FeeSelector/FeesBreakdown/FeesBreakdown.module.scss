@@ -3,14 +3,14 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: .625rem;
 }
 
 .fee {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 22px;
+  padding: 1.25rem 1.375rem;
   background-color: theme(background-primary);
   border-radius: $border-radius;
   color: theme(text-primary);
@@ -34,6 +34,6 @@
   .fee {
     flex-direction: column;
     text-align: center;
-    gap: 15px;
+    gap: .9375rem;
   }
 }

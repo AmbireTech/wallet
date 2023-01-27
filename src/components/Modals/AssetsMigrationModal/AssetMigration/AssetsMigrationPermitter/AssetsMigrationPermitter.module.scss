@@ -2,23 +2,23 @@
 
 .wrapper {
   .actionsLeft {
-    padding: 15px;
+    padding: .9375rem;
     border-radius: $border-radius;
     background-color: $c-mirage;
     color: $warning-color;
     text-align: center;
-    margin-bottom: 15px;
+    margin-bottom: .9375rem;
   }
 
   .migrationPermitted {
-    padding: 8px;
-    font-size: 14px;
+    padding: .5rem;
+    font-size: .875rem;
     background: mix($c-turquoise, $c-ebony-clay, 5%);
     color: $c-turquoise;
     display: flex;
     align-items: center;
     border-radius: $border-radius;
-    gap: 4px;
+    gap: .25rem;
 
     &.warning {
       background: mix($c-half-spanish-white, $c-ebony-clay, 5%);

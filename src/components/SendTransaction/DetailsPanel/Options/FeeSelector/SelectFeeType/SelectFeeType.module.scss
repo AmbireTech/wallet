@@ -12,10 +12,10 @@
     align-items: center;
     font-weight: 300;
     opacity: 0.8;
-    font-size: 14px;
-    gap: 10px;
+    font-size: .875rem;
+    gap: .625rem;
 
-    margin-bottom: 8px;
+    margin-bottom: .5rem;
 
     &:hover {
       opacity: 1;
@@ -24,23 +24,23 @@
   }
 
   .customFeeSelector {
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
     width: 100%;
 
     .title {
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 300;
       margin: 0;
-      margin-bottom: 10px;
+      margin-bottom: .625rem;
     }
 
     .inputMb {
-      margin-bottom: 10px;
+      margin-bottom: .625rem;
     }
 
     .priceWarning {
       color: $warning-color;
-      font-size: 14px;
+      font-size: .875rem;
     }
   }
 }

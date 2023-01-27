@@ -75,7 +75,7 @@
                 transition: all 0.1s ease-in-out;
 
                 svg {
-                    width: 8px;
+                    width: .5rem;
                 }
                 &.open {
                     transform: scaleY(-1);

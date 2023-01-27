@@ -3,26 +3,26 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: .9375rem;
 
   .item {
     display: flex;
     flex-direction: row;
     align-items: center;
-    border-bottom: 1px solid $c-mirage;
+    border-bottom: .0625rem solid $c-mirage;
     background-color: $c-mirage;
     border-radius: $border-radius;
-    padding: 15px 20px;
+    padding: .9375rem 1.25rem;
 
     .itemTitle {
       flex-grow: 1;
     }
 
     .amountInput input {
-      height: 40px;
-      padding: 10px;
-      font-size: 16px;
-      max-width: 160px;
+      height: 2.5rem;
+      padding: .625rem;
+      font-size: 1rem;
+      max-width: 10rem;
     }
   }
 
@@ -33,11 +33,11 @@
   .selection {
     cursor: pointer;
     color: $c-heliotrope;
-    border-bottom: 1px dashed $c-heliotrope;
+    border-bottom: .0625rem dashed $c-heliotrope;
   }
 
   .message {
-    margin: 15px;
+    margin: .9375rem;
   }
 }
 
@@ -46,12 +46,12 @@
     .item {
       flex-direction: column;
       justify-content: center;
-      gap: 15px;
-      padding: 20px;
-      padding-bottom: 15px;
+      gap: .9375rem;
+      padding: 1.25rem;
+      padding-bottom: .9375rem;
 
       .selection {
-        margin-bottom: 10px;
+        margin-bottom: .625rem;
       }
     }
   }

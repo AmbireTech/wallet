@@ -15,7 +15,7 @@ $heading-height: 2.8125rem;
     height: 3.75rem !important;
     background-color: $c-mirage-dark!important;
     border: none!important;
-    border-radius: 0 12px 12px 0!important;
+    border-radius: 0 $border-radius $border-radius 0!important;
     padding: 0 .625rem;
     opacity: 1;
     transition: .3s ease-in-out opacity;
