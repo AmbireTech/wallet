@@ -140,8 +140,7 @@
 
       .baseInfo {
         display: flex;
-        flex: 1.5;
-        max-width: 60%;
+        flex: 1;
         gap: .625rem;
 
         .balanceAndSymbol {
@@ -160,7 +159,7 @@
       }
 
       .priceAndValue {
-        flex: 1;
+        flex: unset;
         flex-direction: column-reverse;
         align-items: flex-end;
         
