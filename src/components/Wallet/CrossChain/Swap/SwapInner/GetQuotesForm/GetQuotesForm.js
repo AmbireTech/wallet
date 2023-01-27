@@ -49,9 +49,8 @@ const GetQuotesForm = ({
       const { decimals } = portfolioToken
       const flatAmount = parseUnits(amount, decimals).toString()
       const quotes = await fetchQuotes(selectedAccount, fromTokens.selected, fromChain, toTokens.selected, toChains.selected, flatAmount, [
-        'hyphen',
-        'celer',
-      ]) //'anyswap-router-v4'
+        'stargate'
+      ])
       setQuotes(quotes)
     } catch (e) {
       console.error(e)

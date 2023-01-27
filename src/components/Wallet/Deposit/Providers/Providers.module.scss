@@ -60,20 +60,10 @@
         }
     }
 
-    .networkWarning {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-
-        svg {
-            width: 20px;
-            height: 20px;
-        }
-
+    .info {
         label {
             font-size: 12px;
             opacity: 0.8;
-            text-align: left;
         }
     }
 }

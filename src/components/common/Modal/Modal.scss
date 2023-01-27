@@ -13,7 +13,7 @@ $buttons-height: 160px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding-top: 40px;
+    padding-top: 30px;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: 12px;
@@ -43,17 +43,13 @@ $buttons-height: 160px;
             }
         }
 
-        .close {
-            height: 40px;
-            width: 40px;
-            background-color: rgba($c-titan-white, 0.05);
-            border-radius: 12px;
-            @include flex-center-center;
-            font-size: 20px;
+        .heading-icon {
+            cursor: pointer;
 
             &:hover {
-                cursor: pointer;
-                background-color: rgba($c-titan-white, 0.02);
+                #background {
+                    opacity: 0.025;
+                }
             }
         }
     }
@@ -61,11 +57,15 @@ $buttons-height: 160px;
     .content {
         height: 100%;
         position: relative;
-        padding: 40px;
+        padding: 30px 40px;
         padding-bottom: 0;
         overflow: hidden;
         overflow-y: auto;
         scrollbar-width: thin;
+
+        &.noPaddingTop {
+            padding-top: 0;
+        }
     }
 
     .buttons {
@@ -117,11 +117,11 @@ $buttons-height: 160px;
         }
 
         .content {
-            padding: 30px;
+            padding: 20px 30px;
         }
 
         .buttons {
-            padding: 30px;
+            padding: 20px 30px;
         }
     }
 }

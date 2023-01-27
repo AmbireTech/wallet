@@ -1,0 +1,49 @@
+@import 'variables';
+
+.wrapper {
+  max-width: 380px;
+  width: 100%;
+  min-height: 555px;
+  background-color: $c-white;
+  border: 2px solid red;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  .headerAndBody {
+    .header {
+      padding: 21px 30px;
+      width: 100%;
+  
+      .tempLogo {
+        font-size: 25px;
+        display: block;
+        text-align: right;
+      }
+    }
+    
+    .body {
+      padding: 0 20px;
+    }
+  }
+
+  .footer {
+    background-color: $c-white;
+    border-top: 1px solid rgba(#6770b3, 0.2);
+    padding: 8px 30px;   
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  
+    .footerText {
+      margin: 0;
+      font-size: 10px;
+    }
+    
+    .footerLogo {
+      width: 55px;
+      height: 18px;
+    }
+  }
+}

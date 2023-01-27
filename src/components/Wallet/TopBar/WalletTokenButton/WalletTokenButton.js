@@ -102,7 +102,6 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
                 border
                 onClick={showWalletTokenModal}
                 className={styles.button}
-                style={{ textTransform: 'none'}}
             >
                 { renderRewardsButtonText() }  
             </Button>

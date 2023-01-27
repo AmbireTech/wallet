@@ -1,8 +1,8 @@
 import AddressBook from './AddressBook/AddressBook';
+import AddressList from './AddressList/AddressList';
 import AddressWarning from './AddressWarning/AddressWarning';
 import Alert from "components/common/Alert/Alert";
 import Button from './Button/Button';
-import Chart from './Chart/Chart';
 import Checkbox from './Checkbox/Checkbox';
 import DropDown from './DropDown/DropDown';
 import Loading from './Loading/Loading';
@@ -31,13 +31,15 @@ import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
 import Image from './Image/Image';
 import RemoteLottie from './RemoteLottie/RemoteLottie'
+import Info from './Info/Info';
+import Note from './Note/Note';
 
 export {
     AddressBook,
+    AddressList,
     AddressWarning,
     Alert,
     Button,
-    Chart,
     Checkbox,
     DropDown,
     Loading,
@@ -65,5 +67,7 @@ export {
     Pagination,
     Panel,
     Image,
-    RemoteLottie
+    RemoteLottie,
+    Info,
+    Note,
 };
