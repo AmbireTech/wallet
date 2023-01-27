@@ -7,12 +7,10 @@ import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 import SWAPPIN_LOGO from 'resources/payment-providers/swappin.svg'
 // import MOONPAY_LOGO from 'resources/payment-providers/moonpay.svg'
 
-import { Loading } from 'components/common'
+import { Loading, Info } from 'components/common'
 import useProviders from './useProviders'
 
 import styles from './Providers.module.scss'
-
-import { ReactComponent as InfoIcon } from 'resources/icons/information.svg' 
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio,  sellMode = false, selectedAsset }) {
     const { openRampNetwork, openPayTrie, openTransak, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio }) // openKriptomat
@@ -89,7 +87,6 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             currencies: 'GBP, EUR, USD and many more',
             networks: ['ethereum', 'polygon', 'avalanche', 'arbitrum', 'binance-smart-chain', 'moonriver', 'moonbeam', 'optimism'],
             isSellAvailable: false,
-            isBuyAvailable: true,
             onClick: () => openTransak()
         },
         {
@@ -111,7 +108,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
     }
     const isNoteVisible = () => providers.find(i => !i.networks.includes(networkDetails.id))
     const filteredProviders = providers.filter(p => sellMode ? p.isSellAvailable : p.isBuyAvailable)
-    
+
     return (
         <div className={styles.wrapper}>
             {
@@ -149,13 +146,9 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                 )
             }
             {
-                !!isNoteVisible() && 
-                    <label className={styles.networkWarning}>
-                        <InfoIcon />
-                        <label>
-                            Some {sellMode ? 'sell' : 'deposit'} methods are unavailable on {networkDetails.name}. Switch to Ethereum for the widest support.
-                        </label>
-                    </label>
+                !!isNoteVisible() && <Info className={styles.info}>
+                    Some {sellMode ? 'sell' : 'deposit'} methods are unavailable on {networkDetails.name}. Switch to Ethereum for the widest support.
+                </Info>
             }
         </div>
     )

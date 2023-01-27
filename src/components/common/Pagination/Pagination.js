@@ -1,10 +1,7 @@
-import cn from 'classnames'
-import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
-import { Button } from 'components/common'
+import styles from './Pagination.module.scss'
 import { useHistory, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
-
-import styles from './Pagination.module.scss'
+import PaginationButtons from './PaginationButtons'
 
 // Pagination component based on url. necessary to be independent and synced
 const Pagination = ({ items, setPaginatedItems, itemsPerPage, url, parentPage = null }) => {
@@ -12,9 +9,7 @@ const Pagination = ({ items, setPaginatedItems, itemsPerPage, url, parentPage = 
   const history = useHistory()
   const localParams = useParams()
 
-  const maxPage = Math.ceil(items.length / itemsPerPage)
-
-  const routerPage = (parentPage || localParams.page || 1) * 1
+  const routerPage = parseInt(parentPage || localParams.page || 0)
 
   const handlePageChange = (page) => {
     const newUrl = url.replace('{p}', page)
@@ -26,23 +21,18 @@ const Pagination = ({ items, setPaginatedItems, itemsPerPage, url, parentPage = 
 
   useEffect(() => {
     const parsedItems = JSON.parse(jsonItems)
-    setPaginatedItems(parsedItems.slice((routerPage - 1) * itemsPerPage, (routerPage - 1) * itemsPerPage + itemsPerPage))
+    setPaginatedItems(parsedItems.slice(routerPage * itemsPerPage, routerPage * itemsPerPage + itemsPerPage))
   }, [jsonItems, routerPage, setPaginatedItems, itemsPerPage])
 
   return !!items.length &&
-    <div className={cn(styles.paginationControlsHolder)}>
-      <div className={cn(styles.paginationControls)}>
-        Page
-        {
-          <Button clear mini disabled={routerPage <= 1}
-                  onClick={() => handlePageChange(routerPage - 1)}><HiOutlineChevronLeft/></Button>
-        }
-        <span>{routerPage} / {maxPage}</span>
-        {
-          <Button clear mini disabled={routerPage >= maxPage}
-                  onClick={() => handlePageChange(routerPage + 1)}><HiOutlineChevronRight/></Button>
-        }
-      </div>
+    <div className={styles.wrapper}>
+      <PaginationButtons
+          page={routerPage}
+          items={items}
+          itemsPerPage={itemsPerPage}
+          onPrev={() => handlePageChange(routerPage - 1)}
+          onNext={() => handlePageChange(routerPage + 1)}
+      />
     </div>
 }
 
