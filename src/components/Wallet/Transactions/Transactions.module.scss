@@ -329,28 +329,6 @@
   }
 }
 
-@media screen and (max-width: 28.125rem) {
-  .transactions {
-    .panel {
-      .panelHeading {
-        .buttons {
-          .title {
-            .inactive {
-              &.txnBtn {
-                width: 8.125rem;
-              }
-
-              &.msgBtn {
-                width: 5.625rem;
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}
-
 @include xs-breakpoint {
   .transactions {
     .panel {
@@ -358,15 +336,16 @@
         .buttons {
           .title {
             font-size: .875rem;
+            margin-right: 1.25rem;
 
             .inactive {
 
               &.txnBtn {
-                width: 5.625rem;
+                width: auto;
               }
 
               &.msgBtn {
-                width: 3.75rem;
+                width: auto;
               }
             }
           }
