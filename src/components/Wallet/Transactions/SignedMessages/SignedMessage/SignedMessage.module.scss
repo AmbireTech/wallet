@@ -3,7 +3,7 @@
 .wrapper {
 	overflow: hidden;
 	padding: 1rem;
-  border-radius: 12px;
+  border-radius: $border-radius;
 	background-color: $c-mirage;
 
   h4, p {
@@ -26,7 +26,7 @@
         width: 2.25rem;
         height: 2.25rem;
         padding: .5rem;
-        border-radius: 12px;
+        border-radius: $border-radius;
         background-color: rgba($c-titan-white, 0.05);
       }
     }
@@ -47,7 +47,7 @@
       justify-content: center;
       width: 2.25rem;
       height: 2.25rem;
-      border-radius: 12px;
+      border-radius: $border-radius;
       background-color: rgba($c-titan-white, 0.05);
 
       svg {

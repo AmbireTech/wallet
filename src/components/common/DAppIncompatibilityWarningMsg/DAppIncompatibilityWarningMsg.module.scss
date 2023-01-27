@@ -6,7 +6,7 @@
     gap: 0.5em;
     cursor: default;
     border: 1px solid $danger-color;
-    border-radius: 12px;
+    border-radius: $border-radius;
     padding: 1.25rem;
     
     .title {

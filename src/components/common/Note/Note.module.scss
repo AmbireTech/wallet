@@ -4,7 +4,7 @@
     padding: .8125rem 1.25rem;
     background: $c-lavender-mist;
     color: $c-martinique-light;
-    border-radius: 12px;
+    border-radius: $border-radius;
     border-left: .125rem solid $c-heliotrope;
 
     svg {

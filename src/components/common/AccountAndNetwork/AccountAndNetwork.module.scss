@@ -15,7 +15,7 @@
     .avatar {
       width: 2.5rem;
       height: 2.5rem;
-      border-radius: 12px;
+      border-radius: $border-radius;
     }
 
     .address {
@@ -36,7 +36,7 @@
     margin: 0;
 
     .icon {
-      border-radius: 12px;
+      border-radius: $border-radius;
       width: 1.5rem;
       height: 1.5rem;
       background-color: theme(background-icon);

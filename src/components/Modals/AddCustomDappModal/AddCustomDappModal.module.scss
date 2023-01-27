@@ -52,7 +52,7 @@
 
         .iconWrapper {
             border: 1px dashed $c-scampi;
-            border-radius: 12px;
+            border-radius: $border-radius;
             width: 4.125rem;
             height: 4.125rem;
             display: flex;

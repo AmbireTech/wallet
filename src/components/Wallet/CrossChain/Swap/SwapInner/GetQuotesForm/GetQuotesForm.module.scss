@@ -34,7 +34,7 @@
         content: '';
         background-color: $c-titan-white;
         opacity: 0.05;
-        border-radius: 12px;
+        border-radius: $border-radius;
       }
     }
 
@@ -63,7 +63,7 @@
       align-self: center;
       flex: 1;
       background-color: rgba($c-titan-white, 0.05);
-      border-radius: 12px;
+      border-radius: $border-radius;
       transform: rotate(90deg);
     }
   }

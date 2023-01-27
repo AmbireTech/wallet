@@ -11,7 +11,7 @@
     align-items: center;
     border-bottom: 1px solid $c-mirage;
     background-color: $c-mirage;
-    border-radius: 12px;
+    border-radius: $border-radius;
     padding: 15px 20px;
 
     .itemTitle {

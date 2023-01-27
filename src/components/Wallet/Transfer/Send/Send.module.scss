@@ -56,7 +56,7 @@
     color: $warning-color;
     padding: .9375rem;
     font-size: .875rem;
-    border-radius: 12px;
+    border-radius: $border-radius;
   }
 
   .gasTankConvertMsg {
@@ -67,7 +67,7 @@
     color: $c-turquoise;
     padding: .9375rem;
     font-size: .875rem;
-    border-radius: 12px;
+    border-radius: $border-radius;
   }
 
   .recipientField {
@@ -146,7 +146,7 @@
 
       .dropdown {
         position: relative;
-        border-radius: 12px!important;
+        border-radius: $border-radius!important;
       }
 
       .recipientInput {

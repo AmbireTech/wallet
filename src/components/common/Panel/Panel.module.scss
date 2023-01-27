@@ -8,7 +8,7 @@
     padding: 1.5625rem 1.875rem 1.875rem;
     background-color: theme(background-terniary);
     border: 1px solid theme(border-secondary);
-    border-radius: 12px;
+    border-radius: $border-radius;
 
     .title {
         display: flex;

@@ -6,7 +6,7 @@
   width: 40px;
   padding: 8px;
   background-color: rgba($c-titan-white, 0.05);
-  border-radius: 12px;
+  border-radius: $border-radius;
 
   &.noBackground {
     background-color: transparent;

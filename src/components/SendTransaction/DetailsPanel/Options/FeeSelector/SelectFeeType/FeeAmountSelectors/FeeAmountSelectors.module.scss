@@ -10,7 +10,7 @@
   .feeSquare {
     flex: 1;
     padding: 12px 15px;
-    border-radius: 12px;
+    border-radius: $border-radius;
     background-color: theme(background-primary);
     border: 1px solid transparent;
     text-align: center;

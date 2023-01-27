@@ -38,7 +38,7 @@
         @include flex-center-center;
         height: 2rem;
         width: 2rem;
-        border-radius: 12px;
+        border-radius: $border-radius;
         background-color: $c-mirage;
     
         img {

@@ -19,7 +19,7 @@
 
   .alertWrapper {
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: $border-radius;
 
     .alert {
       position: relative;

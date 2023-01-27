@@ -79,7 +79,7 @@ $account-height: 3.75rem;
                     margin-right: .625rem;
                     opacity: 0.6;
                     padding: 0 .625rem;
-                    border-radius: 12px;
+                    border-radius: $border-radius;
                     cursor: pointer;
 
                     .icon {
@@ -87,7 +87,7 @@ $account-height: 3.75rem;
                         height: 2rem;
                         width: 2rem;
                         @include flex-center-center;
-                        border-radius: 12px;
+                        border-radius: $border-radius;
                         background-size: cover;
                     }
 
@@ -141,7 +141,7 @@ $account-height: 3.75rem;
                         color: $c-titan-white;
                         font-size: 2.5rem;
                         cursor: pointer;
-                        border-radius: 12px;
+                        border-radius: $border-radius;
 
                         svg {
                             opacity: 0.4;

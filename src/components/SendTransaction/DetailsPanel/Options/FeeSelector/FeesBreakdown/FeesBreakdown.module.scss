@@ -12,7 +12,7 @@
   justify-content: space-between;
   padding: 20px 22px;
   background-color: theme(background-primary);
-  border-radius: 12px;
+  border-radius: $border-radius;
   color: theme(text-primary);
 
   &.discount {

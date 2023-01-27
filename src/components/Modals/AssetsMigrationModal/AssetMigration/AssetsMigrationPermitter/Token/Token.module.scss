@@ -5,7 +5,7 @@
   flex-direction: row;
   align-items: center;
   background-color: $c-mirage;
-  border-radius: 12px;
+  border-radius: $border-radius;
   padding: 10px 15px;
   
   &:hover {
@@ -22,7 +22,7 @@
     justify-content: center;
     height: 40px;
     width: 40px;
-    border-radius: 12px;
+    border-radius: $border-radius;
     background: rgba($c-titan-white, 0.05);
 
     .icon {

@@ -14,7 +14,7 @@ $input-height: 3.75rem;
 
     .container {
         position: relative;
-        border-radius: 12px;
+        border-radius: $border-radius;
         overflow: hidden;
 
         &.hasIcon {

@@ -15,7 +15,7 @@
       width: 2.125rem;
       height: 2.125rem;
       background-color: rgba($c-titan-white, 0.05);
-      border-radius: 12px;
+      border-radius: $border-radius;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -27,7 +27,7 @@
     }
     
     .innerImage {
-      border-radius: 12px;
+      border-radius: $border-radius;
     }
 
     .name {

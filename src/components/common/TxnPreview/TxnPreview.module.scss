@@ -9,7 +9,7 @@ $extended-summary-height: 36px;
     flex: 0 0 auto;
     background-color: theme(background-primary);
     color: theme(text-primary);
-    border-radius: 12px;
+    border-radius: $border-radius;
     min-height: $txn-height;
     position: relative;
     user-select: none;
@@ -55,7 +55,7 @@ $extended-summary-height: 36px;
                     min-height: 36px;
                     @include flex-center-center;
                     background-color: theme(background-icon);
-                    border-radius: 12px;
+                    border-radius: $border-radius;
                     
                     .icon {
                         transition: .2s ease-out transform;
@@ -88,7 +88,7 @@ $extended-summary-height: 36px;
                 text-align: center;
                 background-color: $danger-color;
                 color: $c-titan-white;
-                border-radius: 12px;
+                border-radius: $border-radius;
                 margin: 0;
             }
         }
@@ -103,7 +103,7 @@ $extended-summary-height: 36px;
                 align-items: center;
                 width: 36px;
                 height: 36px;
-                border-radius: 12px;
+                border-radius: $border-radius;
                 background-color: theme(background-icon);
                 transition: all 0.1s ease-in-out;
                 opacity: 1;

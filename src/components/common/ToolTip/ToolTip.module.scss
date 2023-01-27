@@ -14,7 +14,7 @@ $arrow-size: .9375rem;
         color: theme(text-primary);
         background-color: theme(background-primary);
         box-shadow: $box-shadow;
-        border-radius: 12px;
+        border-radius: $border-radius;
         white-space: normal;
         opacity: 0;
         overflow: visible;

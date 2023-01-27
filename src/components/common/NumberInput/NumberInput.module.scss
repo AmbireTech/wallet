@@ -47,7 +47,7 @@
         height: 3.75rem;
         display: flex;
         align-items: center;
-        border-radius: 12px;
+        border-radius: $border-radius;
         overflow: hidden;
         
         input[type=text] {

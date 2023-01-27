@@ -57,7 +57,7 @@
     width: 100%;
     flex-grow: 1;
     background: $c-ebony-clay;
-    border-radius: 12px;
+    border-radius: $border-radius;
     @include flex-center-center;
     font-size: 32px;
 }
@@ -111,7 +111,7 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: $border-radius;
 }
 
 .loading-borders span:nth-child(1) {

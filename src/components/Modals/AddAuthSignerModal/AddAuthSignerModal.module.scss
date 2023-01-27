@@ -39,7 +39,7 @@
     height: 10rem;
     background: $c-mirage;
     border: 1px solid $c-scampi;
-    border-radius: 12px;
+    border-radius: $border-radius;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -88,7 +88,7 @@
   margin-bottom: 1.875rem;
   background: $c-mirage;
   border: 1px solid $c-scampi;
-  border-radius: 12px;
+  border-radius: $border-radius;
 
   .signerAddress {
     margin: 0 0 1.25rem;

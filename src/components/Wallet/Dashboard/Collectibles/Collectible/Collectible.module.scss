@@ -7,7 +7,7 @@ $details-size: 3.75rem;
   position: relative;
   height: 16.5rem;
   width: $collectible-size;
-  border-radius: 12px;
+  border-radius: $border-radius;
   overflow: hidden;
   transition: all 0.1s ease-in-out;
   display: flex;

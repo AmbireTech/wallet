@@ -9,7 +9,7 @@
         .token {
             display: flex;
             background-color: $c-mirage;
-            border-radius: 12px;
+            border-radius: $border-radius;
             padding: .5rem 1.25rem;
 
             p {
@@ -31,7 +31,7 @@
                     justify-content: center;
                     width: 2.125rem;
                     height: 2.125rem;
-                    border-radius: 12px;
+                    border-radius: $border-radius;
                     background-color: rgba($c-titan-white, 0.05);
 
                     img {

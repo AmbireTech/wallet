@@ -27,7 +27,7 @@
 
     .route {
       background-color: $c-mirage;
-      border-radius: 12px;
+      border-radius: $border-radius;
       padding: 1.25rem;
       align-items: flex-start;
     }

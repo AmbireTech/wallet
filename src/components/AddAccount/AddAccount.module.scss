@@ -73,7 +73,7 @@
         width: 100%;
         border: none;
         background: theme(gradient-primary);
-        border-radius: 12px;
+        border-radius: $border-radius;
         color: $c-titan-white;
         font-size: 1.25rem;
         font-weight: 500;
@@ -169,7 +169,7 @@
                 width: 100%;
                 background: theme(background-primary);
                 border: 1px solid $c-scampi;
-                border-radius: 12px;
+                border-radius: $border-radius;
                 color: theme(text-secondary);
                 height: 3.75rem;
                 text-align: center;
@@ -242,7 +242,7 @@
     .emailConf {
         background-color: $c-mirage;
         border: 1px solid $c-scampi;
-        border-radius: 12px;
+        border-radius: $border-radius;
         padding: 1.875rem 3.75rem;
         padding-top: .75rem;
         text-align: center;

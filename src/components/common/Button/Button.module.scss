@@ -2,7 +2,7 @@
 
 .wrapper {
     height: 3.75rem;
-    border-radius: 12px;
+    border-radius: $border-radius;
     @include flex-center-center;
     gap: .625em;
     padding: 0 1.25em;

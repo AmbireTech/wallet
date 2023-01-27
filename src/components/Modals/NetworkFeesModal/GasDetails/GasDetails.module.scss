@@ -27,7 +27,7 @@ $thead-background-color: darken($c-ebony-clay, 2%);
       background: $c-mirage;
       padding: .75rem;
       border: 2px solid transparent;
-      border-radius: 12px;
+      border-radius: $border-radius;
       min-width: 6.25rem;
   
       &.selected {
@@ -57,7 +57,7 @@ $thead-background-color: darken($c-ebony-clay, 2%);
   }
 
   .tableWrapper {
-    border-radius: 12px;
+    border-radius: $border-radius;
     overflow-y: hidden;
     // overflow-x: auto;
     margin-bottom: 1.875rem;

@@ -43,12 +43,12 @@ $item-mobile-distance: .625rem;
       width: 1.875rem;
       height: 1.875rem;
       background-color: rgba($c-titan-white, 0.05);
-      border-radius: 12px;
+      border-radius: $border-radius;
 
       .icon {
         width: 1.25rem;
         height: 1.25rem;
-        border-radius: 12px;
+        border-radius: $border-radius;
       }
 
       .fromAmount,

@@ -30,7 +30,7 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        border-radius: 12px;
+        border-radius: $border-radius;
         background-color: theme(background-icon);
         background-size: contain;
         background-position: center center;
@@ -64,7 +64,7 @@
             font-size: 1rem;
             font-weight: bold;
             background-color: theme(background-primary);
-            border-radius: 12px;
+            border-radius: $border-radius;
 
             .separator {
                 flex-grow: 1;
@@ -91,7 +91,7 @@
             min-height: 3.125rem;
             max-height: 15.625rem;
             width: 100%;
-            border-radius: 12px;
+            border-radius: $border-radius;
             background-color: theme(background-primary);
             box-shadow: 0px 4px 10px #00000073;
             border: 1px solid theme(border-secondary);

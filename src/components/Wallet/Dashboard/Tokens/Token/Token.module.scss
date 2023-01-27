@@ -5,7 +5,7 @@
   flex-direction: column;
   padding: 1.25rem 1.875rem;
   background-color: $c-mirage;
-  border-radius: 12px;
+  border-radius: $border-radius;
 
   h3 {
     font-weight: 300;
@@ -32,7 +32,7 @@
       color: $c-titan-white;
       
       .iconWrapper {
-        border-radius: 12px;
+        border-radius: $border-radius;
         background-color: rgba($c-titan-white, 0.04);
         width: 2.5rem;
         height: 2.5rem;
@@ -43,7 +43,7 @@
         img, .iconFailed {
           width: 1.5rem;
           height: 1.5rem;
-          border-radius: 12px;
+          border-radius: $border-radius;
         }
 
         .iconFailed {
@@ -102,7 +102,7 @@
       padding: 0 1.25rem;
       gap: .3125rem;
       background-color: rgba($c-titan-white, 0.04);
-      border-radius: 12px;
+      border-radius: $border-radius;
       cursor: pointer;
       transition: .3s ease-out opacity;
       opacity: 1;

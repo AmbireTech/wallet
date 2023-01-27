@@ -21,7 +21,7 @@
       padding: .9375rem;
       background: $c-mirage;
       border: 1px solid $c-mirage;
-      border-radius: 12px;
+      border-radius: $border-radius;
       user-select: none;
       cursor: pointer;
 
@@ -45,7 +45,7 @@
     align-items: center;
     padding: .9375rem 1.25rem;
     background-color: $c-mirage;
-    border-radius: 12px;
+    border-radius: $border-radius;
     opacity: .8;
 
     p {

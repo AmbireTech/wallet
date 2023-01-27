@@ -20,7 +20,7 @@
       margin-bottom: 10px;
       height: 64px;
       width: 64px;
-      border-radius: 12px;
+      border-radius: $border-radius;
       background: rgba($c-titan-white, 0.05);
 
       img {
@@ -45,7 +45,7 @@
   .smallAssetNotification {
     padding: 8px;
     display: block;
-    border-radius: 12px;
+    border-radius: $border-radius;
     text-align: center;
 
     &.warning {

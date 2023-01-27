@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
 .notice {
-    border-radius: 12px;
+    border-radius: $border-radius;
     background-color: $warning-color;
     padding: .9375rem 1.25rem;
     color: $c-shark;

@@ -36,7 +36,7 @@
         background-color: $c-mirage;
         width: 2rem;
         height: 2rem;
-        border-radius: 12px;
+        border-radius: $border-radius;
       }
 
       .networkAmount {
@@ -141,7 +141,7 @@
 
 @include xxl-breakpoint {
   .wrapper {
-    gap: 40px;
+    gap: 2.5rem;
 
     .legend {
       .legendTitle {
@@ -172,7 +172,7 @@
       padding: 1.25rem;
       background: $c-ebony-clay;
       border: 1px solid $c-fiord;
-      border-radius: 12px;
+      border-radius: $border-radius;
     }
 
     .legend {
@@ -184,7 +184,7 @@
         padding: .625rem 1.25rem;
         background: $c-ebony-clay;
         border: 1px solid $c-fiord;
-        border-radius: 12px;
+        border-radius: $border-radius;
         overflow-y: auto;
       }
     }

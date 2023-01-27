@@ -8,7 +8,7 @@
   gap: 2rem;
 
   .icon {
-    border-radius: 12px;
+    border-radius: $border-radius;
     width: 2.125rem;
     height: 2.125rem;
     background-color: rgba($c-titan-white, 0.05);
@@ -45,7 +45,7 @@
     .dappLogo {
       width: 2.125rem;
       height: 2.125rem;
-      border-radius: 12px;
+      border-radius: $border-radius;
       padding: .25rem;
     }
 

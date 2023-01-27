@@ -39,7 +39,7 @@ $extended-summary-height: 36px;
     height: 36px;
     width: 36px;
     padding: 8px;
-    border-radius: 12px;
+    border-radius: $border-radius;
     background-color: theme(background-icon);
   }
 }

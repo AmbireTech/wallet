@@ -115,7 +115,7 @@
             width: 100%;
 
             input {
-                border-radius: 12px 0 0 12px;
+                border-radius: $border-radius 0 0 $border-radius;
                 padding-right: 17.5rem;
             }
         }

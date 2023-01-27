@@ -3,7 +3,7 @@
 .wrapper {
   margin-top: .5rem;
   background: #292B43;
-  border-radius: 12px;
+  border-radius: $border-radius;
   padding: .25rem .5rem;
   font-size: .75rem;
   display: inline-flex;
@@ -48,7 +48,7 @@
     background: #292B43;
     padding: .5rem;
     font-size: .7188rem;
-    border-radius: 12px 0 0 12px;
+    border-radius: $border-radius 0 0 $border-radius;
     display: flex;
     flex-direction: column;
     gap: 0;

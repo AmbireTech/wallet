@@ -60,7 +60,7 @@
         padding: .625rem 1.25rem;
         background: $c-ebony-clay;
         border: 1px solid $c-fiord;
-        border-radius: 12px;
+        border-radius: $border-radius;
         .otherBalances {
             gap: .5625rem;
         }
