@@ -144,7 +144,6 @@ const uniV3Mapping = (humanizerInfo) => {
       const args = ifaceV3.parseTransaction(txn).args
       const calls = args[args.length - 1]
       const mappingResult = uniV32Mapping(humanizerInfo)
-      console.log("calls", calls)
       // @TODO: Multicall that outputs ETH should be detected as such and displayed as one action
       // the current verbosity of "Swap ..., unwrap WETH to ETH" will be a nice pedantic quirk
       let parsed
