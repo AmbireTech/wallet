@@ -190,3 +190,13 @@
     }
   }
 }
+
+@include sm-breakpoint {
+  .wrapper {
+    .donut {
+      .lastUpdate {
+        font-size: .875rem;
+      }
+    }
+  }
+}
