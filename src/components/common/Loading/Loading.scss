@@ -91,16 +91,16 @@
 }
 
 .ambire-loading-animation-128 {
-    width: 128px;
-    height: 128px;
+    width: 128px;// Leave these values as px, since the animation won't work in rems/ems
+    height: 128px;// Leave these values as px, since the animation won't work in rems/ems
     background: url('/resources/ambire-loader-animation-sprite-160.png') left center;
     animation: ambire-160 1s steps(29) infinite;
-    filter: drop-shadow(0 0 10px $ambire-dark-blue);
+    filter: drop-shadow(0 0 10px $ambire-dark-blue);// Leave these values as px, since the animation won't work in rems/ems
 }
 
 @keyframes ambire-160 {
     100% {
-        background-position: -4640px;
+        background-position: -4640px;// Leave these values as px, since the animation won't work in rems/ems
     }
 }
 
