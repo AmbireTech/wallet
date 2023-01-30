@@ -139,7 +139,7 @@
 
 // On this breakpoint, the TopBar items overflow and are wrapped on a second row.
 // In order to prevent it, we decrease the items gap.
-@media screen and (max-width: 1500px) {
+@include xl-breakpoint {
     .wrapper {
         .container {
             gap: 1.3125rem;
