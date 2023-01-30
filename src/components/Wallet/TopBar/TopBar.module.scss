@@ -131,9 +131,9 @@
     }
 }
 
-@media screen and (max-width: 1650px) {
+@include xxl-breakpoint {
     .wrapper {
-        padding: 2.8125rem $layout-spacing / 3 2.5rem 0;
+        padding: 2.8125rem $layout-spacing / 2.5 2.5rem 0;
     }
 }
 
