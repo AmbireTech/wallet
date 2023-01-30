@@ -11,7 +11,7 @@ $small-breakpoint-max-width: 1439px;
 $wide-breakpoint-min-width: 1920px;
 
 $basic-transition: all 0.1s ease-in-out;
-$border-radius: 12px;
+$border-radius: .75rem;
 $box-shadow: 0px 5px 10px #00000026;
 
 @mixin flex-center-center {
