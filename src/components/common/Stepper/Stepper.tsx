@@ -1,5 +1,6 @@
 import './Stepper.scss'
-import {FC} from "react";
+import {FC} from 'react'
+import cn from 'classnames'
 
 interface Step {
   name: string;
@@ -19,7 +20,11 @@ const Stepper: FC<props> = ({steps, currentStep, noLabels = false}) => {
       {
         steps.map((s, index) => {
           return (
-            <div className={`step step${currentStep > index ? 'Prev' : (currentStep === index ? 'Current' : 'Next')}`} key={index}>
+            <div className={cn('step', {
+              'stepCurrent': currentStep === index,
+              'stepPrev': currentStep > index,
+              'stepNext': currentStep < index,
+            })} key={index}>
               <span className='stepStatus'></span>
               {
                 !noLabels &&

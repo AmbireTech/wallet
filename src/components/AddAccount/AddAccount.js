@@ -18,6 +18,7 @@ import { useModals } from 'hooks'
 import { Loading, Button, ToolTip } from 'components/common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
 import { isFirefox } from 'lib/isFirefox'
+import humanizeError from 'lib/errors/metamask'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
@@ -78,6 +79,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     } catch (e) {
       console.error(e)
       setInProgress(false)
+
+      const humanizedError = humanizeError(e)
+      if (humanizedError) return setAddAccErr(humanizedError)
+
       setAddAccErr(`Unexpected error: ${e.message || e}`)
     }
   }
