@@ -58,9 +58,8 @@ contract Identity {
 			let result := delegatecall(gas(), fallbackHandler, ptr, calldatasize(), 0, 0)
 			let size := returndatasize()
 			returndatacopy(ptr, 0, size)
-			switch result
-			case 0 { revert(ptr, size) }
-			default { return(ptr, size) }
+			if eq(result, 0) { revert(ptr, size) }
+			return(ptr, size)
 		}
 	}
 
