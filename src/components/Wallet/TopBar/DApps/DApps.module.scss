@@ -9,7 +9,7 @@
         display: flex;
         align-items: center;
         gap: .625rem;
-        
+
         label {
             font-size: .875rem;
         }
@@ -141,13 +141,6 @@
 // Mobile
 @include lg-breakpoint {
     .wrapper {
-        .title {
-            svg {
-                width: 2rem;
-                height: 2rem;
-            }
-        }    
-      
         .menu {
             min-width: unset;
             width: 100%;
