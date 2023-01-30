@@ -4,7 +4,7 @@
     height: 3.75rem;
     border-radius: $border-radius;
     @include flex-center-center;
-    gap: .625em;
+    gap: .5em;
     padding: 0 1.25em;
     border: none;
     font-family: 'Poppins', sans-serif;
@@ -21,8 +21,8 @@
         color: $c-turquoise !important;
 
         svg {
-            max-width: 2em;
-            max-height: 2em;
+            max-width: 1.3em;
+            max-height: 1.3em;
         }
     }
 
