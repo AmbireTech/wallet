@@ -183,6 +183,16 @@
                 svg {
                     color: theme(text-secondary);
                     transition: .3s ease-out all;
+
+                    &.jsonIcon {
+                        width: 1.5rem;
+                        height: 1.5rem;
+                    }
+
+                    &.metamask {
+                        width: 1.5625rem;
+                        height: 1.5625rem;
+                    }
                 }
 
                 &:hover {
