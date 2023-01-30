@@ -139,7 +139,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
         <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
         <a className={styles.backButton} href="#/add-account">
-          <ChevronLeftIcon />
+          <ChevronLeftIcon className={styles.backIcon} />
           {' '}
           Back to Register
         </a>

@@ -152,6 +152,11 @@
         opacity: .8;
         transition: .3s ease-in-out;
 
+        .backIcon {
+            width: 1.25rem;
+            height: .5rem;
+        }
+
         img {
             margin-right: .625rem;
         }
