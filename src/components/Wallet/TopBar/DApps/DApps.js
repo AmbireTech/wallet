@@ -69,7 +69,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
-                        <FiHelpCircle size={21} />
+                        <FiHelpCircle className={styles.helpIcon} />
                     </a>
                 </div>
                 {isClipboardGranted ? (
