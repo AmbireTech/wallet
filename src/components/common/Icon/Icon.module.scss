@@ -3,8 +3,8 @@
 // Keep this component with px values.
 .wrapper {
   @include flex-center-center;
-  height: 40px;
-  width: 40px;
+  max-height: 40px;
+  max-width: 40px;
   padding: 8px;
   background-color: rgba($c-titan-white, 0.05);
   border-radius: $border-radius;
@@ -14,8 +14,8 @@
   }
 
   &.sm {
-    height: 32px;
-    width: 32px;
+    max-height: 32px;
+    max-width: 32px;
     padding: 4px;
   }
 
@@ -27,13 +27,13 @@
 
 @include md-breakpoint {
   .wrapper {
-    width: 35px;
-    height: 35px;
+    max-width: 35px;
+    max-height: 35px;
     padding: 5px;
 
     &.sm {
-      height: 30px;
-      width: 30px;
+      max-height: 30px;
+      max-width: 30px;
       padding: 2px;
     }
   }
@@ -41,13 +41,13 @@
 
 @include sm-breakpoint {
   .wrapper {
-    width: 30px;
-    height: 30px;
+    max-width: 30px;
+    max-height: 30px;
     padding: 3px;
 
     &.sm {
-      height: 26px;
-      width: 26px;
+      max-height: 26px;
+      max-width: 26px;
       border-radius: 10px;
     }
   }
