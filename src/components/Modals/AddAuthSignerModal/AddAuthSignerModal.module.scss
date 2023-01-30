@@ -2,7 +2,6 @@
 
 .wrapper {
   width: 100%;
-  height: 100%;
   max-width: 36.25rem;
 
   :global(.buttons) {
@@ -13,15 +12,17 @@
 }
 
 .subtitle {
+  margin: 0;
   color: $c-scampi;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 500;
   text-align: center;
-  padding: 25px 0;
+  padding: 1.5625rem 0;
 }
 
 .chooseSignerSubtitle {
   padding-top: 0;
+  margin: 0;
 }
 
 .signers {
@@ -35,8 +36,9 @@
   .signer {
     position: relative;
     top: 0;
-    flex: calc(50% - 20px);
+    flex: calc(50% - 1.25rem);
     height: 10rem;
+    padding: 1.25rem;
     background: $c-mirage;
     border: 1px solid $c-scampi;
     border-radius: $border-radius;
@@ -49,34 +51,50 @@
     svg {
       color: $c-scampi;
       transition: .3s ease-out all;
+      width: 100%;
+
+      &.trezor, &.ledger {
+        max-width: 10.75rem;
+      }
+      
+      &.metamask {
+        max-width: 4.375rem;
+      }
+
+      &.gridplus {
+        max-width: 7.9375rem;
+      }
     }
 
     &:hover {
       border-color: $c-turquoise;
       top: -0.25rem;
       color: $c-white;
+
       svg {
         color: $c-white;
-      }
 
-      svg.email {
-        color: $c-turquoise;
-      }
-      svg.metamask {
-        color: #EF801B;
-
-        :global(#decoration) {
-            color: $c-white;
+        &.email {
+          color: $c-turquoise;
         }
-      }
 
-      svg.gridplus {
-        color: $c-white;
-        :global(#logo) {
+        &.metamask {
+          color: #EF801B;
+  
+          :global(#decoration) {
             color: $c-white;
+          }
         }
-        :global(#decoration) {
+  
+        &.gridplus {
+          color: $c-white;
+
+          :global(#logo) {
+            color: $c-white;
+          }
+          :global(#decoration) {
             color: $c-picton-blue;
+          }
         }
       }
     }
