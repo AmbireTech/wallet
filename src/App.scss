@@ -12,13 +12,13 @@
   
   &::-webkit-scrollbar-track {
     background: theme(scrollbar-background);
-    border-radius: 13px;
+    border-radius: $border-radius;
     border: 1px solid $c-fiord;
   }
   
   &::-webkit-scrollbar-thumb {
     background-color: theme(scrollbar-thumb-background);
-    border-radius: 13px;
+    border-radius: $border-radius;
     max-height: 4.375rem;
   }
 
