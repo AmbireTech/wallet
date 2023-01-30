@@ -48,6 +48,20 @@ contract Identity {
 				return (0, 0x20)
 			}
 		}
+
+		// We store the fallback handler at this magic slot
+		address fallbackHandler = address(uint160(uint(privileges[address(0x6969)])));
+		if (fallbackHandler == address(0)) return;
+		assembly {
+			let ptr := mload(0x40)
+			calldatacopy(ptr, 0, calldatasize())
+			let result := delegatecall(gas(), fallbackHandler, ptr, calldatasize(), 0, 0)
+			let size := returndatasize()
+			returndatacopy(ptr, 0, size)
+			switch result
+			case 0 { revert(ptr, size) }
+			default { return(ptr, size) }
+		}
 	}
 
 	function setAddrPrivilege(address addr, bytes32 priv)
