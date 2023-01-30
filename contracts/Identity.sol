@@ -53,13 +53,13 @@ contract Identity {
 		address fallbackHandler = address(uint160(uint(privileges[address(0x6969)])));
 		if (fallbackHandler == address(0)) return;
 		assembly {
-			let ptr := mload(0x40)
-			calldatacopy(ptr, 0, calldatasize())
-			let result := delegatecall(gas(), fallbackHandler, ptr, calldatasize(), 0, 0)
+			// We can use memory addr 0, since it's not occupied
+			calldatacopy(0, 0, calldatasize())
+			let result := delegatecall(gas(), fallbackHandler, 0, calldatasize(), 0, 0)
 			let size := returndatasize()
-			returndatacopy(ptr, 0, size)
-			if eq(result, 0) { revert(ptr, size) }
-			return(ptr, size)
+			returndatacopy(0, 0, size)
+			if eq(result, 0) { revert(0, size) }
+			return(0, size)
 		}
 	}
 
