@@ -76,7 +76,7 @@
             color: $warning-color;
             padding: .5rem;
             font-size: .875rem;
-            border-radius: .75rem;
+            border-radius: $border-radius;
         }
 
         .details-placeholder {

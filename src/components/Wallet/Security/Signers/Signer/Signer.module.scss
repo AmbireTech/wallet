@@ -8,7 +8,7 @@
   max-width: 15rem;
   background: $c-mirage;
   border: 1px solid $c-scampi;
-  border-radius: .75rem;
+  border-radius: $border-radius;
   padding: 1.25rem;
   padding-top: .9375rem;
 
@@ -47,7 +47,7 @@
       padding: 0;
       background-color: transparent;
       border: 1px rgba($danger-color, 0.8) solid;
-      border-radius: .75rem;
+      border-radius: $border-radius;
       cursor: pointer;
 
       &.disabled {

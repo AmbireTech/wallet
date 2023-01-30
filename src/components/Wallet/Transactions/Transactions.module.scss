@@ -92,14 +92,14 @@
                   .inactive {
                     color: $c-scampi;
                     border-bottom: 3px solid $c-scampi;
-                    border-radius: 3px;
+                    border-radius: .1875rem;
 
                   }
 
                   .active {
                     color: $c-titan-white;
                     border-bottom: 3px solid $c-turquoise;
-                    border-radius: 3px;
+                    border-radius: .1875rem;
                   }
 
                   .activeIcon {
@@ -244,13 +244,13 @@
               text-overflow: ellipsis;
               overflow: hidden;
               border-bottom: 2px solid $c-scampi;
-              border-radius: 2px;
+              border-radius: .125rem;
 
             }
 
             .active {
               border-bottom: 2px solid $c-turquoise;
-              border-radius: 2px;
+              border-radius: .125rem;
             }
           }
         }

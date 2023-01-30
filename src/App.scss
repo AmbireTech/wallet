@@ -179,7 +179,7 @@ select {
 }
 
 .notification-hollow {
-  border-radius: .75rem;
+  border-radius: $border-radius;
   padding: .8125rem .625rem;
   background: mix($c-turquoise, $c-ebony-clay, 5%);
   border: 1px solid $c-turquoise;

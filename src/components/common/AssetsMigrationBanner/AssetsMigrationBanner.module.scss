@@ -7,7 +7,7 @@
   padding: 1.25rem;
   background: $c-ebony-clay;
   border: .0625rem solid $c-fiord;
-  border-radius: .75rem;
+  border-radius: $border-radius;
 
   .message {
     margin: 0;
