@@ -6,12 +6,9 @@ import { ReactComponent as FallbackIcon } from 'resources/icons/fallback.svg'
 import styles from  './Image.module.scss'
 
 export default function Image({ src, fallback, size = 64, alt = 'image', className, imageClassName, failedClassName }) {
-
-  const [failed, setFailed] = useState(false)
-
-  useEffect(() => {
-    setFailed(false)
-  }, [src])
+  // In case we have a falsy `src` value (undefined, empty string, etc.) <img> `onError` callback is not being triggered,
+  // because the `src` prop is not being attached at all to the <img> tag (I guess JSX omits falsy props for the `src` prop).
+  const [failed, setFailed] = useState(!src)
 
   return (
     <div className={cn(styles.image, className)} >
@@ -23,6 +20,7 @@ export default function Image({ src, fallback, size = 64, alt = 'image', classNa
                  alt={alt}
                  style={{ maxWidth: size, maxHeight: size }}
                  onError={() => setFailed(true)}
+                 onLoad={() => setFailed(false)}
                  className={cn(imageClassName, {[failedClassName]: failed && failedClassName})}
           />
       }
