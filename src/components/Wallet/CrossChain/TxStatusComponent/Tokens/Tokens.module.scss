@@ -6,7 +6,7 @@
   align-items: center;
   width: $width;
   height: $height;
-  border-radius: 1px;
+  border-radius: $border-radius;
   background-color: rgba($c-titan-white, 0.05);
 }
 
