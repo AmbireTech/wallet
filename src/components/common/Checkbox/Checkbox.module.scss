@@ -52,7 +52,7 @@
     height: 1.5rem;
     width: 1.5rem;
     border: 3px solid #51588C;
-    border-radius: 3px;
+    border-radius: .1875rem;
     background-color: transparent;
     box-sizing: border-box;
 
@@ -65,7 +65,7 @@
       width: .3125rem;
       height: .875rem;
       border: solid #000;
-      border-width: 0 3px 3px 0;
+      border-width: 0 .1875rem .1875rem 0;
       transform: rotate(45deg);
     }
   }
