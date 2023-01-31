@@ -184,6 +184,11 @@
                     color: theme(text-secondary);
                     transition: .3s ease-out all;
 
+                    &.email {
+                        width: 2.3125rem;
+                        height: 1.5625rem;
+                    }
+
                     &.jsonIcon {
                         width: 1.5rem;
                         height: 1.5rem;
