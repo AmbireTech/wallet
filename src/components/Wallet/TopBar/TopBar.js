@@ -59,7 +59,7 @@ const TopBar = ({
       ) ? 'staging' : null
 
     return (<>
-    <div className={cn(styles.mobileBackground, {[styles.visible]: isMenuOpen})}></div>
+    <div className={cn(styles.mobileBackground, {[styles.visible]: isMenuOpen})} onClick={() => setMenuOpen(false)}></div>
     <div className={`${styles.wrapper} ${( visualEnv ? (`${styles.visualEnv} ${styles['visualEnv' + visualEnv]}`) : styles.wrapper) + (dappModeTopBar ? ` ${styles.dappMode}` : '')}`}>
       {
         visualEnv &&
