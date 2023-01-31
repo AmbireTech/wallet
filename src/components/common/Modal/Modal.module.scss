@@ -1,0 +1,68 @@
+@import 'variables.scss';
+
+$modal-width: 580px;
+
+.wrapper {
+    z-index: 52;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 30px;
+    max-height: 100%;
+    max-width: $modal-width;
+    width: 100%;
+    padding: 30px 40px;
+    border: 1px solid $c-fiord;
+    background: $c-ebony-clay;
+    border-radius: 12px;
+
+    .heading {
+        display: flex;
+        justify-content: space-between;
+
+        .title {
+            margin: 0;
+            font-size: 25px;
+            font-weight: 400;
+
+            &.centered {
+                text-align: center;
+                margin: 0 auto;
+            }
+        }
+
+        .headingIcon {
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.2;
+            }
+        }
+    }
+    
+    .content {
+        position: relative;
+        overflow: hidden;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        height: 100%;
+        flex: 1;
+    }
+
+    .buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        button {
+            flex: 1;
+        }
+    }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        padding: 30px;
+    }
+}
