@@ -88,7 +88,7 @@
 }
 
 // Wide screen
-@media screen and (min-width: $wide-breakpoint-min-width) {
+@media screen and (min-width: 1920px) {
     #wallet-container & :not(.dapp-mode) {
         #wallet-container-inner {
             max-width: 93.75rem;

@@ -8,7 +8,6 @@ $sidebar-mobile-height: 5rem;
 // That's the reason we set a higher breakpoint value (1279px) to target both tablets and mobile.
 // Keep in mind that with this setup, the desktop design will be triggered for 1280x720, which is also our goal.
 $small-breakpoint-max-width: 1439px;
-$wide-breakpoint-min-width: 1920px;
 
 $basic-transition: all 0.1s ease-in-out;
 $border-radius: .75rem;
