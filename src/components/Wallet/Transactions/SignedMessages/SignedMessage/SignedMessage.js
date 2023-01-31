@@ -31,7 +31,7 @@ export default function SignedMessage({ data, expansions, setExpansions, hash })
 					}))
 				}}>
 				<div className={styles.dappInfo}>
-          <Image src={dApp.icons[0]} className={styles.dappIconWrapper} imageClassName={styles.dappIcon} />
+          <Image src={dApp?.icons[0]} className={styles.dappIconWrapper} imageClassName={styles.dappIcon} />
 					<p>{dApp?.name || 'Unknown dapp'}</p>
 				</div>
         <div className={styles.typeAndTimestamp}>
