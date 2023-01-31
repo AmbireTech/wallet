@@ -90,7 +90,7 @@ $buttons-height: 10rem;
 @media screen and (max-height: calc(#{$modal-height} + 100px)) {
     .modal {
         min-height: unset;
-        max-height: unset;
+        max-height: 100%;
     }
 }
 
@@ -98,7 +98,6 @@ $buttons-height: 10rem;
     .modal {
         width: 100%;
         min-height: unset;
-        max-height: unset;
     }
 }
 
@@ -106,8 +105,7 @@ $buttons-height: 10rem;
 @include lg-breakpoint {
     .modal {
         max-width: 37.5rem;
-        max-height: 100% !important;
-        width: 100% !important;
+        width: 100%;
 
         .heading {
             padding: 0 1.875rem;
