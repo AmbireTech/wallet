@@ -24,6 +24,7 @@
     "@web3-react/abstract-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
+    "accountabstraction": "github:eth-infinitism/account-abstraction",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#ef2f88f26824c64c1eb12c02a389baec2b2c3889",
     "ambire-common": "github:AmbireTech/ambire-common#v0.21.2",
     "bip44-constants": "^128.0.0",
