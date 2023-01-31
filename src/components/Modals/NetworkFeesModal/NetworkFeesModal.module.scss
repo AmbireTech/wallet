@@ -4,11 +4,7 @@
   max-width: 680px;
   width: 100%;
 
-  :global(.content) {
-    overflow-x: auto;
-  }
-
-  .description {
+  .content {
     display: flex;
     flex-direction: column;
     gap: 5px;
@@ -16,21 +12,22 @@
     font-size: 16px;
     color: $c-titan-white;
     user-select: none;
+    overflow-x: auto;
 
     .feesInfo {
       margin: 0;
       margin-bottom: 12px;
     }
-  }
-  
-  .error {
-    color: $danger-color;
+ 
+    .error {
+      color: $danger-color;
+    }
   }
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
   .wrapper {
-    .description {
+    .content {
       .feesInfo {
         font-size: 14px;
         text-align: center;

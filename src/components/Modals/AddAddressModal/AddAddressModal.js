@@ -1,11 +1,13 @@
-import './AddAddressModal.scss'
-
 import { createRef, useRef, useState, useMemo } from 'react'
-import { MdCheck, MdClose } from 'react-icons/md'
-import { useModals } from 'hooks'
-import { Modal, TextInput, Button, ToolTip } from "components/common"
+import cn from 'classnames'
+
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain } from 'lib/ensDomains'
+
+import { useModals } from 'hooks'
+import { Modal, TextInput, Button, ToolTip } from "components/common"
+
+import styles from './AddAddressModal.module.scss'
 
 const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     const { hideModal } = useModals()
@@ -67,24 +69,27 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
         hideModal()
     }
 
-    const buttons = <>
-        <Button clear small icon={<MdClose />} onClick={hideModal}>Cancel</Button>
-        <Button small icon={<MdCheck />} disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
-    </>
-
     return (
-        <Modal id="input-modal" title={title} buttons={buttons}>
+        <Modal 
+            className={styles.wrapper}
+            contentClassName={styles.content}
+            title={title} 
+            buttons={<>
+                <Button clear small onClick={hideModal}>Cancel</Button>
+                <Button primaryGradient small disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+            </>}
+        >
             {
                 inputsFields.map(({ id, label, placeholder, ref, type }) => (
-                    <div key={id + label}>
-                        <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref} className='address-input' />
+                    <div className={styles.inputWrapper} key={id + label}>
+                        <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref} className={styles.input} />
                         {(type === 'address') &&
                             <>
                                 <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-                                    <span id="udomains-logo" className={ uDAddress ? 'ud-logo-active ' : '' } />
+                                    <span className={cn(styles.udomainsLogo, {[styles.active]: uDAddress})} />
                                 </ToolTip>
                                 <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
-                                    <div id="ens-logo" className={ensAddress ? 'ens-logo-active ' : ''} />
+                                    <div className={cn(styles.ensLogo, {[styles.active]: ensAddress})} />
                                 </ToolTip>
                             </>
                         }

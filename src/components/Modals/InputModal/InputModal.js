@@ -1,9 +1,9 @@
-import './InputModal.scss'
-
 import { createRef, useState } from 'react'
-import { MdCheck, MdClose } from 'react-icons/md'
+
 import { useModals } from 'hooks'
 import { Modal, TextInput, Button } from "components/common"
+
+import styles from './InputModal.module.scss'
 
 const InputModal = ({ title, inputs, onClose }) => {
     const { hideModal } = useModals()
@@ -24,13 +24,16 @@ const InputModal = ({ title, inputs, onClose }) => {
         hideModal()
     }
 
-    const buttons = <>
-        <Button clear small icon={<MdClose/>} onClick={hideModal}>Cancel</Button>
-        <Button small icon={<MdCheck/>} disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
-    </>
-
     return (
-        <Modal id="input-modal" title={title} buttons={buttons}>
+        <Modal 
+            className={styles.wrapper}
+            contentClassName={styles.content}
+            title={title} 
+            buttons={<>
+                <Button clear small onClick={hideModal}>Cancel</Button>
+                <Button small primaryGradient disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+            </>}
+        >
             {
                 inputsFields.map(({ id, label, placeholder, ref }) => (
                     <TextInput key={id || label} label={label} placeholder={placeholder} onInput={onInput} ref={ref}/>

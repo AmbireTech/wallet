@@ -23,17 +23,15 @@ const NetworkFeesModal = ({ relayerURL, selectedNetwork }) => {
   const gasData = data ? data.data : null
 
   return (
-    <Modal className={styles.wrapper} title="Current network fees">
-      <div className={styles.description}>
-        <p className={styles.feesInfo}>
-          Network fees are determined on a market principle - if more users are trying to use the network, fees are
-          higher. Each network has different fees.
-        </p>
-        {gasData && !isLoading && <GasDetails gasData={gasData} />}
-        {isLoading && <Loading />}
-        {!gasData && errMsg && <h3 className={styles.error}>Gas Information: {errMsg}</h3>}
-      </div>
-    </Modal>
+    <Modal className={styles.wrapper} contentClassName={styles.content} title="Current network fees">
+      <p className={styles.feesInfo}>
+        Network fees are determined on a market principle - if more users are trying to use the network, fees are
+        higher. Each network has different fees.
+      </p>
+      {gasData && !isLoading && <GasDetails gasData={gasData} />}
+      {isLoading && <Loading />}
+      {!gasData && errMsg && <h3 className={styles.error}>Gas Information: {errMsg}</h3>}
+  </Modal>
   )
 }
 
