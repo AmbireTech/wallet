@@ -85,7 +85,11 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                 shouldShowPlaceholder ? <TokensPlaceholder
                     onClickAddToken={() => setAddOrHideTokenModal({isOpen: true, defaultSection: 'Add Token'})} 
                     onClickShowToken={() => setAddOrHideTokenModal({isOpen: true, defaultSection: 'Hide Token'})}
-                    footer={footer}
+                    footer={
+                        <AddOrHideButton className={styles.tokensPlaceholderAddOrHide} onClick={openAddOrHideTokenModal}>
+                            Add or Hide Token
+                        </AddOrHideButton>
+                    }
                 /> : null
             }
             <>

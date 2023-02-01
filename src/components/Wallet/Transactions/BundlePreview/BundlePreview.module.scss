@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-.bundle {
+.wrapper {
     display: flex;
     flex-direction: column;
     gap: .625rem;
@@ -8,69 +8,5 @@
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
     border-radius: $border-radius;
-    margin-bottom: 1.5625rem;
-
-    .actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: .9375rem;
-
-        button {
-            color: $c-titan-white;
-            border: 0;
-            padding: .9375rem 1.875rem;
-
-            &.cancel {
-                color: $danger-color;
-                border: 2px solid $danger-color;
-            }
-
-            &.speedUp {
-                color: $c-turquoise;
-                border: 2px solid $c-turquoise;
-            }
-        }
-    }
-}
-
-.bundlePreview {
-    .details {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 3.125rem;
-        padding: 0 .625rem;
-        margin: 0;
-        margin-top: 1.25rem;
-        list-style-type: none;
-
-        li {
-            display: flex;
-            flex-direction: column;
-            gap: .5rem;
-            overflow: hidden;
-
-            label {
-                display: flex;
-                align-items: center;
-                gap: .625rem;
-                font-size: 1.0625rem;
-                font-weight: bold;
-            }
-
-            p {
-                margin: 0;
-                font-size: 1rem;
-                font-weight: 500;
-                opacity: 0.7;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-
-                a.explorerUrl {
-                    color: $c-heliotrope;
-                    text-decoration: underline;
-                }
-            }
-        }
-    }
+    margin-bottom: 1.25rem;
 }
