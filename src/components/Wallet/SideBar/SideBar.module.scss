@@ -190,59 +190,6 @@ $sidebar-desktop-width: 16.25rem;
   }
 }
 
-@media screen and (min-width: $sidebar-small-breakpoint) {
-  .wrapper {
-    .balance {
-      .balanceDollarAmount {
-        font-size: 2rem !important;
-      }
-    }
-  }
-}
-
-@media screen and (max-width: $sidebar-small-breakpoint) {
-  .wrapper {
-    width: $sidebar-desktop-small-width;
-
-    .sidebarLogo {
-      margin: 0 .5rem;
-      margin-bottom: 1.5625rem;
-    }
-
-    &.dappMode {
-      .outside-handler {
-        left: $sidebar-desktop-small-width;
-      }
-    }
-
-    .balance {
-      font-size: 0.8rem !important;
-
-      label {
-        font-size: 1.1rem !important;
-      }
-    }
-
-    .ambire-logo {
-      .logo {
-        display: none;
-      }
-  
-      .icon {
-        display: block;
-      }
-    }
-
-    nav {
-      .item {
-        gap: .3125rem;
-        flex-direction: column;
-        justify-content: center;
-      }
-    }
-  }
-}
-
 // Mobile
 @include lg-breakpoint {
   .wrapper {
@@ -273,6 +220,8 @@ $sidebar-desktop-width: 16.25rem;
       width: 100%;
 
        .item {
+        flex-direction: column;
+        justify-content: center;
         gap: 0;
         height: 100%;
         width: 9.3125rem;

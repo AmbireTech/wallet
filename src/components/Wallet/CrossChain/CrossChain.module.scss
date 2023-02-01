@@ -18,7 +18,7 @@
 }
 
 // Small screen
-@media screen and (max-width: $small-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         min-height: auto;
         flex-direction: column;

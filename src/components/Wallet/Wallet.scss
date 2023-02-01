@@ -61,16 +61,6 @@
     }
 }
 
-@media screen and (max-width: $small-breakpoint-max-width) {
-    #wallet-container {
-
-        #wallet-container-inner {
-            padding: 0 $layout-spacing / 4;
-            padding-bottom: 1.875rem;
-        }
-    }
-}
-
 // Mobile
 @include lg-breakpoint {
     #wallet-container {

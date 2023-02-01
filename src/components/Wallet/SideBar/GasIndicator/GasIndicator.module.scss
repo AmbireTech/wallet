@@ -41,42 +41,6 @@
   }
 }
 
-
-@media screen and (max-width: $sidebar-small-breakpoint) {
-  .wrapper {
-    margin-top: .5rem;
-    background: #292B43;
-    padding: .5rem;
-    font-size: .7188rem;
-    border-radius: $border-radius 0 0 $border-radius;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
-
-    .nativePrice {
-      padding-right: .75rem;
-      border-right: 0;
-      padding-bottom: .25rem;
-      border-bottom: 1px solid $c-turquoise;
-    }
-
-    .gasPrice {
-      text-align: left;
-      padding-top: .25rem;
-
-      span {
-        margin-left: .25rem;
-      }
-
-      svg {
-        padding-top: .0625rem;
-        width: .9375rem;
-        height: .9375rem;
-      }
-    }
-  }
-}
-
 @include lg-breakpoint {
   .gasInfo {
     display: flex;

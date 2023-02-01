@@ -58,23 +58,17 @@
         }
     }
 }
-@media screen and (max-width: $small-breakpoint-max-width) {
-    .wrapper {
-        padding-top: 1.875rem;
-        .title {
-            text-align: center;
-            width: auto;
-            margin: 0 auto;
-        }
-    }
-}
 
 // Mobile
 @include lg-breakpoint {
     .wrapper {
         padding: 1.25rem;
+        padding-top: 1.5rem;
+
         .title {
-            font-size: 1.25rem;
+            text-align: center;
+            width: auto;
+            margin: 0 auto;
         }
         .item {
             padding-left: .9375rem !important;

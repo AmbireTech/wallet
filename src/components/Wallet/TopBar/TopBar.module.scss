@@ -147,12 +147,6 @@
     }
 }
 
-@media screen and (max-width: $sidebar-small-breakpoint) {
-    .wrapper {
-        padding: $layout-spacing / 4;
-    }
-}
-
 // Mobile
 @include lg-breakpoint {
     .mobileBackground {
