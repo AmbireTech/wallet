@@ -373,30 +373,9 @@ $gap: .75rem;
   }
 }
 
-@media screen and (max-width: $small-breakpoint-max-width) {
-  .wrapper {
-    .catalogItems {
-      grid-template-columns: repeat(3, 1fr [col-start]);
-    }
-    .infoWc {
-      border-radius: $border-radius $border-radius 0 0;
-    }
-  }
-}
-
-@media screen and (max-width: 1000px) {
-  .wrapper {
-    .catalogItems {
-      grid-template-columns: repeat(2, 1fr [col-start]);
-    }
-  }
-}
-
 @include lg-breakpoint {
   .wrapper {
     .filterSection { 
-      flex-direction: column;
-      max-width: 28.125rem;
       margin: 0 auto;
       margin-bottom: 1.875rem;
       width: 100%;
@@ -407,15 +386,40 @@ $gap: .75rem;
     }
 
     .catalogItems {
-      grid-template-columns: repeat(1, 1fr [col-start]);
+      grid-template-columns: repeat(3, 1fr [col-start]);
+      justify-items: space-between;
 
       .catalogItem {
-        max-width: 28.125rem;
         width: 100%;
         margin: 0 auto;
       }
     }
+
+    .infoWc {
+      border-radius: $border-radius $border-radius 0 0;
+    }
   }
 }
 
+@include md-breakpoint {
+  .wrapper {
+    .catalogItems {
+      grid-template-columns: repeat(2, 1fr [col-start]);
+    }
+  }
+}
 
+@include sm-breakpoint {
+  .wrapper {
+    .filterSection {
+      flex-direction: column;
+    }
+    .catalogItems {
+      grid-template-columns: repeat(1, 1fr [col-start]);
+      
+      .catalogItem {
+        max-width: 31.25rem;
+      }
+    }
+  }
+}
