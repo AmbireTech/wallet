@@ -141,6 +141,8 @@
 // In order to prevent it, we decrease the items gap.
 @include xl-breakpoint {
     .wrapper {
+        padding: 2rem 2rem 2rem 0;
+        
         .container {
             gap: 1.3125rem;
         }
