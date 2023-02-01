@@ -10,3 +10,9 @@
     border-radius: $border-radius;
     margin-bottom: 1.25rem;
 }
+
+@include sm-breakpoint {
+    .wrapper {
+        padding: 1rem;
+    }
+}
