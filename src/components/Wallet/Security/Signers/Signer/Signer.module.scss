@@ -98,3 +98,9 @@
     }
   }
 }
+
+@include sm-breakpoint {
+  .wrapper {
+    max-width: 17.5rem;
+  }
+}

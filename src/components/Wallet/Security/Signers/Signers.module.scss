@@ -56,3 +56,11 @@
     justify-content: center;
   }
 }
+
+@include sm-breakpoint {
+  .wrapper {
+    .addSigner {
+      max-width: 17.5rem;
+    }
+  }
+}
