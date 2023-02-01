@@ -152,7 +152,7 @@ const Send = ({
           }
 
           addRequest(req)
-
+          setAddress('')
           setAmount(0)
       } catch (e) {
           console.error(e)
