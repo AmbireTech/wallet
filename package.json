@@ -25,7 +25,7 @@
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#ef2f88f26824c64c1eb12c02a389baec2b2c3889",
-    "ambire-common": "github:AmbireTech/ambire-common#d6b1d0dc963584ed7bc85682887522b21a9e30e4",
+    "ambire-common": "github:AmbireTech/ambire-common#6b32128428d3abc0e55afa33bc01473489598b53",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "chart.js": "^3.9.1",
