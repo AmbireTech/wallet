@@ -362,7 +362,13 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
               chainId,
               topic,
               account: requestAccount,
-              notification: true
+              notification: true,
+              dapp: connection.session?.peerMeta ? {
+                name: connection.session.peerMeta.name,
+                description: connection.session.peerMeta.description,
+                description: connection.session.peerMeta.icons,
+                url: connection.session.peerMeta.url,
+              } : null
             }
             setRequests(prev => [...prev, request])
             if (WC2_VERBOSE) console.log('WC2 request added :', request)

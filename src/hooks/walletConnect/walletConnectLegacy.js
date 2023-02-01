@@ -353,7 +353,13 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
           txn,
           chainId: connector.session.chainId,
           account: connector.session.accounts[0],
-          notification: true
+          notification: true,
+          dapp: connector.session?.peerMeta ? {
+            name: connector.session.peerMeta.name,
+            description: connector.session.peerMeta.description,
+            description: connector.session.peerMeta.icons,
+            url: connector.session.peerMeta.url,
+          } : null
         }
       })
     })
