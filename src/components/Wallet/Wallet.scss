@@ -61,6 +61,15 @@
     }
 }
 
+@include xl-breakpoint {
+    #wallet-container {
+        #wallet-container-inner {
+            padding: 0 2rem;
+            padding-bottom: 1.875rem;
+        }
+    }
+}
+
 // Mobile
 @include lg-breakpoint {
     #wallet-container {
