@@ -190,6 +190,16 @@ $sidebar-desktop-width: 16.25rem;
   }
 }
 
+@include xl-breakpoint {
+  .wrapper {
+    padding-top: 2rem;
+    
+    .balance {
+      margin-bottom: 3rem;
+    }
+  }
+}
+
 // Mobile
 @include lg-breakpoint {
   .wrapper {
