@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.7;
+pragma solidity ^0.8.7;
 
 import "./AmbireAccount.sol";
 import "./IERC20.sol";
@@ -110,7 +110,7 @@ contract QuickAccManager {
 	// see https://eips.ethereum.org/EIPS/eip-1271
 	// NOTE: this method is not intended to be called from off-chain eth_calls; technically it's not a clean EIP 1271
 	// ...implementation, because EIP1271 assumes every smart wallet implements that method, while this contract is not a smart wallet
-	function isValidSignature(bytes32 hash, bytes calldata signature) external view returns (bytes4) {
+	function isValidSignature(bytes32 hash, bytes calldata signature) external returns (bytes4) {
 		(uint timelock, bytes memory sig1, bytes memory sig2) = abi.decode(signature, (uint, bytes, bytes));
 		bytes32 accHash = keccak256(abi.encode(QuickAccount({
 			timelock: timelock,

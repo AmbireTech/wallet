@@ -162,7 +162,7 @@ contract AmbireAccount {
 
 	// EIP 1271 implementation
 	// see https://eips.ethereum.org/EIPS/eip-1271
-	function isValidSignature(bytes32 hash, bytes calldata signature) external view returns (bytes4) {
+	function isValidSignature(bytes32 hash, bytes calldata signature) external returns (bytes4) {
 		if (privileges[SignatureValidator.recoverAddr(hash, signature)] != bytes32(0)) {
 			// bytes4(keccak256("isValidSignature(bytes32,bytes)")
 			return 0x1626ba7e;

@@ -22,11 +22,13 @@ library SignatureValidator {
 	// bytes4(keccak256("isValidSignature(bytes32,bytes)"))
 	bytes4 constant internal ERC1271_MAGICVALUE_BYTES32 = 0x1626ba7e;
 
-	function recoverAddr(bytes32 hash, bytes memory sig) internal view returns (address) {
+	function recoverAddr(bytes32 hash, bytes memory sig) internal returns (address) {
 		return recoverAddrImpl(hash, sig, false);
 	}
 
-	function recoverAddrImpl(bytes32 hash, bytes memory sig, bool allowSpoofing) internal view returns (address) {
+	// In order to support different signature modes including EIP1271, we wrap all the signatures in a format that ends in the sig mode
+	// If the sig mode is EIP1271, the wrapping format also includes the account address
+	function recoverAddrImpl(bytes32 hash, bytes memory sig, bool allowSpoofing) internal returns (address) {
 		require(sig.length >= 1, "SV_SIGLEN");
 		uint8 modeRaw;
 		unchecked { modeRaw = uint8(sig[sig.length - 1]); }
@@ -46,16 +48,35 @@ library SignatureValidator {
 			address signer = ecrecover(hash, v, r, s);
 			require(signer != address(0), "SV_ZERO_SIG");
 			return signer;
-		// {sig}{verifier}{mode}
+		// {sig}{account}{mode}
 		} else if (mode == SignatureMode.SmartWallet) {
 			// 32 bytes for the addr, 1 byte for the type = 33
 			require(sig.length > 33, "SV_LEN_WALLET");
 			uint newLen;
 			unchecked {
 				newLen = sig.length - 33;
-			}
-			IERC1271Wallet wallet = IERC1271Wallet(address(uint160(uint256(sig.readBytes32(newLen)))));
+			}			
+			address walletAddr = address(uint160(uint256(sig.readBytes32(newLen))));
 			sig.trimToSize(newLen);
+
+			// counterfactual deployment
+			uint size;
+			assembly { size := extcodesize(walletAddr) }
+			if (size == 0) {
+				unchecked { newLen  = sig.length - 32; }
+				// signature ends in magic bytes (0x6969...6969)
+				if (sig.readBytes32(newLen) != bytes32(0x6969696969696969696969696969696969696969696969696969696969696969)) return address(0);
+				sig.trimToSize(newLen);
+				address create2Factory;
+				bytes memory factoryCalldata;
+				(create2Factory, factoryCalldata, sig) = abi.decode(sig, (address, bytes, bytes));
+				(bool success, ) = create2Factory.call(factoryCalldata);
+				if (!success) return address(0);
+				// continue as usual
+			}
+			// end of counterfactual deployment
+
+			IERC1271Wallet wallet = IERC1271Wallet(walletAddr);
 			require(ERC1271_MAGICVALUE_BYTES32 == wallet.isValidSignature(hash, sig), "SV_WALLET_INVALID");
 			return address(wallet);
 		// {address}{mode}; the spoof mode is used when simulating calls
