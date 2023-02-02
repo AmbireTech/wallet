@@ -9,7 +9,7 @@
 
 @mixin FilledButton($primary-color) {
     background: $primary-color;
-    color: $c-titan-white;
+    color: theme(text-primary);
 }
 
 .wrapper {
@@ -35,11 +35,11 @@
     
     // Colors
     &.primary { // DEFAULT
-        @include BorderButton($c-turquoise);
+        @include BorderButton(theme(highlight-secondary));
     }
     
     &.secondary {
-        @include FilledButton(rgba($c-mirage, .4));
+        @include FilledButton(rgba(theme(background-primary), .4));
     }
 
     &.danger {
@@ -48,15 +48,15 @@
     
     // Gradients
     &.primaryGradient {
-        @include FilledButton(transparent linear-gradient(90deg, $c-turquoise 0%, $c-electric-violet 100%));
+        @include FilledButton(theme(gradient-primary));
     }
 
     &.secondaryGradient {
-        @include FilledButton(transparent linear-gradient(90deg, $c-heliotrope 0%, $c-electric-violet 100%));
+        @include FilledButton(theme(gradient-secondary));
     }
 
     &.terniaryGradient {
-        @include FilledButton(transparent linear-gradient(90deg, $c-turquoise 0%, $c-blue-lagoon 100%));
+        @include FilledButton(theme(gradient-terniary));
     }
 
     // Text only

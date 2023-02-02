@@ -7,16 +7,16 @@ import { useHistory } from 'react-router-dom'
 
 import networks from 'consts/networks'
 import BalanceItem from './BalanceItem/BalanceItem'
-import { useCallback, useEffect, useRef } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import { ReactComponent as AlertCircle } from 'resources/icons/alert-circle.svg'
 
-const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount, match }) => {
+const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, relayerURL, selectedAccount }) => {
     const otherBalancesRef = useRef()
     const history = useHistory()
     const networkDetails = (network) => networks.find(({ id }) => id === network)
     const otherBalances = portfolio.otherBalances.filter(({ network, total }) => network !== selectedNetwork.id && total.full > 0)
-    const otherBalancesLoading = Object.entries(portfolio.balancesByNetworksLoading).find(ntw => ntw[0] !== selectedNetwork.id && ntw[1])
+    const otherBalancesLoading = portfolio.balancesByNetworksLoading
     const urlGetBalance = relayerURL ? `${relayerURL}/gas-tank/${selectedAccount}/getBalance` : null
     const { data: balancesRes, isLoading } = useRelayerData({ url: urlGetBalance })
     const gasTankBalances = balancesRes && balancesRes.length && balancesRes.map(({balanceInUSD}) => balanceInUSD).reduce((a, b) => a + b, 0)    
@@ -32,7 +32,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
 
     // Used to add blur at the bottom of balances when scrollbar is visible
     const handleSetBlur = useCallback(() => {
-        if(!otherBalancesLoading && otherBalances) {
+        if(otherBalances || !otherBalancesLoading) {
             const el = otherBalancesRef.current
             if (!el) return
 
@@ -53,12 +53,12 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     useEffect(() => {
         handleSetBlur()    
     }, [otherBalancesLoading, otherBalances, handleSetBlur])
-    
+
     return (
         <div className={styles.wrapper}>
-            { portfolio.isCurrNetworkBalanceLoading && otherBalancesLoading ? <Loading /> : (
+            { portfolio.isCurrNetworkBalanceLoading ? <Loading /> : (
                 <div className={styles.otherBalances} ref={otherBalancesRef} onScroll={handleSetBlur}>
-                    { otherBalances.length > 0 ? (
+                    { !otherBalances.length && otherBalancesLoading ? <div className={styles.loadingOtherBalancesWrapper}><Loading /></div> : otherBalances.length > 0 ? (
                         <>
                             {
                                 otherBalances.filter(({ network }) => networkDetails(network)).map(({ network, total }, i) => (
@@ -98,4 +98,16 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
     )
 }
 
-export default Balances
+const areEqual = (prevProps, nextProps) => {
+    return prevProps.selectedNetwork.id === nextProps.selectedNetwork.id &&
+        prevProps.selectedAccount === nextProps.selectedAccount &&
+        prevProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0) ===
+        nextProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0)
+        &&
+        prevProps.portfolio.balancesByNetworksLoading ===
+        nextProps.portfolio.balancesByNetworksLoading
+        &&
+        prevProps.portfolio.isCurrNetworkBalanceLoading === nextProps.portfolio.isCurrNetworkBalanceLoading
+}
+
+export default React.memo(Balances, areEqual)

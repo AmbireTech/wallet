@@ -90,10 +90,16 @@
       &.small {
         .body {
           .titleWrapper {
+            gap: 10px;
+
             .title {
               font-size: 16px;
               font-weight: 400;
             }
+          }
+
+          .text {
+            font-size: 14px;
           }
         }
       }
@@ -140,8 +146,11 @@
           .body {
             .titleWrapper {
               .title {
-                font-size: 14px;
+                font-size: 15px;
               }
+            }
+            .text {
+              font-size: 13px;
             }
           }
         }

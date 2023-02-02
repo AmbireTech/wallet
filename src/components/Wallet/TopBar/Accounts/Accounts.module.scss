@@ -3,6 +3,8 @@
 $account-height: 60px;
 
 .wrapper {
+    max-width: 220px;
+    width: 100%;
     color: $c-titan-white;
 
     .content {
@@ -12,13 +14,16 @@ $account-height: 60px;
     .selectedAddress {
         display: flex;
         align-items: center;
-        gap: 10px;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 110px;
+        gap: 5px;
         
         p {
             margin: 0;
         }
 
-        svg {
+        .selectedAddressCopyIcon {
             width: 18px;
             transition: .3s ease-in-out opacity;
 
@@ -31,6 +36,7 @@ $account-height: 60px;
     .menu {
         background-color: $c-mirage;
         padding-top: 15px;
+        min-width: 560px;
         
 
         .list {
@@ -167,11 +173,13 @@ $account-height: 60px;
         }
 
         .confirmDeleteAccount {
-            padding-left: 25px;
-            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 15px;
             
             .message {
-                padding-right: 15px;
+                margin: 0;
+                margin-left: 10px;
                 font-size: 15px;
             }
         }
@@ -190,8 +198,22 @@ $account-height: 60px;
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
+        max-width: 100%;
+
+        .selectedAddress {
+            max-width: 140px;
+        }
+
         .menu {
+            min-width: 100%;
             width: 100%;
+
+            .confirmDeleteAccount {
+                .message {
+                    font-size: 14px;
+                    word-wrap: break-word;
+                }
+            }
         }
     }
 }

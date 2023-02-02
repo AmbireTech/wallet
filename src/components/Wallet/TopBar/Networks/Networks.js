@@ -76,7 +76,7 @@ const Networks = ({
             draggableHeader={
                 <SortButtons>
                     <ToolTip label='Sorted networks by drag and drop'>
-                        <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" 
+                        <MdDragIndicator color={sortType === "custom" ? "#27e8a7" : ""} cursor="pointer" 
                         onClick={() => setUserSorting(prev => ({
                             ...prev,
                             networks: {
@@ -86,7 +86,7 @@ const Networks = ({
                         }))} />
                     </ToolTip>
                     <ToolTip label='Sorted networks by default'>
-                        <MdOutlineSort color={sortType === "default" ? "#80ffdb" : ""} cursor="pointer" 
+                        <MdOutlineSort color={sortType === "default" ? "#27e8a7" : ""} cursor="pointer" 
                         onClick={() => setUserSorting(prev => ({
                             ...prev,
                             networks: {

@@ -1,0 +1,49 @@
+@import 'variables';
+
+.wrapper {
+  margin-left: 60px;
+  margin-top: 19px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 8px;
+
+  &.extraMargin {
+    margin-left: 95px;
+  }
+
+  .ovals {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    .oval {
+      display: block;
+      border: 1px solid $warning-color;
+      color: $warning-color;
+      border-radius: 15px;
+      font-size: 12px;
+      font-weight: 300;
+      padding: 5px 12px;
+      margin: 0;
+    }
+  }
+
+  .latest {
+    margin: 0;
+    font-size: 16px;
+    color: $c-turquoise;
+    opacity: 0.4;
+    span {
+      font-weight: 500;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .wrapper {
+    align-items: center;
+    margin-left: 0;
+  }
+}

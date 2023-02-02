@@ -55,11 +55,11 @@ $c-heliotrope: #ae60ff;
 $c-electric-violet: #6000FF;
 $c-turquoise: #27e8a7;
 $c-blue-lagoon: #007D8A;
-$c-aquamarine: #80ffdb;
 $c-picton-blue: #47AEE9;
 $c-half-spanish-white: #fef5db;
 $c-titan-white: #ebecff;
 $c-white: #ffffff;
+$c-lavender-mist: #ede2ff;
 
 $tertiary-accent-color: #C3D4F6;
 $success-color: $c-turquoise;
@@ -71,8 +71,13 @@ $warning-background-color: $c-half-spanish-white;
 $success-background-color: #C8FFFE;
 $info-color: #7189ff;
 $info-background-color: #EDE2FF;
+$alert-text-color: $c-martinique-light;
 
 $ambire-dark-blue: #6000FF;
 $ambire-purple: #AF50FF;
 
 $text-container-color: mix($c-titan-white, $c-ebony-clay, 60%);
+
+@function theme($color-name) {
+    @return var(--#{$color-name});
+}

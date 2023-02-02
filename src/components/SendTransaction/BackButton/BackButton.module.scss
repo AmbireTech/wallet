@@ -1,47 +1,49 @@
-@import "variables";
+@import 'variables';
 
 $titleBar-height: 90px;
 
 .wrapper {
-  display: flex;
-  align-items: center;
+	position: relative;
+	z-index: 99;
+	display: flex;
+	align-items: center;
+	width: 100%;
   margin-bottom: 30px;
 
-  .backIcon {
-    background-color: rgba($c-titan-white, 0.05);
-    min-width: 40px;
-    min-height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 12px;
-  }
+	.row {
+		@include flex-center-center;
+		gap: 10px;
 
-  .backLabel {
-    margin: 0;
-    font-size: 16px;
-    font-weight: 300;
-  }
-
-  .infoIcon {
-    width: 20px;
-    height: 20px;
-  }
-
-  .dismiss {
-    @include flex-center-center;
-    gap: 10px;
-    cursor: pointer;
-    line-height: 35px;
-    height: 35px;
-    font-size: 20px;
-
-    span {
-      float: right;
+    &.dismiss {
+      cursor: pointer;
     }
+	}
 
-    &:hover {
-      color: $c-titan-white;
-    }
-  }
+	.backIcon {
+		background-color: theme(background-icon);
+		min-width: 40px;
+		min-height: 40px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		border-radius: 12px;
+	}
+
+	.backLabel {
+		margin: 0;
+		font-size: 16px;
+		font-weight: 300;
+		transition: 0.3s ease-in-out opacity;
+	}
+
+	.infoIcon {
+		width: 20px;
+		height: 20px;
+	}
+
+	&:hover {
+		.backLabel {
+			opacity: 0.8;
+		}
+	}
 }

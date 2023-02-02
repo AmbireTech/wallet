@@ -49,8 +49,8 @@ const TopBar = ({
 
   const dappModeTopBar = useMemo(() => isDappMode && routeMatch && currentDappData, [currentDappData, isDappMode, routeMatch])
 
-  const account = accounts.find(({ id }) => id === selectedAcc)
-  const accountIcon = blockies.create({ seed: account ? account.id : null }).toDataURL()
+  const account = useMemo(() => accounts.find(({ id }) => id === selectedAcc), [accounts, selectedAcc])
+  const accountIcon = useMemo(() => blockies.create({ seed: account ? account.id : null }).toDataURL(), [account])
   
   const visualEnv =
     (process.env.REACT_APP_VISUAL_ENV === 'dev')
@@ -59,7 +59,7 @@ const TopBar = ({
       ) ? 'staging' : null
 
     return (<>
-    <div className={cn(styles.mobileBackground, {[styles.visible]: isMenuOpen})}></div>
+    <div className={cn(styles.mobileBackground, {[styles.visible]: isMenuOpen})} onClick={() => setMenuOpen(false)}></div>
     <div className={`${styles.wrapper} ${( visualEnv ? (`${styles.visualEnv} ${styles['visualEnv' + visualEnv]}`) : styles.wrapper) + (dappModeTopBar ? ` ${styles.dappMode}` : '')}`}>
       {
         visualEnv &&
