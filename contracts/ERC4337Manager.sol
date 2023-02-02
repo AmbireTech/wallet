@@ -5,7 +5,7 @@ import "../node_modules/accountabstraction/contracts/interfaces/IAccount.sol";
 import "../node_modules/accountabstraction/contracts/interfaces/IEntryPoint.sol";
 
 // based on Gnosis EIP4337Manager
-contract AmbireEIP4337Manager is AmbireAccount, IAccount {
+contract AmbireERC4337Manager is AmbireAccount, IAccount {
 	address public immutable entryPoint;
 
 	// return value in case of signature failure, with no time-range.
