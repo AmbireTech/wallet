@@ -381,3 +381,74 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix: Adx staking details
 * Fix: popping up the addresses modal when add new signer via Trezor
 * Fix: AAVE earn card
+
+### v0.6.0
+* Redesign the dark theme
+* New dapps section
+* Added support for relayerless chains only
+* Added ethpow chain for relayerless
+* Upgraded "trezor-connect": "^8.2.8" to "@trezor/connect-web": "^9.0.2"
+* Added new params for feeTokens: disableGasTankDeposit and disableAsFeeToken
+* Sign message - supporting custom typed data v4 call
+* Hide token modal not closing when clicking on the side
+* Earn card minor fixes in text
+* Optimize bundle size
+* switch from claim to claimWithRootUpdate for rewards
+* SignatureValidator fix
+* Dapps message for sign message unsupported dapps
+* Trezor manifest
+* Send transaction gasTank badge improvement
+* Wc 2.0 implementation
+* Added signMessage history
+* Swappin as offramp
+* Offramp section in transfer page
+* Added copy button next to current identity address
+* Refactore sign message hook - move into common repo
+* New rewards modal
+* QuickAccManager: fix cancelability
+* Feature / Configurable Providers
+* Provide param to relayer for estimation isGasTankEnabled
+* New Swap release based by Uniswap v2 and v3
+* Socket v2 API
+* humanizer - Uniswap v2 & v3 improvements & AAVE address
+* Aapps iframe allow copy & paste
+* On creating account with MM, added a option to choose the address from MM if have more then one.
+* Update uniswap integrated swap with working v2 routing.
+* Portfolio V2 and dashboard redesign with pending balances by pending and unsigned transactions.
+* Fix / View amount in the rewards button
+* Fix / On a Signer removal button click, hide the modal
+* Fix / Change signers error message
+* Fix / Infinitive Gas tank loading indicator
+* Fix / Native fees decimals numbers in sign txn
+* Fix / NFT images from ipfs by hash
+* Fix / Handle error if WalletConnect if session is not initialized
+* Fix / Wallet stacking unbond period
+* Fix / Gas-tank top up
+* Fix / Bug fixed removed xWallet from feeAssets in gas tank
+* Fix / Styles email confirm view in Add Account page
+* Fix / Wallet staking unbond period
+* Fix / Now the wallet token is on first position in a fee assets list
+* Fix / Change github Workflow on deploy to not remove stagings folders
+* Fix / Multiple requests on earn page in Aave card
+
+### v0.6.1
+* Assets Migration - redesign, increased gasLimit for native and erc20 tokens.
+* Lattice pairing - redesign + reusing the repetitve logic into a hook.
+* Choosing a Signer list (on Add Account and Security) - redesign.
+* Signed Messages - improve responsiveness, code readability and markup.
+* Addressbook search.
+* Disable Code Splitting.
+* Github workflow for auto deploying PR previews.
+* Memoizing DApps, Balances, Link components, because of performance reasons.
+* Modified Unirouter humanizer. Now it's showing "Swap X.X USDT for at least X.XXX matic" instead of "Swap 3.0 USDT for at least 3.760145095713324034 matic and send it to "0xxxxx" Unwrap at least X.X matic"
+* Restore email confirmation in permission modal - because of already existing, old accounts which would be not confirmed yet.
+* Arbitrum gas limit mod.
+* Fix Dashboard last update value to 23hour format.
+* Fix Metamask addresses query (MM 9.8.4) - depending on the MM version, the addresses are returned by a different caveat identifier.
+* Fix Tabs shadow overlaping with content.
+* Fix Movr humanizer bug.
+* Fix Dashboard tokens sort icons color and alignment.
+* Fix Accounts menu on logout when logged in with a single account (Topbar).
+* Fix Topbar accounts twitching when toggling private mode.
+* Fix Collectible name is missing from data and add fallback.
+* Change Dashboard text to trigger Add token modal - If you don't see a specific token that you own, please add it manually.

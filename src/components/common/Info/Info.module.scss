@@ -1,0 +1,19 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    svg {
+        // In the case we have a bigger label text, the svg width gets auto decreased, because of the flex.
+        // In order to fix this - we are setting a minimum required width too.
+        min-width: 24px;
+        width: 24px;
+        height: 24px;
+    }
+
+    label {
+        font-size: 16px;
+    }
+}

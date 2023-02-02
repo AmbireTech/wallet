@@ -18,6 +18,7 @@ import { useModals } from 'hooks'
 import { Loading, Button, ToolTip } from 'components/common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
 import { isFirefox } from 'lib/isFirefox'
+import humanizeError from 'lib/errors/metamask'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
@@ -78,6 +79,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     } catch (e) {
       console.error(e)
       setInProgress(false)
+
+      const humanizedError = humanizeError(e)
+      if (humanizedError) return setAddAccErr(humanizedError)
+
       setAddAccErr(`Unexpected error: ${e.message || e}`)
     }
   }
@@ -132,7 +137,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     
     if (createResp.success) {
       utmTracking.resetUtm()
-    }
+    } 
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
       return
@@ -267,7 +272,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       throw new Error('No accounts connected')
     }
 
-    const addresses = accountsPermission.caveats[0].value
+    // Depending on the MM version, the addresses are returned by a different caveat identifier.
+    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
+    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
+    const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
 
     if (addresses.length === 1) return onEOASelected(addresses[0], {type: 'Web3'})
 

@@ -127,6 +127,7 @@ const Send = ({
 
           let req = {
               id: `transfer_${Date.now()}`,
+              dateAdded: new Date().valueOf(),
               type: 'eth_sendTransaction',
               chainId: selectedNetwork.chainId,
               account: selectedAcc,
@@ -151,7 +152,7 @@ const Send = ({
           }
 
           addRequest(req)
-
+          setAddress('')
           setAmount(0)
       } catch (e) {
           console.error(e)

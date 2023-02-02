@@ -1,3 +1,4 @@
+import React from 'react'
 import styles from './Links.module.scss'
 
 import { DropDown } from "components/common"
@@ -53,4 +54,4 @@ const Links = () => {
     )
 }
 
-export default Links
+export default React.memo(Links)

@@ -1,0 +1,90 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: $c-mirage;
+  border-radius: 12px;
+  padding: 10px 15px;
+  
+  &:hover {
+    background-color: $c-mirage;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 40px;
+    width: 40px;
+    border-radius: 12px;
+    background: rgba($c-titan-white, 0.05);
+
+    .icon {
+      width: 20px;
+      height: 20px;
+    }
+  }
+
+  .name {
+    font-weight: 500;
+    font-size: 16px;
+    margin-left: 10px;
+  }
+
+  .usd {
+    color: $c-manatee;
+    padding-right: 8px;
+  }
+
+  .amount {
+    font-size: 14px;
+    opacity: .9;
+    margin-left: 8px;
+    flex-shrink: 1;
+
+    .amountUsd {
+      color: $c-manatee;
+    }
+  }
+
+  .status {
+    margin-left: auto;
+    font-size: 14px;
+    opacity: .8;
+
+    .warning {
+      color: $warning-color;
+    }
+
+    .success {
+      color: $c-turquoise;
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    flex-direction: column;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px 20px;
+
+    .name {
+      margin-left: 0;
+    }
+
+    .amount {
+      margin-bottom: 10px;
+    }
+
+    .status {
+      margin: 0;
+    }
+  }
+}
