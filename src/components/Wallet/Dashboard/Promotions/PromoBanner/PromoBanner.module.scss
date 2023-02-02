@@ -1,0 +1,154 @@
+@import 'variables.scss';
+
+@mixin GetBannerStyle ($background, $color) {
+  background-color: $background;
+  border-left-color: $color;
+
+  .iconWrapper {
+    background-color: rgba($color, 0.05);
+    border-color: $color;
+  }
+
+  .minimizeIconWrapper {
+    background-color: rgba($color, 0.16);
+    color: $color;
+  }
+
+  .body {
+    .text {
+      .link {
+        color: mix($color, $c-mirage, 90%);
+      }
+    }
+  }
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+  transition: $basic-transition;
+  margin-left: auto;
+
+  &.minimized {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 10px;
+    border-radius: 12px;
+    background-color: $c-mirage;
+    cursor: pointer;
+
+    .shadow {
+      display: none;
+    }
+
+    .bannerWrapper {
+      .banner {
+        padding: 0;
+
+        &.success, &.warning, &.danger, &.info, &.degenTip {
+          background-color: transparent;
+          border-left: none;
+        }
+      }
+    }
+  }
+  
+  .shadow {
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    bottom: 0;
+    width: 99%;
+    height: 40px;
+    transform: translateX(-50%);
+    background: rgba($c-mirage, 0.8);
+    mix-blend-mode: multiply;
+    border-radius: 10px;
+    filter: blur(5px);
+  }
+
+  .bannerWrapper {
+    overflow: hidden;
+    border-radius: 12px;
+
+    .banner {
+      position: relative;
+      display: flex;
+      align-items: center;
+      z-index: 2;
+      gap: 20px;
+      padding: 13px 20px;
+      padding-left: 13px;
+      color: $c-martinique-light;
+      border-left: 7px solid;
+
+      &.success {
+        @include GetBannerStyle($success-background-color, $success-color);
+      }
+
+      &.warning {
+        @include GetBannerStyle($warning-background-color, $warning-color);
+      }
+
+      &.danger {
+        @include GetBannerStyle($danger-background-color, $danger-color);
+      }
+
+      &.info, &.degenTip {
+        @include GetBannerStyle($info-background-color, $ambire-dark-blue);
+      }
+
+      .iconWrapper, .minimizeIconWrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        border-radius: 12px;
+      }
+
+      .iconWrapper {
+        font-size: 20px;
+        border: 1px solid;
+        background-color: $c-titan-white;
+      }
+
+      .body {
+        flex: 1;
+
+        .titleWrapper {
+          display: flex;
+          align-items: center;
+          gap: 20px;
+
+          .title {
+            margin: 0;
+            font-size: 20px;
+          }
+        }
+
+        .text {
+          margin: 0;
+          font-size: 16px;
+          text-align: left;
+
+          .link {
+            color: $c-heliotrope;
+          }
+        }
+      }
+
+      .minimizeIconWrapper {
+        cursor: pointer;
+
+        .minimizeIcon {
+          width: 12px;
+          height: 9px;
+        }
+      }
+    }
+  }
+}

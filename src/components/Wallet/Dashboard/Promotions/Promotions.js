@@ -1,85 +1,10 @@
-import styles from './Promotions.module.scss'
 import { useCallback } from 'react'
-import FinalCountdown from 'components/common/FinalCountdown/FinalCountdown'
+
 import useLocalStorage from "hooks/useLocalStorage"
-import { AiOutlineRight } from 'react-icons/ai'
-import { MdOutlineMarkEmailUnread } from 'react-icons/md'
 
-function Promo({
-    id,
-    period,
-    text,
-    title,
-    resources = {},
-    togglePromo,
-    minimized
-} = {}) {
+import PromoBanner from './PromoBanner/PromoBanner'
 
-    if (!text) return null
-
-    const pattern = new RegExp(/\${{(\w+)}}/, 'gi')
-    const split = text.split(pattern)
-    const { emojies, color, background, ...linksRes } = resources
-
-    const links = Object.entries(linksRes).reduce((anchors, [key, { label, href } = {}]) => {
-        const anc =
-            <a
-                key={key}
-                className="link"
-                href={href}
-                target="_blank"
-                rel="noreferrer noopener">
-                {label}
-            </a>
-
-        anchors[key] = anc
-        return anchors
-    }, {})
-
-    const elmojies = Object.entries({ ...emojies }).reduce((elmos, [key, { text, size } = {}]) => {
-        const elmo = <span key={key} className={styles.emoji} style={{ fontSize: size }}>
-            {text}
-        </span >
-
-        elmos[key] = elmo
-        return elmos
-    }, {})
-
-    return (
-        <div className={`${styles.notice} ${minimized ? styles.minimized : ''}`} style={{
-            ...(background ? { backgroundColor: background } : {}),
-            ...(color ? { color } : {})
-        }}>
-            {!minimized && <div>
-                {title &&
-                    <div className={styles.title}>
-                        {title}
-                    </div>
-                }
-                <div>
-                    {split.map(x => links[x] || elmojies[x] || x)}
-                </div>
-                {
-                    period?.to && period?.timer &&
-                    <div className={styles.timer}>
-                        <FinalCountdown endDateTime={period.to} />
-                    </div>
-                }
-            </div>
-            }
-            {
-                !!id
-                    ? minimized
-                        ? <MdOutlineMarkEmailUnread className={styles.closeBtn} onClick={() => togglePromo(id)} />
-                        : <div><AiOutlineRight className={styles.closeBtn} onClick={() => togglePromo(id)} /></div>
-                    : null
-
-            }
-        </div>
-    )
-}
-
-export default function Promotions({ rewardsData: { rewards: { promo }} }) {
+export default function Promotions({ rewardsData: { rewards: { promoD }} }) {
     const [closedPromos, setClosedPromos] = useLocalStorage({ key: 'closedPromos', defaultValue: [] })
 
     const togglePromo = useCallback(promoId => {
@@ -95,9 +20,24 @@ export default function Promotions({ rewardsData: { rewards: { promo }} }) {
         setClosedPromos(prevClosed)
     }, [closedPromos, setClosedPromos])
 
-    if (!promo) return null
+    // if (!promo) return null
+
+    const promo = {
+        id: '3f71faba',
+        text: 'Special quiz is here. ${{link1}}',
+        title: 'Quiz time!',
+        icon: '👛',
+        type: 'warning', // waring / error / success
+        resources: {
+            link1: {
+                href: 'https://survey.typeform.com/to/YgEolshA#juba=${{identity}}',
+                label: 'You are invited to our quiz.'
+            }
+        },
+        period: { from: new Date('2023-02-01 0:0:0'), to: new Date('2023-02-10 23:59:59'), timer: true }
+    }
 
     return (
-        <Promo {...promo} togglePromo={togglePromo} minimized={closedPromos.includes(promo.id)} />
+        <PromoBanner data={promo} togglePromo={togglePromo} minimized={closedPromos.includes(promo.id)} />
     )
 }
