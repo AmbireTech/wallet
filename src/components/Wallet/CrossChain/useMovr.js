@@ -26,7 +26,7 @@ const useMovr = () => {
     }, [])
 
     const fetchQuotes = useCallback(async (identity, fromAsset, fromChainId, toAsset, toChainId, amount, excludeBridges, sort = 'output') => {
-        return fetchSocket(`/quote?fromChainId=${fromChainId}&fromTokenAddress=${fromAsset}&toChainId=${toChainId}&toTokenAddress=${toAsset}&fromAmount=${amount}${excludeBridges.map(b => `&excludeBridges=${b}`)}&sort=${sort}&userAddress=${identity}&recipient=${identity}&singleTxOnly=true&isContractCall=true&bridgeWithGas=true`)
+        return fetchSocket(`/quote?fromChainId=${fromChainId}&fromTokenAddress=${fromAsset}&toChainId=${toChainId}&toTokenAddress=${toAsset}&fromAmount=${amount}${excludeBridges.map(b => `&excludeBridges=${b}`)}&sort=${sort}&userAddress=${identity}&recipient=${identity}&singleTxOnly=true&isContractCall=true&bridgeWithGas=false`)
     }, [])
 
     // const checkApprovalAllowance = useCallback(async (chainID, owner, allowanceTarget, tokenAddress) => {
