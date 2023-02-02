@@ -1,153 +1,226 @@
 @import 'variables.scss';
 
-@mixin GetBannerStyle ($background, $color) {
-  background-color: $background;
-  border-left-color: $color;
+@mixin GetBannerStyle($background, $color) {
+	background-color: $background;
+	border-left-color: $color;
 
-  .iconWrapper {
-    background-color: rgba($color, 0.05);
-    border-color: $color;
-  }
+	.iconWrapper {
+		background-color: rgba($color, 0.05);
+		border-color: $color;
+	}
 
-  .minimizeIconWrapper {
-    background-color: rgba($color, 0.16);
-    color: $color;
-  }
+	.minimizeIconWrapper {
+		background-color: rgba($color, 0.16);
+		color: $color;
+	}
 
-  .body {
-    .text {
-      .link {
-        color: mix($color, $c-mirage, 90%);
-      }
-    }
+	.body {
+		.text {
+			.link {
+				color: mix($color, $c-mirage, 90%);
+			}
+		}
+	}
+
+  @media screen and (max-width: 1024px) {
+    border-left-color: transparent;
+    border-top-color: $color;
   }
 }
 
 .wrapper {
-  position: relative;
-  width: 100%;
-  transition: $basic-transition;
-  margin-left: auto;
+	position: relative;
+	width: 100%;
+	transition: 0.3s linear width;
 
-  &.minimized {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 40px;
-    height: 40px;
-    padding: 10px;
-    border-radius: 12px;
-    background-color: $c-mirage;
-    cursor: pointer;
+	&.minimized {
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 50px;
+		height: 50px;
+		border-radius: 12px;
+		background-color: $c-mirage;
+		cursor: pointer;
 
-    .shadow {
-      display: none;
-    }
+		svg {
+			width: 24px;
+			height: 24px;
+		}
 
-    .bannerWrapper {
-      .banner {
-        padding: 0;
+		.shadow {
+			display: none;
+		}
 
-        &.success, &.warning, &.danger, &.info, &.degenTip {
-          background-color: transparent;
-          border-left: none;
-        }
-      }
-    }
-  }
-  
-  .shadow {
-    position: absolute;
-    left: 50%;
-    z-index: 1;
-    bottom: 0;
-    width: 99%;
-    height: 40px;
-    transform: translateX(-50%);
-    background: rgba($c-mirage, 0.8);
-    mix-blend-mode: multiply;
-    border-radius: 10px;
-    filter: blur(5px);
-  }
+		.bannerAndMinimize {
+      width: 24px;
+      height: 24px;
+      border-radius: 0;
 
-  .bannerWrapper {
-    overflow: hidden;
-    border-radius: 12px;
+			.banner {
+				padding: 0;
+        display: none;
+			}
+		}
+	}
 
-    .banner {
-      position: relative;
-      display: flex;
-      align-items: center;
-      z-index: 2;
-      gap: 20px;
-      padding: 13px 20px;
-      padding-left: 13px;
-      color: $c-martinique-light;
-      border-left: 7px solid;
+	.bannerAndMinimize {
+		overflow: hidden;
+		border-radius: 12px;
 
-      &.success {
-        @include GetBannerStyle($success-background-color, $success-color);
-      }
+		.banner {
+			z-index: 2;
+			position: relative;
+			display: flex;
+			align-items: center;
+      flex-wrap: wrap;
+			gap: 20px;
+			padding: 13px 20px;
+			padding-left: 13px;
+			color: $c-martinique-light;
+			border-left: 7px solid;
 
-      &.warning {
-        @include GetBannerStyle($warning-background-color, $warning-color);
-      }
+			&.success {
+				@include GetBannerStyle($success-background-color, $success-color);
+			}
 
-      &.danger {
-        @include GetBannerStyle($danger-background-color, $danger-color);
-      }
+			&.warning {
+				@include GetBannerStyle($warning-background-color, $warning-color);
+			}
 
-      &.info, &.degenTip {
-        @include GetBannerStyle($info-background-color, $ambire-dark-blue);
-      }
+			&.danger {
+				@include GetBannerStyle($danger-background-color, $danger-color);
+			}
 
-      .iconWrapper, .minimizeIconWrapper {
+			&.info,
+			&.degenTip {
+				@include GetBannerStyle($info-background-color, $ambire-dark-blue);
+			}
+
+			.iconWrapper,
+			.minimizeIconWrapper {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 34px;
+				height: 34px;
+				border-radius: 12px;
+			}
+
+      .iconAndBody {
         display: flex;
         align-items: center;
-        justify-content: center;
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-      }
-
-      .iconWrapper {
-        font-size: 20px;
-        border: 1px solid;
-        background-color: $c-titan-white;
-      }
-
-      .body {
+        gap: 15px;
         flex: 1;
-
-        .titleWrapper {
-          display: flex;
-          align-items: center;
-          gap: 20px;
-
+        
+        .iconWrapper {
+          font-size: 20px;
+          border-width: 1px;
+          border-style: solid;
+        }
+  
+        .body {
+          flex: 1;
+  
           .title {
             margin: 0;
             font-size: 20px;
           }
+  
+          .text {
+            margin: 0;
+            font-size: 16px;
+            text-align: left;
+          }
         }
+      }
 
-        .text {
-          margin: 0;
-          font-size: 16px;
-          text-align: left;
+		}
 
-          .link {
-            color: $c-heliotrope;
+		.minimizeIconWrapper {
+			cursor: pointer;
+
+			.minimizeIcon {
+				width: 12px;
+				height: 9px;
+			}
+		}
+	}
+
+  .shadow {
+		position: absolute;
+		left: 50%;
+		z-index: 1;
+		bottom: 0;
+		width: 99%;
+		height: 40px;
+		transform: translateX(-50%);
+		background: rgba($c-mirage, 0.8);
+		mix-blend-mode: multiply;
+		border-radius: 10px;
+		filter: blur(5px);
+	}
+}
+
+@media screen and (max-width: 1024px) {
+  .wrapper {
+    .bannerAndMinimize {
+      .banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 20px;
+        border-left: none;
+        border-top: 7px solid;
+
+        .iconAndBody {
+          align-self: flex-start;
+
+          .body {
+            .title {
+              font-size: 18px;
+              margin-bottom: 10px;
+            }
+            .text {
+              font-size: 14px;
+            }
+          }
+        }
+      }
+    }
+
+    .minimizeIconWrapper {
+      position: absolute;
+      bottom: 20px;
+      right: 20px;
+    }
+  }
+}
+
+@media screen and (max-width: 500px) {
+  .wrapper {
+    .bannerAndMinimize {
+      text-align: center;
+
+      .banner {
+        align-items: center;
+
+        .iconAndBody {
+          flex-direction: column;
+
+          .body {
+            .text {
+              text-align: center;
+            }
           }
         }
       }
 
       .minimizeIconWrapper {
-        cursor: pointer;
-
-        .minimizeIcon {
-          width: 12px;
-          height: 9px;
-        }
+        position: static;
+        top: unset;
+        right: unset;
+        align-self: flex-end;
       }
     }
   }

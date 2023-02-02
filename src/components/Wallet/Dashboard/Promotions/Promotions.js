@@ -1,10 +1,11 @@
 import { useCallback } from 'react'
 
 import useLocalStorage from "hooks/useLocalStorage"
-
 import PromoBanner from './PromoBanner/PromoBanner'
 
-export default function Promotions({ rewardsData: { rewards: { promoD }} }) {
+import styles from './Promotions.module.scss'
+
+export default function Promotions({ rewardsData: { rewards: { promo }} }) {
     const [closedPromos, setClosedPromos] = useLocalStorage({ key: 'closedPromos', defaultValue: [] })
 
     const togglePromo = useCallback(promoId => {
@@ -20,24 +21,10 @@ export default function Promotions({ rewardsData: { rewards: { promoD }} }) {
         setClosedPromos(prevClosed)
     }, [closedPromos, setClosedPromos])
 
-    // if (!promo) return null
+    if (!promo) return null
 
-    const promo = {
-        id: '3f71faba',
-        text: 'Special quiz is here. ${{link1}}',
-        title: 'Quiz time!',
-        icon: '👛',
-        type: 'warning', // waring / error / success
-        resources: {
-            link1: {
-                href: 'https://survey.typeform.com/to/YgEolshA#juba=${{identity}}',
-                label: 'You are invited to our quiz.'
-            }
-        },
-        period: { from: new Date('2023-02-01 0:0:0'), to: new Date('2023-02-10 23:59:59'), timer: true }
-    }
-
-    return (
+    return (<div className={styles.wrapper}>
         <PromoBanner data={promo} togglePromo={togglePromo} minimized={closedPromos.includes(promo.id)} />
+    </div>
     )
 }

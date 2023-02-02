@@ -39,30 +39,24 @@ const PromoBanner = ({ data, togglePromo, minimized } = {}) => {
 	}, {})
 
 	return (
-    <div className={cn(styles.wrapper, {[styles.minimized]: minimized})}>
-      <div className={styles.bannerWrapper}>
-        <div className={cn(styles.banner, styles[type || 'info'])}>
-          {!minimized && (
-            <>
-              <div className={styles.iconWrapper}>{icon}</div>
-              <div className={styles.body}>
-                <div className={styles.titleWrapper}>
-                  <h4 className={styles.title}>{title}</h4>
-                </div>
-                {text ? <p className={styles.text}>{split.map((x) => links[x] || elmojies[x] || x)}</p> : null}
-              </div>
-              {period?.to && period?.timer && (
-                <div className={styles.timer}>
-                  <FinalCountdown endDateTime={period.to} />
-                </div>
-              )}
-              <div className={styles.minimizeIconWrapper} onClick={() => togglePromo(id)}>
-                <ChevronRightIcon className={styles.minimizeIcon} />
-              </div>
-            </>
+    <div className={cn(styles.wrapper, {[styles.minimized]: minimized})} onClick={() => (!!id && minimized) ? togglePromo(id) : null}>
+      <div className={styles.bannerAndMinimize}>
+        <div className={cn(styles.banner, styles[type || 'info'], {[styles.expanded]: !minimized})}>
+          <div className={styles.iconAndBody}>
+            <div className={styles.iconWrapper}>{icon}</div>
+            <div className={styles.body}>
+              <h4 className={styles.title}>{title}</h4>
+              {text ? <p className={styles.text}>{split.map((x) => links[x] || elmojies[x] || x)}</p> : null}
+            </div>
+          </div>
+          {(period?.to && period?.timer) && (
+            <FinalCountdown endDateTime={period.to} />
           )}
-          {!!id && minimized && <BellIcon onClick={() => togglePromo(id)} />}
+          <div className={styles.minimizeIconWrapper} onClick={() => togglePromo(id)}>
+            <ChevronRightIcon className={styles.minimizeIcon} />
+          </div>
         </div>
+        {!!id && minimized && <BellIcon />}
       </div>
       <div className={styles.shadow} />
     </div>
