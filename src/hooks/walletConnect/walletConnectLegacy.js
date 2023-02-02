@@ -311,8 +311,8 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
             type: payload.method,
             connectionId: connectionIdentifier,
             txns: payload.params,
-            chainId: connector.session.chainId,
-            account: connector.session.accounts[0],
+            chainId: connector.session?.chainId,
+            account: connector.session?.accounts[0],
             notification: true
           }
         })
@@ -334,10 +334,10 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
 
       const wrongAcc = (
         payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
-        && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
+        && payload.params[0].from.toLowerCase() !== connector.session?.accounts[0].toLowerCase()
       ) || (
         payload.method === 'eth_sign' && payload.params[1]
-        && payload.params[1].toLowerCase() !== connector.session.accounts[0].toLowerCase()
+        && payload.params[1].toLowerCase() !== connector.session?.accounts[0].toLowerCase()
       )
       if (wrongAcc) {
         addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
@@ -351,13 +351,13 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
           type: payload.method,
           connectionId: connectionIdentifier,
           txn,
-          chainId: connector.session.chainId,
-          account: connector.session.accounts[0],
+          chainId: connector.session?.chainId,
+          account: connector.session?.accounts[0],
           notification: true,
           dapp: connector.session?.peerMeta ? {
             name: connector.session.peerMeta.name,
             description: connector.session.peerMeta.description,
-            description: connector.session.peerMeta.icons,
+            icons: connector.session.peerMeta.icons,
             url: connector.session.peerMeta.url,
           } : null
         }
@@ -387,7 +387,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
       if (sessionStart && (Date.now() - sessionStart) < SESSION_TIMEOUT) {
         addToast('dApp disconnected immediately - perhaps it does not support the current network?', { error: true })
       } else {
-        addToast(`${connector.session.peerMeta.name} disconnected: ${payload.params[0].message}`)
+        addToast(`${connector.session?.peerMeta.name} disconnected: ${payload.params[0].message}`)
       }
     })
 

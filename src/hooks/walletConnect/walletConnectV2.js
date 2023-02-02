@@ -366,7 +366,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
               dapp: connection.session?.peerMeta ? {
                 name: connection.session.peerMeta.name,
                 description: connection.session.peerMeta.description,
-                description: connection.session.peerMeta.icons,
+                icons: connection.session.peerMeta.icons,
                 url: connection.session.peerMeta.url,
               } : null
             }
