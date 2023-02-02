@@ -187,13 +187,13 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
     useEffect(() => validateForm(), [isLoading, validateForm, oldPassword, newPassword, newPasswordConfirm])
 
     return (
-        <Modal 
-            className={styles.wrapper} 
+        <Modal
+            className={styles.wrapper}
             contentClassName={styles.content}
             title="Reset Password" 
             buttons={<>
-                <Button clear onClick={() => hideModal()}>Cancel</Button>
-                <Button primaryGradient disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
+                <Button small clear onClick={() => hideModal()}>Cancel</Button>
+                <Button small primaryGradient disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
             </>}
         >
             {

@@ -23,7 +23,7 @@ const NetworkFeesModal = ({ relayerURL, selectedNetwork }) => {
   const gasData = data ? data.data : null
 
   return (
-    <Modal className={styles.wrapper} contentClassName={styles.content} title="Current network fees">
+    <Modal size="lg" className={styles.wrapper} contentClassName={styles.content} title="Current network fees">
       <p className={styles.feesInfo}>
         Network fees are determined on a market principle - if more users are trying to use the network, fees are
         higher. Each network has different fees.

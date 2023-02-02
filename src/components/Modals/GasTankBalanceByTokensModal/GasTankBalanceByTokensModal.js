@@ -8,6 +8,7 @@ const GasTankBalanceByTokensModal = ({ data }) => {
     
     return (
         <Modal 
+            size="sm"
             className={styles.wrapper} 
             contentClassName={styles.content}
             title="Gas Tank Balance by Tokens"

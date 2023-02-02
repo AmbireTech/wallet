@@ -26,7 +26,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
     } = details
    
     return (
-        <Modal 
+        <Modal
             className={styles.wrapper} 
             contentClassName={styles.content} 
             title={title} 

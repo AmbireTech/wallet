@@ -70,7 +70,8 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     }
 
     return (
-        <Modal 
+        <Modal
+            size="sm"
             className={styles.wrapper}
             contentClassName={styles.content}
             title={title} 

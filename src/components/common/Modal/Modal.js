@@ -7,7 +7,7 @@ import { ReactComponent as BackIcon } from 'resources/icons/back.svg'
 
 import styles from './Modal.module.scss'
 
-const Modal = ({ children, title, buttons, isCloseBtnShown = true, onClose, isBackBtnShown, onBack, className, buttonsClassName, contentClassName }) => {
+const Modal = ({ children, title, buttons, size, isCloseBtnShown = true, onClose, isBackBtnShown, onBack, className, buttonsClassName, contentClassName }) => {
     const { onHideModal } = useModals()
 
     const onCloseModal = () => {
@@ -16,7 +16,7 @@ const Modal = ({ children, title, buttons, isCloseBtnShown = true, onClose, isBa
     }
 
     return (
-        <div className={cn(styles.wrapper, className)}>
+        <div className={cn(styles.wrapper, className, styles[size || ''])}>
             {(title || isCloseBtnShown || isBackBtnShown) ? (<div className={styles.heading}>
                 {isBackBtnShown && <BackIcon className={styles.headingIcon} onClick={onBack} />}
                 <h2 className={cn(styles.title, {[styles.centered]: !isCloseBtnShown && !isBackBtnShown })}>{ title }</h2>

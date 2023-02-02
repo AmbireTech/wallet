@@ -142,7 +142,14 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     }, [])
 
     return (
-        <Modal className={styles.wrapper} contentClassName={styles.content} title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown} onClose={handleOnClose}>
+        <Modal 
+            className={styles.wrapper} 
+            contentClassName={styles.content} 
+            title="We need a few things 🙏" 
+            buttons={buttons} 
+            isCloseBtnShown={isCloseBtnShown} 
+            onClose={handleOnClose}
+        >
             {
                 account.email ? 
                     <div className={styles.permission}>

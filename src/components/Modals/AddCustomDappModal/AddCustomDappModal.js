@@ -116,13 +116,6 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const buttons = useMemo(() =>
-        <>
-            <Button clear onClick={() => hideModal()}>Close</Button>
-            <Button primaryGradient disabled={disabled} onClick={addDapp}>Add</Button>
-        </>
-        , [addDapp, disabled, hideModal])
-
     const onNetworkClick = (network) => {
         setNetworks(prev => {
             const index = prev.indexOf(network)
@@ -164,7 +157,11 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                 <div>Add custom dApp</div>
             </div>
             }
-            buttons={buttons}>
+            buttons={<>
+                <Button small clear onClick={() => hideModal()}>Close</Button>
+                <Button small primaryGradient disabled={disabled} onClick={addDapp}>Add</Button>
+            </>}
+        >
             <div>
                 <TextInput
                     value={url}

@@ -40,7 +40,7 @@ const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handl
       contentClassName={styles.content}
       title="Hide Collectible" 
       buttons={
-        <Button className={styles.closeButton} onClick={handleHideModal}>
+        <Button small className={styles.closeButton} onClick={handleHideModal}>
           Close
         </Button>
       }
