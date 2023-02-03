@@ -366,12 +366,69 @@ const uniV32Mapping = (humanizerInfo) => {
   }
 }
 
+const uniUniversalRouter = (humanizerInfo) => {
+  const ifaceUniversalRouter  = new Interface(humanizerInfo.abis.UniswapUniversalRouter)
+  return {
+    [ifaceUniversalRouter.getSighash('collectRewards')]: (txn, network, opts = {}) => {
+      const [ params ] = ifaceUniversalRouter.parseTransaction(txn).args
+      // @TODO: consider fees
+      return {
+        parsed: [],
+        params: {},
+        words: []
+      }
+      // return {
+      //   parsed: !opts.extended 
+      //     ? [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+      //     : toExtended('Swap', 'for at least', token(humanizerInfo, params.tokenIn, params.amountIn, true), token(humanizerInfo, params.tokenOut, params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from, true)),
+      //   params: { amount: params.amountIn, tknIn: params.tokenIn },
+      //   words: ['Swap', 'for at least']
+      // }
+    },
+    [ifaceUniversalRouter.getSighash('execute(bytes calldata commands, bytes[] calldata inputs, uint256 deadline)')]: (txn, network, opts = {}) => {
+      const [ commands, inputs, deadline ] = ifaceUniversalRouter.parseTransaction(txn).args
+    
+      // @TODO: consider fees
+      return {
+        parsed: [],
+        params: {},
+        words: []
+      }
+      // return {
+      //   parsed: opts.extended 
+      //     ? [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+      //     : toExtended('Swap', 'for at least', token(humanizerInfo, params.tokenIn, params.amountIn, true), token(humanizerInfo, params.tokenOut, params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from, true)),
+      //   params: { amount: params.amountIn, tknIn: params.tokenIn },
+      //   words: ['Swap', 'for at least']
+      // }
+    },
+    [ifaceUniversalRouter.getSighash('uniswapV3SwapCallback')]: (txn, network, opts = {}) => {
+      console.log('execute 2', ifaceUniversalRouter.parseTransaction(txn).args)
+      const [ params ] = ifaceUniversalRouter.parseTransaction(txn).args
+      return {
+        parsed: [],
+        params: {},
+        words: []
+      }
+      // @TODO: consider fees
+      // return {
+      //   parsed: !opts.extended 
+      //     ? [`Swap ${token(humanizerInfo, params.tokenIn, params.amountIn)} for at least ${token(humanizerInfo, params.tokenOut, params.amountOutMinimum)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+      //     : toExtended('Swap', 'for at least', token(humanizerInfo, params.tokenIn, params.amountIn, true), token(humanizerInfo, params.tokenOut, params.amountOutMinimum, true), recipientText(humanizerInfo, params.recipient, txn.from, true)),
+      //   params: { amount: params.amountIn, tknIn: params.tokenIn },
+      //   words: ['Swap', 'for at least']
+      // }
+    }
+  }
+}
+
 
 const mapping = (humanizerInfo) => {
   return { 
     ...uniV2Mapping(humanizerInfo), 
     ...uniV3Mapping(humanizerInfo), 
-    ...uniV32Mapping(humanizerInfo)
+    ...uniV32Mapping(humanizerInfo),
+    ...uniUniversalRouter(humanizerInfo)
   }
 } 
 export default mapping
