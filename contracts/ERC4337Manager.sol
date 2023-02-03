@@ -37,5 +37,6 @@ contract AmbireERC4337Manager is AmbireAccount, IAccount {
 			(success);
 			// ignore failure (its EntryPoint's job to verify, not account.)
 		}
+		return 0; // always return 0 as this function doesn't support time based validation
 	}
 }
