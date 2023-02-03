@@ -249,7 +249,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
                 Reject
               </Button>
               {isDeployed !== null && isDeployed && hasPrivileges && (
-                <Button type='submit' variant="primaryGradient" disabled={isLoading} className={styles.button} loading={isLoading} loadingText="Signing...">
+                <Button type='submit' variant="primaryGradient" className={styles.button} loading={isLoading} loadingText="Signing...">
                   Sign
                 </Button>
               )}
