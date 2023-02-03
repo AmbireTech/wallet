@@ -41,7 +41,7 @@ const Button: FC<ButtonProps> = ({
 			type={type}
 			form={form}
 		>
-			{startIcon && startIcon}
+			{(!loading && startIcon) && startIcon}
 			{!loading ? (
 				children
 			) : (
@@ -50,7 +50,7 @@ const Button: FC<ButtonProps> = ({
 					<p className={styles.loadingText}>{loadingText || 'Loading...'}</p>
 				</div>
 			)}
-			{endIcon && endIcon}
+			{(!loading && endIcon) && endIcon}
 		</button>
 	)
 }
