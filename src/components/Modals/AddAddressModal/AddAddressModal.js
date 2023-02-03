@@ -68,8 +68,8 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     }
 
     const buttons = <>
-        <Button clear small icon={<MdClose />} onClick={hideModal}>Cancel</Button>
-        <Button small icon={<MdCheck />} disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+        <Button variant="secondary" size="sm" startIcon={<MdClose />} onClick={hideModal}>Cancel</Button>
+        <Button variant="primaryGradient" size="sm" startIcon={<MdCheck />} disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
     </>
 
     return (

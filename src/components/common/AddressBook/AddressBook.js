@@ -99,7 +99,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                             <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)} />
                             <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)} />
                         </div>
-                        <Button clear small disabled={!isAddAddressFormValid} onClick={onAddAddress}>
+                        <Button variant="secondary" size="sm" disabled={!isAddAddressFormValid} onClick={onAddAddress}>
                             <MdOutlineAdd /> Add Address
                         </Button>
                     </div>

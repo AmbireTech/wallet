@@ -185,7 +185,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     const modalButtons = <>
         <Button onClick={() => hideModal()}>Cancel</Button>
-        <Button primaryGradient={true} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
+        <Button variant="primaryGradient" disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
     </>
 
     return (

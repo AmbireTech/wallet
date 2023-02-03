@@ -6,7 +6,7 @@ import { Modal, Button } from 'components/common'
 
 const EarnDetailsModal = ({ title = 'Details', description = '' }) => {
     const { hideModal } = useModals()
-    const buttons = (<Button clear small icon={<MdClose />} onClick={hideModal}>Close</Button>)
+    const buttons = (<Button variant="secondary" size="sm" startIcon={<MdClose />} onClick={hideModal}>Close</Button>)
    
     return (
         <Modal id="wallet-more-details-modal" title={title} buttons={buttons}>

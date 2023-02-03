@@ -29,7 +29,7 @@
         margin-bottom: 43px;
     }
 
-    button, input {
+    button:not([type=submit], .resendBtn), input {
         font-size: 16px;
         border: 0px;
         background: none; /* #282c34; */
@@ -39,23 +39,20 @@
         transition: all 0.1s ease-in-out;
     }
 
+    .resendBtn {
+        max-width: 250px;
+        margin: 0 auto;
+    }
+
     button {
         background-color: white;
-    }
-
-    button, input[type=submit] {
-        cursor: pointer;
-    }
-
-    button:not([disabled]):active, input[type=submit]:not([disabled]):active {
-        transform: scale(0.95);
     }
 
     input:focus {
         outline: 0px;
     }
 
-    button {
+    button:not([type=submit]) {
         opacity: 0.8;
     }
 
@@ -66,19 +63,6 @@
     input:disabled, button:disabled {
         opacity: 0.5 !important;
         cursor: default;
-    }
-
-    input[type=submit] {
-        height: 60px;
-        width: 100%;
-        border: none;
-        background: theme(gradient-primary);
-        border-radius: 12px;
-        color: $c-titan-white;
-        font-size: 20px;
-        font-weight: 500;
-        padding: 0;
-        margin-bottom: 30px;
     }
 
     input {

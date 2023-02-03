@@ -27,7 +27,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
         remainingTime, 
         currentBalanceWalletAtCurrentShareValue
     } = details
-    const buttons = (<Button clear small icon={<MdClose />} onClick={hideModal}>Close</Button>)
+    const buttons = (<Button variant="secondary" size="sm" startIcon={<MdClose />} onClick={hideModal}>Close</Button>)
    
     return (
         <Modal id="wallet-more-details-modal" title={title} buttons={buttons}>

@@ -156,8 +156,8 @@ const CustomTokenForm = ({
               </div>
               <div className={styles.buttons}>
                 <Button
-                  small
-                  danger
+                  size="sm"
+                  variant="danger"
                   onClick={() => {
                     setIsAddCustomTokenFormShown(false)
                     setCustomTokenAddress('')
@@ -167,7 +167,7 @@ const CustomTokenForm = ({
                 >
                   Cancel
                 </Button>
-                <Button small primaryGradient onClick={() => addCustomToken()} className={styles.button}>
+                <Button size="sm" variant="primaryGradient" onClick={() => addCustomToken()} className={styles.button}>
                   Add
                 </Button>
               </div>
@@ -176,8 +176,8 @@ const CustomTokenForm = ({
         </div>
       ) : (
         <Button
-          small
-          border
+          size="sm"
+          variant="primaryGradient"
           onClick={() => setIsAddCustomTokenFormShown(true)}
           className={cn(styles.button, styles.openFormButton)}
         >

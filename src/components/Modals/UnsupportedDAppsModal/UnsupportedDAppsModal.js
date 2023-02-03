@@ -22,8 +22,8 @@ const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList, onCo
     }
 
     const buttons = <>
-        <Button clear icon={<MdClose/>} onClick={handleCancel}>Cancel</Button>
-        <Button disabled={!advancedMode} onClick={handleContinue}>Continue</Button>
+        <Button variant="secondary" startIcon={<MdClose/>} onClick={handleCancel}>Cancel</Button>
+        <Button variant="primaryGradient" disabled={!advancedMode} onClick={handleContinue}>Continue</Button>
     </>
 
     return (

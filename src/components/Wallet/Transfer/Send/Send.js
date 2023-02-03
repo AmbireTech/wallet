@@ -331,7 +331,7 @@ const Send = ({
                     }    
                 </div>
             </div>
-            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
+            <Button variant="primaryGradient" disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
         </div>) : <NoFundsPlaceholder/>
 }
 

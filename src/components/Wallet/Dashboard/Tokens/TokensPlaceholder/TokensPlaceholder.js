@@ -29,14 +29,14 @@ const TokensPlaceholder = ({ onClickAddToken, onClickShowToken, footer }) => {
                         Welcome! You don't have any funds on this account.
                     </h2>
                     <NavLink to="/wallet/deposit">
-                        <Button small icon={<DepositIcon />}>Deposit</Button>
+                        <Button size="sm" startIcon={<DepositIcon />}>Deposit</Button>
                     </NavLink>
                     <div className={styles.addToken}>
                         <p>You have a token that's not displayed?</p>
                         <Button 
-                            mini 
-                            clear 
-                            icon={<AddIcon />} 
+                            size="xsm"
+                            variant="secondary"
+                            startIcon={<AddIcon />} 
                             onClick={onClickAddToken}
                             className={styles.addTokenButton}
                         >

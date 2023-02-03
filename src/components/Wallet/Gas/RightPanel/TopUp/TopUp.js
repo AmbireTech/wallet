@@ -69,7 +69,7 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
             },
           }}
         >
-          <Button primaryGradient className={styles.depositBtn}>
+          <Button variant="primaryGradient" className={styles.depositBtn}>
             Top up Gas Tank
           </Button>
         </NavLink>

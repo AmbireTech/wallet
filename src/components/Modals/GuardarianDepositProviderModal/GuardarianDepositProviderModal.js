@@ -190,7 +190,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
             } 
             onClick={sendTxn}
             className={styles.button}
-            primaryGradient
+            variant="primaryGradient"
         >
             {guardarian.mode === 'buy' ? 'Buy' : 'Sell'}
         </Button>

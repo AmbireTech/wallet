@@ -9,10 +9,10 @@ const RemoveSignerModal = ({ onClick,  }) => {
   const { hideModal } = useModals()
 
   const Buttons = <>
-    <Button border onClick={hideModal}>
+    <Button onClick={hideModal}>
       Cancel
     </Button>
-    <Button border className={styles.removeButton} onClick={() => {
+    <Button variant="danger" onClick={() => {
       hideModal()
       onClick()
     }}>

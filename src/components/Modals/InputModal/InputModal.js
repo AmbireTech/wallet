@@ -25,8 +25,8 @@ const InputModal = ({ title, inputs, onClose }) => {
     }
 
     const buttons = <>
-        <Button clear small icon={<MdClose/>} onClick={hideModal}>Cancel</Button>
-        <Button small icon={<MdCheck/>} disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+        <Button variant="secondary" size="sm" startIcon={<MdClose/>} onClick={hideModal}>Cancel</Button>
+        <Button size="sm" startIcon={<MdCheck/>} disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
     </>
 
     return (

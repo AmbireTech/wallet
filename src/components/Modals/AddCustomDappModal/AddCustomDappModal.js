@@ -118,8 +118,8 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
 
     const buttons = useMemo(() =>
         <>
-            <Button clear icon={<MdOutlineClose />} onClick={() => hideModal()}>Close</Button>
-            <Button icon={<MdOutlineAdd />} disabled={disabled} onClick={addDapp}>Add</Button>
+            <Button variant="secondary" startIcon={<MdOutlineClose />} onClick={() => hideModal()}>Close</Button>
+            <Button variant="primaryGradient" startIcon={<MdOutlineAdd />} disabled={disabled} onClick={addDapp}>Add</Button>
         </>
         , [addDapp, disabled, hideModal])
 

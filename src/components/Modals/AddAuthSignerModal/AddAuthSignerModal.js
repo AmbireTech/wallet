@@ -274,7 +274,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
           className={styles.button}
           disabled={disabled}
           onClick={() => onAddBtnClicked(signerAddress)}
-          primaryGradient
+          variant="primaryGradient"
       >
         Add
       </Button>

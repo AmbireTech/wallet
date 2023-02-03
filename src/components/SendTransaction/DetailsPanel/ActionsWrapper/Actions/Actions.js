@@ -64,7 +64,7 @@ const Actions = ({
   const rejectButton = rejectTxn && (
     // WARNING: DO NOT remove type='button' here, it indicates that this button is not a submit button in the <form>
     // if it is, pressing Enter will reject the transaction rather than submit it
-    <Button danger type='button' className={cn(styles.button, styles.danger)} onClick={rejectTxn}>Reject</Button>
+    <Button variant="danger" type='button' className={cn(styles.button, styles.danger)} onClick={rejectTxn}>Reject</Button>
   )
 
   const approveTxn = ({ quickAccCredentials }) => {
@@ -404,7 +404,7 @@ const Actions = ({
         </div>
         <div className={styles.buttons}>
           <Button
-            danger
+            variant="danger"
             disabled={signingStatus?.inProgress}
             type='button'
             className={cn(styles.button, styles.danger)}
@@ -413,15 +413,15 @@ const Actions = ({
             Cancel
           </Button>
           <Button
-            primaryGradient
+            variant="primaryGradient"
             className={cn(styles.button, styles.confirm)}
-            disabled={signingStatus?.inProgress}
+            loading={signingStatus?.inProgress}
             onClick={() => {
               if (!form.current.checkValidity()) return
               approveTxn({ quickAccCredentials })
             }}
           >
-            { signingStatus && signingStatus.inProgress ? 'Loading...' : 'Confirm'}
+            Confirm
           </Button>
         </div>
       </form>
@@ -430,8 +430,8 @@ const Actions = ({
 
   return (<div className={styles.buttons}>
       {rejectButton}
-      <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus?.inProgress} onClick={approveTxn}>
-        {signingStatus && signingStatus.inProgress ? 'Signing...' : 'Sign and Send'}
+      <Button variant="primaryGradient" className={cn(styles.button, styles.confirm)} disabled={!estimation} loading={signingStatus?.inProgress} loadingText="Signing..." onClick={approveTxn}>
+        Sign and Send
       </Button>
   </div>)
 }

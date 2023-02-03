@@ -532,7 +532,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
             <div className={styles.btnWrapper}>
               {!isEmailConfirmed && !isEmailResent && <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
-                  <Button border mini icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
+                  <Button className={styles.resendBtn} size="xsm" startIcon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
               </ToolTip>}
             </div>
             <div className={styles.backButton} onClick={handleBackBtnClicked}>

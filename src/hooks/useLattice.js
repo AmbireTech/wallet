@@ -1,4 +1,4 @@
-import { Button, Loading } from 'components/common'
+import { Button } from 'components/common'
 import { useState, useEffect, useRef } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { latticeInit,
@@ -96,17 +96,9 @@ const useLattice = ({ addresses }) => {
         }
     }
 
-    const buttons = <>
-        {!isLoading ? (
-            <Button onClick={connectToDevice}>
-                Connect to Wallet
-            </Button>
-        ) : (
-            <Button disabled>
-                <Loading />
-            </Button>
-        )}
-    </>
+    const buttons = <Button onClick={connectToDevice} loading={isLoading}>
+        Connect to Wallet
+    </Button>
 
     return {
         handleInputDeviceId,

@@ -108,7 +108,7 @@ export default function GnosisSafeApps({
     <div id="plugin-gnosis-container">
       <ul id="dapps-container" className={selectedApp ? 'small-thumbs' : ''}>
         <li className='add-plugin'>
-          <Button mini icon={<MdOutlineAdd />} onClick={showInputModal}>Add plugin</Button>
+          <Button size="xsm" startIcon={<MdOutlineAdd />} onClick={showInputModal}>Add plugin</Button>
         </li>
         {[...dapps, ...customPlugins].map((dapp, index) => (
           <li
@@ -119,7 +119,7 @@ export default function GnosisSafeApps({
             }}
             className={(selectedApp && dapp.url === selectedApp.url) ? 'selected' : ''}
           >
-            {dapp.customId && <Button className='remove-btn' mini red icon={<MdRemove />} onClick={() => removeCustomPlugin(dapp.customId)} />}
+            {dapp.customId && <Button className='remove-btn' size="xsm" variant="danger" startIcon={<MdRemove />} onClick={() => removeCustomPlugin(dapp.customId)} />}
             <div className="logo-container" style={{ backgroundImage: `url(${dapp.logo})` }}></div>
             <div className="dapp-name">{dapp.name}</div>
             <div className="dapp-desc">{dapp.desc}</div>

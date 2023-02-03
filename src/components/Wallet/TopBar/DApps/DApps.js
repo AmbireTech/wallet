@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { checkClipboardPermission } from 'lib/permissions'
 import { canOpenInIframe } from 'lib/dappsUtils'
 
-import { DropDown, ToolTip, Button, Loading } from "components/common"
+import { DropDown, ToolTip, Button } from "components/common"
 import DropDownItem from 'components/common/DropDown/DropDownItem/DropDownItem'
 import DropDownItemSeparator from 'components/common/DropDown/DropDownItem/DropDownItemSeparator'
 
@@ -63,7 +63,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
         >
             <div className={styles.connectDapp}>
                 <div className={styles.heading}>
-                    <Button primaryGradient small className={styles.buttonClass} icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard}>
+                    <Button variant="primaryGradient" size="sm" className={styles.buttonClass} loading={isWcConnecting} startIcon={<ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard}>
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
