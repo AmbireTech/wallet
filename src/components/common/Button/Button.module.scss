@@ -39,7 +39,7 @@
     }
     
     &.secondary {
-        @include FilledButton(rgba(theme(background-primary), .4));
+        @include FilledButton(rgba(0, 0, 0, 0.1));
     }
 
     &.danger {
@@ -61,7 +61,8 @@
 
     // Text only
     &.text {
-        color: inherit;
+        color: theme(text-primary);
+        display: inline;
         background-color: transparent;
         border: none;
         font-size: 16px;
@@ -76,13 +77,14 @@
 
     // Sizes
     &.sm {
-        font-size: 16px;
+        font-size: 17px;
         height: 50px;
     }
 
     &.xsm {
         height: 40px;
         font-size: 14px;
+        padding: 0 0.8em;
     }
 
     // Other states
