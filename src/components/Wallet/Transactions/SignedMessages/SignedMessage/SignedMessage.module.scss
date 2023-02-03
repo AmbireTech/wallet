@@ -15,6 +15,7 @@
     align-items: center;
     cursor: pointer;
     font-size: 14px;
+    user-select: none;
 
     .dappInfo {
       display: flex;
@@ -68,6 +69,7 @@
         margin-bottom: 5px;
         font-size: 16px;
         font-weight: 400;
+        user-select: none;
       }
 
       .advancedText {
