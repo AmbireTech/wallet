@@ -48,7 +48,7 @@
         opacity: 0.8;
     }
 
-    button:not([disabled]):hover {
+    button:not([type=submit]):not([disabled]):hover {
         opacity: 1;
     }
 

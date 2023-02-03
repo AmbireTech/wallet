@@ -78,10 +78,8 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           !isSignup ? (<input type="password" style={{ display: "none" }}></input>): (<></>)
         }
         {additionalInputs}
-        <Button className={styles.button} variant="primaryGradient" type="submit" disabled={inProgress}>
-        {isSignup ?
-          (inProgress ? "Signing up..." : "Sign Up")
-          : (inProgress ? "Logging in..." : "Log In")}
+        <Button className={styles.button} variant="primaryGradient" type="submit" loading={inProgress} loadingText={isSignup ? 'Signing up...' : 'Logging in...'}>
+          {isSignup ? "Sign Up" : "Log In"}
         </Button>
       </form>
     )
