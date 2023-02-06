@@ -1,6 +1,7 @@
 @import 'variables.scss';
 
 $modal-width: 580px;
+$max-modal-height: 820px;
 
 .wrapper {
     z-index: 52;
@@ -9,7 +10,8 @@ $modal-width: 580px;
     flex-direction: column;
     justify-content: space-between;
     gap: 30px;
-    max-height: 100%;
+    max-height: $max-modal-height;
+    height: 100%;
     min-height: 550px;
     max-width: $modal-width;
     width: 100%;
@@ -73,5 +75,23 @@ $modal-width: 580px;
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .wrapper {
         padding: 30px;
+    }
+}
+
+@media screen and (max-height: calc(#{$max-modal-height} + 100px)) {
+    .modal {
+        height: 100%;
+        min-height: unset;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .wrapper {
+        padding: 0;
+
+        // Fixes overflow issues on mobile
+        .heading, .content, .buttons {
+            padding: 20px;
+        }
     }
 }
