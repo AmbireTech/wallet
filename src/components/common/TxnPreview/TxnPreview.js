@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import { useState, useEffect  } from 'react'
+import { useEffect, useState } from 'react'
 import { formatUnits } from 'ethers/lib/utils'
 
 import networks from 'consts/networks'
@@ -24,11 +24,13 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
   const { constants: { tokenList, humanizerInfo } } = useConstants()
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(humanizerInfo, txn[0])
-
+  const isUnknown = !isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account)
+  
   const networkDetails = networks.find(({ id }) => id === network)
   const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
+
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
-  
+
   return (
     <div className={cn(styles.wrapper, {[styles.firstFailing]: isFirstFailing})}>
         <div className={styles.heading}>
@@ -54,30 +56,26 @@ export default function TxnPreview ({ txn, onDismiss, network, account, isFirstF
                   } else return entry 
                 })}
               </div>
+              {onDismiss ? (<div className={styles.dissmissTxnWrapper}>
+                <ToolTip disabled={!disableDismiss || !disableDismissLabel} label={disableDismissLabel}>
+                  <div 
+                    className={cn(styles.dismissTxn, {[styles.disabled]: disableDismiss})} 
+                    onClick={e => { e.stopPropagation(); !disableDismiss && onDismiss.apply(this, e) }}
+                  >
+                    <TrashIcon className={styles.icon} />
+                  </div>
+                </ToolTip>
+              </div>) : null}
             </div>
             {isFirstFailing && (<p className={styles.warning}>This is the first failing transaction.</p>)}
-              {!isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account) && (<p className={styles.warning}>Warning: interacting with an unknown contract or address.</p>)}
-          </div>
-          <div className={styles.actionIcons}>
-            {onDismiss ? (
-              <ToolTip disabled={!disableDismiss || !disableDismissLabel} label={disableDismissLabel}>
-                <div 
-                  className={cn(styles.dismissTxn, {[styles.disabled]: disableDismiss})} 
-                  onClick={e => { e.stopPropagation(); !disableDismiss && onDismiss.apply(this, e) }}
-                >
-                  <TrashIcon className={styles.icon} />
-                </div>
-              </ToolTip>
-            ) : null}
+            {isUnknown && (<p className={styles.warning}>Warning: interacting with an unknown contract or address.</p>)}
           </div>
         </div>
-        {
-          isExpanded ? (<div className={styles.advanced}>
-            <p>Interacting with (<i>to</i>): {txn[0]}{contractName ? ` (${contractName})` : ''}</p>
-            <p>Value to be sent (<i>value</i>): {formatUnits(txn[1] || '0x0', 18)} {getNetworkSymbol(network)}</p>
-            <p>Data: {txn[2]}</p>
-          </div>) : null
-        }
+        {isExpanded ? (<div className={styles.advanced}>
+          <p>Interacting with (<i>to</i>): {txn[0]}{contractName ? ` (${contractName})` : ''}</p>
+          <p>Value to be sent (<i>value</i>): {formatUnits(txn[1] || '0x0', 18)} {getNetworkSymbol(network)}</p>
+          <p>Data: {txn[2]}</p>
+        </div>) : null}
     </div>
   )
 }
