@@ -7,29 +7,10 @@ const parseZeroAddressIfNeeded = address => {
         : address
 }
 
-const recipientText = (humanizerInfo, recipient, txnFrom, extended = false) =>
-    recipient.toLowerCase() === txnFrom.toLowerCase()
-        ? !extended
-            ? ``
-            : []
-        : extended
-        ? `${recipient}`
-        : [
-              '',
-              {
-                  type: 'address',
-                  address: recipient,
-                  name: getName(humanizerInfo, recipient),
-              },
-          ]
-
 const toExtended = (
     action,
     word,
-    fromToken,
-    toToken,
-    recipient = ['on Swappin'],
-    expires = []
+    fromToken
 ) => {
     return [
         [
@@ -38,13 +19,7 @@ const toExtended = (
                 type: 'token',
                 ...fromToken,
             },
-            word,
-            {
-                type: 'token',
-                ...toToken,
-            },
-            ...recipient,
-            expires,
+            word
         ],
     ]
 } 
@@ -112,27 +87,25 @@ const SwappinMapping = (humanizerInfo) => {
     const SwappinInterface = new Interface(humanizerInfo.abis.SwappinOwn)
     
     return {
-        [SwappinInterface.getSighash('payWithEth')]: (txn, network, { extended = false }) => {
-            // Props
-            // amountForm - Swappin
-            // OneInch Contract data:
-            // swapProvider (address) - OneInch contract address
-            // swapCalldata (bytes) - calldata to pass arguments to the swap provider
-            // dest (address) - destination wallet (must be whitelisted)
-            // token (address) - destination token (i.e. USDC - must be whitelisted)
-        const { amountFrom, swapCalldata, dest, token: tokenDst } = SwappinInterface.parseTransaction(txn).args
-        const mappingResult = OneInchMapping(humanizerInfo)
-        const sigHash = swapCalldata.slice(0, 10)
-        const humanizer = mappingResult[sigHash]
-        const swapCall =  humanizer ? humanizer({ ...txn, data: swapCalldata }, network, { dstToken: tokenDst }) : null
-        
-        const parsed = !extended ?
-            [`Pay with ${nativeToken(network, amountFrom, extended)} to ${recipientText(humanizerInfo, dest, txn.from)}`]
-            : toExtended('Pay with', 'to', nativeToken(network, amountFrom, true), {}, recipientText(humanizerInfo, dest, txn.from, true))
-
-        return [ parsed, swapCall ].flat().filter(x => x)
+        [SwappinInterface.getSighash('payWithEth')]: (txn, network, opts) => {  
+            const { amountFrom } = SwappinInterface.parseTransaction(txn).args
+            return !opts.extended 
+                ? [`Pay with ${nativeToken(network, amountFrom, opts.extended)} for a gift card`]
+                : toExtended('Swapping', 'for a gift card on Swappin.gifts', nativeToken(network, amountFrom, opts.extended), {}, {})
+        },
+        [SwappinInterface.getSighash('payWithUsdToken')]: (txn, network, opts) => {  
+            const { amount, token: destToken } = SwappinInterface.parseTransaction(txn).args
+            return !opts.extended 
+                ? [`Pay with ${token(humanizerInfo, network, destToken, amount)} for a gift card`]
+                : toExtended('Swapping', 'for a gift card on Swappin.gifts', token(humanizerInfo, destToken, amount, opts.extended), {}, {})
+        },
+        [SwappinInterface.getSighash('payWithAnyToken')]: (txn, network, opts) => {  
+            const { amountFrom, tokenFrom } = SwappinInterface.parseTransaction(txn).args
+            return !opts.extended 
+                ? [`Pay with ${token(humanizerInfo, tokenFrom, amountFrom, opts.extended)} for a gift card`]
+                : toExtended('Swapping', 'for a gift card on Swappin.gifts', token(humanizerInfo, tokenFrom, amountFrom, opts.extended), {}, {})
+        },
     }
-  }
 }
 const mapping = (humanizerInfo) => {
     return { 
