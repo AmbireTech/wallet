@@ -455,9 +455,9 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 
 ### v0.6.2
 - 4337 implementation in Identity.sol
-- Remove Uniswap from premit exceptions
-- improvement / tnxs preview
-- improvement / Add or Remove Token button
-- fix / sign message white list
+- Fixed an issue where approvals didn't succeed in the official UI of Uniswap
+- improvement / tnxs preview ofor mobile devices
+- improvement / Add or Remove Token button if user don't have any assets on current chain.
+- fix / applay white list for sign message for EIP 1271 support 
 - fix / signed message and sigHash can be selectable for copy
 - redesign / promo banners
