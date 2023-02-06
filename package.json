@@ -26,7 +26,7 @@
     "@yfi/sdk": "^1.0.11",
     "@account-abstraction/contracts": "^0.4.0",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#ef2f88f26824c64c1eb12c02a389baec2b2c3889",
-    "ambire-common": "github:AmbireTech/ambire-common#016c64fcbb336637752d0cf374206b272b5da8f9",
+    "ambire-common": "github:AmbireTech/ambire-common#eb822839387cc8fd4459ce3b05de63ef16e70462",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "chart.js": "^3.9.1",
