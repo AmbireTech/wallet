@@ -23,7 +23,7 @@ const Modal = ({ children, title, buttons, size, isCloseBtnShown = true, onClose
                 {isCloseBtnShown && <CloseIcon className={styles.headingIcon} onClick={onCloseModal} />}
             </div>) : null}
             <div className={cn(styles.content, contentClassName)}>{ children }</div>
-            { buttons ? <div className={cn(styles.buttons, buttonsClassName)}>{ buttons }</div> : null}
+            { buttons && <div className={cn(styles.buttons, buttonsClassName)}>{ buttons }</div>}
         </div>
     )
 }
