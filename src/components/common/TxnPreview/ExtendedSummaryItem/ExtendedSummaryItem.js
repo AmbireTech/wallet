@@ -22,7 +22,9 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
       )
     return (
       <div className={styles.token}>
-        {item.amount > 0 ? <span>{formatFloatTokenAmount(item.amount, true, item.decimals)}</span> : null}
+        {item.amount > 0 ? (<span>
+          {formatFloatTokenAmount(item.amount, true, item.decimals)}
+        </span>) : null}
         {item.decimals !== null && item.symbol ? (
           <>
             {item.address ? (
@@ -41,7 +43,9 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
     )
   }
 
-  if (item.type === 'address')
+  if (item.type === 'address') {
+    const shortenedAddress = item.address.substring(0, 8) + '...' + item.address.substring(item.address.length - 3, item.address.length)
+
     return (
       <a
         className={styles.address}
@@ -51,11 +55,17 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <ToolTip disabled={!item.address} label={item.address}>
-          {item.name ? item.name : item.address}
+          <span className={styles.toAddress}>
+            {item.name ? item.name : item.address}
+          </span>
+          <span className={cn(styles.toAddress, styles.short)}>
+            {item.name ? item.name : ((item.address.length > 14) ? shortenedAddress : item.address)}
+          </span>
           {item.address ? <ExternalLinkIcon className={styles.externalLink} /> : null}
         </ToolTip>
       </a>
     )
+  }
 
   if (item.type === 'network')
     return (
@@ -79,7 +89,8 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         rel="noreferrer"
         onClick={(e) => e.stopPropagation()}
       >
-        {item.name}
+        <span className={styles.toAddress}>{item.name}</span>
+        <span className={cn(styles.toAddress, styles.short)}>{item.name.substring(0, 5) + '...' + item.name.substring(item.name.length-5, item.name.length)}</span>
         {canShowLink ? <ExternalLinkIcon /> : null}
       </a>
     )
