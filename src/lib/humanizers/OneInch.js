@@ -91,19 +91,19 @@ const SwappinMapping = (humanizerInfo) => {
             const { amountFrom } = SwappinInterface.parseTransaction(txn).args
             return !opts.extended 
                 ? [`Pay with ${nativeToken(network, amountFrom, opts.extended)} for a gift card`]
-                : toExtended('Swapping', 'for a gift card on Swappin.gifts', nativeToken(network, amountFrom, opts.extended), {}, {})
+                : toExtended('Swapping', 'for a gift card on Swappin.gifts', nativeToken(network, amountFrom, opts.extended))
         },
         [SwappinInterface.getSighash('payWithUsdToken')]: (txn, network, opts) => {  
             const { amount, token: destToken } = SwappinInterface.parseTransaction(txn).args
             return !opts.extended 
                 ? [`Pay with ${token(humanizerInfo, destToken, amount)} for a gift card`]
-                : toExtended('Swapping', 'for a gift card on Swappin.gifts', token(humanizerInfo, destToken, amount, opts.extended), {}, {})
+                : toExtended('Swapping', 'for a gift card on Swappin.gifts', token(humanizerInfo, destToken, amount, opts.extended))
         },
         [SwappinInterface.getSighash('payWithAnyToken')]: (txn, network, opts) => {  
             const { amountFrom, tokenFrom } = SwappinInterface.parseTransaction(txn).args
             return !opts.extended 
                 ? [`Pay with ${token(humanizerInfo, tokenFrom, amountFrom, opts.extended)} for a gift card`]
-                : toExtended('Swapping', 'for a gift card on Swappin.gifts', token(humanizerInfo, tokenFrom, amountFrom, opts.extended), {}, {})
+                : toExtended('Swapping', 'for a gift card on Swappin.gifts', token(humanizerInfo, tokenFrom, amountFrom, opts.extended))
         },
     }
 }
