@@ -3,8 +3,14 @@ import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 
 import styles from './GasTankBalanceByTokensModal.module.scss'
+import { useMemo } from 'react'
 
 const GasTankBalanceByTokensModal = ({ data }) => {
+    const sortedData = useMemo(() => {
+        if (!data?.length) return []
+
+        return data.sort((a, b) => b.balance - a.balance)
+    }, [data])
     
     return (
         <Modal 
@@ -14,7 +20,7 @@ const GasTankBalanceByTokensModal = ({ data }) => {
             title="Gas Tank Balance by Tokens"
         >
             {
-                data && data.sort((a, b) => b.balance - a.balance).map((item, key) => {
+                sortedData.map((item, key) => {
                     return (
                         <div className={styles.token} key={key}>
                             <div className={styles.iconAndName}>
