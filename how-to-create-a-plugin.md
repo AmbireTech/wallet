@@ -100,21 +100,17 @@ const estimatedTransferGas = await sdk.eth.getEstimateGas({
 - [Safe App documentation](https://docs.gnosis-safe.io/build/sdks/safe-apps)
 
 ### Testing the application
-You can run your plugin at this address: https://wallet.ambire.com/#/wallet/gnosis/plugins
+You can run your plugin at this address: https://wallet.ambire.com/#/wallet/dapps
 
-You have two options, one is to run your plugin on localhost on port 3002, and the second is to provide an external link to the plugin.
+![Add custom dApp](https://user-images.githubusercontent.com/83211172/216987050-641d8fae-6dfa-4dd5-9039-e355eee94dbc.png)
 
-If you run on local host you can load plugin by clicking on “LocalTest”:
+If you deployd your plugin on public address you can load it by click at “Add custom dApp” and fill address in modal form:
 
-![image](https://user-images.githubusercontent.com/8737960/163565237-2592d9c2-f32e-4ec8-914b-5b50dd4583eb.png)
-
-If you deployd your plugin on public address you can load it by click at “Add Plugin” and fill address in modal form:
-
-![image (1)](https://user-images.githubusercontent.com/8737960/163565349-4a5c514d-70f7-4084-843d-1d70380efc58.png)
+![Add custom dApp menu with example](https://user-images.githubusercontent.com/83211172/216987890-f6a21da2-ecf1-4502-9603-f72e870b97ff.png)
 
 If the plugin is loaded correctly then the user can start interacting with it.
 
-![image (2)](https://user-images.githubusercontent.com/8737960/163565433-2a98b712-094a-4c49-820c-e9a57cf75897.png)
+![Add custom dApp - added](https://user-images.githubusercontent.com/83211172/216987343-864e6f2d-084b-481b-8f35-25a28169e1c2.png)
 
 ### Balances provider
 One of the main features that maybe you will need is to get the current balances (for most ERC20/BEP20/etc. tokens) for an account for the current network. We suggest using our own balance provider named Velcro.
