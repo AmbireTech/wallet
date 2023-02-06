@@ -96,7 +96,7 @@ const SwappinMapping = (humanizerInfo) => {
         [SwappinInterface.getSighash('payWithUsdToken')]: (txn, network, opts) => {  
             const { amount, token: destToken } = SwappinInterface.parseTransaction(txn).args
             return !opts.extended 
-                ? [`Pay with ${token(humanizerInfo, network, destToken, amount)} for a gift card`]
+                ? [`Pay with ${token(humanizerInfo, destToken, amount)} for a gift card`]
                 : toExtended('Swapping', 'for a gift card on Swappin.gifts', token(humanizerInfo, destToken, amount, opts.extended), {}, {})
         },
         [SwappinInterface.getSighash('payWithAnyToken')]: (txn, network, opts) => {  
@@ -107,6 +107,7 @@ const SwappinMapping = (humanizerInfo) => {
         },
     }
 }
+
 const mapping = (humanizerInfo) => {
     return { 
         ...OneInchMapping(humanizerInfo), 
