@@ -1,7 +1,7 @@
 @import 'variables.scss';
 
-$modal-width: 580px;
 $max-modal-height: 820px;
+$min-modal-height: 550px;
 
 .wrapper {
     z-index: 52;
@@ -11,11 +11,10 @@ $max-modal-height: 820px;
     justify-content: space-between;
     gap: 30px;
     max-height: $max-modal-height;
-    height: 100%;
-    min-height: 550px;
-    max-width: $modal-width;
+    min-height: $min-modal-height;
+    max-width: 580px;
     width: 100%;
-    padding: 30px 40px;
+    padding: 30px;
     border: 1px solid $c-fiord;
     background: $c-ebony-clay;
     border-radius: 12px;
@@ -58,6 +57,7 @@ $max-modal-height: 820px;
         overflow-y: auto;
         scrollbar-width: thin;
         height: 100%;
+        padding: 0 10px; // fixes scrollbar being shoved into the content
         flex: 1;
     }
 
@@ -79,19 +79,24 @@ $max-modal-height: 820px;
 }
 
 @media screen and (max-height: calc(#{$max-modal-height} + 100px)) {
-    .modal {
-        height: 100%;
-        min-height: unset;
+    .wrapper {
+        max-height: 100%;
+    }
+}
+
+@media screen and (max-height: calc(#{$min-modal-height} + 100px)) {
+    .wrapper {
+        min-height: 100%;
     }
 }
 
 @media screen and (max-width: 768px) {
     .wrapper {
-        padding: 0;
+        padding: 20px 0;
 
         // Fixes overflow issues on mobile
         .heading, .content, .buttons {
-            padding: 20px;
+            padding: 0 20px;
         }
     }
 }
