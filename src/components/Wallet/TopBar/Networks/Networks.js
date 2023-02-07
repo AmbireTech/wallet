@@ -1,9 +1,9 @@
-import styles from './Networks.module.scss'
 import { Select } from 'components/common';
 import { useDragAndDrop, useCheckMobileScreen } from 'hooks';
 import { ToolTip } from 'components/common';
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md';
 import SortButtons from 'components/common/Select/SortButtons/SortButtons';
+import styles from './Networks.module.scss'
 
 const Networks = ({
     network,

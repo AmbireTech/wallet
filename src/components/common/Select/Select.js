@@ -97,7 +97,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                         {
                                             filteredItems.map((item, i) => (
                                                 <div
-                                                    className={`${styles.option} ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
+                                                    className={`${styles.option} ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? styles.active : ''} ${item.disabled ? styles.disabled : ''} ${displayDraggableHeader ? styles.draggableOption : ''}`}
                                                     key={item.value + item.label}
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                     draggable={draggable}
