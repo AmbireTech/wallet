@@ -1,21 +1,23 @@
-![1](https://user-images.githubusercontent.com/8737960/163564503-db05549a-bb70-417f-b204-fd237a3f1442.png)
+![Ambire Wallet Dapp Catalog](https://user-images.githubusercontent.com/8737960/217239365-c4f40b34-c141-486c-a511-d10dc33da7ce.png)
 
-# How to create a plugin for Ambire Wallet
+# How to create a dApp for the Ambire Wallet dApp catalog
 _Basic Intro Guide_
 
-[Ambire](https://www.ambire.com/) is a next-generation open-source Web3 wallet focused on DeFi and the EVM ecosystem.
+[Ambire](https://www.ambire.com/) is a next-generation self-custodial Web3 wallet focused on the EVM ecosystem.
 
-It brings to the table a number of innovative features like human-friendly transaction parsing, simplifying ERC20 approvals, hardware wallet support and much more. It’s also a smart wallet, enabling features like multiple signers, social recovery, transaction batching, gas abstractions and others.
+It brings to the table a number of innovative features like human-readable transaction parsing, simplifying ERC20 approvals, hardware wallet support and much more. It’s also a smart contract wallet, enabling features like multiple signers, account recovery, transaction batching, gas abstractions and others.
 
-We are happy to announce a soft launch of our plugin system **integrated and developed on the Gnosis protocol** (Safe App).
+Ambire Wallet is an open source project. 
 
-### Why should you build an Ambire Wallet plugin
+We are happy to announce the launch of our dApp catalog **integrated and developed on the Gnosis protocol** (Safe App).
 
-We envision Ambire as the homepage of DeFi and this is why we created our plugin system. By adding your plugin to Ambire, you get the following benefits: 
+### Why should you place your dApp in the Ambire Wallet dApp catalog 
 
-- Getting in on the ground floor: the plugin system will be officially launched in Q4 of 2022 but you get a chance to get in during our soft launch and join our early adopters inner circle. 
-- Tapping into the Ambire Wallet’s user base: we currently have 75,000 registered accounts and growing. 
-- Marketing support: Our experienced marketing team will work with you to help promote the plugin and your participation in the Ambire ecosystem. 
+We envision Ambire as the homepage of Web3 and this is why we created our dApp catalog. By adding your dApp to Ambire, you get the following benefits: 
+
+- Getting in on the ground floor: the dApp catalog officially launched in Q4 of 2022 so you get to join our early adopters inner circle. 
+- Tapping into the Ambire Wallet’s user base: we currently have 95,000+ registered accounts and growing. 
+- Marketing support: Our experienced marketing team will work with you to help promote the dApp and your participation in the Ambire ecosystem. 
 - Development support: Our extremely competent developers will be available to assist you should you encounter a roadblock.
 - Empower your users with excellent UX - they get to benefit from all of the fantastic features Ambire Wallet offers. 
 
@@ -25,7 +27,7 @@ Check out Ambire Wallet here: https://wallet.ambire.com
 
 ---
 
-### This document provide basic information how you can start with development of plugin for Ambire Wallet
+### This document provide basic information about developing a dApp for Ambire Wallet
 
 First you can get a Gnosis react template and start with application Gnosis Safe App React Template.
 
@@ -100,15 +102,15 @@ const estimatedTransferGas = await sdk.eth.getEstimateGas({
 - [Safe App documentation](https://docs.gnosis-safe.io/build/sdks/safe-apps)
 
 ### Testing the application
-You can run your plugin at this address: https://wallet.ambire.com/#/wallet/dapps
+You can run your dApp at this address: https://wallet.ambire.com/#/wallet/dapps
 
 ![Add custom dApp](https://user-images.githubusercontent.com/83211172/216987050-641d8fae-6dfa-4dd5-9039-e355eee94dbc.png)
 
-If you deployd your plugin on public address you can load it by click at “Add custom dApp” and fill address in modal form:
+If you deployed your dApp on public address you can load it by click at “Add custom dApp” and fill address in modal form:
 
 ![Add custom dApp menu with example](https://user-images.githubusercontent.com/83211172/216987890-f6a21da2-ecf1-4502-9603-f72e870b97ff.png)
 
-If the plugin is loaded correctly then the user can start interacting with it.
+If the dApp is loaded correctly then the user can start interacting with it.
 
 ![Add custom dApp - added](https://user-images.githubusercontent.com/83211172/216987343-864e6f2d-084b-481b-8f35-25a28169e1c2.png)
 
