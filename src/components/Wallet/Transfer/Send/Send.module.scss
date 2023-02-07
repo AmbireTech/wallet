@@ -23,6 +23,7 @@
 
   .validationError {
     color: $danger-color;
+    text-align: center;
     font-size: 14px;
   }
 
@@ -121,6 +122,8 @@
   }
 
   .binanceAddressWarning {
+    margin: 0;
+    
     .checkBoxLabel {
       vertical-align: middle;
       margin-top: 3px;
