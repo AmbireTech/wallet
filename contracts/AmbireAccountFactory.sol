@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.7;
 
-import "./Identity.sol";
+import "./AmbireAccount.sol";
 import "./interfaces/IERC20.sol";
 
-contract IdentityFactory {
+contract AmbireAccountFactory {
 	event LogDeployed(address addr, uint256 salt);
 
 	address public immutable allowedToDrain;
@@ -16,15 +16,15 @@ contract IdentityFactory {
 		deploySafe(code, salt);
 	}
 
-	// When the relayer needs to act upon an /identity/:addr/submit call, it'll either call execute on the Identity directly
+	// When the relayer needs to act upon an /identity/:addr/submit call, it'll either call execute on the AmbireAccount directly
 	// if it's already deployed, or call `deployAndExecute` if the account is still counterfactual
 	// we can't have deployAndExecuteBySender, because the sender will be the factory
 	function deployAndExecute(
 		bytes calldata code, uint256 salt,
-		Identity.Transaction[] calldata txns, bytes calldata signature
+		AmbireAccount.Transaction[] calldata txns, bytes calldata signature
 	) external {
 		address payable addr = payable(deploySafe(code, salt));
-		Identity(addr).execute(txns, signature);
+		AmbireAccount(addr).execute(txns, signature);
 	}
 	// but for the quick accounts we need this
 	function deployAndCall(bytes calldata code, uint256 salt, address callee, bytes calldata data) external {

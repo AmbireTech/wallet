@@ -1,0 +1,227 @@
+@import 'variables.scss';
+
+@mixin GetBannerStyle($background, $color) {
+	background-color: $background;
+	border-left-color: $color;
+
+	.iconWrapper {
+		background-color: rgba($color, 0.05);
+		border-color: $color;
+	}
+
+	.minimizeIconWrapper {
+		background-color: rgba($color, 0.16);
+		color: $color;
+	}
+
+	.body {
+		.text {
+			.link {
+				color: mix($color, $c-mirage, 90%);
+			}
+		}
+	}
+
+  @media screen and (max-width: 64rem) {
+    border-left-color: transparent;
+    border-top-color: $color;
+  }
+}
+
+.wrapper {
+	position: relative;
+	width: 100%;
+	transition: 0.3s linear width;
+
+	&.minimized {
+		overflow: hidden;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 3.125rem;
+		height: 3.125rem;
+		border-radius: $border-radius;
+		background-color: $c-mirage;
+		cursor: pointer;
+
+		svg {
+			width: 1.5rem;
+			height: 1.5rem;
+		}
+
+		.shadow {
+			display: none;
+		}
+
+		.bannerAndMinimize {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: 0;
+
+			.banner {
+				padding: 0;
+        display: none;
+			}
+		}
+	}
+
+	.bannerAndMinimize {
+		overflow: hidden;
+		border-radius: $border-radius;
+
+		.banner {
+			z-index: 2;
+			position: relative;
+			display: flex;
+			align-items: center;
+      flex-wrap: wrap;
+			gap: 1.25rem;
+			padding: .8125rem 1.25rem;
+			padding-left: .8125rem;
+			color: $c-martinique-light;
+			border-left: 7px solid;
+
+			&.success {
+				@include GetBannerStyle($success-background-color, $success-color);
+			}
+
+			&.warning {
+				@include GetBannerStyle($warning-background-color, $warning-color);
+			}
+
+			&.danger {
+				@include GetBannerStyle($danger-background-color, $danger-color);
+			}
+
+			&.info,
+			&.degenTip {
+				@include GetBannerStyle($info-background-color, $ambire-dark-blue);
+			}
+
+			.iconWrapper,
+			.minimizeIconWrapper {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				width: 2.125rem;
+				height: 2.125rem;
+				border-radius: $border-radius;
+			}
+
+      .iconAndBody {
+        display: flex;
+        align-items: center;
+        gap: .9375rem;
+        flex: 1;
+        
+        .iconWrapper {
+          font-size: 1.25rem;
+          border-width: 1px;
+          border-style: solid;
+        }
+  
+        .body {
+          flex: 1;
+  
+          .title {
+            margin: 0;
+            font-size: 1.25rem;
+          }
+  
+          .text {
+            margin: 0;
+            font-size: 1rem;
+            text-align: left;
+          }
+        }
+      }
+
+		}
+
+		.minimizeIconWrapper {
+			cursor: pointer;
+
+			.minimizeIcon {
+				width: .75rem;
+				height: .5625rem;
+			}
+		}
+	}
+
+  .shadow {
+		position: absolute;
+		left: 50%;
+		z-index: 1;
+		bottom: 0;
+		width: 99%;
+		height: 2.5rem;
+		transform: translateX(-50%);
+		background: rgba($c-mirage, 0.8);
+		mix-blend-mode: multiply;
+		border-radius: .625rem;
+		filter: blur(.3125rem);
+	}
+}
+
+@media screen and (max-width: 64rem) {
+  .wrapper {
+    .bannerAndMinimize {
+      .banner {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 1.25rem;
+        border-left: none;
+        border-top: 7px solid;
+
+        .iconAndBody {
+          align-self: flex-start;
+
+          .body {
+            .title {
+              font-size: 1.125rem;
+              margin-bottom: .625rem;
+            }
+            .text {
+              font-size: .875rem;
+            }
+          }
+        }
+      }
+    }
+
+    .minimizeIconWrapper {
+      position: absolute;
+      bottom: 1.25rem;
+      right: 1.25rem;
+    }
+  }
+}
+
+@media screen and (max-width: 31.25rem) {
+  .wrapper {
+    .bannerAndMinimize {
+      text-align: center;
+
+      .banner {
+        align-items: center;
+
+        .iconAndBody {
+          flex-direction: column;
+
+          .body {
+            .text {
+              text-align: center;
+            }
+          }
+        }
+      }
+
+      .minimizeIconWrapper {
+        position: static;
+        top: unset;
+        right: unset;
+        align-self: flex-end;
+      }
+    }
+  }
+}
