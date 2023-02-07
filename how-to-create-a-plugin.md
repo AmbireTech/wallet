@@ -21,7 +21,9 @@ We envision Ambire as the homepage of Web3 and this is why we created our dApp c
 - Development support: Our extremely competent developers will be available to assist you should you encounter a roadblock.
 - Empower your users with excellent UX - they get to benefit from all of the fantastic features Ambire Wallet offers. 
 
-![2](https://user-images.githubusercontent.com/8737960/163564510-a6c61b7c-44f2-4e1c-8b12-54b153537b23.png)
+
+![Ambire Wallet Dapp Catalog poc](https://user-images.githubusercontent.com/8737960/217244890-759c3494-e996-45d0-bc3f-b9e4d429e983.png)
+
 
 Check out Ambire Wallet here: https://wallet.ambire.com
 
