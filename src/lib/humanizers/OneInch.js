@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/lib/utils'
-import { nativeToken, token, getName } from 'lib/humanReadableTransactions'
+import { nativeToken, token } from 'lib/humanReadableTransactions'
 
 const parseZeroAddressIfNeeded = address => {
     return (address.toLowerCase() === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee')
