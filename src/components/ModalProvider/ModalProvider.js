@@ -1,5 +1,6 @@
 import { createContext, useCallback, useState } from 'react'
-import './ModalProvider.scss'
+
+import styles from './ModalProvider.module.scss'
 
 const ModalContext = createContext(null)
 
@@ -51,8 +52,8 @@ const ModalProvider = ({ children }) => {
         <ModalContext.Provider value={{ showModal, showDynamicModal, hideModal, onHideModal, updateModal, beforeCloseModalHandler, setBeforeCloseModalHandler, setOnClose }}>
             {
                 modal ?
-                    <div id="modal-container">
-                        <div className="backdrop" onClick={modal.opts.disableClose ? null : onHideModal }></div>
+                    <div className={styles.wrapper}>
+                        <div className={styles.backdrop} onClick={modal.opts.disableClose ? null : onHideModal }></div>
                         { modal.element }
                     </div>
                     :
@@ -60,8 +61,8 @@ const ModalProvider = ({ children }) => {
             }
             {
                 dynamicModal ?
-                    <div id="modal-container">
-                        <div className="backdrop" onClick={dynamicModal.opts && dynamicModal.opts.disableClose ? null : onHideModal }></div>
+                    <div className={styles.wrapper}>
+                        <div className={styles.backdrop} onClick={dynamicModal.opts && dynamicModal.opts.disableClose ? null : onHideModal }></div>
                         <dynamicModal.component {...dynamicModal.props} />
                     </div>
                     :

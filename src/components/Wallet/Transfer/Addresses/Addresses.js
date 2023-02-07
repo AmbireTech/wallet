@@ -1,9 +1,10 @@
-import styles from './Addresses.module.scss'
-
-import { Button, Panel, AddressList } from 'components/common'
 import { isValidAddress } from 'ambire-common/src/services/address'
-import AddAddressModal from 'components/Modals/AddAddressModal/AddAddressModal'
+
 import { useModals } from 'hooks'
+import { Button, Panel, AddressList } from 'components/common'
+import { AddAddressModal } from 'components/Modals'
+
+import styles from './Addresses.module.scss'
 
 const Addresses = ({ addresses, addAddress, removeAddress, onSelectAddress, selectedNetwork }) => {
     const { showModal } = useModals()

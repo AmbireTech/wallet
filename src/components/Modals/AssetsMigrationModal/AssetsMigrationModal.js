@@ -12,14 +12,8 @@ const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, ac
   const [modalButtons, setModalButtons] = useState(null)
   const [modalSteps, setModalSteps] = useState({ steps: [], stepIndex: 0})
 
-  const getModalTitle = () => {
-    return (<div>
-      <span>Migrate Assets</span>
-    </div>)
-  }
-
   return (
-    <Modal className={styles.wrapper} title={getModalTitle()} buttons={modalButtons}>
+    <Modal className={styles.wrapper} buttonsClassName={styles.buttons} title="Migrate Assets" buttons={modalButtons}>
       <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
       <AssetsMigration
         addRequest={addRequest}

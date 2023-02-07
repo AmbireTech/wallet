@@ -1,15 +1,11 @@
-import './EarnDetailsModal.scss'
-
-import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 import { Modal, Button } from 'components/common'
 
 const EarnDetailsModal = ({ title = 'Details', description = '' }) => {
     const { hideModal } = useModals()
-    const buttons = (<Button clear small icon={<MdClose />} onClick={hideModal}>Close</Button>)
    
     return (
-        <Modal id="wallet-more-details-modal" title={title} buttons={buttons}>
+        <Modal title={title} buttons={<Button clear small onClick={hideModal}>Close</Button>}>
             <p>{description}</p>
         </Modal>
     )
