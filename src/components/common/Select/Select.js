@@ -9,7 +9,7 @@ import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.
 
 import cn from 'classnames'
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, optionClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -97,7 +97,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                         {
                                             filteredItems.map((item, i) => (
                                                 <div
-                                                    className={`${styles.option} ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? styles.active : ''} ${item.disabled ? styles.disabled : ''} ${displayDraggableHeader ? styles.draggableOption : ''}`}
+                                                    className={`${styles.option} ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? styles.active : ''} ${item.disabled ? styles.disabled : ''} ${displayDraggableHeader ? styles.draggableOption : ''} ${optionClassName || ''}`}
                                                     key={item.value + item.label}
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                     draggable={draggable}

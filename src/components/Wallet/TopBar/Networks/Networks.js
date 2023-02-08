@@ -73,6 +73,7 @@ const Networks = ({
             onChange={({ value }) => setNetwork(value)}
             iconClassName={styles.iconClassName}
             labelClassName={styles.labelClassName}
+            optionClassName={styles.optionClassName}
             draggableHeader={
                 <SortButtons>
                     <ToolTip label='Sorted networks by drag and drop'>
