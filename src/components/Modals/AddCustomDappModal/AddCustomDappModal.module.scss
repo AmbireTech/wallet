@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-.wrapper {
+.wrapper {    
     .customDappTitle {
         display: flex;
         align-items: center;
@@ -20,7 +20,7 @@
         }            
     }
     
-    :global(.content) {
+    .content {
         display: flex;
         flex-direction: column;
         gap: .875rem;

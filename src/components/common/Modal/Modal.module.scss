@@ -1,0 +1,102 @@
+@import 'variables.scss';
+
+$max-modal-height: 820px;
+$min-modal-height: 550px;
+
+.wrapper {
+    z-index: 52;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 30px;
+    max-height: $max-modal-height;
+    min-height: $min-modal-height;
+    max-width: 580px;
+    width: 100%;
+    padding: 30px;
+    border: 1px solid $c-fiord;
+    background: $c-ebony-clay;
+    border-radius: 12px;
+
+    &.sm {
+        max-width: 500px;
+    }
+
+    &.lg {
+        max-width: 680px;
+    }
+
+    .heading {
+        display: flex;
+        justify-content: space-between;
+
+        .title {
+            margin: 0;
+            font-size: 25px;
+            font-weight: 400;
+
+            &.centered {
+                text-align: center;
+                margin: 0 auto;
+            }
+        }
+
+        .headingIcon {
+            cursor: pointer;
+
+            &:hover {
+                opacity: 0.2;
+            }
+        }
+    }
+    
+    .content {
+        position: relative;
+        overflow: hidden;
+        overflow-y: auto;
+        scrollbar-width: thin;
+        height: 100%;
+        padding: 0 10px; // fixes scrollbar being shoved into the content
+        flex: 1;
+    }
+
+    .buttons {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        button {
+            flex: 1;
+        }
+    }
+}
+
+@include lg-breakpoint {
+    .wrapper {
+        padding: 30px;
+    }
+}
+
+@media screen and (max-height: calc(#{$max-modal-height} + 100px)) {
+    .wrapper {
+        max-height: 100%;
+    }
+}
+
+@media screen and (max-height: calc(#{$min-modal-height} + 100px)) {
+    .wrapper {
+        min-height: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .wrapper {
+        padding: 20px 0;
+
+        // Fixes overflow issues on mobile
+        .heading, .content, .buttons {
+            padding: 0 20px;
+        }
+    }
+}

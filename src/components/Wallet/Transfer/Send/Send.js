@@ -300,8 +300,6 @@ const Send = ({
                     />
                 </div>)}
                 <div className={styles.confirmations}>
-                    { validationFormMgs.messages.address && 
-                        (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
                     <AddressWarning
                         address={address}
                         onAddNewAddress={() => setNewAddress(address)}
@@ -309,27 +307,21 @@ const Send = ({
                         isKnownAddress={isKnownAddress}
                         uDAddress={uDAddress}
                         ensAddress={ensAddress}
-                    />
-                    {
-                        showSWAddressWarning ?
-                            <div
-                                className={styles.binanceAddressWarning}
-                            >
-                                <Checkbox
-                                    label={<span>
-                                        I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
-                                        These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
-                                        <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20} /></a>
-                                    </span>}
-                                    labelClassName={styles.checkBoxLabel}
-                                    checked={sWAddressConfirmed}
-                                    onChange={({ target }) => setSWAddressConfirmed(target.checked)}
-                                />
-                            </div>
-                            :
-                            null
-                    }    
+                        />
+                    {showSWAddressWarning ? <Checkbox
+                        className={styles.binanceAddressWarning}
+                        label={<span>
+                            I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
+                            These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
+                            <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20} /></a>
+                        </span>}
+                        labelClassName={styles.checkBoxLabel}
+                        checked={sWAddressConfirmed}
+                        onChange={({ target }) => setSWAddressConfirmed(target.checked)}
+                    /> : null}    
                 </div>
+                { validationFormMgs.messages.address && 
+                    (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
             </div>
             <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
         </div>) : <NoFundsPlaceholder/>

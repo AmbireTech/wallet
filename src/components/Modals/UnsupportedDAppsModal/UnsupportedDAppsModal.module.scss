@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-#unsupported-dapps {
+.wrapper {
     .content {
         display: flex;
         flex-direction: column;
@@ -10,7 +10,7 @@
             flex-grow: 1;
         }
 
-        .dapps-list {
+        .dappsList {
             display: flex;
             flex-direction: column;
             gap: 1em;
@@ -38,8 +38,14 @@
             }
         }
 
-        .advanced-mode {
-            .advanced-mode-label {
+        .message {
+            a {
+                color: $c-heliotrope;
+            }
+        }
+
+        .advancedMode {
+            .advancedModeLabel {
                 font-weight: bold;
             }
         }

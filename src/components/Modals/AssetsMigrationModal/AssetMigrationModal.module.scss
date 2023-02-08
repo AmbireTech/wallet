@@ -1,14 +1,12 @@
 @import 'variables';
 
 .wrapper {
-  :global(.content) {
-    padding-top: 0;
-  }
+  height: 100%;
 }
 
 @include lg-breakpoint {
   .wrapper {
-    :global(.buttons) {
+    .buttons {
       button {
         font-size: .875rem!important;
       }

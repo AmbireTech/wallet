@@ -2,13 +2,7 @@
 
 .wrapper {
   width: 100%;
-  max-width: 36.25rem;
-
-  :global(.buttons) {
-    padding: 1.875rem 2.5rem;
-    padding-top: .625rem;
-    height: 6.25rem;
-  }
+  height: 100%;
 }
 
 .subtitle {

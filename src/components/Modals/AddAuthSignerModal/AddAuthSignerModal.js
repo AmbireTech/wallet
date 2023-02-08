@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import cn from 'classnames'
 import { BsXLg } from "react-icons/bs"
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -22,7 +23,6 @@ import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.sv
 import { ReactComponent as MetaMaskIcon } from 'resources/providers/metamask-fox.svg'
 
 import styles from './AddAuthSignerModal.module.scss'
-import cn from 'classnames'
 
 const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) => {
   const { addToast } = useToasts()

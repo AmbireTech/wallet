@@ -3,7 +3,7 @@ import cn from 'classnames'
 import { Button, Modal, TextInput, Radios, ToolTip } from 'components/common'
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import { MdOutlineAdd, MdOutlineClose, MdImage, MdErrorOutline, MdBuildCircle } from 'react-icons/md'
+import { MdImage, MdErrorOutline, MdBuildCircle } from 'react-icons/md'
 import { fetch } from 'lib/fetch'
 import NETWORKS from 'consts/networks'
 import { getManifestFromDappUrl, getDappId, getNormalizedUrl } from 'ambire-common/src/services/dappCatalog'
@@ -116,13 +116,6 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
-    const buttons = useMemo(() =>
-        <>
-            <Button clear icon={<MdOutlineClose />} onClick={() => hideModal()}>Close</Button>
-            <Button icon={<MdOutlineAdd />} disabled={disabled} onClick={addDapp}>Add</Button>
-        </>
-        , [addDapp, disabled, hideModal])
-
     const onNetworkClick = (network) => {
         setNetworks(prev => {
             const index = prev.indexOf(network)
@@ -152,6 +145,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     return (
         <Modal 
             className={styles.wrapper}
+            contentClassName={styles.content}
             title={<div className={styles.customDappTitle}>
                 <ToolTip label={`Click here to see how create dApp for Ambire Wallet catalog`}>
                     <a className={styles.infoBtn} href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
@@ -163,7 +157,11 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                 <div>Add custom dApp</div>
             </div>
             }
-            buttons={buttons}>
+            buttons={<>
+                <Button small clear onClick={() => hideModal()}>Close</Button>
+                <Button small primaryGradient disabled={disabled} onClick={addDapp}>Add</Button>
+            </>}
+        >
             <div>
                 <TextInput
                     value={url}

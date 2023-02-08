@@ -1,13 +1,6 @@
 @import 'variables.scss';
 
-.button { 
-    flex: 0 1 100%!important;
-    width: 100%;
-}
-
 .wrapper {
-    max-width: 37.5rem;
-
     h4 {
         font-weight: 400;
     }
@@ -36,24 +29,18 @@
 }
 
 @include lg-breakpoint {
-    .button {
-        height: 3.125rem!important;
-    }
-
     .wrapper {
         min-height: unset;
         height: auto;
-        padding-bottom: 4.375rem!important;
-        :global(.buttons) {
-            height: 4.375rem;
-            padding: 1.25rem 1.5rem;
-            padding-top: 0;
-        }
-
+        
         .input {
             input {
                 height: 3.125rem;
             }
+        }
+  
+        .button {
+            height: 3.125rem!important;
         }
     }
 }
