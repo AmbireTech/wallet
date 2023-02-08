@@ -137,10 +137,15 @@
   }
 }
 
+@include xl-breakpoint {
+  .wrapper {
+    overflow-y: visible;
+  }
+}
+
 // Mobile
 @include lg-breakpoint {
   .wrapper {
-    overflow-y: visible;
     gap: 1.875rem;
     padding: 1.25rem;
 

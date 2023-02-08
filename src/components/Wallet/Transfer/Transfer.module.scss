@@ -37,6 +37,10 @@
     .wrapper {
         flex-direction: column;
         height: auto;
+
+        .tab {
+            overflow-y: visible;
+        }
     }
 }
 
