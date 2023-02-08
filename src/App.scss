@@ -35,8 +35,11 @@ html {
   height: 100%;
   font-size: 16px;
 
-  @media screen and (min-width: 2000px) {
-    font-size: 0.75vw;
+  // This media query is used to automatically scale the font size based on the screen width
+  // For example a 1920px screen will have the font-size of 16px, a 3000px screen will have the font-size of 25px and
+  // a 4000px screen will have the font-size of 32px. This allows the app to be used on any screen size.
+  @media screen and (min-width: 1900px) {
+    font-size: 0.833vw; // 16px on 1920px
   }
 
   @include xxl-breakpoint {
