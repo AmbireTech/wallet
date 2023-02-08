@@ -22,7 +22,7 @@
 		}
 	}
 
-  @media screen and (max-width: 64rem) {
+  @include md-breakpoint {
     border-left-color: transparent;
     border-top-color: $color;
   }
@@ -163,7 +163,7 @@
 	}
 }
 
-@media screen and (max-width: 64rem) {
+@include md-breakpoint {
   .wrapper {
     .bannerAndMinimize {
       .banner {
@@ -197,7 +197,7 @@
   }
 }
 
-@media screen and (max-width: 31.25rem) {
+@include xs-breakpoint {
   .wrapper {
     .bannerAndMinimize {
       text-align: center;

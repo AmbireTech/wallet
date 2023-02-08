@@ -83,7 +83,7 @@
   }
 }
 
-@media screen and (max-width: 50rem) {
+@include sm-breakpoint {
   .wrapper {    
     padding: .75rem;
     
