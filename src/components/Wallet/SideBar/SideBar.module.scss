@@ -193,6 +193,18 @@ $sidebar-desktop-width: 16.25rem;
 @include xl-breakpoint {
   .wrapper {
     padding-top: 2rem;
+
+    nav {
+      .item {
+        gap: 1.25rem;
+        font-size: .9375rem;
+
+        svg {
+          width: 1.875rem;
+          height: 1.875rem;
+        }
+      }
+    }
     
     .balance {
       margin-bottom: 3rem;

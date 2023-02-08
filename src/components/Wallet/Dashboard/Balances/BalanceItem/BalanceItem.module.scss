@@ -43,6 +43,14 @@
   }
 }
 
+@include xl-breakpoint {
+  .balanceContainer {
+    label {
+      font-size: 1rem;
+    }
+  }
+}
+
 @include lg-breakpoint {
   .balanceContainer {
     height: auto;

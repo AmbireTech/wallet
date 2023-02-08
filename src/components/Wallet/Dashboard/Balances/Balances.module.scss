@@ -60,6 +60,17 @@
     }
 }
 
+@include xl-breakpoint {
+    .wrapper {
+        .otherBalances {
+            .icon {
+                width: 2rem;
+                height: 2rem;
+            }
+        }
+    }
+}
+
 @include lg-breakpoint {
     .wrapper {
         padding: .625rem 1.25rem;
