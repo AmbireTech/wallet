@@ -35,39 +35,7 @@ html {
   height: 100%;
   font-size: 16px;
 
-  // This media query is used to automatically scale the font size based on the screen width
-  // For example a 1920px screen will have the font-size of 16px, a 3000px screen will have the font-size of 25px and
-  // a 4000px screen will have the font-size of 32px. This allows the app to be used on any screen size.
-  // @media screen and (min-width: 1900px) {
-  //   font-size: 0.833vw; // 16px on 1920px
-  // }
-  @media screen and (min-width: 1900px) {
-    font-size: 16px;
-  }
-  @media screen and (min-width: 2500px) {
-    font-size: 20.825px;
-  }
-  @media screen and (min-width: 3000px) {
-    font-size: 25px;
-  }
-  @media screen and (min-width: 3500px) {
-    font-size: 30px;
-  }
-  @include xxl-breakpoint {
-    font-size: 15px;
-  }
-  @include xl-breakpoint {
-    font-size: 14px;
-  }
-  @include lg-breakpoint {
-    font-size: 13.5px;
-  }
-  @include md-breakpoint {
-    font-size: 13px;
-  }
-  @include sm-breakpoint {
-    font-size: 12.5px;
-  }
+  @include rem-scaling;
 }
 
 body {

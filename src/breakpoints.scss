@@ -40,3 +40,27 @@ $xxlBreakpoint: 1720px;
     @content;
   }
 }
+
+@mixin rem-scaling {
+	@media screen and (min-width: 1920px) {
+    font-size: 16px;
+  }
+  @media screen and (min-width: 3000px) {
+    font-size: 22.5px;
+  }
+  @include xxl-breakpoint {
+    font-size: 15px;
+  }
+  @include xl-breakpoint {
+    font-size: 14px;
+  }
+  @include lg-breakpoint {
+    font-size: 13.5px;
+  }
+  @include md-breakpoint {
+    font-size: 13px;
+  }
+  @include sm-breakpoint {
+    font-size: 12.5px;
+  }
+}
