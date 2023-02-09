@@ -21,6 +21,7 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
       return decreasing
     }), [availableFeeAssets])
 
+  const zeroBalanceOnAllTokens = useMemo(() => availableFeeAssets?.every(t => t.balanceUSD <= 0), [availableFeeAssets])
   return (
     <div className={styles.wrapper}>
       <div className={styles.titleWrapper}>
@@ -56,10 +57,13 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
       <div className={styles.warning}>
         <AlertIcon className={styles.warningIcon} />
         <p className={styles.warningText}>
-          <span>Warning:</span> It will take some time to top up the Gas Tank after the transaction is signed.
+          <span>Warning:</span> {zeroBalanceOnAllTokens ? `You don't have any funds to top-up your gas tank. Please deposit into your account.` : `It will take some time to top up the Gas Tank after the transaction is signed.`}
         </p>
       </div>
       <div>
+        {zeroBalanceOnAllTokens ? <Button primaryGradient  disabled={zeroBalanceOnAllTokens} className={styles.depositBtn}>
+            Top up Gas Tank
+          </Button> :
         <NavLink
           to={{
             pathname: `/wallet/transfer/`,
@@ -72,7 +76,7 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
           <Button primaryGradient className={styles.depositBtn}>
             Top up Gas Tank
           </Button>
-        </NavLink>
+        </NavLink> }
       </div>
     </div>
   )
