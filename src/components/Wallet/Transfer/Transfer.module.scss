@@ -33,21 +33,22 @@
     }
 }
 
-@include xl-breakpoint {
+// @include xl-breakpoint {
+//     .wrapper {
+
+//     }
+// }
+
+// Mobile
+@include lg-breakpoint {
     .wrapper {
         flex-direction: column;
+        gap: .9375rem;
         height: auto;
 
         .tab {
             overflow-y: visible;
         }
-    }
-}
-
-// Mobile
-@include lg-breakpoint {
-    .wrapper {
-        gap: .9375rem;
 
         .sell {
             padding: 1.25rem;

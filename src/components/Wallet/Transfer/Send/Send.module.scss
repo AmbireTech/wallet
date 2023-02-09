@@ -137,17 +137,12 @@
   }
 }
 
-@include xl-breakpoint {
-  .wrapper {
-    overflow-y: visible;
-  }
-}
-
 // Mobile
 @include lg-breakpoint {
   .wrapper {
     gap: 1.875rem;
     padding: 1.25rem;
+    overflow-y: visible;
 
     .recipientField {
       flex-direction: column;
