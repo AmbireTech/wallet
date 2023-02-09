@@ -74,6 +74,9 @@ const Signers = ({
   }
 
   const onAddBtnClickedHandler = newSignerAddress => {
+    const signerIsAdded = signers?.map(s => s[0]?.toLowerCase()).includes(newSignerAddress.address.toLowerCase())
+    if (signerIsAdded) return addToast('You have already added this signer', { timeout: 30000, error: true })
+    
     const txn = craftTransaction(
       newSignerAddress.address,
       privilegesOptions.true
@@ -148,7 +151,8 @@ const Signers = ({
       className={styles.addSigner} 
       onClick={() => {
         showModal(
-          <AddAuthSignerModal 
+          <AddAuthSignerModal
+            signers={signers}
             selectedAcc={selectedAccount} 
             selectedNetwork={selectedNetwork} 
             onAddBtnClicked={onAddBtnClickedHandler} 
