@@ -95,7 +95,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), oldPassword)
             const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, accountPresets.encryptionOpts))
             const sig = await wallet.signMessage(JSON.stringify({ primaryKeyBackup }))
-            const resp = await fetchPost(`${relayerURL}/identity/${account.id}/modify`, { primaryKeyBackup, sig })
+            const resp = await fetchPost(`${relayerURL}/identity/${account.id}/modify`, { primaryKeyBackup, quickAccSigner: account.signer, sig })
 
             if (resp.success) {
                 onAddAccount({ ...account, primaryKeyBackup })
