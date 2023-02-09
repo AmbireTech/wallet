@@ -152,7 +152,6 @@ const Signers = ({
       onClick={() => {
         showModal(
           <AddAuthSignerModal
-            signers={signers}
             selectedAcc={selectedAccount} 
             selectedNetwork={selectedNetwork} 
             onAddBtnClicked={onAddBtnClickedHandler} 
