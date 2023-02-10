@@ -1,13 +1,14 @@
 @import 'variables.scss';
 
-#wallet-more-details-modal {
+.wrapper {
+    height: 100%;
+
     .content {
         display: flex;
         flex-direction: column;
-        padding-bottom: 50px;
 
         .table {
-            .wrapper {
+            .row {
                 display: flex;
                 justify-content: space-between;
                 padding: 20px;
@@ -24,8 +25,8 @@
                     border-radius: 0 0 12px 12px;
                 }
             }
-    
-            .odd-rows-bg {
+
+            .row:nth-child(even) {
                 background-color: rgba(255, 255, 255, 0.01);
             }
     
@@ -33,10 +34,5 @@
                 min-height: 560px;
             }
         }
-    }
-    
-    .buttons button {
-        flex: 0 1 100% !important;
-        height: 100%;
     }
 }

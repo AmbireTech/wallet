@@ -1,4 +1,5 @@
 import useAccounts from "./accounts"
+import useAmbireEarnDetails from "./useAmbireEarnDetails"
 import usePortfolio from "./portfolio"
 import useWalletConnect from "./useWalletConnect"
 import useRelayerData from './relayerData'
@@ -16,6 +17,7 @@ import useSignMessage from './useSignMessage'
 
 export {
     useAccounts,
+    useAmbireEarnDetails,
     usePortfolio,
     useWalletConnect,
     useRelayerData,
