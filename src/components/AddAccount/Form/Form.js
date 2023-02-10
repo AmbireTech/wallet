@@ -33,7 +33,10 @@ export default function AddAccountForm({ state, onUpdate, passInput, passConfirm
 					<div
 						className={cn(
 							styles.strengthProgress,
-							styles[`strengthProgress${hasPassword && passwordStrength(state.passphrase).strength}`]
+              {
+                [styles[`strengthProgress${passwordStrength(state.passphrase).strength}`]]: hasPassword,
+                [styles.taller]: hasPassword
+              }
 						)}
 					/>
 				</div>
