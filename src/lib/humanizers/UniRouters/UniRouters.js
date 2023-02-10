@@ -1,4 +1,4 @@
-import { Interface, AbiCoder, hexDataSlice, defaultAbiCoder, arrayify, hexlify } from 'ethers/lib/utils'
+import { Interface, AbiCoder, arrayify, hexlify } from 'ethers/lib/utils'
 import { nativeToken, token, getName } from 'lib/humanReadableTransactions'
 import { COMMANDS, COMMANDS_DESCRIPTIONS } from './Commands'
 
@@ -290,9 +290,7 @@ const uniUniversalRouter = (humanizerInfo) => {
       let parsedCommands = []
       arrCommands.forEach(item => parsedCommands.push(hexlify([item])))
       
-      const test = coder.decode(['address', 'uint256', 'uint256', 'bytes', 'bool' ], inputs[1])
       let parsed = []
-      
       parsedCommands.forEach((command, index) => {
         if (command === COMMANDS.V3_SWAP_EXACT_IN) {
           const { inputsDetails } = COMMANDS_DESCRIPTIONS.V3_SWAP_EXACT_IN
