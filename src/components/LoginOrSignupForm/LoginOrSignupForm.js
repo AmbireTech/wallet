@@ -54,17 +54,18 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       const newState = { ...state, ...updates }
       setState(newState)
       const shouldValidate = newState.action === 'SIGNUP'
-      const invalid = shouldValidate && (
-        newState.passphrase !== newState.passphraseConfirm
-      )
-
-      const passwordStrengthFeedback = passwordStrength(newState.passphrase)
-
-      passInput.current.setCustomValidity(passwordStrengthFeedback.error || '')
-
-      // @TODO translation string
-      if (passConfirmInput.current) {
-          passConfirmInput.current.setCustomValidity(invalid ? 'Passwords must match' : '')
+      // @Todo: Split logic and markup for Login and Add Account
+      if (shouldValidate) {
+        const invalid = newState.passphrase !== newState.passphraseConfirm
+  
+        const passwordStrengthFeedback = passwordStrength(newState.passphrase)
+  
+        passInput.current.setCustomValidity(passwordStrengthFeedback.error || '')
+  
+        // @TODO translation string
+        if (passConfirmInput.current) {
+            passConfirmInput.current.setCustomValidity(invalid ? 'Passwords must match' : '')
+        }
       }
     }
 
