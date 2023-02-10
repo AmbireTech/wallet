@@ -1,0 +1,67 @@
+@import 'variables.scss';
+
+.checkboxLabel {
+  color: theme(text-primary);
+  
+  a {
+    color: theme(highlight-primary);
+  }
+}
+
+.passwordInputWrapper {
+	position: relative;
+	margin: 2rem 0;
+
+	.passwordInput {
+		margin: 0;
+		border-bottom: 0;
+	}
+	
+	.strengthProgressWrapper {
+		// Setting the height to 2px and margin-bottom to 1px prevents layout shifting when the progress bar changes height
+		width: 100%;
+		height: 2px;
+		margin-bottom: 1px;
+		background-color: $c-white;
+
+		&.taller {
+			height: 3px;
+			margin-bottom: 0;
+		}
+	
+		.strengthProgress {
+			width: 0;
+			height: 2px;
+			background-color: $danger-color;
+
+			&.strengthProgress0, &.strengthProgress1, .strengthProgress2, &.strengthProgress3, &.strengthProgress4, &.strengthProgress5 {
+				height: 3px;
+			}
+	
+			&.strengthProgress0 {
+				width: 10%;
+				background-color: $danger-color;
+			}
+			&.strengthProgress1 {
+				width: 20%;
+				background-color: $danger-color;
+			}
+			&.strengthProgress2 {
+				width: 40%;
+				background-color: $warning-color;
+			}
+			&.strengthProgress3 {
+				width: 60%;
+				background-color: mix($warning-color, $c-turquoise, 40%);
+			}
+			&.strengthProgress4 {
+				width: 80%;
+				background-color: mix($warning-color, $c-turquoise, 20%);
+			}
+			&.strengthProgress5 {
+				width: 100%;
+				background-color: $c-turquoise;
+			}
+		}
+	}
+}
