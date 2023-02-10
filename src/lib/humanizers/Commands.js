@@ -33,25 +33,27 @@ export const COMMANDS = {
 export const COMMANDS_DESCRIPTIONS = {
     V3_SWAP_EXACT_IN: {
         command: '0x00',
-        inputs: [
+        inputsDetails: [
             { type: 'address', name: 'recipient' },
             { type: 'uint256', name: 'amountIn' },
             { type: 'uint256', name: 'amountOutMin' },
+            { type: 'bytes', name: 'path' },
             { type: 'bool', name: 'payerIsUser' }
         ]
     },
     V3_SWAP_EXACT_OUT: {
         command: '0x01',
-        inputs: [
+        inputsDetails: [
             { type: 'address', name: 'recipient' },
             { type: 'uint256', name: 'amountOut' },
             { type: 'uint256', name: 'amountInMax' },
+            { type: 'bytes', name: 'path' },
             { type: 'bool', name: 'payerIsUser' }
         ]
     },
     PERMIT2_TRANSFER_FROM: {
         command: '0x02',
-        inputs: [
+        inputsDetails: [
             { type: 'address', name: 'token' },
             { type: 'address', name: 'recipient' },
             { type: 'uint160', name: 'amount' }
@@ -60,7 +62,7 @@ export const COMMANDS_DESCRIPTIONS = {
     //PERMIT2_PERMIT_BATCH
     SWEEP: {
         command: '0x04',
-        inputs: [
+        inputsDetails: [
             { type: 'address', name: 'token' },
             { type: 'address', name: 'recipient' },
             { type: 'uint160', name: 'amountMin' }
@@ -68,7 +70,7 @@ export const COMMANDS_DESCRIPTIONS = {
     },
     TRANSFER: {
         command: '0x05',
-        inputs: [
+        inputsDetails: [
             { type: 'address', name: 'token' },
             { type: 'address', name: 'recipient' },
             { type: 'uint256', name: 'value' }
@@ -76,7 +78,7 @@ export const COMMANDS_DESCRIPTIONS = {
     },
     PAY_PORTION: {
         command: '0x06',
-        inputs: [
+        inputsDetails: [
             { type: 'address', name: 'token' },
             { type: 'address', name: 'recipient' },
             { type: 'uint256', name: 'bips' }
@@ -84,31 +86,25 @@ export const COMMANDS_DESCRIPTIONS = {
     },
     V2_SWAP_EXACT_IN: {
         command: '0x08',
-        inputs: [
+        inputsDetails: [
             { type: 'address', name: 'recipient' },
             { type: 'uint256', name: 'amountIn' },
             { type: 'uint256', name: 'amountOutMin' },
+            { type: 'address[]', name: 'path' },
             { type: 'bool', name: 'payerIsUser' },
         ]
     },
     V2_SWAP_EXACT_OUT: {
         command: '0x09',
-        inputs: [
+        inputsDetails: [
             { type: 'address', name: 'recipient' },
             { type: 'uint256', name: 'amountOut' },
             { type: 'uint256', name: 'amountInMax' },
+            { type: 'address[]', name: 'path' },
             { type: 'bool', name: 'payerIsUser' },
         ]
     },
-    //PERMIT2_PERMIT: {
-    //     command: '0x0a',
-    //     inputs: [
-    //         { type: 'address', name: 'recipient' },
-    //         { type: 'uint256', name: 'amountOut' },
-    //         { type: 'uint256', name: 'amountInMax' },
-    //         { type: 'bool', name: 'payerIsUser' },
-    //     ]
-    // },
+    //PERMIT2_PERMIT:
     WRAP_ETH: {
         command: '0x0b',
         inputsDetails: [
