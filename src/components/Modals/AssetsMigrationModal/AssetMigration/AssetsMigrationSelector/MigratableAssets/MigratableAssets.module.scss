@@ -1,0 +1,107 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 30px 10px;
+  padding: 5px 15px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  background-color: $c-mirage;
+  border-bottom: 1px solid $c-mirage;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .checkboxWrapper {
+    display: flex;
+    align-items: center;
+   
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 0;
+  
+      .checkboxLabel {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    
+        .tokenIcon {
+          width: 24px;
+          height: 24px;
+        }
+
+        .tokenName {
+          white-space: nowrap;
+          padding-left: 4px;
+          padding-top: 0px;
+        }
+      }
+
+      div { // Checkbox mark
+        margin-top: 0;
+      }
+    }
+  }
+
+  .amountWrapper {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-left: auto;
+
+    .amountUsd {
+      margin-left: 10px;
+    }
+
+    .amountInput {
+      input {
+        width: 200px;
+        height: 40px;
+        padding: 5px 10px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    padding: 15px 20px;
+    flex-direction: column;
+    justify-content: center;
+
+    .checkboxWrapper {
+      .checkbox {
+        display: flex;
+        justify-content: center;
+
+        .checkboxLabel {
+          justify-content: flex-end;
+        }
+      }
+    }
+
+    .amountWrapper {
+      justify-content: space-between;
+      margin: 0;
+
+      .amountUsd {
+        margin-left: 0;
+      }
+      
+      .amountInput {
+        input {
+          max-width: 200px;
+          width: 100%;
+        }
+      }
+    }
+  }
+}

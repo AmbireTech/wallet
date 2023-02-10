@@ -1,20 +1,33 @@
-import './SideBar.scss'
-
-import { NavLink, useRouteMatch  } from 'react-router-dom'
-import { MdDashboard, MdLock, MdCompareArrows, MdHelpCenter, MdClose } from 'react-icons/md'
-import { AiOutlineAppstoreAdd } from 'react-icons/ai'
-import { GiReceiveMoney, GiGasPump } from 'react-icons/gi'
-import { BsCurrencyExchange } from 'react-icons/bs'
-import { BsPiggyBank } from 'react-icons/bs'
-import { BiTransfer } from 'react-icons/bi'
-import { CgArrowsExchangeV } from 'react-icons/cg'
-import { Loading, Button } from 'components/common'
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
-import GasIndicator from 'components/Wallet/GasIndicator/GasIndicator'
+import { NavLink, useRouteMatch  } from 'react-router-dom'
+import cn from 'classnames'
+
+import { Loading, Button } from 'components/common'
+import GasIndicator from 'components/Wallet/SideBar/GasIndicator/GasIndicator'
+
+import { MdClose } from 'react-icons/md'
+import { ReactComponent as DashboardIcon } from './images/dashboard.svg'
+import { ReactComponent as DepositIcon } from './images/deposit.svg'
+import { ReactComponent as TransferIcon } from './images/transfer.svg'
+import { ReactComponent as SwapIcon } from './images/swap.svg'
+import { ReactComponent as GasTankIcon } from './images/gas-tank.svg'
+import { ReactComponent as CrossChainIcon } from './images/cross-chain.svg'
+import { ReactComponent as EarnIcon } from './images/earn.svg'
+import { ReactComponent as TransactionsIcon } from './images/transactions.svg'
+import { ReactComponent as SecurityIcon } from './images/security.svg'
+import { ReactComponent as DappsIcon } from './images/dapps.svg'
+import { ReactComponent as HelpIcon } from './images/help.svg'
+
+import styles from './SideBar.module.scss'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
+const round = num => Math.round((num + Number.EPSILON) * 100) / 100
+
 const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
+  const networkBalance = portfolio.balance.total.full
+  const allTokensWithoutPrice = portfolio?.tokens.length && portfolio?.tokens.every(t => !t.price)
+  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : (allTokensWithoutPrice && !networkBalance ? ' -' : networkBalance.toFixed(2))
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
@@ -42,22 +55,30 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
     if(dappModeSidebar) {
       toggleDappMode()
     }
-  }, [dappModeSidebar, toggleDappMode])  
+  }, [dappModeSidebar, toggleDappMode])
 
   return (
-    <div id="sidebar" className={(dappModeSidebar ? 'dapp-mode' : '') + (sideBarOpen ? ' open' : '') } ref={sidebarRef}>
+    <div className={cn(styles.wrapper, {
+        [styles.dappMode]: dappModeSidebar,
+        [styles.open]: sideBarOpen
+    })} ref={sidebarRef}>
       {/* NOTE: click outside not working because of the iframe - ths is simpler than adding event listeners to the dapps ifeame  */}
-      {dappModeSidebar && sideBarOpen && <div className='outside-handler' onClick={() => toggleSideBarOpen()}></div> }
+      {dappModeSidebar && sideBarOpen && <div className={styles.outsideHandler} onClick={() => toggleSideBarOpen()}></div> }
       {dappModeSidebar &&
-      <div className='ambire-logo'>
-        <div className="logo" />
-        <div className="icon" />
-        <Button  clear icon={<MdClose size={23} />} mini border
-          onClick={() => toggleSideBarOpen()}
+      <div className={styles.ambireLogo}>
+        <div className={styles.logo} />
+        <div className={styles.icon} />
+        <Button clear icon={<MdClose size={23} />} mini
+          onClick={toggleSideBarOpen}
         ></Button>
       </div>
-      }     
-      <div className="balance">
+      }
+
+      { !dappModeSidebar && <NavLink to={'/wallet/dashboard'} className={styles.sidebarLogo}>
+        <img src='/resources/logo.svg' alt='ambire-logo' />
+      </NavLink>
+      }
+      <div className={styles.balance}>
         <label>Balance</label>
         {portfolio.isCurrNetworkBalanceLoading ? (
           <div className={'loaderContainer'}>
@@ -65,14 +86,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
           </div>
         ) : (
           <div
-            className="balanceDollarAmount"
+            className={styles.balanceDollarAmount}
             style={{ fontSize: balanceFontSize }}
           >
-            <span className="dollarSign highlight">$</span>
-            {hidePrivateValue(portfolio.balance.total.truncated)}
-            <span className="highlight">
-              .{hidePrivateValue(portfolio.balance.total.decimals)}
-            </span>
+            <span className={cn(styles.dollarSign, styles.highlight)}>$</span>
+            {hidePrivateValue(shortBalance)}
           </div>
         )}
         <div>
@@ -81,66 +99,65 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         </div>
       </div>
       <nav>
-        <NavLink to={match.url + "/dashboard"} activeClassName="selected">
-          <div className="item">
-              <MdDashboard/>Dashboard
+        <NavLink to={match.url + "/dashboard"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+              <DashboardIcon />Dashboard
           </div>
         </NavLink>
-        <NavLink to={match.url + "/deposit"} activeClassName="selected">
-          <div className="item">
-              <GiReceiveMoney/>Deposit
+        <NavLink to={match.url + "/deposit"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+              <DepositIcon />Deposit
           </div>
         </NavLink>
-        <NavLink to={match.url + "/transfer"} activeClassName="selected">
-          <div className="item">
-              <BiTransfer/>Transfer
+        <NavLink to={match.url + "/transfer"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+              <TransferIcon />Transfer
           </div>
         </NavLink>
-        <NavLink to={match.url + "/swap"} activeClassName="selected">
-          <div className="item">
-              <BsCurrencyExchange/>Swap
+        <NavLink to={match.url + "/swap"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+              <SwapIcon />Swap
           </div>
         </NavLink>
-        <NavLink to={match.url + "/dapps"} activeClassName="selected">
-          <div className="item" onClick={onDappsClick}>
-            <AiOutlineAppstoreAdd />dApps
+        <NavLink to={match.url + "/gas-tank"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+              <GasTankIcon/>Gas Tank
           </div>
         </NavLink>
-        <NavLink to={match.url + "/gas-tank"} activeClassName="selected">
-          <div className="item">
-              <GiGasPump/>Gas Tank
+        <NavLink to={match.url + "/cross-chain"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+              <CrossChainIcon />Cross-Chain
           </div>
         </NavLink>
-        <NavLink to={match.url + "/cross-chain"} activeClassName="selected">
-          <div className="item">
-              <CgArrowsExchangeV/>Cross-Chain
+        <NavLink to={match.url + "/earn"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+              <EarnIcon />Earn
           </div>
         </NavLink>
-        <NavLink to={match.url + "/earn"} activeClassName="selected">
-          <div className="item">
-              <BsPiggyBank/>Earn
-          </div>
-        </NavLink>
-        <NavLink to={match.url + "/transactions"} activeClassName="selected">
-          <div className="item">
-                <MdCompareArrows/>Transactions
+        <NavLink to={match.url + "/transactions"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+                <TransactionsIcon />Transactions
           </div>
         </NavLink>
         {/* Temporarily commented OpenSea tab. */}
-        {/* <NavLink to={match.url + "/opensea"} activeClassName="selected">
-          <div className="item">
+        {/* <NavLink to={match.url + "/opensea"} activeClassName={styles.selected}>
+          <div className={styles.item}>
             <div className='opensea-icon'/>OpenSea
           </div>
         </NavLink> */}
-        <NavLink to={match.url + "/security"} activeClassName="selected">
-          <div className="item">
-            <MdLock/>Security
+        <NavLink to={match.url + "/dapps"} activeClassName={styles.selected}>
+          <div className={styles.item} onClick={onDappsClick}>
+              <DappsIcon />dApps
           </div>
         </NavLink>
-        <div className="separator"></div>
+        <NavLink to={match.url + "/security"} activeClassName={styles.selected}>
+          <div className={styles.item}>
+            <SecurityIcon />Security
+          </div>
+        </NavLink>
         <a href={helpCenterUrl} target="_blank" rel="noreferrer">
-          <div className="item" id="help-center">
-            <MdHelpCenter/>Help Center
+          <div className={cn(styles.item, styles.helpLink)}>
+            <HelpIcon />Help Center
           </div>
         </a>
       </nav>

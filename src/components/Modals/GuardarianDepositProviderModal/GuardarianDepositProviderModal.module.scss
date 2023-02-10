@@ -1,0 +1,186 @@
+@import 'variables.scss';
+
+.wrapper {
+    padding-bottom: 0;
+
+    .validationMsg {
+        color: $danger-color;
+    }
+
+    .buySellBtnsWrapper {
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        width: 30%;
+        padding-bottom: 20px;
+
+        .button {
+            padding: 10px 35px;
+            background-color: $c-mirage;
+            color: $c-titan-white;
+            cursor: pointer;
+            border-radius: 12px;
+            
+            &.active {
+                color: $c-titan-white;
+                background-color: $c-heliotrope;
+            }
+        }
+    }
+    .inputCurrenciesWrapper {
+        display: flex;
+        background-color: $c-mirage;
+        padding: 4px 20px;
+        padding-bottom: 0;
+        margin-bottom: 20px;
+        border-radius: 12px;
+        height: 95px;
+        flex-direction: column;
+
+        .currenciesRowWrapper {
+            display: flex;
+            justify-content: space-between;
+            gap: 5px;
+            align-items: center;
+
+            .estimateInfoInput {
+                flex: 1;
+            }
+        }
+        .inputLabel {
+            margin: 0;
+            color: $c-scampi;
+            font-size: 16px;
+        }
+
+        input {
+            height: auto;
+            padding: 0;
+            font-size: 20px;
+            color: $c-titan-white;
+        }
+
+        .amount {
+            flex: 0 1 50%;
+
+            &Input {
+                & > div{
+                    border-radius: 0;
+                }
+                input {
+                    padding-bottom: 4px;
+                }
+            }
+
+            .loadingInput {
+                opacity: .68;
+            }
+        }
+
+        .currency {
+            flex: 0 1 50%;
+
+            .select {
+                min-width: 45px;
+                width: 100%;
+                .selectInput {
+                    padding: 0;
+                    font-size: 20px;
+                    gap: 10px;
+                }
+
+                .selectIcon {
+                    background-color: $c-ebony-clay-light;
+                    padding: 8px;
+                    border-radius: 12px;
+                    width: 40px;
+                    height: 40px;
+                }
+            }
+        }
+
+        .loadingWrapper {
+            margin-top: 20px;
+            height: 40px;
+            width: 100%;
+            background-color: $c-mirage;
+            border-radius: 12px;
+        }
+    }
+
+    .estimationInfoWrapper {
+        margin-left: 15px;
+        margin-bottom: 10px;
+        position: relative;
+        margin-top: 10px;
+        display: flex;
+        flex-direction: column;
+
+        &:before {
+            content: '';
+            display: block;
+            border-right: 2px solid #898DCB;
+            height: 100%;
+            position: absolute;
+            z-index: -1;
+            margin-left: 4px;
+            
+        }
+    }
+
+    .extraFees, .estimationRate {
+        position: relative;
+        padding-left: 25px;
+        margin-top: 0;
+        margin-bottom: 12px;
+
+        &:before {
+            content: '';
+            background: #898DCB;
+            border-radius: 50%;
+            width: 10px;
+            height: 10px;
+            display: block;
+            position: absolute;
+            left: 0;
+            top: 50%;
+            margin-top: -4px;
+            z-index: 1;
+        }
+
+        p {
+            margin: 0;
+            font-size: 14px;
+            font-weight: 300;
+
+            span {
+                font-size: 16px;
+            }
+        }
+    }
+    .extraFees {
+        margin-top: 13px;
+        margin-bottom: 13px;
+    }
+    .button {
+        width: 100%;
+        margin-bottom: 120px;
+    }
+
+    .poweredBy {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+        padding: 10px 0;
+        border-top: 1px solid #3E436B;
+        
+        &Label {
+            font-size: 14px;
+            color: #898DCB;
+        }
+
+        &Logo {
+            width: 144px;
+        }
+    }
+}

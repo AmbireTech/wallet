@@ -1,0 +1,141 @@
+@import 'variables.scss';
+
+$heading-height: 45px;
+
+.handle {
+    display: none!important;
+}
+
+.addressBook {
+    height: 60px !important;
+    background-color: $c-mirage-dark!important;
+    border: none!important;
+    border-radius: 0 12px 12px 0!important;
+    padding: 0 10px;
+    opacity: 1;
+    transition: .3s ease-in-out opacity;
+
+    &:hover {
+        cursor: pointer;
+    }
+
+    .content {
+        cursor: pointer;
+
+        .title {
+            flex-direction: row !important;
+        }
+    }
+
+    .menu {
+        top: 70px !important;
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        padding: 0;
+        white-space: nowrap;
+        min-width: 260px;
+        max-width: 400px;
+    }
+
+    .button {
+        height: 100%;
+        @include flex-center-center;
+        font-size: 17px;
+        font-weight: bold;
+        color: $c-titan-white;
+
+        &:not([disabled]):hover {
+            cursor: pointer;
+            opacity: 1;
+            background-color: rgba($c-mirage, 0.2) !important;
+        }
+
+        &:active {
+            background-color: $c-mirage!important;
+        }
+    }
+
+    .heading {
+        height: $heading-height;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding-left: 20px;
+        background-color: $c-mirage;
+
+        .title {
+            display: flex;
+            flex-direction: row !important;
+            align-items: center;
+            gap: 10px;
+            font-size: 15px;
+            font-weight: bold;
+        }
+
+        .button {
+            width: $heading-height;
+        }
+    }
+
+    .content {
+        max-height: 250px;
+        display: flex;
+        flex-direction: column;
+        padding: 0;
+        overflow-y: auto;
+
+        .text-input {
+            input {
+                padding-right: initial !important;
+            }
+        }
+
+        .emptyText {
+            padding: 15px;
+            margin: 0;
+        }
+
+        .address {
+            border-radius: 0;
+        }
+    }
+
+    .addAddress {
+        padding: 10px;
+
+        .fields {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            input[type=text] {
+                display: block;
+                height: 40px;
+                width: 300px;
+                margin: 0 auto;
+                font-size: 1em !important;
+                background-color: $c-mirage;
+                border-radius: 8px;
+                color: $c-titan-white;
+            }
+        }
+
+        button {
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            margin-top: 15px;
+            color: $c-titan-white;
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .addressBook {
+        .menu {
+            width: 100%;
+        }
+    }
+}

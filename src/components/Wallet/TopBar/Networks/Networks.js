@@ -2,6 +2,8 @@ import { Select } from 'components/common';
 import { useDragAndDrop, useCheckMobileScreen } from 'hooks';
 import { ToolTip } from 'components/common';
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md';
+import SortButtons from 'components/common/Select/SortButtons/SortButtons';
+import styles from './Networks.module.scss'
 
 const Networks = ({
     network,
@@ -56,6 +58,8 @@ const Networks = ({
     return (
         <Select
             defaultValue={network.id}
+            className={styles.select}
+            selectInputClassName={styles.selectInput}
             draggable={sortType === 'custom' && !isMobileScreen ? true : false}
             dragEnter={dragEnter}
             drop={drop}
@@ -67,28 +71,33 @@ const Networks = ({
             items={networksItems}
             displayDraggableHeader={!isMobileScreen}
             onChange={({ value }) => setNetwork(value)}
-            draggableHeader={<div className='sort-buttons'>
-                <ToolTip label='Sorted networks by drag and drop'>
-                    <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" 
-                    onClick={() => setUserSorting(prev => ({
-                        ...prev,
-                        networks: {
-                            ...prev.networks,
-                            sortType: 'custom'
-                        }
-                    }))} />
-                </ToolTip>
-                <ToolTip label='Sorted networks by default'>
-                    <MdOutlineSort color={sortType === "default" ? "#80ffdb" : ""} cursor="pointer" 
-                    onClick={() => setUserSorting(prev => ({
-                        ...prev,
-                        networks: {
-                            ...prev.networks,
-                            sortType: 'default'
-                        }
-                    }))} />
-                </ToolTip>
-            </div>}
+            iconClassName={styles.iconClassName}
+            labelClassName={styles.labelClassName}
+            optionClassName={styles.optionClassName}
+            draggableHeader={
+                <SortButtons>
+                    <ToolTip label='Sorted networks by drag and drop'>
+                        <MdDragIndicator color={sortType === "custom" ? "#27e8a7" : ""} cursor="pointer" 
+                        onClick={() => setUserSorting(prev => ({
+                            ...prev,
+                            networks: {
+                                ...prev.networks,
+                                sortType: 'custom'
+                            }
+                        }))} />
+                    </ToolTip>
+                    <ToolTip label='Sorted networks by default'>
+                        <MdOutlineSort color={sortType === "default" ? "#27e8a7" : ""} cursor="pointer" 
+                        onClick={() => setUserSorting(prev => ({
+                            ...prev,
+                            networks: {
+                                ...prev.networks,
+                                sortType: 'default'
+                            }
+                        }))} />
+                    </ToolTip>
+                </SortButtons>   
+            }
         />
     );
 };

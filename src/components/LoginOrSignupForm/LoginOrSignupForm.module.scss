@@ -1,0 +1,9 @@
+@import 'variables.scss';
+
+.checkboxLabel {
+  color: theme(text-primary);
+  
+  a {
+    color: theme(highlight-primary);
+  }
+}

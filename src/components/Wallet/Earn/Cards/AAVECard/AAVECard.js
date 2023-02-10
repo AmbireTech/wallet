@@ -5,20 +5,22 @@ import { useToasts } from 'hooks/toasts'
 import AAVELendingPoolAbi from 'ambire-common/src/constants/abis/AAVELendingPoolAbi'
 import AAVELendingPoolProviders from 'ambire-common/src/constants/AAVELendingPoolProviders'
 import networks from 'consts/networks'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import { ToolTip } from "components/common"
 import AAVE_ICON from 'resources/aave.svg'
 import Card from 'components/Wallet/Earn/Card/Card'
 import { getDefaultTokensItems } from './defaultTokens'
 import approveToken from 'ambire-common/src/services/approveToken'
-import { EarnDetailsModal } from 'components/Modals'
+import EarnDetailsModal from 'components/Modals/EarnDetailsModal/EarnDetailsModal'
 import { MdInfo } from "react-icons/md"
+import { rpcProviders } from 'config/providers'
 
 const AAVELendingPool = new Interface(AAVELendingPoolAbi)
 const RAY = 10**27
 let lendingPoolAddress = null
 
-const AAVECard = ({ networkId, tokens, account, addRequest }) => {
+const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
+    const [tokens] = useState(tokensData)
     const { addToast } = useToasts()
 
     const currentNetwork = useRef()
@@ -48,13 +50,13 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
     const networkDetails = networks.find(({ id }) => id === networkId)
     const defaultTokens = useMemo(() => getDefaultTokensItems(networkDetails.id), [networkDetails.id])
     const getToken = (type, address) => tokensItems.filter(token => token.type === type).find(token => token.address === address)
-    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
+    const addRequestTxn = (id, txn, extraGas = 0) => addRequest({ id, dateAdded: new Date().valueOf(), type: 'eth_sendTransaction', chainId: networkDetails.chainId, account, txn, extraGas })
 
     const onValidate = async (type, tokenAddress, amount) => {
         const validate = async (type, functionData) => {
             const token = getToken(type, tokenAddress)
             const bigNumberHexAmount = ethers.utils.parseUnits(amount.toString(), token.decimals).toHexString()
-            await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
+            if (type === 'deposit') await approveToken('Aave Pool', networkDetails.id, account, lendingPoolAddress, tokenAddress, addRequestTxn, addToast)
 
             try {
                 addRequestTxn(`aave_pool_${type}_${Date.now()}`, {
@@ -75,6 +77,15 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
         }
     }
 
+    const loadTokensAPR = useCallback(async(uniqueTokenAddresses, lendingPoolContract) => {
+        const aprs = await Promise.all(uniqueTokenAddresses.map(address => lendingPoolContract.getReserveData(address).catch(e => { throw Error(e) })))
+        return Object.fromEntries(uniqueTokenAddresses.map((addr, i) => {
+            const { liquidityRate } = aprs[i]
+            const apr = ((liquidityRate / RAY) * 100).toFixed(2)
+            return ([addr, apr])
+        }))
+    }, [])
+ 
     const loadPool = useCallback(async () => {
         const providerAddress = AAVELendingPoolProviders[networkDetails.id]
         if (!providerAddress) {
@@ -84,7 +95,9 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
         }
 
         try {
-            const provider = getProvider(networkDetails.id)
+            const provider = (networkDetails.id === 'ethereum') 
+                ? rpcProviders['ethereum-ambire-earn']
+                : getProvider(networkDetails.id)
             const lendingPoolProviderContract = new ethers.Contract(providerAddress, AAVELendingPool, provider)
             lendingPoolAddress = await lendingPoolProviderContract.getLendingPool()
 
@@ -107,22 +120,17 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
                 type: 'deposit'
             })).filter(token => token).sort((a, b) => b.balance - a.balance)
 
-            const allTokens = (await Promise.all([
+            const allTokens = [
                 ...withdrawTokens,
                 ...depositTokens,
                 ...defaultTokens.filter(({ type, address }) => type === 'deposit' && !depositTokens.map(({ address }) => address.toLowerCase()).includes(address.toLowerCase())),
                 ...defaultTokens.filter(({ type, baseTokenAddress }) => type === 'withdraw' && !withdrawTokens.map(({ address }) => address.toLowerCase()).includes(baseTokenAddress.toLowerCase()))
-            ]))
+            ]
 
             const uniqueTokenAddresses = [...new Set(allTokens.map(({ address }) => address))]
-            const tokensAPR = Object.fromEntries(await Promise.all(uniqueTokenAddresses.map(async address => {
-                const data = await lendingPoolContract.getReserveData(address)
-                const { liquidityRate } = data
-                const apr = ((liquidityRate / RAY) * 100).toFixed(2)
-                return [address, apr]
-            })))
 
 
+            const tokensAPR = await loadTokensAPR(uniqueTokenAddresses, lendingPoolContract)
             const tokensItems = allTokens.map(token => {
                 const arp = tokensAPR[token.address] === '0.00' && tokensAPR[token.baseTokenAddress]
                 ? tokensAPR[token.baseTokenAddress]
@@ -145,9 +153,18 @@ const AAVECard = ({ networkId, tokens, account, addRequest }) => {
             console.error(e);
             addToast(`Aave load pool error: ${e.message || e}`, { error: true })
         }
-    }, [addToast, tokens, defaultTokens, networkDetails])
+    }, [networkDetails.id, defaultTokens, tokens, loadTokensAPR, addToast])
 
-    useEffect(() => loadPool(), [loadPool])
+    useEffect(() => {
+        const invokeLoadPool = async() => await loadPool()
+        invokeLoadPool()
+
+        return () => {
+            setTokensItems([])
+            setLoading(false)
+            setUnavailable(false)
+        }
+    }, [loadPool, unavailable])
     useEffect(() => {
         currentNetwork.current = networkId
         setLoading(true)

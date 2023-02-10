@@ -1,0 +1,104 @@
+@import "variables";
+
+$txn-height: 65px;
+$extended-summary-height: 36px;
+
+.action {
+  display: flex;
+  align-items: center;
+  height: $extended-summary-height;
+  color: theme(highlight-secondary);
+  font-size: 14px;
+
+  &.unknown {
+    color: #d06f1b;
+  }
+
+  &.cancel {
+    color: #c33a3a;
+  }
+}
+
+.word {
+  font-size: 13px;
+  color: theme(text-secondary);
+}
+
+.token,
+.address,
+.network,
+.erc721 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  flex-wrap: wrap;
+  color: theme(text-primary);
+
+  .icon {
+    height: 36px;
+    width: 36px;
+    padding: 8px;
+    border-radius: 12px;
+    background-color: theme(background-icon);
+  }
+}
+
+.erc721, .address {
+  .toAddress.short {
+    display: none;
+  }
+}
+.externalLink {
+  width: 24px;
+  height: 24px;
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .word {
+    font-size: 11px;
+  }
+
+  .action,
+  .token,
+  .address,
+  .network,
+  .erc721 {
+    font-size: 12px;
+
+    .icon {
+      height: 24px;
+      width: 24px;
+      padding: 4px;
+      border-radius: 12px;
+      background-color: theme(background-icon);
+    }
+  }
+
+  .token,
+  .address,
+  .network,
+  .erc721 {
+    gap: 5px;
+    row-gap: 2px;
+  }
+
+  .action {
+    height: auto;
+  }
+
+  .erc721, .address {
+    .toAddress {
+      display: none;
+    }
+
+    .toAddress.short {
+      display: block;
+    }
+  }
+
+  .externalLink {
+    width: 16px;
+    height: 16px;
+  }
+}

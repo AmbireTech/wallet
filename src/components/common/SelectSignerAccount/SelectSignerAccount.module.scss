@@ -1,0 +1,61 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+
+    .title {
+        color: $c-scampi;
+        font-size: 18px;
+        font-weight: 500;
+        text-align: center;
+        padding-bottom: 25px;
+    }
+
+    .intro {
+        color: $text-container-color;
+    }
+
+    .signers {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+
+        .signer {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 20px;
+            cursor: pointer;
+            background: $c-mirage;
+            border-radius: 13px;
+            border: 1px solid transparent;
+            transition: border-color 0.3s ease;
+
+            .link {
+                display: flex;
+                align-items: center;
+
+                svg {
+                    width: 16px;
+                    height: 16px;
+                }
+            }
+
+            &:hover {
+                border: 1px solid $c-turquoise;
+            }
+        }
+    }
+
+    .info {
+        margin-top: auto;
+        margin-bottom: 20px;
+    }
+
+    .pagination {
+        margin-bottom: 30px;
+        display: flex;
+        justify-content: flex-end;
+    }
+}

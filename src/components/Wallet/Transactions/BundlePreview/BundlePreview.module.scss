@@ -1,0 +1,12 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: .625rem;
+    padding: 1.5625rem;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
+    border-radius: 12px;
+    margin-bottom: 1.25rem;
+}

@@ -1,0 +1,87 @@
+@import 'variables.scss';
+
+.addressesButton {
+    max-width: 400px;
+    width: 100%;
+    margin: 0 auto;
+}
+
+.wrapper {
+    gap: 57px;
+    padding: 40px;
+    padding-top: 15px;
+    flex: 1;
+
+    .addressList {
+        overflow-y: auto;
+        flex: 1;
+    }
+
+    .title {
+        font-size: 25px;
+        font-weight: 400;
+    }
+
+    .separator {
+        flex: 1 0 auto;
+    }
+
+    .item {
+        height: 65px;
+        padding-left: 20px !important;
+
+        &:nth-child(odd) {
+            background-color: rgba(0, 0, 0, 0.025);
+        }
+
+        &:nth-child(even) {
+            background-color: rgba(0, 0, 0, 0.1);
+        }
+
+        .details {
+            text-align: left;
+            overflow-x: auto;
+
+            .address {
+                word-break: break-all;
+                text-align: left;
+            }
+        }
+
+        .button {
+            flex: 0 0 auto;
+            width: 60px;
+        }
+
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
+}
+@media screen and (max-width: $small-breakpoint-max-width) {
+    .wrapper {
+        padding-top: 30px;
+        .title {
+            text-align: center;
+            width: auto;
+            margin: 0 auto;
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        padding: 20px;
+        .title {
+            font-size: 20px;
+        }
+        .item {
+            padding-left: 15px !important;
+
+            .details {
+                padding-right: 5px;
+            }
+        }
+    }
+}

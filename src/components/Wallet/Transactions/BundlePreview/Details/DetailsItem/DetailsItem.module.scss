@@ -1,0 +1,22 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: .625rem;
+  overflow: hidden;
+
+  .itemTitle {
+    margin: 0;
+    font-size: .75rem;
+    font-weight: 500;
+  }
+
+  .itemText {
+    margin: 0;
+    font-size: .75rem;
+    font-weight: 300;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}

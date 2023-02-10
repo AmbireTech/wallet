@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.7;
+pragma solidity ^0.8.7;
 
 import "./BytesLib.sol";
 
@@ -14,7 +14,9 @@ library SignatureValidator {
 		EIP712,
 		EthSign,
 		SmartWallet,
-		Spoof
+		Spoof,
+		// WARNING: must always be last
+		LastUnused
 	}
 
 	// bytes4(keccak256("isValidSignature(bytes32,bytes)"))
@@ -28,6 +30,8 @@ library SignatureValidator {
 		require(sig.length >= 1, "SV_SIGLEN");
 		uint8 modeRaw;
 		unchecked { modeRaw = uint8(sig[sig.length - 1]); }
+		// Ensure we're in bounds for mode; Solidity does this as well but it will just silently blow up rather than showing a decent error
+		require(modeRaw < uint8(SignatureMode.LastUnused), "SV_SIGMODE");
 		SignatureMode mode = SignatureMode(modeRaw);
 
 		// {r}{s}{v}{mode}
@@ -62,6 +66,8 @@ library SignatureValidator {
 			require(sig.length == 33, "SV_SPOOF_LEN");
 			sig.trimToSize(32);
 			return abi.decode(sig, (address));
-		} else revert("SV_SIGMODE");
+		}
+		// should be impossible to get here
+		return address(0);
 	}
 }

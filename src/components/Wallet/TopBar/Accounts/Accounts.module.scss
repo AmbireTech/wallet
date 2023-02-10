@@ -1,0 +1,219 @@
+@import 'variables.scss';
+
+$account-height: 60px;
+
+.wrapper {
+    max-width: 220px;
+    width: 100%;
+    color: $c-titan-white;
+
+    .content {
+        cursor: pointer;
+    }
+
+    .selectedAddress {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        width: 100%;
+        max-width: 110px;
+        gap: 5px;
+        
+        p {
+            margin: 0;
+        }
+
+        .selectedAddressCopyIcon {
+            width: 18px;
+            transition: .3s ease-in-out opacity;
+
+            &:hover {
+                opacity: .6;
+            }
+        }
+    }
+
+    .menu {
+        background-color: $c-mirage;
+        padding-top: 15px;
+        min-width: 560px;
+        
+
+        .list {
+            max-height: calc(#{$account-height} * 6.5);
+            overflow-x: hidden;
+            overflow-y: auto;
+            scrollbar-width: thin;
+
+            .sortButtons {
+                padding: 0 10px;
+            }
+
+            .account {
+                padding: 0 10px;
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+
+                &[draggable="true"] .dragHandle {
+                    cursor: grab;
+                    cursor: -moz-grab;
+                    cursor: -webkit-grab;
+                }
+
+                &[draggable="true"]:active .dragHandle {
+                    cursor: grabbing;
+                    cursor: -moz-grabbing;
+                    cursor: -webkit-grabbing;
+                }
+
+                .inner {
+                    min-width: 0;
+                    height: $account-height;
+                    display: flex;
+                    flex: 1;
+                    align-items: center;
+                    justify-content: flex-start;
+                    gap: 15px;
+                    margin-right: 10px;
+                    opacity: 0.6;
+                    padding: 0 10px;
+                    border-radius: 12px;
+                    cursor: pointer;
+
+                    .icon {
+                        flex: 0 0 auto;
+                        height: 32px;
+                        width: 32px;
+                        @include flex-center-center;
+                        border-radius: 12px;
+                        background-size: cover;
+                    }
+
+                    .details {
+                        display: flex;
+                        flex-direction: column;
+                        gap: 2px;
+                        overflow: hidden;
+
+                        .address, label {
+                            overflow: hidden;
+                            white-space: nowrap;
+                            text-overflow: ellipsis;
+                        }
+
+                        .address {
+                            font-size: 14px;
+                            font-weight: 400;
+                        }
+
+                        label {
+                            font-size: 12px;
+                            font-weight: 500;
+                            opacity: 0.5;
+                            cursor: pointer;
+                        }
+                    }
+
+                    &:hover {
+                        background-color: $c-ebony-clay;
+
+                        // ~.buttons .button {
+                        //     svg {
+                        //         opacity: 1;
+                        //     }
+                        //     background-color: $c-ebony-clay;
+                        // }
+                    }
+                }
+
+                .buttons {
+                    display: flex;
+                    flex-direction: row;
+
+                    .button {
+                        display: block;
+                        flex: 0 0 auto;
+                        height: 60px;
+                        width: 50px;
+                        @include flex-center-center;
+                        color: $c-titan-white;
+                        font-size: 28px;
+                        cursor: pointer;
+                        border-radius: 12px;
+
+                        svg {
+                            opacity: 0.4;
+                            width: 28px;
+                            height: 28px;
+                        }
+
+                        &:hover {
+                            background-color: $c-ebony-clay;
+
+                            svg {
+                                opacity: 1;
+                            }
+                        }
+
+                        &:active {
+                            background-color: rgba(255, 255, 255, 0.05);
+                        }
+                    }
+                }
+
+                &.active {
+
+                    .inner {
+                        opacity: 1;
+                    }
+                }
+            }
+        }
+
+        .confirmDeleteAccount {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            
+            .message {
+                margin: 0;
+                margin-left: 10px;
+                font-size: 15px;
+            }
+        }
+    }
+    .addAccount {
+        padding: 20px 10px;
+        padding-bottom: 18px;
+    
+        button {
+            width: 100%;
+        }
+    }
+}
+
+// Mobile 
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        max-width: 100%;
+
+        .selectedAddress {
+            max-width: 140px;
+        }
+
+        .menu {
+            min-width: 100%;
+            width: 100%;
+
+            .confirmDeleteAccount {
+                .message {
+                    font-size: 14px;
+                    word-wrap: break-word;
+                }
+            }
+        }
+    }
+}

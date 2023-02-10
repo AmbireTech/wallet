@@ -1,0 +1,190 @@
+@import 'variables.scss';
+
+$max-width: 650px;
+
+.wrapper {
+  position: fixed;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  z-index: 999;
+  overflow-y: auto;
+  background: theme(background-gradient);
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 17px;
+  padding: 32px;
+
+  .panel {
+    width: $max-width;
+
+    .content {
+      flex-wrap: wrap;
+    }
+
+    .signMessageTitle {
+      display: flex;
+      align-items: baseline;
+
+      .signMessageTitleTitle {
+        flex-grow: 1;
+      }
+      .signMessageTitleSignatureType {
+        display: flex;
+        align-items: center;
+        background-color: theme(background-primary);
+        padding: 2px 8px;
+        color: $text-container-color;
+        font-weight: 300;
+        font-size: 16px;
+        border-radius: 12px;
+
+        span {
+          margin-left: 4px;
+        }
+      }
+    }
+  }
+
+  .requestMessage {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    font-weight: 500;
+
+    .dappMessage {
+      display: flex;
+      flex-direction: row;
+      gap: 8px;
+      row-gap: 3px;
+      align-items: center;
+      flex-wrap: wrap;
+
+      .dapp {
+        display: flex;
+        flex-direction: row;
+        gap: 8px;
+        color: theme(highlight-primary);
+
+        .icon {
+          height: 22px;
+          width: 22px;
+          border-radius: 100%;
+          @include flex-center-center;
+          background-size: contain;
+          background-color: theme(background-icon);
+
+          svg {
+            font-size: 12px;
+            opacity: 0.2;
+          }
+        }
+      }
+    }
+
+    span {
+      opacity: 0.5;
+    }
+
+    .warning {
+      color: $warning-color;
+    }
+  }
+
+  .signMessage {
+    width: auto;
+    padding: 32px;
+    color: theme(text-secondary);
+    min-height: 300px;
+    background-color: theme(background-primary);
+    border: 0px;
+    border-radius: 12px;
+    resize: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: 14px;
+  }
+
+  .actions {
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+
+      .buttons {
+        display: flex;
+        gap: 24px;
+
+        .button {
+          flex: 1 1 50%;
+        }
+
+        .icon {
+          position: absolute;
+          top: 20px;
+          left: 20px;
+        }
+      }
+    }
+  }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    gap: 16px;
+    padding: 16px;
+
+    .panel {
+      width: 100%;
+      min-width: auto !important;
+      max-width: 100% !important;
+      padding: 20px 16px !important;
+
+      .panelTitle {
+        justify-content: center;
+        font-size: 20px;
+      }
+
+      .signMessageTitle {
+        .signMessageTitleSignatureType {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .requestMessage {
+      .dappMessage {
+        font-size: 12px;
+
+        a {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+    .signMessage {
+      font-size: 12px;
+      min-height: 180px;
+      padding: 10px 20px;
+      padding-bottom: 15px;
+    }
+    .actions {
+      form {
+        .buttons {
+          flex-direction: column-reverse;
+          gap: 10px;
+
+          .button {
+            flex: unset;
+            font-size: 16px;
+            height: 50px;
+          }
+        }
+      }
+    }
+  }
+}

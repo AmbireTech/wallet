@@ -1,0 +1,108 @@
+@import 'variables.scss';
+
+.wrapper {    
+    .customDappTitle {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 12px;
+
+        .infoBtn {
+            height: 32px;
+            color: $ambire-purple;
+            opacity: 0.5;
+            &:hover {
+                opacity: 1;
+            } 
+            .icon {
+                font-size: 32px;
+                height: 32px;
+            }
+        }            
+    }
+    
+    .content {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+
+        .dappInput {
+            flex: 1;
+            gap: 8px;
+            width: 100%;
+            
+            .textInputContainer {
+                input {
+                    height: 40px;
+                    font-size: 1em;
+                    padding: 0.8em;
+                }                
+            }
+        }
+
+        .iconInput {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            justify-content: space-between;
+            align-items: flex-end;
+
+            .textInput {
+                flex-grow: 1;
+            }
+
+            .iconWrapper {
+                border: 1px dashed $c-scampi;
+                border-radius: 12px;
+                width: 66px;
+                height: 66px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+
+                img {
+                    width: 46px;
+                    height: 46px;
+                }
+            }
+        }
+
+        .networks {
+            .networksContainer {
+                display: flex;
+                flex-direction: row;
+                gap: 4px;
+                .networkTag {
+                    border: 2px solid $c-mirage;
+                    display: block;
+                    height: 20px;
+                    width: 20px;
+                    background-size: 16px 16px;
+                    background-color: transparent;
+                    background-position: center;
+                    mask-repeat: no-repeat;
+                    border-radius: 100px;
+                    filter: grayscale(100%);
+                    cursor: pointer;
+
+                    &.selected {
+                        filter: none;
+                        border: 2px solid $c-turquoise;
+                    }
+                }
+            }
+        }
+
+        .networks, .connectionRadios {
+            > :first-child {
+                margin-bottom: 8px;
+            }
+        }
+
+        .inputErr {
+            margin-top: 4px;
+            color: $warning-color;
+            font-size: 0.8em;
+        }
+    }
+}

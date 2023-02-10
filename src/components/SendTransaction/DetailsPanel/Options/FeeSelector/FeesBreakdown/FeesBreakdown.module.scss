@@ -1,0 +1,39 @@
+@import "variables";
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fee {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px;
+  background-color: theme(background-primary);
+  border-radius: 12px;
+  color: theme(text-primary);
+
+  &.discount {
+    color: theme(highlight-secondary);
+  }
+
+  &.warning {
+    color: $warning-color;
+  }
+
+  .feeSide {
+    display: block;
+    margin: 0;
+    font-weight: 300;
+  }
+}
+
+@media (max-width: $mobile-breakpoint-max-width) {
+  .fee {
+    flex-direction: column;
+    text-align: center;
+    gap: 15px;
+  }
+}

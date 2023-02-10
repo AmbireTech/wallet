@@ -1,9 +1,13 @@
-import './Modal.scss'
+import cn from 'classnames'
 
-import { MdClose } from 'react-icons/md'
 import { useModals } from 'hooks'
 
-const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, topLeft }) => {
+import { ReactComponent as CloseIcon } from 'resources/icons/close.svg'
+import { ReactComponent as BackIcon } from 'resources/icons/back.svg'
+
+import styles from './Modal.module.scss'
+
+const Modal = ({ children, title, buttons, size, isCloseBtnShown = true, onClose, isBackBtnShown, onBack, className, buttonsClassName, contentClassName }) => {
     const { onHideModal } = useModals()
 
     const onCloseModal = () => {
@@ -12,18 +16,14 @@ const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, 
     }
 
     return (
-        <div id={id} className={`modal ${buttons ? 'buttons' : ''}`}>
-            <div className="heading">
-                <div className="title"  style={topLeft ? { maxWidth: '360px' } : {}}>{ title }</div>
-                {topLeft && <div className="top-left">{ topLeft }</div>}
-                {isCloseBtnShown ? (<div className="close" onClick={onCloseModal}>
-                    <MdClose/>
-                </div>) : <></>}
-            </div>
-            <div className="content">{ children }</div>
-            { buttons ? 
-                <div className="buttons">{ buttons }</div>
-            : null}
+        <div className={cn(styles.wrapper, className, styles[size || ''])}>
+            {(title || isCloseBtnShown || isBackBtnShown) ? (<div className={styles.heading}>
+                {isBackBtnShown && <BackIcon className={styles.headingIcon} onClick={onBack} />}
+                <h2 className={cn(styles.title, {[styles.centered]: !isCloseBtnShown && !isBackBtnShown })}>{ title }</h2>
+                {isCloseBtnShown && <CloseIcon className={styles.headingIcon} onClick={onCloseModal} />}
+            </div>) : null}
+            <div className={cn(styles.content, contentClassName)}>{ children }</div>
+            { buttons && <div className={cn(styles.buttons, buttonsClassName)}>{ buttons }</div>}
         </div>
     )
 }

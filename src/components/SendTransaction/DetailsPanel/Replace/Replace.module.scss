@@ -1,0 +1,35 @@
+@import "variables";
+
+.replaceInfo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 12px;
+
+  &.info {
+    background-color: $info-background-color;
+    color: $alert-text-color;
+  }
+
+  &.warning {
+    background-color: $warning-background-color;
+    color: $alert-text-color;
+  }
+
+  margin-bottom: 16px;
+}
+
+.wrapper {
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5em;
+    flex-wrap: wrap;
+
+    .button {
+      height: 75px;
+      flex-grow: 1;
+    }
+  }
+}

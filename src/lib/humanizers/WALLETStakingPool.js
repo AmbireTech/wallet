@@ -18,8 +18,6 @@ const STAKING_POOLS = {
   }
 }
 
-const iface = new Interface(WalletStakingPoolABI)
-
 const toExtended = (action, word, token, txn) => {
   return [[
     action,
@@ -36,29 +34,32 @@ const toExtended = (action, word, token, txn) => {
   ]]
 }
 
-const WALLETStakingPool = {
-  [iface.getSighash('enter')]: (txn, network, { extended = false }) => {
-    const { amount } = iface.parseTransaction(txn).args
-    if (extended) return toExtended('Deposit', 'to', token(STAKING_POOLS[txn.to].baseToken, amount, true), txn)
-    return [`Deposit ${token(STAKING_POOLS[txn.to].baseToken, amount)} to ${STAKING_POOLS[txn.to].name}`]
-  },
-  [iface.getSighash('leave')]: (txn, network, { extended = false }) => {
-    if (extended) return [['Leave', 'from', {
-      type: 'address',
-      address: txn.to,
-      name: STAKING_POOLS[txn.to].name
-    }]]
-    return [`Leave the WALLET Staking Pool`]
-  },
-  [iface.getSighash('withdraw')]: (txn, network, { extended = false }) => {
-    const { shares } = iface.parseTransaction(txn).args
-    if (extended) return toExtended('Withdraw', 'from', token(txn.to, shares, true), txn)
-    return [`Withdraw ${token(txn.to, shares)} to ${STAKING_POOLS[txn.to].name}`]
-  },
-  [iface.getSighash('rageLeave')]: (txn, network, { extended = false }) => {
-    const { shares } = iface.parseTransaction(txn).args
-    if (extended) return toExtended('Rage Leave', 'from', token(txn.to, shares, true), txn)
-    return [`Rage Leave ${token(txn.to, shares)} to ${STAKING_POOLS[txn.to].name}`]
-  },
+const WALLETStakingPool = (humanizerInfo) => {
+  const iface = new Interface(WalletStakingPoolABI)
+  return {
+    [iface.getSighash('enter')]: (txn, network, { extended = false }) => {
+      const { amount } = iface.parseTransaction(txn).args
+      if (extended) return toExtended('Deposit', 'to', token(humanizerInfo, STAKING_POOLS[txn.to].baseToken, amount, true), txn)
+      return [`Deposit ${token(humanizerInfo, STAKING_POOLS[txn.to].baseToken, amount)} to ${STAKING_POOLS[txn.to].name}`]
+    },
+    [iface.getSighash('leave')]: (txn, network, { extended = false }) => {
+      if (extended) return [['Leave', 'from', {
+        type: 'address',
+        address: txn.to,
+        name: STAKING_POOLS[txn.to].name
+      }]]
+      return [`Leave the WALLET Staking Pool`]
+    },
+    [iface.getSighash('withdraw')]: (txn, network, { extended = false }) => {
+      const { shares } = iface.parseTransaction(txn).args
+      if (extended) return toExtended('Withdraw', 'from', token(humanizerInfo, txn.to, shares, true), txn)
+      return [`Withdraw ${token(humanizerInfo, txn.to, shares)} to ${STAKING_POOLS[txn.to].name}`]
+    },
+    [iface.getSighash('rageLeave')]: (txn, network, { extended = false }) => {
+      const { shares } = iface.parseTransaction(txn).args
+      if (extended) return toExtended('Rage Leave', 'from', token(humanizerInfo, txn.to, shares, true), txn)
+      return [`Rage Leave ${token(humanizerInfo, txn.to, shares)} to ${STAKING_POOLS[txn.to].name}`]
+    },
+  }
 }
 export default WALLETStakingPool

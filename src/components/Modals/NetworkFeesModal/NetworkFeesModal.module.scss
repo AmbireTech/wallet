@@ -1,0 +1,37 @@
+@import 'variables';
+
+.wrapper {
+  width: 100%;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    text-align: left;
+    font-size: 16px;
+    color: $c-titan-white;
+    user-select: none;
+    overflow-x: auto;
+
+    .feesInfo {
+      margin: 0;
+      margin-bottom: 12px;
+    }
+ 
+    .error {
+      color: $danger-color;
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .content {
+      .feesInfo {
+        font-size: 14px;
+        text-align: center;
+      }
+    }   
+  }
+}
+

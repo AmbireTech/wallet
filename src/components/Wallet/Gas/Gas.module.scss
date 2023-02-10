@@ -1,0 +1,39 @@
+@import 'variables.scss';
+
+.unavailable {
+  padding-top: 50px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  gap: 17px;
+  min-height: 100%;
+
+  .panel {
+    flex: 1;
+    padding: 40px;
+    min-height: 100%;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    flex-direction: column;
+
+    .panel {
+      padding: 30px;
+      min-height: unset;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    .panel {
+      padding: 20px;
+    }
+  }
+}

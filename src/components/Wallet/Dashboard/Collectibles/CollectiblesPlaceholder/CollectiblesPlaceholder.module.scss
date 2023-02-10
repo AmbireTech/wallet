@@ -1,0 +1,36 @@
+@import 'variables.scss';
+
+.placeholderOverlay {
+    z-index: 4;
+    @include absolute-full-size;
+    @include flex-center-center;
+
+    .placeholderText {
+        text-align: center;
+        text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+
+        h2 {
+            font-size: 22px;
+            margin: 0;
+            margin-bottom: 20px;
+        }
+
+        p {
+            margin: 0;
+            cursor: pointer;
+        }
+    }
+}
+
+.blur {
+    filter: blur(15px);
+    opacity: .4;
+    padding-bottom: 50px;
+}
+
+@media (max-width: 768px) {
+    .placeholderOverlay {
+        align-items: flex-start;
+        padding-top: 100px;
+    }
+}

@@ -1,0 +1,42 @@
+@import 'variables.scss';
+
+.wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    padding: 25px 30px 30px;
+    background-color: theme(background-terniary);
+    border: 1px solid theme(border-secondary);
+    border-radius: 12px;
+
+    .title {
+        display: flex;
+        justify-content: space-between;
+        margin: 0;
+        font-size: 25px;
+        font-weight: 400;
+    }
+
+    .content {
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        gap: 25px;
+        // Without setting this prop, a child auto-scrollable component (without certain height) is not growing correctly into the available space,
+        // instead it gets 100% height, its scrollbars are not even shown and it overflows its parent height.
+        // Please check how Transfer -> Address book list is working when toggling on/off this prop.
+        // min-height set a proper height for the child components and works perfectly.
+        // @credits: https://stackoverflow.com/a/68183297/4312466
+        min-height: 0;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        gap: 16px;
+        padding: 20px;
+    }
+}

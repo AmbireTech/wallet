@@ -1,0 +1,21 @@
+@import 'variables';
+
+.wrapper {
+  margin-bottom: 30px;
+
+  .title {
+    margin: 0;
+    margin-bottom: 10px;
+    font-size: 16px;
+    font-weight: 300;
+    color: theme(text-primary);
+  }
+}
+
+@media (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .title {
+      text-align: center;
+    }
+  }
+}

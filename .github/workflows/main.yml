@@ -1,4 +1,4 @@
-name: Build & deploy
+name: Build & deploy 🔥 Ambire Wallet 🔥
 
 on:
   push:
@@ -7,58 +7,44 @@ on:
   pull_request:
     branches:
       - main
-
+permissions:
+  contents: write
 jobs:
   build:
-    name: Build
+    name: Build & Deploy 
     runs-on: ubuntu-latest
-    
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }} 
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
-    
-    - name: Install Node.js
-      uses: actions/setup-node@v1
+    - name: Checkout code 🛎️
+      uses: actions/checkout@v3
+
+    - name: Install Node.js ⚙️
+      uses: actions/setup-node@v3
       with:
         node-version: 16.x
-    
-    - name: Install NPM packages
+    - name: Install NPM packages ♾️🕳️
       run: npm ci
-    
-    - name: Build project
+
+    - name: Build project 🛠️
       run: npm run build
-    
-    - name: Upload production-ready build files
-      uses: actions/upload-artifact@v2
-      with:
-        name: production-files
-        path: ./build
-  
-  deploy:
-    name: Deploy
-    needs: build
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    
-    steps:
-    - name: Download artifact
-      uses: actions/download-artifact@v2
-      with:
-        name: production-files
-        path: ./build
 
-    - name: Deploy to gh-pages
-      uses: peaceiris/actions-gh-pages@v3
+    - name: Deploy 🚀🌕 
+      if: github.ref == 'refs/heads/main'
+      uses: JamesIves/github-pages-deploy-action@v4.4.1
       with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
+        branch: gh-pages
+        folder: build
         cname: wallet.ambire.com
+        clean-exclude: |
+            pr-preview
+            staging
+            relayerless
+            paperbackup
+            portfolio-v2
+            moonpay
+            walletconnect2
+            sdk-login
 
-    - name: Deploy to gh-pages (staging)
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./build
-        destination_dir: ./staging
-        cname: wallet.ambire.com
+
 

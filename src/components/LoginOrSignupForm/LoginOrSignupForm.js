@@ -1,3 +1,4 @@
+import styles from './LoginOrSignupForm.module.scss'
 import { useState, useRef } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Checkbox } from "components/common"
@@ -104,10 +105,12 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           value={state.passphraseConfirm}
           onChange={e => onUpdate({ passphraseConfirm: e.target.value })}></input>
         <Checkbox
+          labelClassName={styles.checkboxLabel}
           label={<>I agree to the <Link href='https://www.ambire.com/Ambire%20ToS%20and%20PP%20(26%20November%202021).pdf'>Terms of Service and Privacy policy</Link>.</>}
           required={true}
         ></Checkbox>
         <Checkbox
+          labelClassName={styles.checkboxLabel}
           label={<>Backup on <Link href='https://help.ambire.com/hc/en-us/articles/4410892186002-What-is-Ambire-Cloud-'>Ambire Cloud</Link>.</>}
           checked={!state.backupOptout}
           onChange={e => onUpdate({ backupOptout: !e.target.checked })}
@@ -124,8 +127,8 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
         }
         {additionalInputs}
         <input type="submit" disabled={inProgress} value={isSignup ?
-          (inProgress ? "Signing up..." : "Sign up")
-          : (inProgress ? "Logging in..." : "Log in")}></input>
+          (inProgress ? "Signing up..." : "Sign Up")
+          : (inProgress ? "Logging in..." : "Log In")}></input>
       </form>
     )
 }

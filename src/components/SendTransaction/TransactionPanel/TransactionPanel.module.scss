@@ -1,0 +1,27 @@
+@import "variables";
+
+.wrapper {  
+  .panelBody {
+    overflow: auto;
+  }
+
+  .listOfTransactions {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .titleWrapper {
+      flex-direction: column;
+
+      .title {
+        position: static;
+        transform: none;
+      }
+    }
+  }
+}

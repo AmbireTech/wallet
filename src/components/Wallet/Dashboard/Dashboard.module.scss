@@ -1,0 +1,150 @@
+@import 'variables.scss';
+
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 17px;
+
+    .panel {
+        flex: 0 1 50%;
+
+        .panelTitle {
+            font-size: 25px;
+            font-weight: 400;
+            color: $c-titan-white;
+            margin-bottom: 20px;
+        }
+    }
+
+    .tab {
+        font-size: 20px;
+    }
+
+    .topPanels {
+        padding: 15px 50px;
+        gap: 0;
+        overflow: hidden;
+    }
+    
+    .overview {
+        display: flex;
+        justify-content: space-between;
+        gap: 17px;
+        max-height: 300px;
+    }
+
+    .footer {
+        margin-top: 15px;
+        margin-bottom: 40px;
+
+        .missingTokenNotice {
+            font-size: 15px;
+            color: $c-titan-white;
+
+            .footerButton, a {
+                color: $c-heliotrope;
+            }
+
+            .footerButton {
+                background-color: transparent;
+                border: none;
+                font-family: inherit;
+                display: inline;
+                cursor: pointer;
+                padding: 0;
+                font-size: inherit;
+            }
+        }
+
+        .powered {
+            text-align: right;
+            font-size: 12px;
+            padding: 0 10px;
+            opacity: 0.5;
+        }
+
+    }
+}
+
+@media screen and (max-width: 1800px) {
+    .wrapper {
+        .panel {
+            .panelTitle {
+                font-size: 20px;
+                margin-bottom: 23px;
+            }
+        }
+        .topPanels {
+            padding: 15px 30px;
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+    .overview {
+        flex-direction: column;
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .wrapper {
+        gap: 30px;
+        padding: 20px;
+
+        .panel {
+            background-color: transparent;
+            border: none;
+
+            .panelTitle {
+                margin-left: 20px;
+                margin-bottom: 15px;
+            }
+        }
+
+        .topPanels {
+            max-height: unset;
+            padding: 0;
+        }
+
+        .overview {
+            gap: 30px;
+            max-height: unset;
+        }
+
+        .chart {
+            flex-direction: column;
+        }
+
+        .assetsPanel {
+            background-color: transparent;
+            border: none;
+        }
+
+        .tabsShadow {
+            display: none;
+        }
+
+        .tab {
+            border-left: none!important;
+            border-right: none!important;
+
+            &:first-child {
+                margin-right: 10px;
+            }
+
+            &:nth-child(2) {
+                margin-left: 10px;
+            }
+        }
+
+        .footer {
+            flex-direction: column;
+
+            .missingTokenNotice {
+                align-items: flex-start;
+                font-weight: 300;
+            }
+        }
+    }
+}
