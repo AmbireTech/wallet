@@ -1,47 +1,81 @@
-import { usePageVisibility } from 'react-page-visibility';
+import { usePageVisibility } from 'react-page-visibility'
 import usePortfolioCommon from 'ambire-common/src/hooks/usePortfolio'
 
-import { ZAPPER_API_KEY } from 'config';
 import { fetchGet } from 'lib/fetch';
-import { ZAPPER_API_ENDPOINT } from 'config'
+import { ZAPPER_API_ENDPOINT, VELCRO_API_ENDPOINT, COINGECKO_API_URL } from 'config'
 import { useToasts } from 'hooks/toasts'
-import { VELCRO_API_ENDPOINT } from 'config'
+import useConstants from './useConstants'
+import useDbCacheStorage from './useCacheStorage'
+import useLocalCacheStorage from './useLocalCacheStorage'
 
-const getBalances = (network, protocol, address, provider) =>
-    fetchGet(`${provider === 'velcro' ?
-        VELCRO_API_ENDPOINT :
-        ZAPPER_API_ENDPOINT}/protocols/${protocol}/balances?addresses[]=${address}&network=${network}&api_key=${ZAPPER_API_KEY}&newBalances=true`
+const useCacheStorage = window.indexedDB ||
+    window.mozIndexedDB ||
+    window.webkitIndexedDB ||
+    window.msIndexedDB ||
+    window.shimIndexedDB ? useDbCacheStorage : useLocalCacheStorage
+            
+const getBalances = (network, address, provider, quickResponse) => {
+    if (provider === '' || !provider) return null
+    return fetchGet(`${provider === 'velcro' ?
+    VELCRO_API_ENDPOINT :
+    ZAPPER_API_ENDPOINT}/balance/${address}/${network}${quickResponse ? '?quick=true': ''}`
+    )
+}
+
+const getCoingeckoPrices = (addresses) =>
+    fetchGet(`${COINGECKO_API_URL}/simple/price?ids=${addresses}&vs_currencies=usd`
     )
 
-export default function usePortfolio({ currentNetwork, account, useStorage }) {
-    const isVisible = usePageVisibility()
+const getCoingeckoAssetPlatforms = () =>
+    fetchGet(`${COINGECKO_API_URL}/asset_platforms`
+    )
 
+const getCoingeckoPriceByContract = (id, addresses) =>
+    fetchGet(`${COINGECKO_API_URL}/coins/${id}/contract/${addresses}`
+    )
+
+export default function usePortfolio({ currentNetwork, account, useStorage, relayerURL, useRelayerData, eligibleRequests, requests, selectedAccount, sentTxn, accounts }) {
+    const isVisible = usePageVisibility()
+    
     const {
         balance,
         otherBalances,
         tokens,
-        extraTokens,
+        resultTime,
         hiddenTokens,
-        protocols,
-        collectibles,
-        requestOtherProtocolsRefresh,
-        onAddExtraToken,
-        onRemoveExtraToken,
         onAddHiddenToken,
         onRemoveHiddenToken,
+        extraTokens,
+        collectibles,
+        onAddExtraToken,
+        onRemoveExtraToken,
         balancesByNetworksLoading,
         isCurrNetworkBalanceLoading,
-        areAllNetworksBalancesLoading,
-        otherProtocolsByNetworksLoading,
-        isCurrNetworkProtocolsLoading,
-        cachedBalancesByNetworks,
-      } = usePortfolioCommon({
+        loading,
+        cache,
+        onAddHiddenCollectible,
+        onRemoveHiddenCollectible,
+        setHiddenCollectibles,
+        hiddenCollectibles
+    } = usePortfolioCommon({
+        useConstants,
         currentNetwork,
         account,
         useStorage,
         isVisible,
         useToasts,
-        getBalances
+        getBalances,
+        getCoingeckoPrices,
+        getCoingeckoPriceByContract,
+        getCoingeckoAssetPlatforms,
+        relayerURL,
+        useRelayerData,
+        eligibleRequests,
+        requests,
+        selectedAccount,
+        sentTxn,
+        useCacheStorage,
+        accounts
     })
 
     return {
@@ -50,18 +84,19 @@ export default function usePortfolio({ currentNetwork, account, useStorage }) {
         tokens,
         extraTokens,
         hiddenTokens,
-        protocols,
         collectibles,
-        requestOtherProtocolsRefresh,
         onAddExtraToken,
         onRemoveExtraToken,
         onAddHiddenToken,
         onRemoveHiddenToken,
         balancesByNetworksLoading,
         isCurrNetworkBalanceLoading,
-        areAllNetworksBalancesLoading,
-        otherProtocolsByNetworksLoading,
-        isCurrNetworkProtocolsLoading,
-        cachedBalancesByNetworks
+        loading,
+        cache,
+        resultTime,
+        onAddHiddenCollectible,
+        onRemoveHiddenCollectible,
+        setHiddenCollectibles,
+        hiddenCollectibles
     }
 }

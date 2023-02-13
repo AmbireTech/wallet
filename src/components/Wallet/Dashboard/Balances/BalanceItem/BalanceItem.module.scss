@@ -1,0 +1,51 @@
+@import 'variables.scss';
+
+.purpleHighlight {
+  color: $c-heliotrope;
+}
+
+.balanceContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+  height: 36px;
+  border: 1px solid transparent;
+  border-bottom-color: $c-fiord;
+  padding: 1px 20px;
+  padding-left: 0;
+  cursor: pointer;
+  transition: opacity 0.1s ease-in-out;
+
+  &:hover {
+    opacity: .8;
+  }
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  label {
+    opacity: 1;
+    cursor: pointer;
+    color: $c-titan-white;
+    font-weight: 300;
+    font-size: 14px;
+  }
+
+  .network {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+    font-weight: 400;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .balanceContainer {
+    height: auto;
+    padding-right: 0;
+  }
+}

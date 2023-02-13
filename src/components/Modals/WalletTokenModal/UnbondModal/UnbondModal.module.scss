@@ -1,0 +1,83 @@
+@import 'variables.scss';
+
+.wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba($c-ebony-clay, 0.85) 0% 0% no-repeat padding-box;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  .modal {
+    min-height: 530px;
+    padding-top: 0;
+  }
+
+  .modalContentWrapper {
+    max-width: 500px;
+    background: $c-ebony-clay 0% 0% no-repeat padding-box;
+    box-shadow: 0px 0px 15px #00000040;
+  }
+  .content {
+    text-align: center;
+    padding-top: 40px;
+
+    .dangerAnimationWrapper {
+      position: relative;
+      .dangerAnimation {
+        width: 124px;
+        height: 124px;
+        margin: 0 auto;
+        margin-bottom: 40px;
+      }
+
+      .dangerAnimationCircle {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 0;
+      }
+    }
+
+    .warningTitle {
+      font-size: 24px;
+      color: $danger-color;
+      font-weight: 700;
+      margin-bottom: 20px;
+    }
+
+    .warningText {
+      font-size: 16px;
+      line-height: 22px;
+      margin-bottom: 42px;
+    }
+  }
+  .buttons {
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    padding: 0 34px;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 15px;
+
+    .button:first-child {
+      margin-bottom: 10px;
+    }
+
+    .button:last-child {
+      background-color: #161920;
+    }
+    .button {
+      color: $c-titan-white;
+      width: 100%;
+      box-sizing: border-box;
+      padding: 21px 0;
+    }
+  }
+}

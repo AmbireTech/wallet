@@ -1,13 +1,18 @@
 @import 'variables.scss';
 
 .card {
-    width: 380px;
     display: flex;
+    flex: 1;
     flex-direction: column;
     gap: 30px;
     padding: 20px 25px;
     padding-bottom: 25px;
-    background-color: $panel-background-color;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
+    border-radius: 12px;
+    max-height: 700px;
+    min-height: 450px;
+    max-width: 450px;
 
     .amount-label {
         width: 100%;
@@ -36,7 +41,7 @@
     .unavailable {
         display: flex;
         justify-content: center;
-        font-weight: bold;
+        font-weight: 400;
     }
 
     .content {
@@ -66,11 +71,12 @@
         }
 
         .warning-msg {
-            background: mix($warning-color, $panel-background-color, 5%);
+            background: mix($warning-color, $c-ebony-clay, 5%);
             border: 1px solid $warning-color;
             color: $warning-color;
-            padding: 7px;
+            padding: 8px;
             font-size: 14px;
+            border-radius: 12px;
         }
 
         .details-placeholder {
@@ -109,6 +115,8 @@
 // Mobile
 @media screen and (max-width: $mobile-breakpoint-max-width) {
     .card {
+        min-height: unset;
+        max-height: unset;
         width: 100%;
         padding: 20px;
     }

@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: agpl-3.0
 pragma solidity 0.8.7;
 
-import "./Identity.sol";
+import "./AmbireAccount.sol";
 import "./IERC20.sol";
 
 contract QuickAccManager {
@@ -14,7 +14,7 @@ contract QuickAccManager {
 
 	// Events
 	// we only need those for timelocked stuff so we can show scheduled txns to the user; the oens that get executed immediately do not need logs
-	event LogScheduled(bytes32 indexed txnHash, bytes32 indexed accHash, address indexed signer, uint nonce, uint time, Identity.Transaction[] txns);
+	event LogScheduled(bytes32 indexed txnHash, bytes32 indexed accHash, address indexed signer, uint nonce, uint time, AmbireAccount.Transaction[] txns);
 	event LogCancelled(bytes32 indexed txnHash, bytes32 indexed accHash, address indexed signer, uint time);
 	event LogExecScheduled(bytes32 indexed txnHash, bytes32 indexed accHash, uint time);
 
@@ -47,8 +47,8 @@ contract QuickAccManager {
 
 	// isBothSigned is hashed in so that we don't allow signatures from two-sig txns to be reused for single sig txns,
 	// ...potentially frontrunning a normal two-sig transaction and making it wait
-	// WARNING: if the signature of this is changed, we have to change IdentityFactory
-	function send(Identity identity, QuickAccount calldata acc, DualSig calldata sigs, Identity.Transaction[] calldata txns) external {
+	// WARNING: if the signature of this is changed, we have to change AmbireAccountFactory
+	function send(AmbireAccount identity, QuickAccount calldata acc, DualSig calldata sigs, AmbireAccount.Transaction[] calldata txns) external {
 		bytes32 accHash = keccak256(abi.encode(acc));
 		require(identity.privileges(address(this)) == accHash, 'WRONG_ACC_OR_NO_PRIV');
 		uint initialNonce = nonces[address(identity)]++;
@@ -75,7 +75,7 @@ contract QuickAccManager {
 		}
 	}
 
-	function cancel(Identity identity, QuickAccount calldata acc, uint nonce, bytes calldata sig, Identity.Transaction[] calldata txns) external {
+	function cancel(AmbireAccount identity, QuickAccount calldata acc, uint nonce, bytes calldata sig, AmbireAccount.Transaction[] calldata txns) external {
 		bytes32 accHash = keccak256(abi.encode(acc));
 		require(identity.privileges(address(this)) == accHash, 'WRONG_ACC_OR_NO_PRIV');
 
@@ -85,7 +85,7 @@ contract QuickAccManager {
 
 		// @NOTE: should we allow cancelling even when it's matured? probably not, otherwise there's a minor grief
 		// opportunity: someone wants to cancel post-maturity, and you front them with execScheduled
-		bytes32 hashTx = keccak256(abi.encode(address(this), block.chainid, accHash, nonce, txns, false));
+		bytes32 hashTx = keccak256(abi.encode(address(this), block.chainid, address(identity), accHash, nonce, txns, false));
 		uint scheduledTime = scheduled[hashTx];
 		require(scheduledTime != 0 && block.timestamp < scheduledTime, 'TOO_LATE');
 		delete scheduled[hashTx];
@@ -93,7 +93,7 @@ contract QuickAccManager {
 		emit LogCancelled(hashTx, accHash, signer, block.timestamp);
 	}
 
-	function execScheduled(Identity identity, bytes32 accHash, uint nonce, Identity.Transaction[] calldata txns) external {
+	function execScheduled(AmbireAccount identity, bytes32 accHash, uint nonce, AmbireAccount.Transaction[] calldata txns) external {
 		require(identity.privileges(address(this)) == accHash, 'WRONG_ACC_OR_NO_PRIV');
 
 		bytes32 hash = keccak256(abi.encode(address(this), block.chainid, address(identity), accHash, nonce, txns, false));
@@ -117,7 +117,7 @@ contract QuickAccManager {
 			one: SignatureValidator.recoverAddr(hash, sig1),
 			two: SignatureValidator.recoverAddr(hash, sig2)
 		})));
-		if (Identity(payable(address(msg.sender))).privileges(address(this)) == accHash) {
+		if (AmbireAccount(payable(address(msg.sender))).privileges(address(this)) == accHash) {
 			// bytes4(keccak256("isValidSignature(bytes32,bytes)")
 			return 0x1626ba7e;
 		} else {
@@ -153,8 +153,8 @@ contract QuickAccManager {
 
 	bytes32 private constant TRANSFER_TYPEHASH = keccak256('Transfer(address tokenAddr,address to,uint256 value,uint256 fee,address identity,uint256 nonce)');
 	struct Transfer { address token; address to; uint amount; uint fee; }
-	// WARNING: if the signature of this is changed, we have to change IdentityFactory
-	function sendTransfer(Identity identity, QuickAccount calldata acc, DualSigAlwaysBoth calldata sigs, Transfer calldata t) external {
+	// WARNING: if the signature of this is changed, we have to change AmbireAccountFactory
+	function sendTransfer(AmbireAccount identity, QuickAccount calldata acc, DualSigAlwaysBoth calldata sigs, Transfer calldata t) external {
 		require(identity.privileges(address(this)) == keccak256(abi.encode(acc)), 'WRONG_ACC_OR_NO_PRIV');
 
 		bytes32 hash = keccak256(abi.encodePacked(
@@ -164,7 +164,7 @@ contract QuickAccManager {
 		));
 		require(acc.one == SignatureValidator.recoverAddr(hash, sigs.one), 'SIG_ONE');
 		require(acc.two == SignatureValidator.recoverAddr(hash, sigs.two), 'SIG_TWO');
-		Identity.Transaction[] memory txns = new Identity.Transaction[](2);
+		AmbireAccount.Transaction[] memory txns = new AmbireAccount.Transaction[](2);
 		txns[0].to = t.token;
 		txns[0].data = abi.encodeWithSelector(IERC20.transfer.selector, t.to, t.amount);
 		txns[1].to = t.token;
@@ -178,13 +178,13 @@ contract QuickAccManager {
 	struct Txn { string description; address to; uint value; bytes data; }
 	bytes32 private constant TXNS_TYPEHASH = keccak256('Txn(string description,address to,uint256 value,bytes data)');
 	bytes32 private constant BUNDLE_TYPEHASH = keccak256('Bundle(address identity,uint256 nonce,Txn[] transactions)');
-	// WARNING: if the signature of this is changed, we have to change IdentityFactory
-	function sendTxns(Identity identity, QuickAccount calldata acc, DualSigAlwaysBoth calldata sigs, Txn[] calldata txns) external {
+	// WARNING: if the signature of this is changed, we have to change AmbireAccountFactory
+	function sendTxns(AmbireAccount identity, QuickAccount calldata acc, DualSigAlwaysBoth calldata sigs, Txn[] calldata txns) external {
 		require(identity.privileges(address(this)) == keccak256(abi.encode(acc)), 'WRONG_ACC_OR_NO_PRIV');
 
 		// hashing + prepping args
 		bytes32[] memory txnBytes = new bytes32[](txns.length);
-		Identity.Transaction[] memory identityTxns = new Identity.Transaction[](txns.length);
+		AmbireAccount.Transaction[] memory identityTxns = new AmbireAccount.Transaction[](txns.length);
 		uint txnLen = txns.length;
 		for (uint256 i = 0; i < txnLen; i++) {
 			txnBytes[i] = keccak256(abi.encode(TXNS_TYPEHASH, txns[i].description, txns[i].to, txns[i].value, txns[i].data));

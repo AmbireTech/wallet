@@ -1,0 +1,28 @@
+@import 'variables.scss';
+
+$collectible-size: 204px;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  padding: 0 50px;
+  margin-top: 12px;
+
+  .relative {
+    position: relative;
+  }
+
+  .collectiblesWrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax($collectible-size, 1fr));
+    grid-gap: 30px 46px;
+    justify-items: center;
+  }
+}
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    padding: 0 20px;
+  }
+}

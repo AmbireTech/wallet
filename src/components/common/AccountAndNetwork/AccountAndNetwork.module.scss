@@ -1,0 +1,62 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px 30px;
+
+  .account {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+
+    .avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+    }
+
+    .address {
+      color: theme(text-primary);
+      font-size: 16px;
+      margin: 0;
+      word-break: break-all;
+    }
+  }
+
+  .network {
+    display: flex;
+    justify-self: flex-end;
+    align-items: center;
+    gap: 10px;
+    color: theme(text-secondary);
+    font-size: 14px;
+    margin: 0;
+
+    .icon {
+      border-radius: 12px;
+      width: 24px;
+      height: 24px;
+      background-color: theme(background-icon);
+    }
+  }
+}
+
+
+@media (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    flex-direction: column;
+    gap: 10px;
+
+    .account {
+      flex-direction: column;
+
+      .address {
+        font-size: 13px;
+        text-align: center;
+      }
+    }
+  }
+}

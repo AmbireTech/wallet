@@ -1,0 +1,38 @@
+@import 'variables.scss';
+
+.wrapper {
+    height: 100%;
+
+    .content {
+        display: flex;
+        flex-direction: column;
+
+        .table {
+            .row {
+                display: flex;
+                justify-content: space-between;
+                padding: 20px;
+                background-color: rgba(255, 255, 255, 0.04);
+    
+                div {
+                    flex: 0 1 50% !important;
+                }
+
+                &:first-child {
+                    border-radius: 12px 12px 0 0;
+                }
+                &:last-child {
+                    border-radius: 0 0 12px 12px;
+                }
+            }
+
+            .row:nth-child(even) {
+                background-color: rgba(255, 255, 255, 0.01);
+            }
+    
+            .loading-wrapper {
+                min-height: 560px;
+            }
+        }
+    }
+}

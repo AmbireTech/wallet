@@ -1,0 +1,37 @@
+@import 'variables';
+
+.wrapper {
+  p {
+    margin: 0;
+    margin-bottom: 15px;
+    font-weight: 300;
+    opacity: .7;
+  }
+  
+  .saveAlert {
+    // opacity: 1;
+    // color: $c-heliotrope;
+    // padding: 10px;
+    // background-color: $c-mirage;
+    // border-radius: 12px;
+    margin-bottom: 60px;
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    p {
+      margin-bottom: 10px;
+    }
+    
+    .saveAlert {
+      margin-bottom: 30px;
+    }
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .wrapper {
+    text-align: center;
+  }
+}

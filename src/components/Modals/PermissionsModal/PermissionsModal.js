@@ -1,16 +1,20 @@
-import './PermissionsModal.scss'
-
 import { useState, useEffect, useCallback } from 'react'
-import { MdCheck, MdClose, MdOutlineCheck } from 'react-icons/md'
+import cn from 'classnames'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
+
+import { isFirefox } from 'lib/isFirefox'
+import { askForPermission } from 'lib/permissions'
+import { fetchGet } from 'lib/fetch'
+
 import { useModals, usePermissions } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import { askForPermission } from 'lib/permissions'
 import { Modal, Toggle, Button, Checkbox, ToolTip } from 'components/common'
-import { isFirefox } from 'lib/isFirefox'
-import { fetchGet } from 'lib/fetch'
+
 import { AiOutlineReload } from 'react-icons/ai'
 import { BiExport } from 'react-icons/bi'
-import accountPresets from 'ambire-common/src/constants/accountPresets'
+import { MdOutlineCheck } from 'react-icons/md'
+
+import styles from './PermissionsModal.module.scss'
 
 const toastErrorMessage = name => `You blocked the ${name} permission. Check your browser permissions tab.`
 
@@ -25,6 +29,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
 
     const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
     const areBlockedPermissions = (!isFirefox() && !isClipboardGranted) || !isNoticationsGranted
+    // Because of already existing, old accounts which would be not confirmed yet.
     const isAccountNotConfirmed = account.emailConfRequired && !isEmailConfirmed
     const buttonDisabled = isAccountNotConfirmed || (!modalHidden && areBlockedPermissions)
     const sendConfirmationEmail = async () => {
@@ -89,11 +94,11 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     const openThankYouPage = () => window.open("https://www.ambire.com/thankyou", "_blank")
 
     const buttons = isJsonBackupDownloaded ? (<>
-        <Button clear small icon={<MdClose/>} disabled={isAccountNotConfirmed} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={buttonDisabled} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
+        <Button clear small disabled={isAccountNotConfirmed} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
+        <Button small primaryGradient disabled={buttonDisabled} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
     </>) : (<>
-        <Button clear small icon={<MdClose/>} disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
-        <Button small icon={<MdCheck/>} disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
+        <Button clear small disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
+        <Button small primaryGradient disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
     </>)
 
     const downloadFile = ({ data, fileName, fileType }) => {
@@ -137,23 +142,30 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     }, [])
 
     return (
-        <Modal id="permissions-modal" title="We need a few things 🙏" buttons={buttons} isCloseBtnShown={isCloseBtnShown} onClose={handleOnClose}>
+        <Modal 
+            className={styles.wrapper} 
+            contentClassName={styles.content} 
+            title="We need a few things 🙏" 
+            buttons={buttons} 
+            isCloseBtnShown={isCloseBtnShown} 
+            onClose={handleOnClose}
+        >
             {
                 account.email ? 
-                    <div className="permission">
-                    <div className="details">
-                        <div className="name">Email Verification</div>
-                        <div className="description">
+                    <div className={styles.permission}>
+                    <div className={styles.details}>
+                        <div className={styles.name}>Email Verification</div>
+                        <div className={styles.description}>
                             <b>Confirming your email is mandatory so that we can make sure your account can be recovered in case access is lost.</b>
                             &nbsp;We already sent an email, please check your inbox.
                         </div>
                     </div>
-                    <div className="status">
+                    <div className={styles.status}>
                         { 
                             !isEmailConfirmed ?
                                 <label>Waiting for<br/>your confirmation</label>
                                 : 
-                                <span className="check-icon"><MdOutlineCheck/></span>
+                                <span className={styles.checkIcon}><MdOutlineCheck/></span>
                         }
                         { 
                             !isEmailConfirmed && !isEmailResent ? 
@@ -168,10 +180,10 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                 :
                 null
             }
-            <div className="permission">
-                <div className="details">
-                    <div className="name">Notifications Permission</div>
-                    <div className="description">
+            <div className={styles.permission}>
+                <div className={styles.details}>
+                    <div className={styles.name}>Notifications Permission</div>
+                    <div className={styles.description}>
                         Needed to draw your attention to Ambire Wallet when there is a transaction signing request.<br/>
                         You can also click the notifications to go directly to the Ambire tab.<br/>
                         We do not send any other notifications.
@@ -179,32 +191,32 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                 </div>
                 <Toggle checked={isNoticationsGranted} onChange={() => requestNotificationsPermission()}/>
             </div>
-            <div className={`permission ${isFirefox() ? 'disabled' : ''}`}>
-                <div className="details">
-                    <div className="name">Clipboard Permission { isFirefox() ? <span className="unavailable">(Unavailable in Firefox)</span> : null }</div>
-                    <div className="description">
+            <div className={cn(styles.permission, {[styles.disabled]: isFirefox()})}>
+                <div className={styles.details}>
+                    <div className={styles.name}>Clipboard Permission { isFirefox() ? <span className={styles.unavailable}>(Unavailable in Firefox)</span> : null }</div>
+                    <div className={styles.description}>
                         Needed so that dApps can be connected automatically just by copying their WalletConnect URL.
                     </div>
                     { 
                         isFirefox() ? 
-                            <div className="unavailable">
+                            <div className={styles.unavailable}>
                                 Without this, you can still use Ambire, but you will have to paste URLs manually
                             </div> : null
                     }
                 </div>
                 <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()}/>
             </div>
-            {!isBackupOptout && <div className="permission">
-                <div className="details">
-                    <div className="name">Download a backup</div>
-                    <div className="description">
+            {!isBackupOptout && <div className={styles.permission}>
+                <div className={styles.details}>
+                    <div className={styles.name}>Download a backup</div>
+                    <div className={styles.description}>
                         In case you forget your password or lose your backup, <br/>
                         you will have to wait {days} days and pay the recovery fee to restore access to your account.
                     </div>
                 </div>
-                <div className="status">
+                <div className={styles.status}>
                     {isJsonBackupDownloaded ? 
-                        (<span className="check-icon"><MdOutlineCheck/></span>) : 
+                        (<span className={styles.checkIcon}><MdOutlineCheck/></span>) : 
                         (<Button onClick={handleExportClicked} icon={<BiExport/>}>Export</Button>)
                     }
                 </div>
@@ -218,7 +230,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                     onChange={({ target }) => setModalHidden(target.checked)}/>)
             }
             {
-                !isBackupOptout ? <p className="download-backup">You have to download a backup of you profile before you can continue</p> : null
+                !isBackupOptout ? <p className={styles.downloadBackup}>You have to download a backup of you profile before you can continue</p> : null
             }
         </Modal>
     )

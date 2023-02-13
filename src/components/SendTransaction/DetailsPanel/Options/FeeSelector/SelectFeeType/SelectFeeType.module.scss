@@ -1,0 +1,46 @@
+@import "variables";
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: stretch;
+  flex-wrap: wrap;
+
+  .editCustomFee {
+    display: flex;
+    align-items: center;
+    font-weight: 300;
+    opacity: 0.8;
+    font-size: 14px;
+    gap: 10px;
+
+    margin-bottom: 8px;
+
+    &:hover {
+      opacity: 1;
+      cursor: pointer;
+    }
+  }
+
+  .customFeeSelector {
+    margin-bottom: 20px;
+    width: 100%;
+
+    .title {
+      font-size: 16px;
+      font-weight: 300;
+      margin: 0;
+      margin-bottom: 10px;
+    }
+
+    .inputMb {
+      margin-bottom: 10px;
+    }
+
+    .priceWarning {
+      color: $warning-color;
+      font-size: 14px;
+    }
+  }
+}

@@ -1,0 +1,129 @@
+@import 'variables';
+
+.wrapper {
+	overflow: hidden;
+	padding: 16px;
+  border-radius: 12px;
+	background-color: $c-mirage;
+
+  h4, p {
+    margin: 0;
+  }
+
+  .body {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+    user-select: none;
+
+    .dappInfo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex: 1.2;
+
+      .dappIcon {
+        width: 36px;
+        height: 36px;
+        padding: 8px;
+        border-radius: 12px;
+        background-color: rgba($c-titan-white, 0.05);
+      }
+    }
+
+    .typeAndTimestamp {
+      display: flex;
+      align-items: center;
+      flex: 2;
+
+      .type, .timestamp {
+        flex: 1;
+      }
+    }
+
+    .expandIcon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 12px;
+      background-color: rgba($c-titan-white, 0.05);
+
+      svg {
+        width: 12px;
+        height: 12px;
+      }
+    }
+  }
+
+  .advanced {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-top: 15px;
+
+    .advancedItem {
+      .advancedTitle {
+        margin-bottom: 5px;
+        font-size: 16px;
+        font-weight: 400;
+        user-select: none;
+      }
+
+      .advancedText {
+        color: $c-scampi; 
+        font-size: 14px;
+        font-weight: 300;
+        word-wrap: break-word;
+        white-space: break-spaces;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: 800px) {
+  .wrapper {    
+    padding: 12px;
+    
+    .body {
+      align-items: stretch;
+      font-size: 12px;
+
+      .dappInfo {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .typeAndTimestamp {
+        flex-direction: column;
+        align-items: flex-end;
+        justify-content: space-between;
+
+        .type, .timestamp {
+          flex: unset;
+        }
+
+        .type {
+          color: $c-heliotrope;
+          font-size: 14px;
+        }
+      }
+
+      .expandIcon {
+        margin-left: 10px;
+      }
+    }
+    .advanced {
+      .advancedItem {
+        .advancedTitle {
+          font-size: 12px;
+        }
+        .advancedText {
+          font-size: 10.5px;
+        }
+      }
+    }
+  }
+}

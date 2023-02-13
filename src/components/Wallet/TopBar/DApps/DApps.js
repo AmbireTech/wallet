@@ -1,15 +1,20 @@
-import './DApps.scss'
-
 import React, { useState, useCallback } from 'react'
-import { FiHelpCircle } from 'react-icons/fi'
-import { BiTransferAlt } from 'react-icons/bi'
-import { MdBrokenImage } from 'react-icons/md'
-import { AiOutlineDisconnect } from 'react-icons/ai'
-import { DropDown, ToolTip, Button } from "components/common"
-import { checkClipboardPermission } from 'lib/permissions'
-import { MdOutlineWarning } from 'react-icons/md'
-import { canOpenInIframe } from 'lib/dappsUtils'
 import { useHistory } from 'react-router-dom'
+
+import { checkClipboardPermission } from 'lib/permissions'
+import { canOpenInIframe } from 'lib/dappsUtils'
+
+import { DropDown, ToolTip, Button, Loading } from "components/common"
+import DropDownItem from 'components/common/DropDown/DropDownItem/DropDownItem'
+import DropDownItemSeparator from 'components/common/DropDown/DropDownItem/DropDownItemSeparator'
+
+import { MdOutlineWarning, MdBrokenImage } from 'react-icons/md'
+import { ReactComponent as ConnectIcon } from './images/connect.svg'
+import { FiHelpCircle } from 'react-icons/fi'
+import { AiOutlineDisconnect } from 'react-icons/ai'
+import { ReactComponent as WalletConnect } from 'resources/icons/wallet-connect.svg'
+
+import styles from './DApps.module.scss'
 
 const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     const history = useHistory()
@@ -33,26 +38,36 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
 
     const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
 
-    const wcTitle = (<div className='ddWcTitle'><img src='./resources/walletconnect.svg' alt='wc-logo'/>WalletConnect</div>)
-
     const onConnectionClick = useCallback( async (url) => {
         const canOpen = await canOpenInIframe(url)
         if(canOpen) {
-            history.push(`/wallet/dapps?dappUrl=${encodeURIComponent(url + `?${Date.now()}`)}`)
+            history.push(`/wallet/dapps?dappUrlCatalog=${encodeURIComponent(url + `?${Date.now()}`)}`)
         } else {
             window.open(url, '_blank')
         }
     }, [history])
 
     return (
-        <DropDown id="dApps" title={wcTitle} badge={connections.length} onOpen={() => checkPermission()} isLoading={isClipboardGranted && isWcConnecting}>
-            <div id="connect-dapp">
-                <div className="heading">
-                    <Button small icon={<BiTransferAlt />} disabled={isClipboardGranted} onClick={readClipboard}>
+        <DropDown
+            className={styles.wrapper}
+            menuClassName={styles.menu}
+            title={
+                <div className={styles.title}>
+                    <WalletConnect />
+                    <label>WalletConnect</label>
+                </div>
+            }
+            badge={connections.length}
+            onOpen={() => checkPermission()}
+            isLoading={isClipboardGranted && isWcConnecting}
+        >
+            <div className={styles.connectDapp}>
+                <div className={styles.heading}>
+                    <Button primaryGradient small className={styles.buttonClass} icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard}>
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
-                        <FiHelpCircle size={30} />
+                        <FiHelpCircle size={21} />
                     </a>
                 </div>
                 {isClipboardGranted ? (
@@ -62,18 +77,18 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                     </label>
                 ) : null}
             </div>
-            <div className='dappList'>
-                {connections.map(({ session, uri, isOffline }) => (
-                  <div className="item dapps-item" key={session.key}>
-                      <div className="icon">
-                          <div className="icon-overlay" style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
+            <div className={styles.dappList}>
+                {connections.map(({ session, connectionId, isOffline, wcVersion }, index) => (
+                  <DropDownItem className={styles.dappsItem} key={index}>
+                      <div className={styles.icon}>
+                          <div className={styles.iconOverlay} style={{backgroundImage: `url(${session.peerMeta.icons.filter(x => !x.endsWith('favicon.ico'))[0]})`}}/>
                           <MdBrokenImage/>
                       </div>
                       <span onClick={() => onConnectionClick(session.peerMeta.url)}>
-                          <div className="details">
+                          <div className={styles.details}>
                               {
                                   isLegacyWC(session) ?
-                                    <ToolTip className="session-warning" label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
+                                    <ToolTip className={styles.sessionWarning} label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version.">
                                         <MdOutlineWarning/>
                                     </ToolTip>
                                     :
@@ -81,22 +96,22 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
                               }
                               {
                                   isOffline ?
-                                    <ToolTip className="session-error" label="WalletConnect connection may be offline. Check again later. If this warning persist try to disconnect and connect WalletConnect.">
+                                    <ToolTip className={styles.sessionError} label="WalletConnect connection may be offline. Check again later. If this warning persist try to disconnect and connect WalletConnect.">
                                         <AiOutlineDisconnect />
                                     </ToolTip>
                                     :
                                     null
                               }
-                              <div className="name">{session.peerMeta.name}</div>
+                              <div className={styles.name}>{session.peerMeta.name || 'Untitled dApp'}</div>
                           </div>
                       </span>
-                      <div className="separator"></div>
-                      <button onClick={() => disconnect(uri)}>Disconnect</button>
-                  </div>
+                      <DropDownItemSeparator />
+                      <button onClick={() => disconnect(connectionId, wcVersion)}>Disconnect</button>
+                  </DropDownItem>
                 ))}
             </div>
         </DropDown>
     )
 }
 
-export default DApps
+export default React.memo(DApps)

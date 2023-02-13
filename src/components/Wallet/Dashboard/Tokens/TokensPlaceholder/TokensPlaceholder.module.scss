@@ -1,0 +1,61 @@
+@import 'variables.scss';
+
+
+.blur {
+    filter: blur(15px);
+}
+
+.placeholderOverlay {
+    font-size: 18px;
+    color: $c-titan-white;
+    z-index: 4;
+    @include absolute-full-size;
+    @include flex-center-center;
+    flex-direction: column;
+    text-align: center;
+    gap: 20px;
+
+    svg {
+        g {
+            opacity: 1;
+        }
+    }
+    
+    h2 {
+        font-size: 16px;
+        margin: 0;
+        margin-bottom: 10px;
+        font-weight: 400;
+    }
+}
+
+.addToken {
+    @include flex-center-center;
+    flex-direction: column;
+    gap: 10px;
+
+    &Button {
+        font-weight: 400;
+    }
+
+    svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    p {
+        font-size: 14px;
+
+        &.clickable {
+            cursor: pointer;
+        }
+    }
+}
+
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .placeholderOverlay {
+        width: 100%;
+        padding: 10px;
+    }
+}

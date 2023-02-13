@@ -12,21 +12,24 @@ import WALLETSupplyController from './WALLETSupplyController'
 import AmbireBatcher from './AmbireBatcher'
 import WALLETStakingPool from './WALLETStakingPool'
 import AaveWethGatewayV2 from './AaveWethGatewayV2'
+import OneInch from './OneInch'
 
-const all = {
-	...UniRouters,
-	...AaveLendingPoolV2,
-	...AaveWethGatewayV2,
-	...ERC20,
-	...ERC721,
-	...WETH,
-	...AmbireIdentity,
-	...AmbireFactory,
-	...YearnTesseractVault,
-	...Movr,
-	...OpenSea,
-	...WALLETSupplyController,
-	...AmbireBatcher,
-	...WALLETStakingPool,
-}
+const all = ({humanizerInfo, tokenList}) => ({
+	...UniRouters(humanizerInfo),
+	...AaveLendingPoolV2(humanizerInfo),
+	...AaveWethGatewayV2(humanizerInfo.abis),
+	...ERC20(humanizerInfo),
+	...ERC721(humanizerInfo, tokenList),
+	...WETH(humanizerInfo.abis),
+	...AmbireIdentity(humanizerInfo),
+	...AmbireFactory(),
+	...YearnTesseractVault(humanizerInfo),
+	...Movr(humanizerInfo),
+	...OpenSea(humanizerInfo),
+	...WALLETSupplyController(),
+	...AmbireBatcher(humanizerInfo, tokenList),
+	...WALLETStakingPool(humanizerInfo),
+	...OneInch(humanizerInfo)
+})
+
 export default all

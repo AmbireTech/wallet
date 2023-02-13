@@ -1,9 +1,8 @@
-import './AddAccount.scss'
-
+import cn from 'classnames'
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
-import TrezorConnect from 'trezor-connect'
+import TrezorConnect from '@trezor/connect-web'
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -11,31 +10,56 @@ import { hexZeroPad, AbiCoder, keccak256, id, getAddress } from 'ethers/lib/util
 import { Wallet } from 'ethers'
 import { generateAddress2 } from 'ethereumjs-util'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
-import { fetch, fetchPost } from 'lib/fetch'
+import { fetch, fetchPost, fetchGet } from 'lib/fetch'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { useToasts } from 'hooks/toasts'
-import { SelectSignerAccountModal } from 'components/Modals'
+import SelectSignerAccountModal from 'components/Modals/SelectSignerAccountModal/SelectSignerAccountModal'
 import { useModals } from 'hooks'
-import { Loading } from 'components/common'
+import { Loading, Button, ToolTip } from 'components/common'
 import { ledgerGetAddresses, PARENT_HD_PATH } from 'lib/ledgerWebHID'
 import { isFirefox } from 'lib/isFirefox'
+import humanizeError from 'lib/errors/metamask'
 import { VscJson } from 'react-icons/vsc'
 import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
-import { LatticeModal } from 'components/Modals'
+import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
+import Lottie from 'lottie-react'
+import AnimationData from './assets/confirm-email.json'
+
+import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
+
+import styles from './AddAccount.module.scss'
+// Icons
+import { ReactComponent as AmbireLogo } from 'resources/logo.svg'
+import { AiOutlineReload } from 'react-icons/ai'
+import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
+import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
+import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
+import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.svg'
+import { ReactComponent as MetamaskIcon } from 'resources/providers/metamask-fox.svg'
+import { ReactComponent as EmailIcon } from 'resources/icons/email.svg'
 
 TrezorConnect.manifest({
   email: 'contactus@ambire.com',
-  appUrl: 'https://www.ambire.com'
+  appUrl: 'https://wallet.ambire.com'
 })
 
+const EMAIL_AND_TIMER_REFRESH_TIME = 5000
+const RESEND_EMAIL_TIMER_INITIAL = 60000
+
 export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
+  const { theme } = useThemeContext()
   const [signersToChoose, setChooseSigners] = useState(null)
   const [err, setErr] = useState('')
   const [addAccErr, setAddAccErr] = useState('')
   const [inProgress, setInProgress] = useState(false)
   const { addToast } = useToasts()
   const { showModal } = useModals()
+  const [isCreateRespCompleted, setIsCreateRespCompleted] = useState(null)
+  const [requiresEmailConfFor, setRequiresConfFor] = useState(false)
+  const [resendTimeLeft, setResendTimeLeft] = useState(null)
+  const [isEmailResent, setEmailResent] = useState(false)
+  const [isEmailConfirmed, setEmailConfirmed] = useState(false)
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -55,6 +79,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     } catch (e) {
       console.error(e)
       setInProgress(false)
+
+      const humanizedError = humanizeError(e)
+      if (humanizedError) return setAddAccErr(humanizedError)
+
       setAddAccErr(`Unexpected error: ${e.message || e}`)
     }
   }
@@ -109,7 +137,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     
     if (createResp.success) {
       utmTracking.resetUtm()
-    }
+    } 
     if (createResp.message === 'EMAIL_ALREADY_USED') {
       setErr('An account with this email already exists')
       return
@@ -120,7 +148,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       return
     }
 
-    onAddAccount({
+    setIsCreateRespCompleted([{
       id: identityAddr,
       email: req.email,
       primaryKeyBackup,
@@ -131,8 +159,64 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       backupOptout: !!req.backupOptout,
       // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
       emailConfRequired: true
-    }, { select: true, isNew: true })
+    }, { select: true, isNew: true }])
+    
+    setRequiresConfFor(true)
+    setResendTimeLeft(RESEND_EMAIL_TIMER_INITIAL)
   }
+
+  const checkEmailConfirmation = useCallback(async () => {
+    if (!isCreateRespCompleted) return
+    const relayerIdentityURL = `${relayerURL}/identity/${isCreateRespCompleted[0].id}`
+    try {
+      const identity = await fetchGet(relayerIdentityURL)
+      if (identity) {
+          const { emailConfirmed } = identity.meta
+          const isConfirmed = !!emailConfirmed
+          setEmailConfirmed(isConfirmed)
+          if (isConfirmed) {
+            setRequiresConfFor(!isConfirmed)
+            onAddAccount({
+                ...isCreateRespCompleted[0],
+                emailConfRequired: false
+            }, isCreateRespCompleted[1])
+          }
+      }
+  } catch(e) {
+      console.error(e);
+      addToast('Could not check email confirmation.', { error: true })
+  }
+  }, [addToast, isCreateRespCompleted, onAddAccount, relayerURL])
+
+  useEffect(() => {
+    if (requiresEmailConfFor) {
+      const timer = setTimeout(async () => {
+        await checkEmailConfirmation()
+      }, EMAIL_AND_TIMER_REFRESH_TIME)
+      return () => clearTimeout(timer)
+    }
+  })
+
+  const sendConfirmationEmail = async () => {
+    try {
+        const response = await fetchGet(`${relayerURL}/identity/${(isCreateRespCompleted.length > 0) && isCreateRespCompleted[0].id}/resend-verification-email`)
+        if (!response.success) throw new Error('Relayer did not return success.')
+
+        addToast('Verification email sent!')
+        setEmailResent(true)
+    } catch(e) {
+        console.error(e)
+        addToast('Could not resend verification email.' + e.message || e, { error: true })
+        setEmailResent(false)
+    }
+  }
+ 
+  useEffect(() => {
+    if (resendTimeLeft) {
+      const resendInterval = setInterval(() => setResendTimeLeft(resendTimeLeft => resendTimeLeft > 0 ? resendTimeLeft - EMAIL_AND_TIMER_REFRESH_TIME : 0), EMAIL_AND_TIMER_REFRESH_TIME)
+      return () => clearTimeout(resendInterval)
+    }
+  })
 
   // EOA implementations
   // Add or create accounts from Trezor/Ledger/Metamask/etc.
@@ -174,11 +258,28 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       throw new Error('MetaMask not available')
     }
     const ethereum = window.ethereum
-    const web3Accs = await ethereum.request({ method: 'eth_requestAccounts' })
-    if (!web3Accs.length) throw new Error('No accounts connected')
-    if (web3Accs.length === 1) return onEOASelected(web3Accs[0], {type: 'Web3'})
 
-    setChooseSigners({ addresses: web3Accs, signerName: 'Web3' })
+    const permissions = await ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }],
+    })
+
+    const accountsPermission = permissions.find(
+        (permission) => permission.parentCapability === 'eth_accounts'
+    )
+
+    if (!accountsPermission) {
+      throw new Error('No accounts connected')
+    }
+
+    // Depending on the MM version, the addresses are returned by a different caveat identifier.
+    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
+    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
+    const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
+
+    if (addresses.length === 1) return onEOASelected(addresses[0], {type: 'Web3'})
+
+    setChooseSigners({ addresses, signerName: 'Web3' })
   }
 
   const getAccountByAddr = useCallback(async (idAddr, signerAddr) => {
@@ -364,85 +465,121 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     validator: fileSizeValidator
   })
 
+  const handleBackBtnClicked = () => {
+    setRequiresConfFor((prev) => !prev)
+  }
+
   // Adding accounts from existing signers
   const addFromSignerButtons = (<>
     <button onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/trezor.png)' }}/>
-      Trezor
+      {/* Trezor */}
+      <TrezorIcon />
     </button>
     <button onClick={() => wrapProgress(connectLedgerAndGetAccounts, 'hwwallet')}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/ledger.png)' }}/>
-      Ledger
+      {/* Ledger */}
+      <LedgerIcon />
     </button>
     <button onClick={() => wrapProgress(connectGridPlusAndGetAccounts, 'hwwallet')}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/grid-plus.png)' }}/>
-      Grid+ Lattice1
+      {/* Grid+ Lattice1 */}
+      <GridPlusIcon className={styles.gridplus} />
     </button>
     <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
-      <div className="icon" style={{ backgroundImage: 'url(./resources/metamask.png)' }}/>
-      Metamask / Browser
+      {/* Metamask / Browser */}
+      <MetamaskIcon className={styles.metamask} width={25} /> Web3 Wallet
     </button>
     <button onClick={() => wrapErr(open)}>
-      <div className="icon"><VscJson size={25}/></div>
+      <VscJson size={25} />
       Import from JSON
     </button>
     <input {...getInputProps()} />
   </>)
 
   if (!relayerURL) {
-    return (<div className="loginSignupWrapper">
-      <div id="logo"/>
-      <section id="addAccount">
-        <div id="loginOthers">
+    return (<div className={cn(styles.loginSignupWrapper, styles[theme])}>
+      <AmbireLogo className={styles.logo} />
+      <section className={styles.addAccount}>
+        <div className={styles.loginOthers}>
           <h3>Add an account</h3>
           {addFromSignerButtons}
           <h3>NOTE: You can enable email/password login by connecting to a relayer.</h3>
-          {addAccErr ? (<p className="error" style={{maxWidth: '800px'}}>{addAccErr}</p>) : (<></>)}
+          {addAccErr ? (<p className={styles.error} style={{maxWidth: '800px'}}>{addAccErr}</p>) : (<></>)}
         </div>
       </section>
     </div>)
   }
   //TODO: Would be great to create Ambire spinners(like 1inch but simpler) (I can have a look at them if you need)
-  return (<div className="loginSignupWrapper">
-      <div id="logo" {...(pluginData ? {style: {backgroundImage: `url(${pluginData.iconUrl})` }} : {})}/>
-      {pluginData && 
-      <div id="plugin-info">
-        <div className="name">{pluginData.name}</div>
-        <div>{pluginData.description}</div>
-      </div>
-      }
-      <section id="addAccount">
-        <div id="loginEmail">
-          <h3>Create a new account</h3>
-          <LoginOrSignup
-            inProgress={inProgress === 'email'}
-            onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
-            action="SIGNUP"
-          ></LoginOrSignup>
-          {err ? (<p className="error">{err}</p>) : (<></>)}
-        </div>
+  return (<div className={cn(styles.loginSignupWrapper, styles[theme])}>
+      { requiresEmailConfFor ?
+        (<> 
+          <div className={styles.logo} />
+          <div className={`${styles.emailConf}`}>
+            <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
+            <h3>
+              Email confirmation required
+            </h3>
+            <p>
+              We sent an email to
+              {' '}
+              <span className={styles.email}>
+                {isCreateRespCompleted && isCreateRespCompleted[0].email}
+              </span>
+              .
+              <br />
+              Please check your inbox for "Welcome to
+              <br />
+              Ambire Wallet" email and click "Verify".
+            </p>
+            {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+            <div className={styles.btnWrapper}>
+              {!isEmailConfirmed && !isEmailResent && <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
+                  <Button border mini icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
+              </ToolTip>}
+            </div>
+            <div className={styles.backButton} onClick={handleBackBtnClicked}>
+              <ChevronLeftIcon />
+              {' '}
+              Back to Register
+            </div>
+          </div>
+        </>)
+      : (<>
+          {pluginData ? <img src={pluginData.iconUrl} alt="plugin logo" className={styles.logo} /> : <AmbireLogo className={styles.logo} />}
+          {pluginData &&
+            <div className={styles.pluginInfo}>
+              <div className={styles.name}>{pluginData.name}</div>
+              <div>{pluginData.description}</div>
+            </div>
+          }
+          <section className={styles.addAccount}>
+            <div className={styles.loginEmail}>
+              <h3>Create a new account</h3>
+              <LoginOrSignup
+                inProgress={inProgress === 'email'}
+                onAccRequest={req => wrapProgress(() => createQuickAcc(req), 'email')}
+                action="SIGNUP"
+              ></LoginOrSignup>
+              {err ? (<p className={styles.error}>{err}</p>) : (<></>)}
+            </div>
 
-        <div id="loginSeparator">
-          <div className="verticalLine"></div>
-          <span>or</span>
-          <div className="verticalLine"></div>
-        </div>
-        <div id="loginOthers">
-          <h3>Add an account</h3>
-          {inProgress !== 'hwwallet' ? (<>
-            <Link to="/email-login">
-              <button>
-                <div className="icon" style={{ backgroundImage: 'url(./resources/envelope.png)' }}/>
-                Email login
-              </button>
-            </Link>
-            {addFromSignerButtons}
-            {addAccErr ? (<p className="error">{addAccErr}</p>) : (<></>)}
-          </>) : (<div className="accountLoader">
-            <Loading/>
-          </div>)}
-        </div>
-      </section>
+            <div className={styles.loginSeparator} />
+            <div className={styles.loginOthers}>
+              <h3>Add an account</h3>
+              {inProgress !== 'hwwallet' ? (<>
+                <Link to="/email-login">
+                  <button>
+                    <EmailIcon className={styles.email} />
+                    Email login
+                  </button>
+                </Link>
+                {addFromSignerButtons}
+                {addAccErr ? (<p className={styles.error}>{addAccErr}</p>) : (<></>)}
+              </>) : (<div className={styles.accountLoader}>
+                <Loading/>
+              </div>)}
+            </div>
+          </section>
+        </>)
+      }
     </div>
   )
 }

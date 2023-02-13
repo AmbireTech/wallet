@@ -1,0 +1,364 @@
+@import 'variables.scss';
+
+.loginSignupWrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 50px;
+    min-height: 100%;
+    padding: 40px 0;
+    overflow: hidden;
+
+    &.dark {
+        background: url('/resources/login-bg.png');
+        background-size: cover;
+        background-position: top center;
+        background-repeat: no-repeat;
+
+        input {
+            &:not([type=submit]):focus {
+                border-bottom-color: $c-white;
+            }
+        }
+    }
+
+    h3 {
+        font-size: 25px;
+        text-align: left;
+        font-weight: 400;
+        margin-bottom: 43px;
+    }
+
+    button, input {
+        font-size: 16px;
+        border: 0px;
+        background: none; /* #282c34; */
+        padding: 1em;
+        box-sizing: border-box;
+        font-family: 'Poppins', sans-serif;
+        transition: all 0.1s ease-in-out;
+    }
+
+    button {
+        background-color: white;
+    }
+
+    button, input[type=submit] {
+        cursor: pointer;
+    }
+
+    button:not([disabled]):active, input[type=submit]:not([disabled]):active {
+        transform: scale(0.95);
+    }
+
+    input:focus {
+        outline: 0px;
+    }
+
+    button {
+        opacity: 0.8;
+    }
+
+    button:not([disabled]):hover {
+        opacity: 1;
+    }
+
+    input:disabled, button:disabled {
+        opacity: 0.5 !important;
+        cursor: default;
+    }
+
+    input[type=submit] {
+        height: 60px;
+        width: 100%;
+        border: none;
+        background: theme(gradient-primary);
+        border-radius: 12px;
+        color: $c-titan-white;
+        font-size: 20px;
+        font-weight: 500;
+        padding: 0;
+        margin-bottom: 30px;
+    }
+
+    input {
+        color: $c-scampi;
+        margin: 2em 0px;
+        border-bottom: 2px solid theme(border-input);
+        width: 100%;
+        font-size: 16px;
+
+        &:not([type=submit]):focus {
+            border-bottom-color: $c-electric-violet;
+        }
+    }
+
+    .logo {
+        width: 100%;
+        max-width: 252px;
+        margin: 0px auto;
+        height: 110px;
+    }
+
+    .pluginInfo {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        font-size: 1.2em;
+
+        .name {
+            font-size: 1.7em;
+        }
+    } 
+
+    .signersToChoose {
+        margin: 0px auto;
+        display: block;
+        line-height: 2em;
+        font-size: 1.5em;
+        color: #ccc;
+        list-style: none;
+        font-family: 'Ubuntu Mono';
+        width: 500px;
+        cursor: pointer;
+
+        li:hover {
+            background-color: rgba(0, 0, 0, 0.3);
+            color: $c-white;
+        }
+    }
+
+    .loginEmail {
+        flex: 0.9;
+    }
+
+    .loginEmail form > :not(label), .loginEmail button,
+    .addAccount form > :not(label), .addAccount button {
+        /* TODO */
+        display: block;
+    }
+
+    .addAccount {
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        max-width: 800px;
+        /* TODO some sort of vertical alignment */
+        margin: 0em auto 0em;
+
+        input[type=submit]:hover {
+            opacity: 1.0;
+        }
+
+        .loginSeparator {
+            width: 1px;
+            // background-color: theme(background-fournary);
+            background-color: $c-scampi;
+            margin: 0 96px;
+            margin-top: 35px;
+            margin-bottom: 30px;
+        }
+
+        .loginOthers {
+            flex: 0.9;
+
+            button {
+                position: relative;
+                top: 0;
+                width: 100%;
+                background: theme(background-primary);
+                border: 1px solid $c-scampi;
+                border-radius: 12px;
+                color: theme(text-secondary);
+                height: 60px;
+                text-align: center;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 7px;
+                margin-bottom: 20px;
+                transition: .3s ease-out all;
+
+                svg {
+                    color: theme(text-secondary);
+                    transition: .3s ease-out all;
+                }
+
+                &:hover {
+                    top: -4px;
+                    color: theme(text-primary);
+
+                    svg {
+                        color: theme(text-primary);
+                    }
+
+                    svg.email {
+                        color: $c-turquoise;
+                    }
+                    svg.metamask {
+                        color: #EF801B;
+
+                        :global(#decoration) {
+                            color: theme(text-primary);
+                        }
+                    }
+
+                    svg.gridplus {
+                        color: theme(text-primary);
+                        :global(#logo) {
+                            color: theme(text-primary);
+                        }
+                        :global(#decoration) {
+                            color: $c-picton-blue;
+                        }
+                    }
+                }
+            }
+
+            .icon {
+                margin-right: 10px;
+                width: 25px;
+                height: 25px;
+                background-repeat: no-repeat;
+                background-size: contain;
+            }
+
+            .accountLoader {
+                width: 50px;
+                display: block;
+                margin: 4em auto;
+            }
+
+            .error {
+                max-width: 300px;
+                font-size: 1em;
+                font-weight: 300;
+                position: relative;
+            }
+        }
+    }
+
+    .emailConf {
+        background-color: $c-mirage;
+        border: 1px solid $c-scampi;
+        border-radius: 12px;
+        padding: 30px 60px;
+        padding-top: 12px;
+        text-align: center;
+        color: $c-titan-white;
+        width: 100%;
+        max-width: 460px;
+        margin: 0 auto;
+    }
+    
+    .emailConf h3 {
+        font-size: 24px;
+        text-align: center;
+        font-weight: 400;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    
+    .emailConf p {
+        font-size: 16px;
+        font-weight: 300;
+        line-height: 25px;
+        margin-bottom: 0;
+        min-width: 360px;
+    
+        span.email {
+            color: $c-heliotrope;
+        }
+    }
+
+    .emailConf {
+        .btnWrapper {
+            display: flex;
+            justify-content: space-around;
+            padding: 15px 0;
+
+            button {
+                width: 100%;
+            }
+        }
+    }
+    
+    .magicLink {
+        font-weight: 400;
+        color: $c-titan-white;
+        opacity: .8;
+        text-align: center;
+    }
+    
+    .emailAnimation {
+        width: 140px;
+        height: 140px;
+        margin: 0 auto;
+    }
+
+    .backButton {
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-size: 16px;
+        font-weight: 400;
+        position: absolute;
+        bottom: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: $c-titan-white;
+        opacity: .8;
+        transition: .3s ease-in-out;
+        margin-bottom: 50px;
+
+        img {
+            margin-right: 10px;
+        }
+
+        &:hover {
+            opacity: 1;
+        }
+    }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .loginSignupWrapper {
+        gap: 0;
+        padding: 0 1em;
+
+        h3 {
+            text-align: center;
+        }
+
+        .logo {
+            width: 75%;
+        }
+
+        .addAccount {
+            flex-direction: column;
+            gap: 2em;
+
+            .loginSeparator {
+                margin: 0;
+                width: 100%;
+                height: 2px;
+            }
+        }
+
+        .emailConf {
+            padding: 20px;
+            padding-top: 10px;
+    
+            p {
+                min-width: unset;
+            }
+        }
+
+        .backButton {
+            margin-bottom: 0;
+        }
+    }
+}

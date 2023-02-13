@@ -1,0 +1,82 @@
+@import 'variables.scss';
+
+.numberInput {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    &.disabled {
+        pointer-events: none;
+        opacity: 0.5;
+    }
+    
+    label {
+        padding-left: 20px;
+        font-weight: 400;
+        color: $c-titan-white;
+    }
+
+    .button {
+        height: 100%;
+        @include flex-center-center;
+        padding: 0 1.5rem;
+        cursor: pointer;
+        font-size: 16px;
+        color: $c-titan-white;
+        transition: all 0.1s ease-in-out;
+        user-select: none;
+        background-color: $c-mirage;
+        border-bottom: 2px solid transparent;
+
+        &:hover {
+            background-color: #191a2b;
+        }
+
+        &:active {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+    }
+    
+    .input {
+        position: relative;
+        z-index: 6;
+        left: 0;
+        width: 100%;
+        top: 0;
+        height: 60px;
+        display: flex;
+        align-items: center;
+        border-radius: 12px;
+        overflow: hidden;
+        
+        input[type=text] {
+            height: 100%;
+            width: 100%;
+            color: $c-titan-white;
+            font-family: 'Poppins', sans-serif;
+            font-size: 16px;
+            padding: 18px;
+            padding-left: 20px;
+            border: none;
+            outline: none;
+            text-overflow: ellipsis;
+            background-color: $c-mirage;            
+            transition: all 0.1s ease-in-out;
+            border-bottom: 2px solid transparent;
+            
+            &::-webkit-outer-spin-button,
+            &::-webkit-inner-spin-button {
+                margin: 0;
+            }
+
+            &:focus  {
+                border-bottom-color: $c-titan-white;
+            }
+
+            &:focus ~ .button {
+                border-bottom-color: $c-titan-white;
+            }
+        }
+    }
+}

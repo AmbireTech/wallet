@@ -1,6 +1,5 @@
 import { formatUnits } from 'ethers/lib/utils'
 import { constants } from 'ethers'
-import { names, tokens } from 'ambire-common/src/constants/humanizerInfo'
 import networks from 'consts/networks'
 import humanizers from './humanizers'
 
@@ -13,7 +12,8 @@ const knownAddressNames = {}
 
 export const formatNativeTokenAddress = address => address.toLowerCase() === `0x${'e'.repeat(40)}` ? `0x${'0'.repeat(40)}` : address.toLowerCase()
 
-export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
+export function getTransactionSummary(humanizerInfo, tokenList, txn, networkId, accountAddr, opts = {}) {
+    const { tokens, names } = humanizerInfo
     const [to, value, data = '0x'] = txn
     const network = networks.find(x => x.id === networkId || x.chainId === networkId)
     if (!network) return 'Unknown network (unable to parse)'
@@ -44,13 +44,13 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
         {
             type: 'address',
             address: to,
-            name: getName(to, network)
+            name: getName(humanizerInfo, to)
         }
     ]
 
     if (data !== '0x') {
         callSummary = !opts.extended ? `Unknown interaction with ${name || (tokenInfo ? tokenInfo[0] : to)}` : [
-            'unknown',
+            'Unknown',
             'interaction with',
             {
                 type: 'address',
@@ -60,7 +60,7 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
         ]
 
         const sigHash = data.slice(0, 10)
-        const humanizer = humanizers[sigHash]
+        const humanizer = humanizers({humanizerInfo, tokenList})[sigHash]
         if (humanizer) {
             try {
                 const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
@@ -77,7 +77,8 @@ export function getTransactionSummary(txn, networkId, accountAddr, opts = {}) {
 }
 
 // Currently takes network because one day we may be seeing the same addresses used on different networks
-export function getName(addr, network) {
+export function getName(humanizerInfo, addr) {
+    const { tokens, names } = humanizerInfo
     const address = addr.toLowerCase()
     return names[address] 
         || (tokens[address] ? tokens[address][0] + ' token' : null) 
@@ -86,7 +87,8 @@ export function getName(addr, network) {
         || addr
 }
 
-export function token(addr, amount, extended = false) {
+export function token(humanizerInfo, addr, amount, extended = false) {
+    const { tokens } = humanizerInfo
     const address = addr.toLowerCase()
     const assetInfo = tokens[address] || knownTokens[address]
 
@@ -110,11 +112,11 @@ export function token(addr, amount, extended = false) {
             amount: formatUnits(amount, assetInfo[1])
         }
     } else {
-        return !extended ? `${formatUnits(amount, 0)} units of unknown token` : {
+        return !extended ? ` ${!amount ? 'unknown' : formatUnits(amount, 0)} units of unknown token` : {
             address,
             symbol: null,
             decimals: null,
-            amount: formatUnits(amount, 0)
+            amount: !amount ? null : formatUnits(amount, 0)
         }
     }
 }
@@ -153,7 +155,8 @@ export function setKnownTokens(tokens) {
     tokens.forEach(({ address, symbol, decimals }) => knownTokens[address.toLowerCase()] = [symbol, decimals])
 }
 
-export function isKnown(txn, from) {
+export function isKnown(humanizerInfo, txn, from) {
+    const { tokens, names } = humanizerInfo
     if (txn[0] === from) return true
     const address = txn[0].toLowerCase()
     return !!(knownAliases[address] || names[address] || tokens[address] || knownTokens[address])

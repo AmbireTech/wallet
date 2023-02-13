@@ -1,0 +1,156 @@
+@import 'variables.scss';
+
+.deposit {
+    display: flex;
+    justify-content: center;
+    gap: 17px;
+
+    .depositAddress {
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto;
+        margin-bottom: 32px;
+
+        label {
+            font-size: 14px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .inputClass {
+            input {
+                font-family: 'Poppins', sans-serif;
+                font-size: 16px;
+                padding: 13px 21px;
+                height: auto;
+                color: $c-titan-white;
+                font-weight: 200;
+            }
+        }
+    }
+
+    .panel {
+        flex: 1;
+        width: 36em;
+        text-align: center;
+        padding: 36px 40px 25px 40px;
+        overflow: hidden;
+        
+        div {
+            gap: 0;
+        }
+
+        .heading {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+
+            .title {
+                @include flex-center-center;
+                gap: 0.5rem;
+                font-size: 25px;
+                color: $c-titan-white;
+            }
+
+            .subtitle {
+                font-size: 16px;
+                margin-bottom: 37px;
+                text-transform: uppercase;
+                color: $c-turquoise;
+            }
+        }
+
+        .description {
+            text-align: center;
+            font-size: 14px;
+            color: $c-titan-white;
+            user-select: none;
+            
+            &.margin {
+                margin-bottom: 20px;
+            }
+
+            .qrCode {
+                height: 168px;
+                width: 168px;
+                padding: 6px;
+                border-radius: 12px;
+                margin: 0 auto;
+                margin-bottom: 43px;
+                background-color: $c-white;
+            }
+        }
+
+        .networks {
+            margin-bottom: 40px;
+
+            &Title {
+                margin-bottom: 20px;
+                display: block;
+                font-size: 14px;
+                color: $c-titan-white;
+                opacity: .8;
+            }
+
+            .list {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px;
+                max-width: 700px;
+                width: 100%;
+                margin: 0 auto;
+
+                .network {
+                    display: flex;
+                    flex-direction: column;
+                    justify-content: center;
+                    align-items: center;
+                    background-color: rgba($c-martinique, 0.4);
+                    border-radius: 12px;
+                    width: 120px;
+                    height: 70px;
+
+                    .icon {
+                        height: 32px;
+                        width: 32px;
+                        @include flex-center-center;
+                        background-size: cover;
+                        border-radius: 100%;
+                    }
+
+                    .name {
+                        font-size: 12px;
+                        color: $c-titan-white;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (max-width: 1200px) {
+   .deposit {
+       flex-direction: column;
+
+        .panel {
+            width: 100%;
+        }
+   }
+}
+
+// Mobile
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+    .deposit {
+        gap: 1em;
+
+        .panel {
+            padding: 20px 20px;
+        }
+
+        .networks {
+            .logos {
+                gap: 1em !important;
+            }
+        }
+    }
+}

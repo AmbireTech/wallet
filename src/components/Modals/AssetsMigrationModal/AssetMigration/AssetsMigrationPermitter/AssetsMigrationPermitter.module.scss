@@ -1,0 +1,28 @@
+@import 'variables';
+
+.wrapper {
+  .actionsLeft {
+    padding: 15px;
+    border-radius: 12px;
+    background-color: $c-mirage;
+    color: $warning-color;
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  .migrationPermitted {
+    padding: 8px;
+    font-size: 14px;
+    background: mix($c-turquoise, $c-ebony-clay, 5%);
+    color: $c-turquoise;
+    display: flex;
+    align-items: center;
+    border-radius: 12px;
+    gap: 4px;
+
+    &.warning {
+      background: mix($c-half-spanish-white, $c-ebony-clay, 5%);
+      color: $c-half-spanish-white;
+    }
+  }
+}

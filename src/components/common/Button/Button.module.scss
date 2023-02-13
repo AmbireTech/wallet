@@ -1,0 +1,139 @@
+@import 'variables.scss';
+
+.wrapper {
+    height: 60px;
+    border-radius: 12px;
+    @include flex-center-center;
+    gap: 10px;
+    padding: 0 20px;
+    border: none;
+    font-family: 'Poppins', sans-serif;
+    font-size: 20px;
+    font-weight: 500;
+    background-color: transparent;
+    color: $c-turquoise;
+    border: 2px solid $c-turquoise;
+    outline: none;
+    transition: 0.1s ease-in-out;
+
+    .iconButton {
+        @include flex-center-center;
+        color: $c-turquoise !important;
+    }
+
+    &.small {
+        height: 50px;
+        font-size: 17px;
+    }
+
+    &.full {
+        width: 100%;
+    }
+
+    &.mini {
+        gap: 5px;
+        height: 40px;
+        padding: 0 10px;
+        font-size: 14px;
+    }
+
+    &.danger {
+        border: none;
+        color: $c-titan-white;
+        background: $danger-color;
+
+        .iconButton {
+            color: inherit!important;
+        }
+    }
+
+    &.clear {
+        border: none;
+        color: $c-titan-white;
+        background-color: rgba(0, 0, 0, 0.1);
+
+        .iconButton {
+            color: inherit!important;
+        }
+
+        &:not([disabled]):hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    }
+
+    &.primaryGradient {
+        border: none;
+        background: theme(gradient-primary);
+        color: $c-titan-white;
+
+        .iconButton {
+            color: inherit!important;
+        }
+    }
+
+    &.secondaryGradient {
+        border: none;
+        background: theme(gradient-secondary);
+        color: $c-titan-white;
+
+        .iconButton {
+            color: inherit!important;
+        }
+    }
+
+    &.terniaryGradient {
+        border: none;
+        background: theme(gradient-terniary);
+        color: $c-titan-white;
+
+        .iconButton {
+            color: inherit!important;
+        }
+    }
+
+    &.secondary {
+        border: none;
+        color: $c-titan-white;
+        background-color: $c-heliotrope;
+
+        .iconButton {
+            color: inherit!important;
+        }
+    }
+
+    &.textOnly {
+        padding: 0;
+        margin: 0;
+        height: auto;
+        background: 0;
+        border: none;
+        color: theme(text-primary);
+        font-size: 1em;
+        display: inline-flex;
+    }
+
+    &.border {
+        color: theme(highlight-secondary);
+        background-color: transparent;
+        border: 2px solid theme(highlight-secondary);
+
+        .iconButton {
+            color: theme(highlight-secondary) !important;
+        }
+    }
+
+    &:disabled, &.disabled{
+        opacity: 0.4 !important;
+    }
+
+    &:not([disabled]):not(.disabled) {
+        &:hover {
+            cursor: pointer;
+            opacity: 0.8;
+        }
+
+        &:active {
+            opacity: 0.6;
+        }
+    }
+}

@@ -1,5 +1,5 @@
 import { TrezorSubprovider } from '@0x/subproviders/lib/src/subproviders/trezor' // https://github.com/0xProject/0x-monorepo/issues/1400
-import TrezorConnect from 'trezor-connect'
+import TrezorConnect from '@trezor/connect-web'
 import { ethers } from 'ethers'
 import HDNode from 'hdkey'
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -14,7 +14,7 @@ import {
   latticeSignMessage712
  } from 'lib/lattice'
 import { _TypedDataEncoder } from 'ethers/lib/utils'
-import { getProvider } from 'lib/provider'
+import { getProvider } from 'ambire-common/src/services/provider'
 import networks from 'consts/networks'
 
 let wallets = {}
@@ -30,6 +30,10 @@ export function getWallet({ signer, signerExtra, chainId }, opts = {}) {
 
 function getWalletNew({ chainId, signer, signerExtra }, opts) {
   if (signerExtra && signerExtra.type === 'trezor') {
+    TrezorConnect.manifest({
+      email: 'contactus@ambire.com',
+      appUrl: 'https://wallet.ambire.com'
+    })
     const providerTrezor = new TrezorSubprovider({
       trezorConnectClientApi: TrezorConnect,
       networkId: chainId
@@ -42,7 +46,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
       sendTransaction: async (transaction) => {
         const network = networks.find(n => n.chainId === transaction.chainId)
         if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
-        const broadcastProvider = await getProvider(network.id)
+        const broadcastProvider = getProvider(network.id)
         if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
 
         transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
@@ -95,7 +99,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         sendTransaction: async (transaction) => {
           const network = networks.find(n => n.chainId === transaction.chainId)
           if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
-          const provider = await getProvider(network.id)
+          const provider = getProvider(network.id)
           if (!provider) throw Error('no provider found for network : ' + network.id)
 
           transaction.nonce = ethers.utils.hexlify(await provider.getTransactionCount(transaction.from))
@@ -187,7 +191,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         return await wrapLatticeError(async (transaction) => {
           const network = networks.find(n => n.chainId === transaction.chainId)
           if (!network) throw Error('no network found for chainId : ' + transaction.chainId)
-          const broadcastProvider = await getProvider(network.id)
+          const broadcastProvider = getProvider(network.id)
           if (!broadcastProvider) throw Error('no provider found for network : ' + network.id)
           transaction.nonce = ethers.utils.hexlify(await broadcastProvider.getTransactionCount(transaction.from))
           const { commKey, deviceId } = signerExtra

@@ -1,19 +1,20 @@
-import './Button.scss'
+import styles from './Button.module.scss'
 
-const Button = ({ children, className, small, mini, icon, iconAfter, disabled, onClick, red, danger, clear, border, title, type, textOnly, secondary, testId }) => {
+const Button = ({ children, className, small, mini, icon, iconAfter, form, disabled, onClick, red, primaryGradient, secondaryGradient, terniaryGradient, danger, clear, border, title, type, textOnly, secondary, full, testId }) => {
     return (
         <button
             onClick={(...args) => !disabled && onClick && onClick.apply(this, args)}
-            className={`buttonComponent ${className} ${small ? 'small' : ''} ${mini ? 'mini' : ''} ${danger || red ? 'danger' : ''} ${clear ? 'clear' : ''} ${border ? 'border' : ''} ${disabled ? 'disabled' : ''} ${textOnly ? 'text-only' : ''} ${secondary ? 'secondary' : ''}`}
-            // disabled={disabled} // causing pointer-events to not trigger 
+            className={`${styles.wrapper} ${className} ${small ? styles.small : ''} ${mini ? styles.mini : ''} ${primaryGradient ? styles.primaryGradient : ''} ${secondaryGradient ? styles.secondaryGradient : ''} ${terniaryGradient ? styles.terniaryGradient : ''} ${danger || red ? styles.danger : ''} ${clear ? styles.clear : ''} ${border ? styles.border : ''} ${disabled ? styles.disabled : ''} ${textOnly ? styles.textOnly : ''} ${secondary ? styles.secondary : ''} ${full ? styles.full : ''}`}
+            // disabled={disabled} // causing pointer-events to not trigger
             title={title}
             // used with <form>
             type={type}
+            form={form}
             data-testid={testId}
         >
-            { icon ? <div className="icon-button">{ icon }</div> : null }
+            { icon ? <div className={styles.iconButton}>{ icon }</div> : null }
             { children }
-            { iconAfter ? <div className="icon-button">{ iconAfter }</div> : null }
+            { iconAfter ? <div className={styles.iconButton}>{ iconAfter }</div> : null }
         </button>
     )
 }

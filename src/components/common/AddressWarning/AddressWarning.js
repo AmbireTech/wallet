@@ -1,10 +1,11 @@
-import './AddressWarning.scss'
 
 import { MdOutlineAdd } from 'react-icons/md'
 import { Checkbox } from 'components/common'
 import { useEffect, useMemo, useState } from 'react'
 import { isValidAddress, isKnownTokenOrContract } from 'ambire-common/src/services/address'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
+
+import styles from './AddressWarning.module.scss'
 
 const AddressWarning = ({ address, onChange, onAddNewAddress, isKnownAddress, uDAddress, ensAddress }) => {
     const [confirmed, setConfirmed] = useState(false)
@@ -20,14 +21,14 @@ const AddressWarning = ({ address, onChange, onAddNewAddress, isKnownAddress, uD
         <>
             {
                 (!smartContractWarning && unknownWarning) && (address !== accountPresets.feeCollector) ?
-                    <div id="unknown-address-warning">
+                    <div className={styles.wrapper}>
                         <Checkbox
                             label="Confirm sending to a previously unknown address"
                             checked={confirmed}
                             onChange={({ target }) => setConfirmed(target.checked)}
                             testId="unknownAddressWarning"
                         />
-                        <div className="button" onClick={onAddNewAddress}>
+                        <div className={styles.button} onClick={onAddNewAddress}>
                             <MdOutlineAdd/>
                             Add it to the address book
                         </div>

@@ -5,8 +5,7 @@
     gap: 30px;
 
     .address {
-        font-family: 'monospace';
-        font-weight: 500;
+        font-family: 'Ubuntu Mono';
     }
 
     .panel {
@@ -71,13 +70,13 @@
             .name {
                 font-size: 18px;
                 font-weight: bold;
-                color: white;
+                color: $c-titan-white;
             }
 
             .description {
                 font-size: 15px;
                 font-weight: 500;
-                color: white;
+                color: $c-titan-white;
                 opacity: 0.6;
             }
         }
@@ -112,10 +111,11 @@
         position: relative;
         display: flex;
 
-        .text-input {
+        .recipient-input {
             width: 100%;
 
             input {
+                border-radius: 12px 0 0 12px;
                 padding-right: 280px;
             }
         }
@@ -167,9 +167,7 @@
             flex-direction: column;
             gap: 10px;
 
-            .text-input {
-                width: 100%;
-    
+            .recipient-input {
                 input {
                     padding-right: 50px;
                 }
@@ -189,6 +187,10 @@
                 right: 15px;
                 height: 25px;
                 width: 25px;
+            }
+
+            .address-book {
+                position: relative !important;
             }
 
             .dropdown {
