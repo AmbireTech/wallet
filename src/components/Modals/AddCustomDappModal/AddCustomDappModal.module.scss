@@ -1,6 +1,6 @@
 @import 'variables.scss';
 
-.wrapper {
+.wrapper {    
     .customDappTitle {
         display: flex;
         flex-direction: row;
@@ -21,7 +21,7 @@
         }            
     }
     
-    :global(.content) {
+    .content {
         display: flex;
         flex-direction: column;
         gap: 14px;
@@ -30,6 +30,7 @@
             flex: 1;
             gap: 8px;
             width: 100%;
+            
             .textInputContainer {
                 input {
                     height: 40px;

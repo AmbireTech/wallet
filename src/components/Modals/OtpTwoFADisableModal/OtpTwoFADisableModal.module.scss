@@ -1,13 +1,6 @@
 @import 'variables.scss';
 
-.button { 
-    flex: 0 1 100%!important;
-    width: 100%;
-}
-
 .wrapper {
-    max-width: 600px;
-
     h4 {
         font-weight: 400;
     }
@@ -36,24 +29,18 @@
 }
 
 @media screen and (max-width: $mobile-breakpoint-max-width) {
-    .button {
-        height: 50px!important;
-    }
-
     .wrapper {
         min-height: unset;
         height: auto;
-        padding-bottom: 70px!important;
-        :global(.buttons) {
-            height: 70px;
-            padding: 20px 24px;
-            padding-top: 0;
-        }
-
+        
         .input {
             input {
                 height: 50px;
             }
+        }
+  
+        .button {
+            height: 50px!important;
         }
     }
 }

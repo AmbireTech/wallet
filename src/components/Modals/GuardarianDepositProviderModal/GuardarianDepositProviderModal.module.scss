@@ -1,16 +1,8 @@
 @import 'variables.scss';
 
 .wrapper {
-    max-width: 500px;
-    height: auto!important;
-    min-height: unset;
-    padding: 0 10px;
-    padding-top: 36px;
+    padding-bottom: 0;
 
-    :global(.content) {
-        padding-top: 50px;
-        padding-bottom: 10px;
-    }
     .validationMsg {
         color: $danger-color;
     }
@@ -37,10 +29,10 @@
     }
     .inputCurrenciesWrapper {
         display: flex;
-
         background-color: $c-mirage;
         padding: 4px 20px;
         padding-bottom: 0;
+        margin-bottom: 20px;
         border-radius: 12px;
         height: 95px;
         flex-direction: column;
@@ -50,6 +42,10 @@
             justify-content: space-between;
             gap: 5px;
             align-items: center;
+
+            .estimateInfoInput {
+                flex: 1;
+            }
         }
         .inputLabel {
             margin: 0;
@@ -168,16 +164,16 @@
     }
     .button {
         width: 100%;
-        margin-top: 20px;
+        margin-bottom: 120px;
     }
 
     .poweredBy {
         display: flex;
         justify-content: center;
         gap: 10px;
-        margin-top: 120px;
-        padding-top: 10px;
+        padding: 10px 0;
         border-top: 1px solid #3E436B;
+        
         &Label {
             font-size: 14px;
             color: #898DCB;

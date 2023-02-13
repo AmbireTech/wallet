@@ -8,8 +8,6 @@
 .wrapper {
   min-height: 350px;
   max-height: 500px;
-  max-width: 600px;
-  padding-bottom: 140px!important;
 
   .animation {
     width: 173px;
@@ -18,14 +16,5 @@
   .text {
     text-align: center;
     margin: 0;
-  }
-
-  :global(.content) {
-    padding-top: 0;
-  }
-  :global(.buttons) {
-    padding: 40px;
-    padding-top: 0;
-    height: auto;
   }
 }

@@ -3,6 +3,7 @@ import { useEffect, useMemo } from 'react'
 
 import { useModals } from 'hooks'
 import { Button, Modal } from 'components/common'
+import Collectible from './Collectible/Collectible'
 
 import {
   MdVisibilityOff as VisibleIcon,
@@ -10,20 +11,6 @@ import {
 } from 'react-icons/md'
 
 import styles from './HideCollectibleModal.module.scss'
-
-const Collectible = ({ button, handleUri, asset }) => (
-  <div className={styles.collectible}>
-    <div className={styles.info}>
-      <div className={styles.iconWrapper}>
-        <img src={handleUri(asset.data.image)} alt="" className={styles.icon} />
-      </div>
-      <h3 className={styles.name}>
-        { asset.data.name }
-      </h3>
-    </div>
-    { button }
-  </div>
-)
 
 const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handleUri }) => {
   const { hideModal, setOnClose } = useModals()
@@ -49,28 +36,27 @@ const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handl
 
   return (
     <Modal 
-      className={styles.modal} 
+      className={styles.wrapper}
+      contentClassName={styles.content}
       title="Hide Collectible" 
       buttons={
-        <Button className={styles.closeButton} onClick={handleHideModal}>
+        <Button small className={styles.closeButton} onClick={handleHideModal}>
           Close
         </Button>
       }
       isCloseBtnShown={false}
     >
-      <div className={styles.collectibles}>
-        {sortedCollectibles.map((collectible) => (collectible.assets || []).map((asset) => (
-          <Collectible
-            key={collectible.address}
-            asset={asset}
-            button={!asset.isHidden ? 
-              <HiddenIcon className={styles.icon} color="#27e8a7" onClick={() => hideCollectible(collectible, asset.tokenId)} /> :
-              <VisibleIcon className={styles.icon} color="#F21A61" onClick={() => unhideCollectible(collectible, asset.tokenId)} />
-            }
-            handleUri={handleUri}
-          />
-        )))}
-      </div>
+      {sortedCollectibles.map((collectible) => (collectible.assets || []).map((asset) => (
+        <Collectible
+          key={collectible.address}
+          asset={asset}
+          button={!asset.isHidden ? 
+            <HiddenIcon className={styles.icon} color="#27e8a7" onClick={() => hideCollectible(collectible, asset.tokenId)} /> :
+            <VisibleIcon className={styles.icon} color="#F21A61" onClick={() => unhideCollectible(collectible, asset.tokenId)} />
+          }
+          handleUri={handleUri}
+        />
+      )))}
     </Modal>
   )
 }
