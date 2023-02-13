@@ -16,6 +16,7 @@
     "static/media/back.f07e39d3.svg": "./static/media/back.f07e39d3.svg",
     "static/media/bell.e1303cdc.svg": "./static/media/bell.e1303cdc.svg",
     "static/media/burger-menu.7ac20c3e.svg": "./static/media/burger-menu.7ac20c3e.svg",
+    "static/media/check.a6151888.svg": "./static/media/check.a6151888.svg",
     "static/media/chevron-down.svg": "./static/media/chevron-down.bedc61f6.svg",
     "static/media/chevron-left.svg": "./static/media/chevron-left.7b89c6c7.svg",
     "static/media/chevron-right.2c761750.svg": "./static/media/chevron-right.2c761750.svg",
@@ -94,6 +95,7 @@
     "static/media/waiting.0eb12807.svg": "./static/media/waiting.0eb12807.svg",
     "static/media/wallet-connect.baafeacf.svg": "./static/media/wallet-connect.baafeacf.svg",
     "static/media/warning.3d8c50bf.svg": "./static/media/warning.3d8c50bf.svg",
+    "static/media/x.6c9a4ba7.svg": "./static/media/x.6c9a4ba7.svg",
     "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
   },
   "entrypoints": [
