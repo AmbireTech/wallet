@@ -1,43 +1,31 @@
 import { useState, useRef } from 'react'
-import { ethers } from "ethers"
-import WEAK_PASSWORDS from 'ambire-common/src/constants/commonPasswords.json'
+
+import passwordChecks from 'components/AddAccount/passwordChecks'
 
 import AddAccountForm from 'components/AddAccount/Form/Form'
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
+    const [passwordStrength, setPasswordStrength] = useState({
+      checks: passwordChecks,
+      satisfied: false
+    })
+  
     const passConfirmInput = useRef(null)
     const passInput = useRef(null)
     const [state, setState] = useState({
       email: '', passphrase: '', passphraseConfirm: '', action
     })
+    const [arePasswordsMatching, setArePasswordsMatching] = useState(false)
+    const isSignup = state.action === 'SIGNUP'
 
-    const passwordStrength = (passphrase) => {
-      let strength = 0
-      let passwordError = ''
-      if (state.passphrase.length >= 8) {
-        strength += 1
-        if (passphrase.match(/\d/)) strength += 1
-        if (passphrase.match(/[a-z]/)) strength += 1
-        if (passphrase.match(/[A-Z]/)) strength += 1
-        if (passphrase.match(/[@_.,+;()[\]-]/)) strength += 1
-  
-        if (strength < 3) {
-          passwordError = 'Password too weak. Include Uppercase, lowercase letters, numbers and special characters'
-        }
-      } else if (!!passphrase.length) {
-        strength += 1
-        passwordError = 'Password should be 8 characters minimum'
-      }
-  
-      if (WEAK_PASSWORDS.includes(ethers.utils.ripemd160(ethers.utils.toUtf8Bytes(passphrase)))) {
-        passwordError = 'This password is too common'
-        strength = 1
-      }
-  
-      return {
-        strength,
-        error: passwordError
-      }
+    const checkPasswordStrength = (passphrase) => {
+      setPasswordStrength((prev) => ({
+        satisfied: prev.checks.every((check) => check.check(passphrase)),
+        checks: prev.checks.map((check) => ({
+          ...check,
+          satisfied: check.check(passphrase)
+        }))
+      }))
     }
 
     const onSubmit = e => {
@@ -58,9 +46,15 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       if (shouldValidate) {
         const invalid = newState.passphrase !== newState.passphraseConfirm
   
-        const passwordStrengthFeedback = passwordStrength(newState.passphrase)
-  
-        passInput.current.setCustomValidity(passwordStrengthFeedback.error || '')
+        // We check the password strength and compare the passwords
+        setArePasswordsMatching(!invalid)
+        checkPasswordStrength(newState.passphrase)
+
+        // If the password is invalid, set a custom validity message
+        if (!passwordStrength.satisfied) {
+          passInput.current.setCustomValidity('Make sure that your password is at least 8 characters long and contains at least one number and one letter.')
+        }
+        passInput.current.setCustomValidity('')
   
         // @TODO translation string
         if (passConfirmInput.current) {
@@ -69,7 +63,6 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       }
     }
 
-    const isSignup = state.action === 'SIGNUP'
 
     return (
       <form onSubmit={onSubmit}>
@@ -85,10 +78,11 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
             passInput={passInput}
             passConfirmInput={passConfirmInput}
             passwordStrength={passwordStrength}
+            arePasswordsMatching={arePasswordsMatching}
           />
 				)
 			}
-        <input type="submit" disabled={inProgress} value={isSignup ?
+        <input type="submit" disabled={inProgress || (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied))} value={isSignup ?
           (inProgress ? "Signing up..." : "Sign Up")
           : (inProgress ? "Logging in..." : "Log In")}></input>
       </form>

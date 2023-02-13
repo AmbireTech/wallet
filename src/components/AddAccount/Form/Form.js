@@ -1,5 +1,9 @@
+import { useState } from 'react'
 import cn from 'classnames'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
+
+import { ReactComponent as XIcon } from 'resources/icons/x.svg'
+import { ReactComponent as CheckIcon } from 'resources/icons/check.svg'
 
 import { Checkbox } from 'components/common'
 
@@ -13,7 +17,15 @@ const Link = ({ href, children }) => (
 	</a>
 )
 
-export default function AddAccountForm({ state, onUpdate, passInput, passConfirmInput, passwordStrength }) {
+const onFocusOrUnfocus = (e, setIsFocused, state) => {
+	if (e.currentTarget === e.target) {
+		setIsFocused(state)
+	}
+}
+
+
+export default function AddAccountForm({ state, onUpdate, passInput, passConfirmInput, passwordStrength, arePasswordsMatching }) {
+	const [isFocused, setIsFocused] = useState(false)
   const hasPassword = !!state.passphrase.length
   
 	return (
@@ -28,17 +40,18 @@ export default function AddAccountForm({ state, onUpdate, passInput, passConfirm
 					placeholder="Password"
 					value={state.passphrase}
 					onChange={(e) => onUpdate({ passphrase: e.target.value })}
+					onFocus={(e) => onFocusOrUnfocus(e, setIsFocused, true)}
+					onBlur={(e) => onFocusOrUnfocus(e, setIsFocused, false)}
 				/>
-				<div className={cn(styles.strengthProgressWrapper, {[styles.taller]: hasPassword})}>
-					<div
-						className={cn(
-							styles.strengthProgress,
-              {
-                [styles[`strengthProgress${passwordStrength(state.passphrase).strength}`]]: hasPassword,
-                [styles.taller]: hasPassword
-              }
-						)}
-					/>
+				<div className={cn(styles.passwordStrength, {[styles.visible]: hasPassword && isFocused})}>
+					{
+						passwordStrength.checks.map((check) => (
+							<div key={check.id} className={styles.check}>
+								{check.satisfied ? <CheckIcon className={styles.checkIcon} /> : <XIcon className={styles.xIcon} />}
+								<span className={styles.checkLabel}>{check.label}</span>
+							</div>
+						))
+					}
 				</div>
 			</div>
 			<input
@@ -49,6 +62,7 @@ export default function AddAccountForm({ state, onUpdate, passInput, passConfirm
 				placeholder="Confirm password"
 				value={state.passphraseConfirm}
 				onChange={(e) => onUpdate({ passphraseConfirm: e.target.value })}
+				className={cn(styles.confirmPassword, {[styles.error]: !arePasswordsMatching && hasPassword})}
 			/>
 			<Checkbox
 				labelClassName={styles.checkboxLabel}

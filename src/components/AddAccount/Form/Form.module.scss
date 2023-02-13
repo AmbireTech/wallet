@@ -14,51 +14,89 @@
 
 	.passwordInput {
 		margin: 0;
-		border-bottom: 0;
 	}
-	
-	.strengthProgressWrapper {
-		position: relative;
-		height: 3px;
-		width: 100%;
-		border-bottom: 2px solid $c-titan-white;
 
-		&.taller {
-			border-bottom-width: 3px;
+	.passwordStrength {
+		position: absolute;
+		z-index: 9;
+		top: 60px;
+		right: -0.625rem;
+		transform: translate(100%, -50%);
+		display: flex;
+		flex-direction: column;
+		gap: .625rem;
+		padding: .9375rem;
+		border-radius: .75rem;
+    background-color: theme(background-terniary);
+    border: 1px solid theme(border-secondary);
+		
+		visibility: hidden;
+		opacity: 0;
+		transition: .2s ease-in opacity, .2s ease-in visibility;
+
+		&.visible {
+			visibility: visible;
+			opacity: 1;
 		}
-	
-		.strengthProgress {
-			position: absolute;
-			width: 0;
-			border-bottom: 2px solid $danger-color;
 
-			&.taller {
-				border-bottom-width: 3px;
+		.check {
+			display: flex;
+			align-items: center;
+			gap: .5rem;
+
+			.checkIcon, .xIcon {
+				width: 1.25rem;
 			}
-	
-			&.strengthProgress0 {
-				width: 10%;
-				border-bottom-color: $danger-color;
+
+			.checkIcon {
+				color: $success-color;
 			}
-			&.strengthProgress1 {
-				width: 20%;
-				border-bottom-color: $danger-color;
+			.xIcon {
+				color: $danger-color;
 			}
-			&.strengthProgress2 {
-				width: 40%;
-				border-bottom-color: $warning-color;
+
+
+			.checkLabel {
+				opacity: .8;
+				font-size: .875rem;
+				white-space: nowrap;
 			}
-			&.strengthProgress3 {
-				width: 60%;
-				border-bottom-color: mix($warning-color, $c-turquoise, 40%);
-			}
-			&.strengthProgress4 {
-				width: 80%;
-				border-bottom-color: mix($warning-color, $c-turquoise, 20%);
-			}
-			&.strengthProgress5 {
-				width: 100%;
-				border-bottom-color: $c-turquoise;
+		}
+	}
+}
+
+.confirmPassword.error {
+	border-bottom-color: $danger-color;
+
+	&:not([type="submit"]):focus {
+		border-bottom-color: $danger-color!important;
+	}
+}
+
+@media screen and (max-width: 1278px) {
+	.passwordInputWrapper {
+		.passwordStrength {
+			top: 3.125rem;
+			right: 1.25rem;
+			transform: translate(0, 0);
+		}
+	}
+}
+
+@media screen and (max-width: 768px) {
+	.passwordInputWrapper {
+		.passwordStrength {
+			padding: .625rem;
+			right: 0;
+
+			.check {
+				.checkIcon, .xIcon {
+					width: .9375rem;
+				}
+
+				.checkLabel {
+					font-size: .75rem;
+				}
 			}
 		}
 	}
