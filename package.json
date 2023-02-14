@@ -120,7 +120,6 @@
     "progress-bar-webpack-plugin": "^2.1.0",
     "web-vitals": "^1.1.2",
     "webpack-bundle-analyzer": "^4.6.1"
-    "@types/validator": "^13.7.6"
   },
   "jest": {
     "transformIgnorePatterns": ["/node_modules/(?!(ambire-common|react-donut-chart|validator))"]
