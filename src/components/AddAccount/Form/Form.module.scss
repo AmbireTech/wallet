@@ -14,6 +14,14 @@
 
 	.passwordInput {
 		margin: 0;
+		
+		&.error {
+			border-bottom-color: $danger-color;
+	
+			&:not([type="submit"]):focus {
+				border-bottom-color: $danger-color!important;
+			}
+		}
 	}
 
 	.passwordStrength {

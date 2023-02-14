@@ -23,16 +23,15 @@ const onFocusOrUnfocus = (e, setIsFocused, state) => {
 	}
 }
 
-
 export default function AddAccountForm({ state, onUpdate, passInput, passConfirmInput, passwordStrength, arePasswordsMatching }) {
 	const [isFocused, setIsFocused] = useState(false)
-  const hasPassword = !!state.passphrase.length
+  const hasPassword = state.passphrase?.length > 0
   
 	return (
 		<>
 			<div className={styles.passwordInputWrapper}>
 				<input
-					className={styles.passwordInput}
+					className={cn(styles.passwordInput, {[styles.error]: hasPassword && !passwordStrength.satisfied})}
 					type="password"
 					ref={passInput}
 					required
@@ -62,7 +61,7 @@ export default function AddAccountForm({ state, onUpdate, passInput, passConfirm
 				placeholder="Confirm password"
 				value={state.passphraseConfirm}
 				onChange={(e) => onUpdate({ passphraseConfirm: e.target.value })}
-				className={cn(styles.confirmPassword, {[styles.error]: !arePasswordsMatching && hasPassword})}
+				className={cn(styles.confirmPassword, {[styles.error]: hasPassword && (!passwordStrength.satisfied || !arePasswordsMatching)})}
 			/>
 			<Checkbox
 				labelClassName={styles.checkboxLabel}
