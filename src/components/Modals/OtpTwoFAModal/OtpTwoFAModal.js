@@ -143,21 +143,14 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         >
             {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}
             <CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp} className={styles.timer} />
-            <div className={styles.imgWrapper}>
-                <img alt="qr-code" src={imageURL}></img>
-            </div>
-            <div className={cn(styles.imgMsg, {[styles.showSecret]: showSecret})}>
-                {!showSecret && 
-                (<span className={styles.clickHere}>
-                    Unable to scan code? <button onClick={() => setShowSecret(prevState => !prevState)}>Click here.</button>
-                </span>)}
-                {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
-            </div>
             <form onSubmit={handleSubmit} id="enable2faForm">
+                {/* First step- Email code */}
                 <div className={styles.emailWrapper}>
-                    <h4>Confirmation code sent via Email</h4>
+                    <h4>1&#41; Request and confirm the code sent to your Email</h4>
                     <div className={styles.emailBody}>
+                        <Button small type="button" primaryGradient disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
                         <TextInput
+                            small
                             className={styles.emailInput}
                             title='Confirmation code should be 6 digits'
                             autoComplete='nope'
@@ -166,17 +159,32 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                             value={emailConfirmCode}
                             onInput={value => setEmailConfirmCode(value)}
                         ></TextInput>
-                        
-                        <Button type="button" primaryGradient disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
                     </div>
                 </div>
+                {/* Second step- Qr Code  */}
+                <div className={styles.qrCode}>
+                    <h4>2&#41; Scan the QR code with an authenticator app</h4> 
+                    <div className={styles.imgWrapper}>
+                        <img alt="qr-code" src={imageURL}></img>
+                    </div>
+                    <a className={styles.downloadQrCodeButton} href={imageURL} download="ambire-authenticator-code.png">Download QR Code.</a>
+                    <div className={cn(styles.imgMsg, {[styles.showSecret]: showSecret})}>
+                        {!showSecret && 
+                        (<span className={styles.clickHere}>
+                            Unable to scan code? <button onClick={() => setShowSecret(prevState => !prevState)}>Click here.</button>
+                        </span>)}
+                        {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
+                    </div>
+                </div>
+                {/* Third step - Enter the code from authenticator app */}
                 <div className={styles.authenticatorWrapper}>
-                    <h4>Authenticator app code</h4>
+                    <h4>3&#41; Enter the code from your authenticator app</h4>
                     <TextInput
                         placeholder="Enter the code from authenticator app"
                         onInput={setReceivedOTP}
                         value={receivedOtp}
                         pattern="[0-9]{6}"
+                        small
                         required
                     />
                 </div>
