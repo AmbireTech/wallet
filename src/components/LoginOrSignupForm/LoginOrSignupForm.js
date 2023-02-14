@@ -82,7 +82,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           />
 				)
 			}
-        <input type="submit" disabled={inProgress || (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied))} value={isSignup ?
+        <input type="submit" disabled={inProgress || !state.email?.length || (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied))} value={isSignup ?
           (inProgress ? "Signing up..." : "Sign Up")
           : (inProgress ? "Logging in..." : "Log In")}></input>
       </form>
