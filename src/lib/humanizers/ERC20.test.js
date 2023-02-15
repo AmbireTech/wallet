@@ -1,9 +1,20 @@
-import ERC20 from './ERC20'
+import ERC20Humanizer from './ERC20'
 import networks from 'consts/networks'
+import ERC20 from 'adex-protocol-eth/abi/ERC20.json'
 
 // transfer signature hash
 const sigHash = '0xa9059cbb'
-const humanizer = ERC20[sigHash]
+const humanizerInfo = {
+  abis: { ERC20 },
+  tokens: {
+    "0xc2132d05d31c914a87c6611c10748aeb04b58e8f": [
+      "USDT",
+      6
+    ],
+  },
+  "names": {},
+}
+const humanizer = ERC20Humanizer(humanizerInfo)[sigHash]
 
 const txn = {
   "to": "0xc2132d05d31c914a87c6611c10748aeb04b58e8f",

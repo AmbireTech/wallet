@@ -281,6 +281,7 @@ const Send = ({
                         onInput={setAddress}
                         className={styles.recipientInput}
                         inputContainerClass={styles.textInputContainer}
+                        testId="recipient"
                     />
                     <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
                         <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />
@@ -323,7 +324,7 @@ const Send = ({
                 { validationFormMgs.messages.address && 
                     (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
             </div>
-            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
+            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton} testId="send">Send</Button>
         </div>) : <NoFundsPlaceholder/>
 }
 
