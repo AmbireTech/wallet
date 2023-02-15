@@ -73,15 +73,74 @@ const Permit2 = (humanizerInfo) => {
         return [`Approve ${name} to use ${token(humanizerInfo, tokenToApprove, params.amount)}`]
     },
     [ifacePermit2.getSighash('permit(address,((address,uint160,uint48,uint48),address,uint256),bytes)')]: (txn, network, opts = {}) => {
+        // owner - the address of the token’s owner
+        // permitSingle - constructed with the following:
+        //     struct PermitSingle {
+        //         // the permit data for a single token allowance
+        //         PermitDetails details;
+        //         // address permissioned on the allowed tokens
+        //         address spender;
+        //         // deadline on the permit signature
+        //         uint256 sigDeadline;
+        //     }
+        
+        //     struct PermitDetails {
+        //         // ERC20 token address
+        //         address token;
+        //         // the maximum amount allowed to spend
+        //         uint160 amount;
+        //         // timestamp at which a spender's token allowances become invalid
+        //         uint48 expiration;
+        //         // an incrementing value indexed per owner,token,and spender for each signature
+        //         uint48 nonce;
+        //     }
+        // signature - the signature over the permit data. Supports EOA signatures, compact signatures defined by EIP-2098, and contract signatures defined by EIP-1271
+        
         return []
     },
     [ifacePermit2.getSighash('permit(address,((address,uint160,uint48,uint48)[],address,uint256),bytes)')]: (txn, network, opts = {}) => {
+        // owner - the address of the token’s owner
+        // permitBatch - constructed with the following:
+        //     struct PermitBatch {
+        //         // the permit data for multiple token allowances
+        //         PermitDetails[] details;
+        //         // address permissioned on the allowed tokens
+        //         address spender;
+        //         // deadline on the permit signature
+        //         uint256 sigDeadline;
+        //     }
+        //     struct PermitDetails {
+        //         // ERC20 token address
+        //         address token;
+        //         // the maximum amount allowed to spend
+        //         uint160 amount;
+        //         // timestamp at which a spender's token allowances become invalid
+        //         uint48 expiration;
+        //         // an incrementing value indexed per owner,token,and spender for each signature
+        //         uint48 nonce;
+        //     }
+        // signature - the signature over the permit data. Supports EOA signatures, compact signatures defined by EIP-2098, and contract signatures defined by EIP-1271
         return []
     },
     [ifacePermit2.getSighash('transferFrom((address,address,uint160,address)[])')]: (txn, network, opts = {}) => {
+        // from - the address to transfer the token from
+        // to - the address of the recipient
+        // amount - the amount of the token to transfer, the maximum amount is type(uint160).max
+        // token - the address of the token to be transferred
         return []
     },
     [ifacePermit2.getSighash('transferFrom(address,address,uint160,address)')]: (txn, network, opts = {}) => {
+        // transferDetails - constructed with the following
+        // struct AllowanceTransferDetails {
+        //         // the owner of the token
+        //         address from;
+        //         // the recipient of the token
+        //         address to;
+        //         // the amount of the token
+        //         uint160 amount;
+        //         // the token to be transferred
+        //         address token;
+        //     }
         return []
     }
   }
