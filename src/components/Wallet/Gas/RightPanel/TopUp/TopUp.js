@@ -21,7 +21,7 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
       return decreasing
     }), [availableFeeAssets])
 
-  const zeroBalanceOnAllTokens = useMemo(() => availableFeeAssets?.every(t => t.balanceUSD <= 0), [availableFeeAssets])
+  const zeroBalanceOnAllTokens = useMemo(() => sortedTokens?.every(t => t.balanceUSD <= 0), [sortedTokens])
   return (
     <div className={styles.wrapper}>
       <div className={styles.titleWrapper}>
