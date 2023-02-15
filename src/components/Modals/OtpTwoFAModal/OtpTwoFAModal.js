@@ -1,4 +1,4 @@
-import { Modal, Button, TextInput, Loading } from 'components/common'
+import { Modal, Button, TextInput, Loading, ToolTip } from 'components/common'
 import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
 import cn from 'classnames'
@@ -167,7 +167,11 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
                     <div className={styles.imgWrapper}>
                         <img alt="qr-code" src={imageURL}></img>
                     </div>
-                    <a className={styles.downloadQrCodeButton} href={imageURL} download="ambire-authenticator-code.png">Download QR Code.</a>
+                    <ToolTip label="Back up the QR code in a secure place. It will allow you to recover your 2FA in case you lose access to the device.">
+                        <a className={styles.downloadQrCodeButton} href={imageURL} download="ambire-authenticator-code.png">
+                            Download QR Code.
+                        </a>
+                    </ToolTip>
                     <div className={cn(styles.imgMsg, {[styles.showSecret]: showSecret})}>
                         {!showSecret && 
                         (<span className={styles.clickHere}>

@@ -40,9 +40,9 @@
                 }
                 .downloadQrCodeButton {
                     display: block;
+                    width: fit-content;
+                    margin: 0 auto;
                     color: $warning-color;
-                    text-align: center;
-                    width: 100%;
                 }
             
                 .imgMsg {
