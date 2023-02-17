@@ -51,14 +51,14 @@
                 padding-right: 20px;
                 overflow: hidden;
 
-                label, .address {
+                .label {
                     width: 100%;
                     overflow: hidden;
                     white-space: nowrap;
                     text-overflow: ellipsis;
                 }
 
-                label {
+                .label {
                     cursor: pointer;
                     font-size: 12px;
                     font-weight: 500;
@@ -66,8 +66,10 @@
                 }
 
                 .address {
-                    font-size: 15px;
+                    width: 100%;
+                    font-size: 15px; 
                 }
+
             }
         }
 
