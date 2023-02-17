@@ -125,12 +125,16 @@
                 align-items: center;
                 justify-content: flex-start;
                 gap: 12px;
-                padding: 0 20px;
-                padding-right: 40px;
+                padding-left: 20px;
                 font-size: 16px;
                 font-weight: 500;
                 opacity: 0.8;
                 cursor: pointer;
+
+                &.draggableOption {
+                    padding-left: 10px;
+                    padding-right: 15px;
+                }
 
                 .dragHandle {
                     min-width: 14px;
@@ -154,6 +158,7 @@
                 &.active {
                     font-weight: bold;
                     opacity: 1;
+                    padding-right: 30px;
                     
                     &::after {
                         content: "";

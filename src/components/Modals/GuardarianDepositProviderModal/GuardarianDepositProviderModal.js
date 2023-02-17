@@ -91,6 +91,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
 
     return (
         <Modal 
+            size="sm"
             className={styles.wrapper}
             title={guardarian.mode === 'buy' ? 'Buy' : 'Sell'}
         >
@@ -158,6 +159,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
             </div>
             <div className={styles.currenciesRowWrapper}>
                 {!guardarian.estimateInfo.isLoading ? <TextInput
+                    className={styles.estimateInfoInput}
                     value={guardarian?.estimateInfo?.data ? guardarian?.estimateInfo?.data?.value : ''}
                     disabled
                     /> : <TextInput
@@ -180,6 +182,7 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
             </div>
         </div>
         <Button 
+            small
             disabled={
                 validationMsg !== '' 
                 || guardarian?.marketInfo?.isLoading 

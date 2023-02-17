@@ -31,7 +31,12 @@ const AddOrHideTokenModal = ({
   }, [setOnClose, handleModalVisiblity])
 
   return (
-    <Modal className={styles.modal} isCloseBtnShown={false} buttons={<Button onClick={handleHideModal} className={styles.closeButton}>Close</Button>}>
+    <Modal
+      size="sm" 
+      className={styles.modal} 
+      isCloseBtnShown={false} 
+      buttons={<Button small onClick={handleHideModal} className={styles.closeButton}>Close</Button>}
+    >
       <Segments small defaultValue={segment} segments={segments} onChange={(value) => setSegment(value)} />
       <div className={styles.body}>
         {
