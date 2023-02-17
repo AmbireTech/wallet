@@ -32,6 +32,7 @@ import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
 import Image from './Image/Image';
 import RemoteLottie from './RemoteLottie/RemoteLottie'
+import ResponsiveAddress from './ResponsiveAddress/ResponsiveAddress'
 import Info from './Info/Info';
 import Note from './Note/Note';
 
@@ -70,6 +71,7 @@ export {
     Panel,
     Image,
     RemoteLottie,
+    ResponsiveAddress,
     Info,
     Note,
 };
