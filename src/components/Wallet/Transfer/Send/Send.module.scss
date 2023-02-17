@@ -84,8 +84,8 @@
       }
 
       input {
-        // border-radius: 12px 0 0 12px;
-        padding-right: 290px;
+        padding-right: 150px;
+        font-size: 15px;
       }
     }
 
@@ -97,7 +97,7 @@
     .udomainsLogo {
       position: absolute;
       top: 18px;
-      right: 250px;
+      right: 120px;
       height: 25px;
       width: 25px;
       background-image: url('/resources/ud-logo-inactive.png');
@@ -110,7 +110,7 @@
     .ensLogo {
       position: absolute;
       top: 18px;
-      right: 200px;
+      right: 80px;
       height: 25px;
       width: 25px;
       background-image: url('/resources/ens-logo-inactive.png');
