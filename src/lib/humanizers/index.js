@@ -14,7 +14,6 @@ import WALLETStakingPool from './WALLETStakingPool'
 import AaveWethGatewayV2 from './AaveWethGatewayV2'
 import OneInch from './OneInch'
 import UniswapV3Pool from './UniswapV3Pool'
-import Permit2 from './UniRouters/Permit2'
 
 const all = ({humanizerInfo, tokenList}) => ({
 	...UniRouters(humanizerInfo),
@@ -32,8 +31,7 @@ const all = ({humanizerInfo, tokenList}) => ({
 	...AmbireBatcher(humanizerInfo, tokenList),
 	...WALLETStakingPool(humanizerInfo),
 	...OneInch(humanizerInfo),
-	...UniswapV3Pool(humanizerInfo),
-	...Permit2(humanizerInfo)
+	...UniswapV3Pool(humanizerInfo)
 })
 
 export default all
