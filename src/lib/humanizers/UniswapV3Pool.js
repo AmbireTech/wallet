@@ -49,12 +49,12 @@ const UniswapV3Pool = (humanizerInfo) => {
       }).flat().filter(x => x)
       return parsed.length ? parsed : [`Unknown Uniswap V3 Pool interaction`]
     },
-    [ifaceV3.getSighash('mint')]: (txn, network, opts = {}) => {
+    [ifaceV3.getSighash('mint')]: (txn, network, opts = { extended: true }) => {
         const [ params ] = ifaceV3.parseTransaction(txn).args
-        // @TODO: consider fees
+        
         return !opts.extended 
           ? [`Supplying ${token(humanizerInfo, params.token0, params.amount0Desired)} and ${token(humanizerInfo, params.token1, params.amount1Desired)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
-          : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from))
+          : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from, true))
     },
     [ifaceV3.getSighash('unwrapWETH9')]: (txn, network, opts = {}) => {
       const [ amountMinimum, recipient ] = ifaceV3.parseTransaction(txn).args

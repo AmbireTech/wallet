@@ -299,7 +299,7 @@ const uniUniversalRouter = (humanizerInfo) => {
           
           parsed.push(!opts.extended 
             ? [`Swap ${token(humanizerInfo, path[0], params.amountIn)} for at least ${token(humanizerInfo, path[path.length - 1], params.amountOutMin)}${recipientText(humanizerInfo, txn.from, txn.from)}${deadlineText(deadline, opts.mined)}`]
-            : toExtended('Swap', 'for at least', token(humanizerInfo, path[0], params.amountIn, true), token(humanizerInfo, path[path.length - 1], params.amountOutMin, true), recipientText(humanizerInfo, txn.from, txn.from), deadlineText(deadline, opts.mined))
+            : toExtended('Swap', 'for at least', token(humanizerInfo, path[0], params.amountIn, true), token(humanizerInfo, path[path.length - 1], params.amountOutMin, true), recipientText(humanizerInfo, txn.from, txn.from, true), deadlineText(deadline, opts.mined))
           )
         } else if (command === COMMANDS.V3_SWAP_EXACT_OUT) {
           const { inputsDetails } = COMMANDS_DESCRIPTIONS.V3_SWAP_EXACT_OUT
@@ -308,7 +308,7 @@ const uniUniversalRouter = (humanizerInfo) => {
 
           parsed.push(!opts.extended 
             ? [`Swap up to ${token(humanizerInfo, path[path.length - 1], params.amountInMax)} for ${token(humanizerInfo, path[0], params.amountOut)}${recipientText(humanizerInfo, txn.from, txn.from)}${deadlineText(deadline, opts.mined)}`]
-            : toExtended('Swap up to', 'for', token(humanizerInfo, path[path.length - 1], params.amountInMax, true), token(humanizerInfo, path[0], params.amountOut, true), recipientText(humanizerInfo, txn.from, txn.from), deadlineText(deadline, opts.mined))
+            : toExtended('Swap up to', 'for', token(humanizerInfo, path[path.length - 1], params.amountInMax, true), token(humanizerInfo, path[0], params.amountOut, true), recipientText(humanizerInfo, txn.from, txn.from, true), deadlineText(deadline, opts.mined))
           )
         } else if (command === COMMANDS.V2_SWAP_EXACT_IN) {
           const { inputsDetails } = COMMANDS_DESCRIPTIONS.V2_SWAP_EXACT_IN
@@ -334,7 +334,7 @@ const uniUniversalRouter = (humanizerInfo) => {
           
           parsed.push(!opts.extended 
             ? [`Wrap ${nativeToken(network, params.amountMin)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
-            : toExtendedUnwrap('Wrap', network, params.amountMin, recipientText(humanizerInfo, params.recipient, txn.from, opts.extended))
+            : toExtendedUnwrap('Wrap', network, params.amountMin, recipientText(humanizerInfo, params.recipient, txn.from, true))
           )
         } else if (command === COMMANDS.UNWRAP_WETH) {
           const { inputsDetails } = COMMANDS_DESCRIPTIONS.UNWRAP_WETH
@@ -342,7 +342,7 @@ const uniUniversalRouter = (humanizerInfo) => {
           
           parsed.push(!opts.extended 
             ? [`Unwrap at least ${nativeToken(network, params.amountMin)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
-            : toExtendedUnwrap('Unwrap at least', network, params.amountMin, recipientText(humanizerInfo, params.recipient, txn.from, opts.extended))
+            : toExtendedUnwrap('Unwrap at least', network, params.amountMin, recipientText(humanizerInfo, params.recipient, txn.from, true))
           )
         }
       })
