@@ -9,7 +9,7 @@ import {
   Redirect,
   Prompt
 } from 'react-router-dom'
-import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import ModalProvider from './components/ModalProvider/ModalProvider'
 import useAccounts from './hooks/accounts'
@@ -145,7 +145,6 @@ function AppInner() {
     setGasTankState([...gasTankState, { account: selectedAcc, isEnabled: false }])
   } 
 
-
   // Handling transaction signing requests
   // Show the send transaction full-screen modal if we have a new txn
   const eligibleRequests = useMemo(() => requests
@@ -183,7 +182,6 @@ function AppInner() {
     .filter(({ type, account }) => (type === 'personal_sign' || type === 'eth_sign' || type === 'eth_signTypedData_v4' || type === 'eth_signTypedData')
       && account === selectedAcc
     ), [requests, selectedAcc])
-
   // Handling the back button
   // When the user presses back, we first hide the SendTransactions dialog (keeping the queue)
   // Then, signature requests will need to be dismissed one by one, starting with the oldest
@@ -198,6 +196,7 @@ function AppInner() {
     }
     return true
   }
+  const requestPendingState = useRef(false)
 
   // Keeping track of sent transactions
   const [sentTxn, setSentTxn] = useState([])
@@ -216,6 +215,7 @@ function AppInner() {
   const confirmSentTx = txHash => setSentTxn(sentTxn => {
     const tx = sentTxn.find(tx => tx.hash === txHash)
     tx.confirmed = true
+    requestPendingState.current = false
     return [
       ...sentTxn.filter(tx => tx.hash !== txHash),
       tx
@@ -233,7 +233,8 @@ function AppInner() {
     requests,
     selectedAccount: accounts.find(x => x.id === selectedAcc),
     sentTxn,
-    accounts
+    accounts,
+    requestPendingState
   })
 
   // Show notifications for all requests
@@ -308,6 +309,7 @@ function AppInner() {
           replaceByDefault={sendTxnState.replaceByDefault}
           mustReplaceNonce={sendTxnState.mustReplaceNonce}
           onBroadcastedTxn={onBroadcastedTxn}
+          requestPendingState={requestPendingState}
           gasTankState={gasTankState}
         ></SendTransaction>
       ) : (<></>)}

@@ -29,7 +29,8 @@ const DetailsPanel = ({
   REJECT_MSG,
   onBroadcastedTxn,
   panelClassName,
-  panelTitleClassName
+  panelTitleClassName,
+  requestPendingState
 }) => {
   const [replaceTx, setReplaceTx] = useState(!!replaceByDefault);
 
@@ -108,6 +109,7 @@ const DetailsPanel = ({
         currentAccGasTankState={currentAccGasTankState}
         onBroadcastedTxn={onBroadcastedTxn}
         resolveMany={resolveMany}
+        requestPendingState={requestPendingState}
         canProceed={canProceed}
       />
     </Panel>

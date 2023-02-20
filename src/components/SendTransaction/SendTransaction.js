@@ -23,7 +23,7 @@ const REJECT_MSG = 'Ambire user rejected the request'
 
 const isInt = x => !isNaN(x) && x !== null
 
-export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, mustReplaceNonce, onBroadcastedTxn, onDismiss, gasTankState }) {
+export default function SendTransaction({ relayerURL, accounts, network, selectedAcc, requests, resolveMany, replacementBundle, replaceByDefault, mustReplaceNonce, onBroadcastedTxn, onDismiss, gasTankState, requestPendingState }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
   const account = accounts.find(x => x.id === selectedAcc)
@@ -55,12 +55,13 @@ export default function SendTransaction({ relayerURL, accounts, network, selecte
     account={account}
     resolveMany={resolveMany}
     onBroadcastedTxn={onBroadcastedTxn}
+    requestPendingState={requestPendingState}
     onDismiss={onDismiss}
     gasTankState={gasTankState}
   />)
 }
 
-function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState }) {
+function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce, network, account, resolveMany, relayerURL, onBroadcastedTxn, onDismiss, gasTankState, requestPendingState }) {
   const currentAccGasTankState = network.isGasTankAvailable ? 
     gasTankState.find(i => i.account === account.id) : 
     { account: account.id, isEnabled: false }
@@ -189,6 +190,7 @@ function SendTransactionWithBundle({ bundle, replaceByDefault, mustReplaceNonce,
             currentAccGasTankState={currentAccGasTankState}
             REJECT_MSG={REJECT_MSG}
             onBroadcastedTxn={onBroadcastedTxn}
+            requestPendingState={requestPendingState}
             panelClassName={styles.panel}
             panelTitleClassName={styles.panelTitle}
           />

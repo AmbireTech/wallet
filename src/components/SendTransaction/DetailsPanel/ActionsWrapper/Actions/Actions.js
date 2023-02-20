@@ -52,7 +52,8 @@ const Actions = ({
   isGasTankEnabled,
   currentAccGasTankState,
   onBroadcastedTxn,
-  resolveMany
+  resolveMany,
+  requestPendingState
   }) => {
   const { addToast } = useToasts()
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
@@ -89,6 +90,7 @@ const Actions = ({
       : approveTxnImpl();
     approveTxnPromise
       .then((bundleResult) => {
+        requestPendingState.current = true
         // special case for approveTxnImplQuickAcc: when a user interaction prevents the operation from completing
         if (!bundleResult) return;
 

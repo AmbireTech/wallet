@@ -21,7 +21,8 @@ const ActionsWrapper = ({
   currentAccGasTankState,
   onBroadcastedTxn,
   resolveMany,
-  canProceed
+  canProceed,
+  requestPendingState
 }) => {
 
   return canProceed && (
@@ -69,6 +70,7 @@ const ActionsWrapper = ({
             currentAccGasTankState={currentAccGasTankState}
             onBroadcastedTxn={onBroadcastedTxn}
             resolveMany={resolveMany}
+            requestPendingState={requestPendingState}
           />
         </div>
       )}
