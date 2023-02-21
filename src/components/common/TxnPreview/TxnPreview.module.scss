@@ -4,33 +4,33 @@ $txn-height: 54px;
 $extended-summary-height: 36px;
 
 .wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
-    background-color: $c-mirage;
-    color: $c-titan-white;
-    border-radius: 12px;
     min-height: $txn-height;
-    position: relative;
-    user-select: none;
     overflow: hidden;
+    background-color: theme(background-primary);
+    color: theme(text-primary);
+    border-radius: 12px;
+    user-select: none;
     transition: .3s ease-out;
 
     &:hover {
-        background-color: rgba($c-mirage, 0.8)
+        opacity: .8;
     }
 
     .heading {
-        width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
         gap: 15px;
+        box-sizing: border-box;
+        width: 100%;
+        padding: 10px 20px;
         margin: 0;
         cursor: pointer;
-        box-sizing: border-box;
-        padding: 10px 20px;
 
         .info {
             min-width: 0;
@@ -40,7 +40,7 @@ $extended-summary-height: 36px;
             flex-direction: column;
             align-items: flex-start;
             justify-content: center;
-            gap: 30px;
+            gap: 10px;
 
 
             .summaryContainer {
@@ -54,7 +54,7 @@ $extended-summary-height: 36px;
                     min-width: 36px;
                     min-height: 36px;
                     @include flex-center-center;
-                    background-color: rgba($c-titan-white, 0.05);
+                    background-color: theme(background-icon);
                     border-radius: 12px;
                     
                     .icon {
@@ -87,12 +87,13 @@ $extended-summary-height: 36px;
                 padding: 10px 15px;
                 text-align: center;
                 background-color: $danger-color;
+                color: $c-titan-white;
                 border-radius: 12px;
                 margin: 0;
             }
         }
 
-        .actionIcons {
+        .dissmissTxnWrapper {
             align-self: flex-start;
             height: 36px;
 
@@ -103,7 +104,7 @@ $extended-summary-height: 36px;
                 width: 36px;
                 height: 36px;
                 border-radius: 12px;
-                background-color: rgba($c-titan-white, 0.05);
+                background-color: theme(background-icon);
                 transition: all 0.1s ease-in-out;
                 opacity: 1;
 
@@ -136,7 +137,7 @@ $extended-summary-height: 36px;
             word-break: break-word;
             font-size: 13.5px;
             font-weight: 300;
-            color: $c-scampi;
+            color: theme(text-secondary);
             user-select: text;
         }
     }
@@ -149,31 +150,53 @@ $extended-summary-height: 36px;
 
         .heading {
             gap: 5px;
-            flex-direction: column-reverse;
+            padding: 10px 15px;
 
-            .actionIcons {
-                align-self: flex-end;
-                height: 36px;
+            .dissmissTxnWrapper {
+                .dismissTxn {
+                    width: 32px;
+                    height: 32px;
+
+                    .icon {
+                        width: 16px;
+                        height: 16px;
+                    }
+                }
+            }
+
+            .info {
+                gap: 10px;
+
+                .summaryContainer {      
+                    gap: 10px;
+                              
+                    .expandTxn {
+                        min-width: 32px;
+                        min-height: 32px;
+                        border-radius: 12px;
+                    }
+        
+                    .summary {
+                        column-gap: 5px;
+                        row-gap: 2px;
+                        font-size: 11px;
+                    }
+                }
+                
+                .warning {
+                    font-size: 12px;
+                    padding: 10px;
+                    width: 100%;
+                }
             }
         }
-
-        .summaryContainer {
-            flex-direction: column;
-        
-            .expandTxn {
-                position: absolute;
-                top: 10px;
-                left: 20px;
-            }
-
-            .summary {
-                text-align: center;
-                justify-content: center;
-            }
-        }
-        
         .advanced {
-            text-align: center;
+            gap: 5px;
+            padding-top: 5px;
+            
+            p {
+                font-size: 12px;
+            }
         }
     }
 }

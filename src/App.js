@@ -44,6 +44,9 @@ import SignMessage from './components/SignMessage/SignMessage'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
+import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
+
+const MATCH = { url: "/wallet" };
 
 // Initialize rpc providers for all networks
 initRpcProviders(rpcProviders)
@@ -79,6 +82,7 @@ function AppInner() {
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
+  const [allRequests, setRequests] = useState([])
   // Signing requests: transactions/signed msgs: all requests are pushed into .requests
   const { connections, connect, disconnect, isConnecting, requests: wcRequests, resolveMany: wcResolveMany } = useWalletConnect({
     account: selectedAcc,
@@ -86,38 +90,49 @@ function AppInner() {
     initialUri: wcUri,
     allNetworks,
     setNetwork,
-    useStorage: useLocalStorage
+    useStorage: useLocalStorage,
+    setRequests: setRequests
   })
 
   const { requests: gnosisRequests, resolveMany: gnosisResolveMany, connect: gnosisConnect, disconnect: gnosisDisconnect } = useGnosisSafe({
     selectedAccount: selectedAcc,
     network: network,
-    useStorage: useLocalStorage
+    useStorage: useLocalStorage,
+    setRequests: setRequests
   }, [selectedAcc, network])
+
+  
+  // Filter gnosisRequests and wcRequests by dateAdded,
+  // because they are saved in local storage and add them on first render
+  useEffect(() => {
+    const storageRequests = [...gnosisRequests, ...wcRequests]
+    if (storageRequests.length) {
+      const newRequests = storageRequests.filter(r => !allRequests.find(x => x.id === r.id) || r).sort((a, b) => a.dateAdded - b.dateAdded)
+
+      setRequests(reqs => [...reqs, ...newRequests])
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  
+  const requests = useMemo(
+    () => allRequests
+      .filter(({ account }) => accounts.find(({ id }) => id === account)),
+    [accounts, allRequests]
+  )
 
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
-  const [internalRequests, setInternalRequests] = useState([])
-  const addRequest = async req => setInternalRequests(reqs => [...reqs, req])
+  const addRequest = async req => {
+    return setRequests(reqs => [...reqs, req])
+  }
 
   // Merge all requests
-  const requests = useMemo(
-    () => [...internalRequests, ...wcRequests, ...gnosisRequests]
-      .filter(({ account }) => accounts.find(({ id }) => id === account)),
-    [wcRequests, internalRequests, gnosisRequests, accounts]
-  )
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
-    setInternalRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
-  }
+    setRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
 
-  // Portfolio: this hook actively updates the balances/assets of the currently selected user
-  const portfolio = usePortfolio({
-    currentNetwork: network.id,
-    account: selectedAcc,
-    useStorage: useLocalStorage
-  })
+  }
 
   const privateMode = usePrivateMode(useLocalStorage)
 
@@ -206,6 +221,20 @@ function AppInner() {
       ...sentTxn.filter(tx => tx.hash !== txHash),
       tx
     ]
+  })
+
+  // Portfolio: this hook actively updates the balances/assets of the currently selected user
+  const portfolio = usePortfolio({
+    currentNetwork: network.id,
+    account: selectedAcc,
+    useStorage: useLocalStorage,
+    relayerURL: relayerURL,
+    useRelayerData: useRelayerData,
+    eligibleRequests,
+    requests,
+    selectedAccount: accounts.find(x => x.id === selectedAcc),
+    sentTxn,
+    accounts
   })
 
   // Show notifications for all requests
@@ -298,7 +327,7 @@ function AppInner() {
         {selectedAcc ?
           <Route path="/wallet">
             <Wallet
-              match={{ url: "/wallet" }}
+              match={MATCH}
               accounts={accounts}
               selectedAcc={selectedAcc}
               addressBook={addressBook}
@@ -355,11 +384,13 @@ export default function App() {
     <Router>
       <OfflineProvider>
         <ConstantsProvider>
-          <ToastProvider>
-            <ModalProvider>
-              <AppInner/>
-            </ModalProvider>
-          </ToastProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              <ModalProvider>
+                <AppInner/>
+              </ModalProvider>
+            </ToastProvider>
+          </ThemeProvider>
         </ConstantsProvider>
       </OfflineProvider>
     </Router>

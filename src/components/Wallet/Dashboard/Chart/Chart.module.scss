@@ -1,0 +1,192 @@
+@import 'variables.scss';
+
+.wrapper {
+  display: flex;
+  gap: 70px;
+  height: 100%;
+  overflow: hidden;
+  color: $c-titan-white;
+
+  .donut {
+    position: relative;
+    z-index: 1;
+    max-width: 205px;
+    width: 100%;
+    align-self: center;
+
+    .lastUpdate {
+      font-size: 12px;
+      color: $c-scampi;
+      margin-top: 15px;
+      text-align: center;
+    }
+    .networkInfo {
+      position: absolute;
+      z-index: -1;
+      left: 50%;
+      top: 40%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+
+      .networkIcon {
+        background-color: $c-mirage;
+        border-radius: 12px;
+        width: 32px;
+        height: 32px;
+      }
+
+      .networkAmount {
+        font-size: 30px;
+        font-weight: 400;
+        color: $c-titan-white;
+
+        .currency {
+          color: $c-turquoise;
+        }
+      }
+    }
+    
+  }
+
+  .legend {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: stretch;
+    
+    .legendTitle {
+      font-size: 25px;
+      font-weight: 400;
+      margin: 0;
+      margin-bottom: 20px;
+    }
+
+    .legendItems {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      padding-right: 15px;
+      overflow-y: auto;
+      scrollbar-width: thin;
+
+      .item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 7px 5px;
+        border-radius: 8px;
+        border: 1px solid transparent;
+        transition: .3s ease-out border;
+        height: 36px;
+
+        &:last-child {
+          border-bottom: none;
+        }
+  
+        &.active {
+          background-color: $c-ebony-clay-light;
+          border: 1px solid $c-fiord;
+        }
+  
+        .separator {
+          flex: 1 0 auto;
+        }
+  
+        .color {
+          flex: 0 0 auto;
+          height: 20px;
+          width: 20px;
+          border-radius: 8px;
+        }
+  
+        label {
+          flex: 0 0 auto;
+          font-size: 14px;
+          color: $c-titan-white;
+        }
+  
+        .percent {
+          flex: 0 0 auto;
+          font-size: 14px;
+          color: $c-titan-white;
+        }
+      }
+    } 
+    .noTokensWrapper {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      .noTokens {
+        display: flex;
+        gap: 10px;
+        max-width: 250px;
+  
+        label {
+          flex: 1;
+        }
+  
+        svg {
+          margin-top: 5px;
+        }
+      }
+
+    }
+  }
+}
+
+@media screen and (max-width: 1800px) {
+  .wrapper {
+    gap: 40px;
+
+    .legend {
+      .legendTitle {
+        font-size: 20px;
+      }
+    }
+  }
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .donut {
+      height: auto;
+
+      .networkInfo {
+        .networkIcon {
+          width: 28px;
+          height: 28px;
+        }
+
+        .networkAmount {
+          font-size: 24px;
+        }
+      }
+    }
+    
+    .noTokensWrapper {
+      padding: 20px;
+      background: $c-ebony-clay;
+      border: 1px solid $c-fiord;
+      border-radius: 12px;
+    }
+
+    .legend {
+      .legendTitle {
+        margin-left: 20px;
+        margin-bottom: 15px;
+      }
+      .legendItems {
+        padding: 10px 20px;
+        background: $c-ebony-clay;
+        border: 1px solid $c-fiord;
+        border-radius: 12px;
+        overflow-y: auto;
+      }
+    }
+  }
+}

@@ -1,5 +1,5 @@
 export const UNISWAP_PERMIT_EXCEPTIONS = [ // based on PeerMeta
-  'Uniswap', // Uniswap Interface
+  // 'Uniswap', // Uniswap Interface - already using UniversalRouter that supports permit form sc wallets, and uniswap interface will not fallback to old routers if we reject the tx
   'Sushi',
   'QuickSwap', // QuickSwap Interface
   'PancakeSwap', // 🥞 PancakeSwap - A next evolution DeFi exchange on BNB Smart Chain (BSC)

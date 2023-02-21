@@ -17,8 +17,9 @@ let lastTokensBalanceRaw = []
 
 const getAmountReceived = (lastToken, newBalanceRaw, decimals) => {
     try {
+        const lastBalanceRaw = lastToken ? lastToken.latest ? lastToken.latest.balanceRaw : lastToken.balanceRaw : ''
         const amountRecieved = lastToken
-            ? (BigNumber.from(newBalanceRaw.toString(10)).sub(BigNumber.from(lastToken.balanceRaw.toString(10))))
+            ? (BigNumber.from(newBalanceRaw.toString(10)).sub(BigNumber.from(lastBalanceRaw.toString(10))))
             : newBalanceRaw
         return formatUnits(amountRecieved, decimals)
     } catch(e) {
@@ -87,18 +88,23 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
             if (!portfolio.isCurrNetworkBalanceLoading && portfolio.balance) {
                 if (!isLastTotalBalanceInit) {
                     isLastTotalBalanceInit = true
-                    lastTokensBalanceRaw = portfolio.tokens.map(({ address, balanceRaw }) => ({ address, balanceRaw }))
+                    lastTokensBalanceRaw = portfolio.tokens.filter(t => !t.pending || !t.unconfirmed).map(({ address, balanceRaw, latest, pending, unconfirmed }) => ({ address, balanceRaw, latest, pending, unconfirmed }))
                 }
 
-                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw }) => {
+                const changedAmounts = portfolio.tokens.filter(({ address, balanceRaw, latest, pending, unconfirmed }) => {
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const isSignificantChange = lastToken && ((balanceRaw / lastToken.balanceRaw) > BALANCE_TRESHOLD)
-                    return !lastToken || isSignificantChange
+                    const currentBalance = latest ? latest.balanceRaw : balanceRaw
+
+                    const lastTokenBalance = lastToken && lastToken.latest ? lastToken.latest.balanceRaw : lastToken?.balanceRaw
+
+                    const isSignificantChange = lastToken && ((currentBalance / lastTokenBalance) > BALANCE_TRESHOLD)
+                    return (!lastToken && (!pending && !unconfirmed)) || isSignificantChange
                 })
 
-                changedAmounts.forEach(({ address, symbol, decimals, balanceRaw }) => {
+                changedAmounts.forEach(({ address, symbol, decimals, balanceRaw, latest, pending, unconfirmed }) => {
+                    const newBalance = latest ? latest.balanceRaw : balanceRaw
                     const lastToken = lastTokensBalanceRaw.find(token => token.address === address)
-                    const amountRecieved = getAmountReceived(lastToken, balanceRaw, decimals)
+                    const amountRecieved = getAmountReceived(lastToken, newBalance, decimals)
 
                     showNotification({
                         id: `received_amount_${Date.now()}`,
@@ -108,8 +114,8 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
 
                     lastToken ? lastTokensBalanceRaw = [
                         ...lastTokensBalanceRaw.filter(token => token.address !== address),
-                        { address, balanceRaw }
-                    ] : lastTokensBalanceRaw.push({ address, balanceRaw })
+                        { address, balanceRaw, latest, pending, unconfirmed }
+                    ] : lastTokensBalanceRaw.push({ address, balanceRaw, latest, pending, unconfirmed })
                 })
             }
         } catch(e) {
@@ -148,6 +154,11 @@ export default function useNotifications (requests, onShow, portfolio, selectedA
     useEffect(() => {
         isLastTotalBalanceInit = false
         lastTokensBalanceRaw = []
+        // Reset data on component unmount
+        return () => {
+            isLastTotalBalanceInit = false
+            lastTokensBalanceRaw = []
+        }
     }, [selectedAcc, network])
 
     currentNotifs = currentNotifs.filter(({ id, notification }) => {

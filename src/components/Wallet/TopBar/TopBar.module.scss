@@ -102,6 +102,7 @@
         gap: 30px;
         flex-wrap: wrap;
         max-width: $max-container-width;
+        width: 100%;
 
         .privacyAndRewards {
             display: flex;
@@ -114,6 +115,12 @@
     &.dappMode {
         padding: 20px;
         align-items: center;
+
+        .container {
+            max-width: unset;
+            width: unset;
+            flex: 1;
+        }
 
         .mobileMenu {
             padding: 0;

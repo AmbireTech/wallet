@@ -1,0 +1,15 @@
+@import 'variables';
+
+.wrapper {
+  height: 100%;
+}
+
+@media screen and (max-width: $mobile-breakpoint-max-width) {
+  .wrapper {
+    .buttons {
+      button {
+        font-size: 14px!important;
+      }
+    }
+  }
+}

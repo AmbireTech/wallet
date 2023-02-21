@@ -29,7 +29,7 @@ const checkIsOffline = connectionId => {
   return errors.length > 0 && errors.find(({ time } = {}) => time > (Date.now() - timePastForConnectionErr))
 }
 
-export default function useWalletConnectLegacy({ account, chainId, clearWcClipboard, allNetworks, setNetwork, useStorage }) {
+export default function useWalletConnectLegacy({ account, chainId, clearWcClipboard, allNetworks, setNetwork, useStorage, setRequests }) {
   const { addToast } = useToasts()
 
   // This is needed cause of the WalletConnect event handlers
@@ -63,6 +63,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
           newRequests.push({
             ...action.batchRequest,
             type: 'eth_sendTransaction',
+            dateAdded: new Date().valueOf(),
             isBatch: true,
             id: action.batchRequest.id + ':' + ix,
             account,
@@ -119,6 +120,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
     })
 
     setStateStorage(state)
+    setRequests(currRe => [...currRe, ...state.requests])
 
     if (updateConnections) dispatch({
       type: 'updateConnections',
@@ -127,7 +129,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
         .map(({ connectionId }) => ({ connectionId, session: connectors[connectionId].session, isOffline: checkIsOffline(connectionId) }))
     })
   }
-  useEffect(maybeUpdateSessions, [account, chainId, state, setStateStorage])
+  useEffect(maybeUpdateSessions, [account, chainId, state, setStateStorage, setRequests])
   // we need this so we can invoke the latest version from any event handler
   stateRef.current.maybeUpdateSessions = maybeUpdateSessions
 
@@ -305,11 +307,12 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
         dispatch({
           type: 'batchRequestsAdded', batchRequest: {
             id: payload.id,
+            dateAdded: new Date().valueOf(),
             type: payload.method,
             connectionId: connectionIdentifier,
             txns: payload.params,
-            chainId: connector.session.chainId,
-            account: connector.session.accounts[0],
+            chainId: connector.session?.chainId,
+            account: connector.session?.accounts[0],
             notification: true
           }
         })
@@ -331,10 +334,10 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
 
       const wrongAcc = (
         payload.method === 'eth_sendTransaction' && payload.params[0] && payload.params[0].from
-        && payload.params[0].from.toLowerCase() !== connector.session.accounts[0].toLowerCase()
+        && payload.params[0].from.toLowerCase() !== connector.session?.accounts[0].toLowerCase()
       ) || (
         payload.method === 'eth_sign' && payload.params[1]
-        && payload.params[1].toLowerCase() !== connector.session.accounts[0].toLowerCase()
+        && payload.params[1].toLowerCase() !== connector.session?.accounts[0].toLowerCase()
       )
       if (wrongAcc) {
         addToast(`dApp sent a request for the wrong account: ${payload.params[0].from}`, { error: true })
@@ -344,12 +347,19 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
       dispatch({
         type: 'requestAdded', request: {
           id: payload.id,
+          dateAdded: new Date().valueOf(),
           type: payload.method,
           connectionId: connectionIdentifier,
           txn,
-          chainId: connector.session.chainId,
-          account: connector.session.accounts[0],
-          notification: true
+          chainId: connector.session?.chainId,
+          account: connector.session?.accounts[0],
+          notification: true,
+          dapp: connector.session?.peerMeta ? {
+            name: connector.session.peerMeta.name,
+            description: connector.session.peerMeta.description,
+            icons: connector.session.peerMeta.icons,
+            url: connector.session.peerMeta.url,
+          } : null
         }
       })
     })
@@ -377,7 +387,7 @@ export default function useWalletConnectLegacy({ account, chainId, clearWcClipbo
       if (sessionStart && (Date.now() - sessionStart) < SESSION_TIMEOUT) {
         addToast('dApp disconnected immediately - perhaps it does not support the current network?', { error: true })
       } else {
-        addToast(`${connector.session.peerMeta.name} disconnected: ${payload.params[0].message}`)
+        addToast(`${connector.session?.peerMeta.name} disconnected: ${payload.params[0].message}`)
       }
     })
 
