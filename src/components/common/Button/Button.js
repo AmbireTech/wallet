@@ -5,7 +5,7 @@ const Button = ({ children, className, small, mini, icon, iconAfter, form, disab
         <button
             onClick={(...args) => !disabled && onClick && onClick.apply(this, args)}
             className={`${styles.wrapper} ${className} ${small ? styles.small : ''} ${mini ? styles.mini : ''} ${primaryGradient ? styles.primaryGradient : ''} ${secondaryGradient ? styles.secondaryGradient : ''} ${terniaryGradient ? styles.terniaryGradient : ''} ${danger || red ? styles.danger : ''} ${clear ? styles.clear : ''} ${border ? styles.border : ''} ${disabled ? styles.disabled : ''} ${textOnly ? styles.textOnly : ''} ${secondary ? styles.secondary : ''} ${full ? styles.full : ''}`}
-            // disabled={disabled} // causing pointer-events to not trigger
+            disabled={disabled}
             title={title}
             // used with <form>
             type={type}

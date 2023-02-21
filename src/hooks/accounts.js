@@ -8,9 +8,13 @@ export default function useAccounts (useStorage) {
     const [pluginUrl, setPluginUrl] = useState(null)
 
     // const onAdd = useCallback(() => history.push('/wallet/dashboard'), [history])
-    const onAdd = useCallback(() => pluginUrl ? 
-      history.push(`/wallet/dapps?dappUrl=${encodeURIComponent(pluginUrl + `?${Date.now()}`)}`) 
-    : history.push('/wallet/dashboard'), [history, pluginUrl])
+    const onAdd = useCallback(() => {
+      if(pluginUrl) {
+        history.push(`/wallet/dapps?dappUrl=${encodeURIComponent(pluginUrl + `?${Date.now()}`)}`) 
+      } else if (history.location.pathname !== '/wallet/security') {
+        history.push('/wallet/dashboard')
+      }
+    }, [history, pluginUrl])
     const onRemoveLastAccount = useCallback(() => history.push('/add-account'), [history])
     const onRemoveAccountWithoutBackingItUp =
       useCallback(() => history.push('/wallet/security'), [history]);
