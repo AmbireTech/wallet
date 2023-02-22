@@ -14,7 +14,10 @@ contract AmbireAccount {
 	// Events
 	event LogPrivilegeChanged(address indexed addr, bytes32 priv);
 	event LogErr(address indexed to, uint value, bytes data, bytes returnData); // only used in tryCatch
-	// @TODO: recovery logs
+	event LogScheduled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, address indexed recoveryKey, uint nonce, uint time, Transaction[] txns);
+	// @TODO
+	//event LogCancelled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, address indexed recoveryKey, uint time);
+	event LogExecScheduled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, uint time);
 
 	// Transaction structure
 	// we handle replay protection separately by requiring (address(this), chainID, nonce) as part of the sig
@@ -102,11 +105,13 @@ contract AmbireAccount {
 		if (uint8(signature[signature.length - 1]) == 255) {
 			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner,) = abi.decode(signature, (RecoveryInfo, bytes, address, bytes1));
 			signerKey = recoverySigner;
-			require(privileges[signerKey] == keccak256(abi.encode(recoveryInfo)), 'RECOVERY_NOT_AUTHORIZED');
+			bytes32 recoveryInfoHash = keccak256(abi.encode(recoveryInfo));
+			require(privileges[signerKey] == recoveryInfoHash, 'RECOVERY_NOT_AUTHORIZED');
 			uint scheduled = scheduledRecoveries[hash];
 			if (scheduled != 0) {
 				require(block.timestamp > scheduled, 'RECOVERY_NOT_READY');
 				delete scheduledRecoveries[hash];
+				emit LogExecScheduled(hash, recoveryInfoHash, block.timestamp);
 			} else {
 				address recoveryKey = SignatureValidator.recoverAddr(hash, recoverySignature);
 				bool isIn;
@@ -115,6 +120,7 @@ contract AmbireAccount {
 				}
 				require(isIn, 'RECOVERY_NOT_AUTHORIZED');
 				scheduledRecoveries[hash] = block.timestamp + recoveryInfo.timelock;
+				emit LogScheduled(hash, recoveryInfoHash, recoveryKey, currentNonce, block.timestamp, txns);
 				return;
 			}
 		} else {
