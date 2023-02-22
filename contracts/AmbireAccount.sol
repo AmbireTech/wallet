@@ -31,25 +31,13 @@ contract AmbireAccount {
 
 	// This contract can accept ETH without calldata
 	receive() external payable {}
+	// To support EIP 721 and EIP 1155, we need to respond to those methods with their own method signature
+	function onERC721Received(address, address, uint256, bytes memory) external pure returns (bytes4) { return this.onERC721Received.selector; }
+	function onERC1155Received(address, address, uint256, uint256, bytes memory) external pure returns (bytes4) { return this.onERC1155Received.selector; }
+	function onERC1155BatchReceived(address, address, uint256[] memory, uint256[] memory, bytes memory) external pure returns (bytes4) {  return this.onERC1155BatchReceived.selector;  }
 
 	// This contract can accept ETH with calldata
-	// However, to support EIP 721 and EIP 1155, we need to respond to those methods with their own method signature
 	fallback() external payable {
-		// @TODO re-implement those as pure Solidity
-		bytes4 method = msg.sig;
-		if (
-			method == 0x150b7a02 // bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))
-				|| method == 0xf23a6e61 // bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))
-				|| method == 0xbc197c81 // bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))
-		) {
-			// Copy back the method
-			// solhint-disable-next-line no-inline-assembly
-			assembly {
-				calldatacopy(0, 0, 0x04)
-				return (0, 0x20)
-			}
-		}
-
 		// We store the fallback handler at this magic slot
 		address fallbackHandler = address(uint160(uint(privileges[address(0x6969)])));
 		if (fallbackHandler == address(0)) return;
