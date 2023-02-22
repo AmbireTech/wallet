@@ -35,6 +35,7 @@ contract AmbireAccount {
 	// This contract can accept ETH with calldata
 	// However, to support EIP 721 and EIP 1155, we need to respond to those methods with their own method signature
 	fallback() external payable {
+		// @TODO re-implement those as pure Solidity
 		bytes4 method = msg.sig;
 		if (
 			method == 0x150b7a02 // bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))
@@ -104,7 +105,6 @@ contract AmbireAccount {
 	function execute(Transaction[] calldata txns, bytes calldata signature)
 		external
 	{
-		require(txns.length > 0, 'MUST_PASS_TX');
 		uint currentNonce = nonce;
 		// NOTE: abi.encode is safer than abi.encodePacked in terms of collision safety
 		bytes32 hash = keccak256(abi.encode(address(this), block.chainid, currentNonce, txns));
@@ -113,30 +113,25 @@ contract AmbireAccount {
 
 		address signer = SignatureValidator.recoverAddrImpl(hash, signature, true);
 		require(privileges[signer] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
-		uint len = txns.length;
-		for (uint i=0; i<len; i++) {
-			Transaction memory txn = txns[i];
-			executeCall(txn.to, txn.value, txn.data);
-		}
+		executeBatch(txns);
 		// The actual anti-bricking mechanism - do not allow a signer to drop their own priviledges
 		require(privileges[signer] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
 	}
 
 	// no need for nonce management here cause we're not dealing with sigs
 	function executeBySender(Transaction[] calldata txns) external {
-		require(txns.length > 0, 'MUST_PASS_TX');
 		require(privileges[msg.sender] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
-		uint len = txns.length;
-		for (uint i=0; i<len; i++) {
-			Transaction memory txn = txns[i];
-			executeCall(txn.to, txn.value, txn.data);
-		}
+		executeBatch(txns);
 		// again, anti-bricking
 		require(privileges[msg.sender] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
 	}
 
 	function executeBySelf(Transaction[] calldata txns) external {
 		require(msg.sender == address(this), 'ONLY_IDENTITY_CAN_CALL');
+		executeBatch(txns);
+	}
+
+	function executeBatch(Transaction[] memory txns) internal {
 		require(txns.length > 0, 'MUST_PASS_TX');
 		uint len = txns.length;
 		for (uint i=0; i<len; i++) {
