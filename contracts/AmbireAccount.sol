@@ -110,12 +110,8 @@ contract AmbireAccount {
 			} else {
 				address recoveryKey = SignatureValidator.recoverAddr(hash, recoverySignature);
 				bool isIn;
-				uint len = recoveryInfo.keys.length;
-				for (uint i=0; i<len; i++) {
-					if (recoveryInfo.keys[i] == recoveryKey) {
-						isIn = true;
-						break;
-					}
+				for (uint i=0; i<recoveryInfo.keys.length; i++) {
+					if (recoveryInfo.keys[i] == recoveryKey) { isIn = true; break; }
 				}
 				require(isIn, 'RECOVERY_NOT_AUTHORIZED');
 				scheduledRecoveries[hash] = block.timestamp + recoveryInfo.timelock;
