@@ -4,6 +4,9 @@ pragma solidity ^0.8.7;
 import "./libs/SignatureValidatorV2.sol";
 
 contract AmbireAccount {
+	address private constant FALLBACK_HANDLER_SLOT = address(0x6969);
+
+	// Variables
 	mapping (address => bytes32) public privileges;
 	// The next allowed nonce
 	uint public nonce;
@@ -39,7 +42,7 @@ contract AmbireAccount {
 	// This contract can accept ETH with calldata
 	fallback() external payable {
 		// We store the fallback handler at this magic slot
-		address fallbackHandler = address(uint160(uint(privileges[address(0x6969)])));
+		address fallbackHandler = address(uint160(uint(privileges[FALLBACK_HANDLER_SLOT])));
 		if (fallbackHandler == address(0)) return;
 		assembly {
 			// We can use memory addr 0, since it's not occupied
