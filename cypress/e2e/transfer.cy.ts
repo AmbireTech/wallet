@@ -10,8 +10,7 @@ describe('Transfering funds', () => {
     cy.restoreLocalStorage();
   })
 
-  it('Sends funds via Quick account', () => {
-    cy.task('gmail:refresh-token')
+  it.only('Sends funds via Quick account', () => {
     cy.visit('/wallet/transfer')
 
     // Wait for the initial wallet load
@@ -38,17 +37,7 @@ describe('Transfering funds', () => {
     const today = new Date()
     const yesterday = (new Date()).setDate(today.getDate() - 1)
 
-    cy.task('gmail:get-messages', {
-      options: {
-        from: 'no-reply@ambire.com',
-        subject: 'Transaction confirmation code',
-        include_body: true,
-        after: yesterday
-      }
-    }).then(emails => {
-      const body = emails[0].body.text;
-      const code = body.match(/\d{6}/)[0]
-
+    cy.task('get-confirm-code').then(code => {
       cy.get('[data-testid="confirmationCode"]').type(code)
       cy.get('[data-testid="confirmSigning"]').click()
 

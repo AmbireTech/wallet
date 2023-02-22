@@ -7,8 +7,6 @@
 
 # testing
 /coverage
-credentials.json
-token.json
 cypress.env.json
 
 # production

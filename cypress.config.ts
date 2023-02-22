@@ -1,6 +1,5 @@
-import { defineConfig } from "cypress";
-import gmail_tester from "gmail-tester";
-import path from "path";
+import { defineConfig } from "cypress"
+import { ImapFlow } from 'imapflow'
 
 // Cypress doesn't work very well with cross-origin testing (different domains).
 // In order to test dApp connection, we need to get WalletConnect uri from the dApp page and pass it to the Wallet.
@@ -13,20 +12,43 @@ export default defineConfig({
     experimentalSessionAndOrigin: true,
     setupNodeEvents(on, config) {
       on("task", {
-        "gmail:get-messages": async args => {
-          return await gmail_tester.get_messages(
-              path.resolve(__dirname, "credentials.json"),
-              path.resolve(__dirname, "token.json"),
-              args.options
-          );
-        },
-        "gmail:refresh-token": async () => {
-          await gmail_tester.refresh_access_token(
-              path.resolve(__dirname, "credentials.json"),
-              path.resolve(__dirname, "token.json")
-          )
+        "get-confirm-code": async () => {
+          const client = new ImapFlow({
+            host: 'mail.devlabs.bg',
+            port: 993,
+            secure: true,
+            auth: {
+              user: 'ambire-tests@devlabs.bg',
+              pass: 'ClB95d!tr}v^'
+            },
+            logger: false
+          })
 
-          return null;
+          return new Promise( async resolve => {
+            // Wait until client connects and authorizes
+            await client.connect()
+
+            await client.mailboxOpen('INBOX')
+
+            // Get most recent email
+            const { content } = await client.download('*')
+
+            content.on('data', chunk => {
+              const body = chunk.toString()
+              // Search for a string starting with 'Please copy...' and ending with 'This code ...'.
+              const confirmMsg = body.match(/Please copy this confirmation code to sign it:([^]*?)This code is only valid for 3 minutes/)[0]
+              // Extract the code from the confirmation message string
+              const code = confirmMsg
+                  .replace('Please copy this confirmation code to sign it:', '')
+                  .replace('This code is only valid for 3 minutes', '')
+                  .replace(/(\r\n|\n|\r)/gm, '')
+
+              resolve(code)
+            })
+
+            // Log out and close connection
+            await client.logout()
+          })
         },
         setWcUrl: url => {
           return (wcUrl = url)

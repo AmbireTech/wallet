@@ -41,6 +41,6 @@ import "cypress-localstorage-commands";
 Cypress.Commands.add('login', () => {
     cy.setLocalStorage('selectedAcc', Cypress.env('SELECTED_ACCOUNT'));
     cy.setLocalStorage('accounts', JSON.stringify(Cypress.env('ACCOUNTS')));
-    cy.setLocalStorage('network', 'rinkeby');
+    cy.setLocalStorage('network', 'mumbai');
     cy.setLocalStorage('permissionsModalHidden', 'true');
 });
