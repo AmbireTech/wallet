@@ -97,12 +97,12 @@ contract AmbireAccount {
 		// We have to increment before execution cause it protects from reentrancies
 		nonce = currentNonce + 1;
 
-		address signer;
+		address signerKey;
 		// Recovery signature: allows to perform timelocked txns
 		if (uint8(signature[signature.length - 1]) == 255) {
 			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner,) = abi.decode(signature, (RecoveryInfo, bytes, address, bytes1));
-			signer = recoverySigner;
-			require(privileges[signer] == keccak256(abi.encode(recoveryInfo)), 'RECOVERY_NOT_AUTHORIZED');
+			signerKey = recoverySigner;
+			require(privileges[signerKey] == keccak256(abi.encode(recoveryInfo)), 'RECOVERY_NOT_AUTHORIZED');
 			uint scheduled = scheduledRecoveries[hash];
 			if (scheduled != 0) {
 				require(block.timestamp > scheduled, 'RECOVERY_NOT_READY');
@@ -118,13 +118,13 @@ contract AmbireAccount {
 				return;
 			}
 		} else {
-			signer = SignatureValidator.recoverAddrImpl(hash, signature, true);
-			require(privileges[signer] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
+			signerKey = SignatureValidator.recoverAddrImpl(hash, signature, true);
+			require(privileges[signerKey] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
 		}
 
 		executeBatch(txns);
-		// The actual anti-bricking mechanism - do not allow a signer to drop their own priviledges
-		require(privileges[signer] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
+		// The actual anti-bricking mechanism - do not allow a signerKey to drop their own priviledges
+		require(privileges[signerKey] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
 	}
 
 	// no need for nonce management here cause we're not dealing with sigs
