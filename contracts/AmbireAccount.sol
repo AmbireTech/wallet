@@ -15,8 +15,7 @@ contract AmbireAccount {
 	event LogPrivilegeChanged(address indexed addr, bytes32 priv);
 	event LogErr(address indexed to, uint value, bytes data, bytes returnData); // only used in tryCatch
 	event LogScheduled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, address indexed recoveryKey, uint nonce, uint time, Transaction[] txns);
-	// @TODO
-	//event LogCancelled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, address indexed recoveryKey, uint time);
+	event LogCancelled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, address indexed recoveryKey, uint time);
 	event LogExecScheduled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, uint time);
 
 	// Transaction structure
@@ -102,13 +101,15 @@ contract AmbireAccount {
 
 		address signerKey;
 		// Recovery signature: allows to perform timelocked txns
-		if (uint8(signature[signature.length - 1]) == 255) {
-			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner,) = abi.decode(signature, (RecoveryInfo, bytes, address, bytes1));
+		// @TODO: cleaner mode constants?
+		if (uint8(signature[signature.length - 1]) >= 254) {
+			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner, uint8 mode) = abi.decode(signature, (RecoveryInfo, bytes, address, uint8));
 			signerKey = recoverySigner;
+			bool isCancellation = mode == 255;
 			bytes32 recoveryInfoHash = keccak256(abi.encode(recoveryInfo));
 			require(privileges[signerKey] == recoveryInfoHash, 'RECOVERY_NOT_AUTHORIZED');
 			uint scheduled = scheduledRecoveries[hash];
-			if (scheduled != 0) {
+			if (scheduled != 0 && !isCancellation) {
 				require(block.timestamp > scheduled, 'RECOVERY_NOT_READY');
 				delete scheduledRecoveries[hash];
 				emit LogExecScheduled(hash, recoveryInfoHash, block.timestamp);
@@ -119,8 +120,13 @@ contract AmbireAccount {
 					if (recoveryInfo.keys[i] == recoveryKey) { isIn = true; break; }
 				}
 				require(isIn, 'RECOVERY_NOT_AUTHORIZED');
-				scheduledRecoveries[hash] = block.timestamp + recoveryInfo.timelock;
-				emit LogScheduled(hash, recoveryInfoHash, recoveryKey, currentNonce, block.timestamp, txns);
+				if (isCancellation) {
+					delete scheduledRecoveries[hash];
+					emit LogCancelled(hash, recoveryInfoHash, recoveryKey, block.timestamp);
+				} else {
+					scheduledRecoveries[hash] = block.timestamp + recoveryInfo.timelock;
+					emit LogScheduled(hash, recoveryInfoHash, recoveryKey, currentNonce, block.timestamp, txns);
+				}
 				return;
 			}
 		} else {
