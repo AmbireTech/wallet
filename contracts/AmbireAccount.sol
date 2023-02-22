@@ -8,12 +8,13 @@ contract AmbireAccount {
 
 	// Variables
 	mapping (address => bytes32) public privileges;
-	// The next allowed nonce
 	uint public nonce;
+	mapping (bytes32 => uint) public scheduledRecoveries;
 
 	// Events
 	event LogPrivilegeChanged(address indexed addr, bytes32 priv);
 	event LogErr(address indexed to, uint value, bytes data, bytes returnData); // only used in tryCatch
+	// @TODO: recovery logs
 
 	// Transaction structure
 	// we handle replay protection separately by requiring (address(this), chainID, nonce) as part of the sig
@@ -21,6 +22,10 @@ contract AmbireAccount {
 		address to;
 		uint value;
 		bytes data;
+	}
+	struct RecoveryInfo {
+		address[] keys;
+		uint timelock;
 	}
 
 	constructor(address[] memory addrs) {
@@ -92,8 +97,35 @@ contract AmbireAccount {
 		// We have to increment before execution cause it protects from reentrancies
 		nonce = currentNonce + 1;
 
-		address signer = SignatureValidator.recoverAddrImpl(hash, signature, true);
-		require(privileges[signer] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
+		address signer;
+		// Recovery signature: allows to perform timelocked txns
+		if (uint8(signature[signature.length - 1]) == 255) {
+			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner,) = abi.decode(signature, (RecoveryInfo, bytes, address, bytes1));
+			signer = recoverySigner;
+			require(privileges[signer] == keccak256(abi.encode(recoveryInfo)), 'RECOVERY_NOT_AUTHORIZED');
+			uint scheduled = scheduledRecoveries[hash];
+			if (scheduled != 0) {
+				require(block.timestamp > scheduled, 'RECOVERY_NOT_READY');
+				delete scheduledRecoveries[hash];
+			} else {
+				address recoveryKey = SignatureValidator.recoverAddr(hash, recoverySignature);
+				bool isIn;
+				uint len = recoveryInfo.keys.length;
+				for (uint i=0; i<len; i++) {
+					if (recoveryInfo.keys[i] == recoveryKey) {
+						isIn = true;
+						break;
+					}
+				}
+				require(isIn, 'RECOVERY_NOT_AUTHORIZED');
+				scheduledRecoveries[hash] = block.timestamp + recoveryInfo.timelock;
+				return;
+			}
+		} else {
+			signer = SignatureValidator.recoverAddrImpl(hash, signature, true);
+			require(privileges[signer] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
+		}
+
 		executeBatch(txns);
 		// The actual anti-bricking mechanism - do not allow a signer to drop their own priviledges
 		require(privileges[signer] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
