@@ -92,6 +92,13 @@ contract AmbireAccount {
 		(bool success, bytes memory returnData) = to.call{value: value, gas: gasleft()}(data);
 		if (!success) emit LogErr(to, value, data, returnData);
 	}
+	function tryCatchLimit(address to, uint value, bytes calldata data, uint gasLimit)
+		external
+	{
+		require(msg.sender == address(this), 'ONLY_IDENTITY_CAN_CALL');
+		(bool success, bytes memory returnData) = to.call{value: value, gas: gasLimit}(data);
+		if (!success) emit LogErr(to, value, data, returnData);
+	}
 
 	// WARNING: if the signature of this is changed, we have to change IdentityFactory
 	function execute(Transaction[] calldata txns, bytes calldata signature)
