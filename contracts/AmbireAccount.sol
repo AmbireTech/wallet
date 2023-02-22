@@ -66,16 +66,6 @@ contract AmbireAccount {
 		emit LogPrivilegeChanged(addr, priv);
 	}
 
-	// Useful for pre-EIP1559 flashbots
-	function tipMiner(uint amount)
-		external
-	{
-		require(msg.sender == address(this), 'ONLY_IDENTITY_CAN_CALL');
-		// See https://docs.flashbots.net/flashbots-auction/searchers/advanced/coinbase-payment/#managing-payments-to-coinbaseaddress-when-it-is-a-contract
-		// generally this contract is reentrancy proof cause of the nonce
-		executeCall(block.coinbase, amount, new bytes(0));
-	}
-
 	// Useful when we need to do multiple operations but ignore failures in some of them
 	function tryCatch(address to, uint value, bytes calldata data)
 		external
@@ -132,11 +122,6 @@ contract AmbireAccount {
 	}
 
 	// we shouldn't use address.call(), cause: https://github.com/ethereum/solidity/issues/2884
-	// copied from https://github.com/uport-project/uport-identity/blob/develop/contracts/Proxy.sol
-	// there's also
-	// https://github.com/gnosis/MultiSigWallet/commit/e1b25e8632ca28e9e9e09c81bd20bf33fdb405ce
-	// https://github.com/austintgriffith/bouncer-proxy/blob/master/BouncerProxy/BouncerProxy.sol
-	// https://github.com/gnosis/safe-contracts/blob/7e2eeb3328bb2ae85c36bc11ea6afc14baeb663c/contracts/base/Executor.sol
 	function executeCall(address to, uint256 value, bytes memory data)
 		internal
 	{
