@@ -269,6 +269,7 @@ const Send = ({
                     onInput={onAmountChange}
                     button="MAX"
                     onButtonClick={() => setMaxAmount()}
+                    testId="amount"
                 />
                 
                 { validationFormMgs.messages.amount && 
@@ -311,7 +312,7 @@ const Send = ({
                         />
                     {showSWAddressWarning ? <Checkbox
                         className={styles.binanceAddressWarning}
-                        label={<span>
+                        label={<span data-testid="binance-address-warning-label">
                             I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
                             These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
                             <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20} /></a>

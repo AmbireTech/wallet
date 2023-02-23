@@ -10,7 +10,7 @@ describe('Transfering funds', () => {
     cy.restoreLocalStorage();
   })
 
-  it.only('Sends funds via Quick account', () => {
+  it('Sends funds via Quick account', () => {
     cy.visit('/wallet/transfer')
 
     // Wait for the initial wallet load
@@ -22,7 +22,7 @@ describe('Transfering funds', () => {
     // If so (3+ txns) - the confirmation code is skipped and our test will fail.
     cy.get('[data-testid="recipient"]').type(Wallet.createRandom().address)
     cy.get('[data-testid="unknownAddressWarning"]').click({force: true})
-    cy.get('#binance-address-warning-label').click()
+    cy.get('[data-testid="binance-address-warning-label"]').click()
     cy.get('[data-testid="send"]').click()
 
     cy.wait(2000)
@@ -31,11 +31,8 @@ describe('Transfering funds', () => {
     cy.get('[data-testid="password"]').type(Cypress.env('ACCOUNT_PASSWORD'))
 
     // Wait for the email code.
-    // Later we can make a polling mechanism for checking the code, instead of waiting 5 seconds.
-    cy.wait(5000)
-
-    const today = new Date()
-    const yesterday = (new Date()).setDate(today.getDate() - 1)
+    // Later we can make a polling mechanism for checking the code, instead of waiting 10 seconds.
+    cy.wait(10000)
 
     cy.task('get-confirm-code').then(code => {
       cy.get('[data-testid="confirmationCode"]').type(code)

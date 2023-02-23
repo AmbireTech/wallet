@@ -17,18 +17,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: create-json
-        id: create-credentials-json
-        uses: jsdaniell/create-json@1.1.2
-        with:
-          name: "credentials.json"
-          json: ${{ secrets.CYPRESS_GOOGLE_APP_CREDENTIALS }}
-      - name: create-json
-        id: create-token-json
-        uses: jsdaniell/create-json@1.1.2
-        with:
-          name: "token.json"
-          json: ${{ secrets.CYPRESS_GOOGLE_APP_TOKEN }}
       # Set default Production env variables, such as Relayer, Velcro, etc.
       - run: cat .env.production >> $GITHUB_ENV
       # Install NPM dependencies, cache them correctly
@@ -44,8 +32,7 @@ jobs:
           CYPRESS_SELECTED_ACCOUNT: ${{ secrets.CYPRESS_SELECTED_ACCOUNT }}
           CYPRESS_ACCOUNTS: ${{ secrets.CYPRESS_ACCOUNTS }}
           CYPRESS_ACCOUNT_PASSWORD: ${{ secrets.CYPRESS_ACCOUNT_PASSWORD }}
-          CYPRESS_GOOGLE_APP_CREDENTIALS: ${{ secrets.CYPRESS_GOOGLE_APP_CREDENTIALS }}
-          CYPRESS_GOOGLE_APP_TOKEN: ${{ secrets.CYPRESS_GOOGLE_APP_TOKEN }}
+          CYPRESS_EMAIL_PASSWORD: ${{ secrets.CYPRESS_EMAIL_PASSWORD }}
       # Upload the test Screenshots (in case of failure) as Artifact
       - name: Artifacts - Screenshots
         uses: actions/upload-artifact@v2

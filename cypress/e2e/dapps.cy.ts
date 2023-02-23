@@ -19,7 +19,6 @@ describe('dApps', () => {
       cy.contains('Connect to WalletConnect').click()
       cy.contains('Copy to clipboard').click()
 
-
       // Before adding the wait time here, the WalletConnect uri was expiring in 3/10 cases,
       // and we couldn't establish a connection between the dApp and Wallet.
       // The assumption is that WalletConnect QR modal kills the uri in the case we close the dApp page very quickly.
@@ -45,8 +44,8 @@ describe('dApps', () => {
       cy.stub(win, 'prompt').returns(wcUrl)
     })
 
-    cy.get('#dApps > .content > .handle > svg').click()
-    cy.get('.heading > .buttonComponent').click()
+    cy.get('[data-testid="dapp-dropdown"]').click()
+    cy.get('[data-testid="connect-btn"]').click()
 
     cy.contains('Successfully connected to WalletConnect Example').should('be.visible')
   })
