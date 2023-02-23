@@ -16,7 +16,11 @@ jobs:
     environment: cypress
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@
+      - name: Set up Node version️
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
       # Set default Production env variables, such as Relayer, Velcro, etc.
       - run: cat .env.production >> $GITHUB_ENV
       # Install NPM dependencies, cache them correctly

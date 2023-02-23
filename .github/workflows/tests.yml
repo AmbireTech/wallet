@@ -1,6 +1,14 @@
 name: Tests (Component and Unit)
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - main
+      - development
+  pull_request:
+    branches:
+      - main
+      - development
 
 jobs:
   tests-run:
@@ -10,8 +18,8 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Install Node.js
-        uses: actions/setup-node@v1
+      - name: Set up Node version️
+        uses: actions/setup-node@v3
         with:
           node-version: 16.x
 
