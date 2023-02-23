@@ -16,7 +16,7 @@ jobs:
     environment: cypress
     steps:
       - name: Checkout
-        uses: actions/checkout@
+        uses: actions/checkout@v2
       - name: Set up Node version️
         uses: actions/setup-node@v3
         with:
