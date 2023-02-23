@@ -102,14 +102,16 @@ contract AmbireAccount {
 		address signerKey;
 		// Recovery signature: allows to perform timelocked txns
 		// @TODO: cleaner mode constants?
-		if (uint8(signature[signature.length - 1]) >= 254) {
-			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner, uint8 mode) = abi.decode(signature, (RecoveryInfo, bytes, address, uint8));
-			signerKey = recoverySigner;
-			bool isCancellation = mode == 255;
+		uint8 sigMode = uint8(signature[signature.length - 1]);
+		if (sigMode >= 254) {
+			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner, address postRecoverySigner,) = abi.decode(signature, (RecoveryInfo, bytes, address, address, uint8));
+			bool isCancellation = sigMode == 255;
 			bytes32 recoveryInfoHash = keccak256(abi.encode(recoveryInfo));
-			require(privileges[signerKey] == recoveryInfoHash, 'RECOVERY_NOT_AUTHORIZED');
+			require(privileges[recoverySigner] == recoveryInfoHash, 'RECOVERY_NOT_AUTHORIZED');
 			uint scheduled = scheduledRecoveries[hash];
 			if (scheduled != 0 && !isCancellation) {
+				// signerKey is set to postRecoverySigner so that the anti-bricking check can pass
+				signerKey = postRecoverySigner;
 				require(block.timestamp > scheduled, 'RECOVERY_NOT_READY');
 				delete scheduledRecoveries[hash];
 				emit LogExecScheduled(hash, recoveryInfoHash, block.timestamp);
