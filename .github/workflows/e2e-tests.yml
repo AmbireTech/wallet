@@ -16,7 +16,7 @@ jobs:
     environment: cypress
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up Node version️
         uses: actions/setup-node@v3
         with:
@@ -26,11 +26,11 @@ jobs:
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v4.1.0
+        uses: cypress-io/github-action@v5
         with:
-          build: npm run build
           start: npm start
           wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
           browser: chrome
         env:
           CYPRESS_SELECTED_ACCOUNT: ${{ secrets.CYPRESS_SELECTED_ACCOUNT }}
@@ -44,10 +44,10 @@ jobs:
         with:
           name: cypress-screenshots
           path: cypress/screenshots
-      # Upload the recorded test Video as Artifact
+      # Upload the recorded test Video (in case of failure) as Artifact
       - name: Artifacts - Videos
         uses: actions/upload-artifact@v2
-        if: always()
+        if: failure()
         with:
           name: cypress-videos
           path: cypress/videos
