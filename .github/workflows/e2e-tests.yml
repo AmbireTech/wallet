@@ -21,17 +21,16 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16.x
-      - name: Install NPM packages
-        run: npm ci
       # Set default Production env variables, such as Relayer, Velcro, etc.
       - run: cat .env.production >> $GITHUB_ENV
       # Install NPM dependencies, cache them correctly
       # and run all Cypress tests
       - name: Cypress run
-        uses: cypress-io/github-action@v4.1.0
+        uses: cypress-io/github-action@v5
         with:
           start: npm start
           wait-on: 'http://localhost:3000'
+          wait-on-timeout: 120
           browser: chrome
         env:
           CYPRESS_SELECTED_ACCOUNT: ${{ secrets.CYPRESS_SELECTED_ACCOUNT }}
