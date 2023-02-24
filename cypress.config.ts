@@ -35,20 +35,22 @@ export default defineConfig({
 
             await client.mailboxOpen('INBOX')
 
-            // Get most recent email
-            const { content } = await client.download('*')
+            // It returns all the emails' sequences (email index) matching the search criteria
+            const confirmEmails = await client.search({
+              from: 'no-reply@ambire.com',
+              subject: 'Transaction confirmation code',
+            })
+
+            // Most recent email is the email having the highest sequence
+            const mostRecentConfEmail = Math.max(...confirmEmails)
+
+            // Get most recent email content
+            const { content } = await client.download(mostRecentConfEmail)
 
             content.on('data', chunk => {
               const body = chunk.toString()
-              // Search for a string starting with 'Please copy...' and ending with 'This code ...'.
-              const confirmMsg = body.match(/Please copy this confirmation code to sign it:([^]*?)This code is only valid for 3 minutes/)[0]
-              // Extract the code from the confirmation message string
-              const code = confirmMsg
-                  .replace('Please copy this confirmation code to sign it:', '')
-                  .replace('This code is only valid for 3 minutes', '')
-                  .replace(/(\r\n|\n|\r)/gm, '')
-                  .replace(' ', '')
-                  .replace('.', '')
+              // Extract the code from the following msg 'Please copy this confirmation code to sign it: {code}.'
+              const code = body.match(/Please copy this confirmation code to sign it: (.*)\./)[1]
 
               resolve(code)
             })
