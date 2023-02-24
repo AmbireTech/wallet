@@ -15,12 +15,15 @@ library SignatureValidator {
 		EthSign,
 		SmartWallet,
 		Spoof,
+		Schnorr,
 		// WARNING: must always be last
 		LastUnused
 	}
 
 	// bytes4(keccak256("isValidSignature(bytes32,bytes)"))
 	bytes4 constant internal ERC1271_MAGICVALUE_BYTES32 = 0x1626ba7e;
+	// secp256k1 group order
+	uint256 constant internal Q = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
 
 	function recoverAddr(bytes32 hash, bytes memory sig) internal view returns (address) {
 		return recoverAddrImpl(hash, sig, false);
@@ -47,6 +50,20 @@ library SignatureValidator {
 			require(signer != address(0), "SV_ZERO_SIG");
 			return signer;
 		// {sig}{verifier}{mode}
+		} else if (mode == SignatureMode.Schnorr) {
+			// last uint8 is for mode
+			(bytes32 e, bytes32 px, bytes32 s, uint8 parity,) = abi.decode(sig, (bytes32, bytes32, bytes32, uint8, uint8));
+			// ecrecover = (m, v, r, s);
+			bytes32 sp = bytes32(Q - mulmod(uint256(s), uint256(px), Q));
+			bytes32 ep = bytes32(Q - mulmod(uint256(e), uint256(px), Q));
+
+			require(sp != 0);
+			// the ecrecover precompile implementation checks that the `r` and `s`
+			// inputs are non-zero (in this case, `px` and `ep`), thus we don't need to
+			// check if they're zero.
+			address R = ecrecover(sp, parity, px, ep);
+			require(R != address(0), "ecrecover failed");
+			return address(bytes20(keccak256(abi.encodePacked(R, uint8(parity), px, hash)))); // or e == keccak256(...)
 		} else if (mode == SignatureMode.SmartWallet) {
 			// 32 bytes for the addr, 1 byte for the type = 33
 			require(sig.length > 33, "SV_LEN_WALLET");
