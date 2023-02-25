@@ -65,11 +65,13 @@ library SignatureValidator {
 			// solium-disable-next-line indentation
 			require(nonceTimesGeneratorAddress != address(0) && signingPubKeyX > 0 && signature > 0 && hash > 0, "no zero inputs allowed");
 
-			uint256 msgChallenge = uint256( // "e"
-				keccak256(abi.encodePacked(
-					signingPubKeyX, pubKeyYParity, hash, nonceTimesGeneratorAddress
-				))
+			// solium-disable-next-line indentation
+			uint256 msgChallenge = // "e"
+				// solium-disable-next-line indentation
+				uint256(keccak256(abi.encodePacked(signingPubKeyX, pubKeyYParity,
+				hash, nonceTimesGeneratorAddress))
 			);
+
 			// Verify msgChallenge * signingPubKey + signature * generator ==
 			//        nonce * generator
 			//
