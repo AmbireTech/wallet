@@ -51,8 +51,12 @@ library SignatureValidator {
 			return signer;
 		// {sig}{verifier}{mode}
 		} else if (mode == SignatureMode.Schnorr) {
+  			// px := public key x-coord
+			// e := schnorr signature challenge
+  			// s := schnorr signature
+			// parity := public key y-coord parity (27 or 28)
 			// last uint8 is for mode
-			(bytes32 e, bytes32 px, bytes32 s, uint8 parity,) = abi.decode(sig, (bytes32, bytes32, bytes32, uint8, uint8));
+			(bytes32 px, bytes32 e, bytes32 s, uint8 parity,) = abi.decode(sig, (bytes32, bytes32, bytes32, uint8, uint8));
 			// ecrecover = (m, v, r, s);
 			bytes32 sp = bytes32(Q - mulmod(uint256(s), uint256(px), Q));
 			bytes32 ep = bytes32(Q - mulmod(uint256(e), uint256(px), Q));
@@ -63,7 +67,8 @@ library SignatureValidator {
 			// check if they're zero.
 			address R = ecrecover(sp, parity, px, ep);
 			require(R != address(0), "ecrecover failed");
-			return address(bytes20(keccak256(abi.encodePacked(R, uint8(parity), px, hash)))); // or e == keccak256(...)
+			return e == keccak256(abi.encodePacked(R, uint8(parity), px, hash)) ? // or e == keccak256(...)
+				address(bytes20(px)) : address(0); // NOTE: do we want to keccak px?
 		} else if (mode == SignatureMode.SmartWallet) {
 			// 32 bytes for the addr, 1 byte for the type = 33
 			require(sig.length > 33, "SV_LEN_WALLET");
