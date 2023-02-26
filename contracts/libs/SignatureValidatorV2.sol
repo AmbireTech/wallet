@@ -68,7 +68,7 @@ library SignatureValidator {
 			address R = ecrecover(sp, parity, px, ep);
 			require(R != address(0), "ecrecover failed");
 			return e == keccak256(abi.encodePacked(R, uint8(parity), px, hash)) ? // or e == keccak256(...)
-				address(bytes20(px)) : address(0); // NOTE: do we want to keccak px?
+				address(bytes20(keccak256(abi.encodePacked(px)))) : address(0);
 		} else if (mode == SignatureMode.SmartWallet) {
 			// 32 bytes for the addr, 1 byte for the type = 33
 			require(sig.length > 33, "SV_LEN_WALLET");
