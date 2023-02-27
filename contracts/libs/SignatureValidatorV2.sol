@@ -55,7 +55,7 @@ library SignatureValidator {
 			// e := schnorr signature challenge
   			// s := schnorr signature
 			// parity := public key y-coord parity (27 or 28)
-			// last uint8 is for mode
+			// last uint8 is for the Ambire sig mode - it's ignored
 			(bytes32 px, bytes32 e, bytes32 s, uint8 parity,) = abi.decode(sig, (bytes32, bytes32, bytes32, uint8, uint8));
 			// ecrecover = (m, v, r, s);
 			bytes32 sp = bytes32(Q - mulmod(uint256(s), uint256(px), Q));
@@ -68,7 +68,7 @@ library SignatureValidator {
 			address R = ecrecover(sp, parity, px, ep);
 			require(R != address(0), "ecrecover failed");
 			return e == keccak256(abi.encodePacked(R, uint8(parity), px, hash))
-				? address(bytes20(px))
+				? address(uint160(uint256(px)))
 				: address(0);
 		} else if (mode == SignatureMode.SmartWallet) {
 			// 32 bytes for the addr, 1 byte for the type = 33
