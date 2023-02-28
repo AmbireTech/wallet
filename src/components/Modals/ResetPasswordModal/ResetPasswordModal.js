@@ -1,15 +1,18 @@
-import './ResetPasswordModal.scss'
-
+import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
 import { Wallet } from 'ethers'
 import { id } from 'ethers/lib/utils'
-import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
-import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from 'components/common'
-import { MdOutlineHelpOutline } from 'react-icons/md'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
+
+import buildRecoveryBundle from 'lib/recoveryBundle'
+import { fetchPost } from 'lib/fetch'
+
 import { useModals } from 'hooks'
 import { useToasts } from 'hooks/toasts'
-import accountPresets from 'ambire-common/src/constants/accountPresets'
-import { fetchPost } from 'lib/fetch'
-import buildRecoveryBundle from 'lib/recoveryBundle'
+import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from 'components/common'
+
+import { MdOutlineHelpOutline } from 'react-icons/md'
+
+import styles from './ResetPasswordModal.module.scss'
 
 const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, showSendTxns }) => {
     const { hideModal } = useModals()
@@ -91,8 +94,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
         try {
             const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), oldPassword)
             const primaryKeyBackup = JSON.stringify(await wallet.encrypt(newPassword, accountPresets.encryptionOpts))
-            const sig = await wallet.signMessage(JSON.stringify({ primaryKeyBackup }))
-            const resp = await fetchPost(`${relayerURL}/identity/${account.id}/modify`, { primaryKeyBackup, sig })
+            const sig = await wallet.signMessage(JSON.stringify({ primaryKeyBackup, quickAccSigner: account.signer }))
+            const resp = await fetchPost(`${relayerURL}/identity/${account.id}/modify`, { primaryKeyBackup, quickAccSigner: account.signer, sig })
 
             if (resp.success) {
                 onAddAccount({ ...account, primaryKeyBackup })
@@ -183,28 +186,31 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
 
     useEffect(() => validateForm(), [isLoading, validateForm, oldPassword, newPassword, newPasswordConfirm])
 
-    const modalButtons = <>
-        <Button onClick={() => hideModal()}>Cancel</Button>
-        <Button primaryGradient={true} disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
-    </>
-
     return (
-        <Modal id="reset-password-modal" title="Reset Password" buttons={modalButtons}>
+        <Modal
+            className={styles.wrapper}
+            contentClassName={styles.content}
+            title="Reset Password" 
+            buttons={<>
+                <Button small clear onClick={() => hideModal()}>Cancel</Button>
+                <Button small primaryGradient disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
+            </>}
+        >
             {
                 isLoading ?
-                    <div id="loading-overlay">
+                    <div className={styles.loadingOverlay}>
                         <Loading/>
                     </div>
                     :
                     null
             }
-            <Radios radios={radios} onChange={onRadioChange} className='radios-container' />
+            <Radios radios={radios} onChange={onRadioChange} className={styles.radiosContainer} />
             {
                 type === 'change' ?
                     <form>
-                        <PasswordInput className='password-input' autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
-                        <PasswordInput className='password-input' peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <PasswordInput className='password-input' autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput className={styles.passwordInput} autocomplete="current-password" placeholder="Old Password" onInput={value => setOldPassword(value)}/>
+                        <PasswordInput className={styles.passwordInput} peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput className={styles.passwordInput} autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[0].map(({ label, ref }, i) => (
                                 <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
@@ -215,11 +221,11 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             {
                 type === 'reset' ?
                     <form>
-                        <PasswordInput className='password-input' peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
-                        <PasswordInput className='password-input' autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
+                        <PasswordInput className={styles.passwordInput} peakPassword autocomplete="new-password" placeholder="New Password" onInput={value => setNewPassword(value)}/>
+                        <PasswordInput className={styles.passwordInput} autocomplete="new-password" placeholder="Confirm New Password" onInput={value => setNewPasswordConfirm(value)}/>
                         {
                             checkboxes[1].map(({ label, ref }, i) => (
-                                <Checkbox labelClassName='checkbox-label' key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
+                                <Checkbox labelClassName={styles.checkboxLabel} key={`checkbox-${i}`} ref={ref} label={label} onChange={() => validateForm()}/>
                             ))
                         }
                     </form> : null
@@ -227,15 +233,15 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             <div id="warnings">
                 {
                     oldPasswordEmptyWarning ?
-                        <div className="warning">Old Password must be set</div> : null
+                        <div className={styles.warning}>Old Password must be set</div> : null
                 }
                 {
                     passwordsMustMatchWarning ?
-                        <div className="warning">Passwords must match</div> : null
+                        <div className={styles.warning}>Passwords must match</div> : null
                 }
                 {
                     passwordsLengthWarning ?
-                        <div className="warning">Password must be at least 8 characters</div> : null
+                        <div className={styles.warning}>Password must be at least 8 characters</div> : null
                 }
             </div>
         </Modal>

@@ -40,25 +40,24 @@ const PromoBanner = ({ data, togglePromo, minimized } = {}) => {
 
 	return (
     <div className={cn(styles.wrapper, {[styles.minimized]: minimized})} onClick={() => (!!id && minimized) ? togglePromo(id) : null}>
-      <div className={styles.bannerAndMinimize}>
-        <div className={cn(styles.banner, styles[type || 'info'], {[styles.expanded]: !minimized})}>
-          <div className={styles.iconAndBody}>
-            <div className={styles.iconWrapper}>{icon}</div>
-            <div className={styles.body}>
-              <h4 className={styles.title}>{title}</h4>
-              {text ? <p className={styles.text}>{split.map((x) => links[x] || elmojies[x] || x)}</p> : null}
-            </div>
-          </div>
-          {(period?.to && period?.timer) && (
-            <FinalCountdown endDateTime={period.to} />
-          )}
-          <div className={styles.minimizeIconWrapper} onClick={() => togglePromo(id)}>
-            <ChevronRightIcon className={styles.minimizeIcon} />
-          </div>
-        </div>
-        {!!id && minimized && <BellIcon />}
-      </div>
-      <div className={styles.shadow} />
+			<div className={styles.bannerWrapper}>
+				<div className={cn(styles.banner, styles[type || 'info'])}>
+					<div className={styles.iconAndBody}>
+						<div className={styles.iconWrapper}>{icon}</div>
+						<div className={styles.body}>
+							<h4 className={styles.title}>{title}</h4>
+							{text ? <p className={styles.text}>{split.map((x) => links[x] || elmojies[x] || x)}</p> : null}
+						</div>
+					</div>
+					{(period?.to && period?.timer) && (
+						<FinalCountdown endDateTime={period.to} />
+					)}
+					<div className={styles.minimizeIconWrapper} onClick={() => togglePromo(id)}>
+						<ChevronRightIcon className={styles.minimizeIcon} />
+					</div>
+				</div>
+			</div>
+			{!!id && <BellIcon className={cn(styles.bellIcon, {[styles.visible]: minimized})}/>}
     </div>
 	)
 }

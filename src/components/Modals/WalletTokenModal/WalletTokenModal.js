@@ -1,4 +1,3 @@
-import styles from './WalletTokenModal.module.scss'
 
 import { Button, Modal, ToolTip, RemoteLottie } from 'components/common'
 import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
@@ -7,6 +6,7 @@ import { useState } from 'react'
 import UnbondModal from './UnbondModal/UnbondModal'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import cn from 'classnames'
+import styles from './WalletTokenModal.module.scss'
 
 const MIN_ELIGIBLE_USD = 1000
 const MIN_CLAIMABLE_WALLET = 1000
@@ -53,8 +53,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
   const formatAmount = amount => amount ? amount.toFixed(6): 0
 
   return (
-    <Modal className={styles.wrapper} title='WALLET token distribution'>
-      <div className={styles.content}>
+    <Modal className={styles.wrapper} contentClassName={styles.content} title='WALLET token distribution'>
       <UnbondModal
         isVisible={isUnbondModalVisible}
         hideModal={hideUnbondModal}
@@ -197,7 +196,6 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
           </div>
         </div>
       )}
-      </div>
     </Modal>
   )
 }

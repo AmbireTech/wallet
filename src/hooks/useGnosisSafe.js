@@ -31,7 +31,9 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
   })
 
   const connect = useCallback(connectorOpts => {
-    verbose > 1 && console.log("GS: creating connector")
+    if (verbose > 0) {
+      console.log("GS: creating connector")
+    }
 
     try {
       connector.current = new GnosisConnector(
