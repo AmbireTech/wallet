@@ -23,25 +23,29 @@
     width: 100%;
     margin-bottom: 30px;
 
-    .checkbox {
-      gap: 10px;
-      align-items: center;
-      margin: 0;
-      
-      &Label {
-        flex: unset;
-        opacity: 0;
-        transition: .3s ease-in-out;
-      }
+    .makeDefault {
+      padding: 0 12px;
+      height: 34px;
+      border-radius: 12px;
+      background-color: transparent;
+      border: 2px solid $c-scampi;
+      font-family: inherit;
+      color: $c-scampi;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
 
-      &:hover {
-        .checkboxLabel {
-          opacity: 1;
-        }
+      &.default {
+        cursor: not-allowed;
+        color: $c-turquoise;
+        border-color: $c-turquoise;
       }
     }
 
     .close {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       width: 34px;
       height: 34px;
       padding: 0;
