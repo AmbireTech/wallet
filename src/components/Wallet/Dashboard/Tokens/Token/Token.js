@@ -55,7 +55,7 @@ const Token = ({
             <h3 className={styles.price}>
               { price }
             </h3>
-            <h3 className={styles.value}>
+            <h3 className={`${styles.value} ${(unconfirmed || pending  ? styles.valueEstimated : '')}`}>
               <span className={styles.symbol}>$</span>
               { value }
             </h3>
