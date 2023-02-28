@@ -5,7 +5,7 @@ export const rpcUrls = {
   // ethereum: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
   // ethereum: 'https://morning-wild-water.quiknode.pro/66011d2c6bdebc583cade5365086c8304c13366c/',
   // ethereum: 'https://mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
-  ethereum: 'https://eth-mainnet.alchemyapi.io/v2/e5Gr8LP_EH0SBPZiNCcC08OuEDrvgoYK',
+  ethereum: 'https://eth-mainnet.alchemyapi.io/v2/SBG22nxioGnHZCCFJ9C93SIN82e9TUHS',
   polygon: 'https://rpc.ankr.com/polygon', // temp - 5M per month and 170k per day
   avalanche: 'https://rpc.ankr.com/avalanche',
   'binance-smart-chain': 'https://bsc-dataseed1.defibit.io',
@@ -29,44 +29,90 @@ export const rpcUrls = {
 const rpcProviders: { [key in NetworkId]: any } = {}
 const CHECK_NET_INTERVAL_MS = 2000
 const TRIES_LEFT = 10
-const checkNetworkStatus = (ms: number, triesLeft: number) => {
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-      if (navigator.onLine) {
-        resolve(navigator.onLine)
-        clearInterval(interval)
-      } else if (triesLeft <= 1) {
-        reject(navigator.onLine)
-        clearInterval(interval)
-      }
-    }, ms)
-  })
+
+const wait = (ms: number) => {
+    return new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+            resolve()
+        }, ms)
+    })
 }
 
-const setProvider = async (_id: NetworkId) => {
-  const isOnline = await checkNetworkStatus(CHECK_NET_INTERVAL_MS, TRIES_LEFT)
-  if (!isOnline) return null
+async function retryRPCPromiseWithDelay<Promise>(
+    promise: any,
+    retriesLeft: number,
+    delay: number
+): Promise {
+    try {
+        const data = await promise
+        console.log('WORKS', data)
+        return data
+    } catch (error) {
+        if (retriesLeft === 0) {
+            return Promise.reject(error)
+        }
+
+        console.log(`${retriesLeft} retries left`)
+        await wait(delay)
+        return retryRPCPromiseWithDelay(promise, retriesLeft - 1, delay)
+    }
+}
+const handleTypeFunction = async(target: any, prop: string, args: any) => {
+  let result
+  if (prop === 'send' && args[0] === 'eth_chainId') {
+    result = `0x${target._network.chainId.toString(16)}`
+    return result
+  }
+
+  if (['getBlock', 'getBlockWithTransactions'].includes(prop)) {
+    args[0] = args[0] === -1 ? 'latest' : args[0]
+  }
+  
+  result = target[prop](...args)
+
+  if (typeof result === 'object' && typeof result.then === 'function') {
+    const res = await retryRPCPromiseWithDelay(result, 10, 2000)
+    return new Promise(resolve => resolve(res))
+  }
+
+  return result
+}
+
+const setProvider = (_id: NetworkId) => {
   // eslint-disable-next-line no-underscore-dangle
   const url = rpcUrls[_id]
   const network = networks.find(({ id }) => id === _id)
   if (!network) return null
 
   const { id: name, chainId, ensName } = network as NetworkType
-
+  let prov
   if (url.startsWith('wss:')) {
-    return new providers.WebSocketProvider(url, {
+    prov = new providers.WebSocketProvider(url, {
+      name: ensName || name,
+      chainId
+    })
+  } else {
+    prov = new providers.StaticJsonRpcProvider(url, {
       name: ensName || name,
       chainId
     })
   }
-  return new providers.StaticJsonRpcProvider(url, {
-    name: ensName || name,
-    chainId
+  
+  return new Proxy(prov, {
+    get: function (target: any, prop: string, receiver) {
+      if (typeof target[prop] === 'function') {
+        return async function() {
+          return await handleTypeFunction(target, prop, arguments)
+        }
+      }
+      
+      return target[prop]
+    }
   })
 }
 
 ;(Object.keys(NETWORKS) as Array<keyof typeof NETWORKS>).forEach(async(networkId: NetworkId) => {
-  rpcProviders[networkId] = await setProvider(networkId)
+  rpcProviders[networkId] = setProvider(networkId)
 })
 
 // Case specific RPCs:
