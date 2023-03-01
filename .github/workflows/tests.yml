@@ -1,14 +1,11 @@
 name: Tests (Component and Unit)
 
 on:
-  push:
-    branches:
-      - main
-      - development
   pull_request:
-    branches:
-      - main
-      - development
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 jobs:
   tests-run:
