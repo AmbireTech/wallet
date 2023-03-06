@@ -74,8 +74,8 @@ const Signers = ({
   }
 
   const onAddBtnClickedHandler = newSignerAddress => {
-    const signerIsAdded = signers?.map(s => s[0]?.toLowerCase()).includes(newSignerAddress.address.toLowerCase())
-    if (signerIsAdded) return addToast('You have already added this signer', { timeout: 30000, error: true })
+    const signerIsAdded = signers?.find(s => s[0]?.toLowerCase() === newSignerAddress.address.toLowerCase())
+    if (signerIsAdded) return addToast('You have already added this signer', { timeout: 3000, error: true })
     
     const txn = craftTransaction(
       newSignerAddress.address,
