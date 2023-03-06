@@ -47,6 +47,7 @@ const BundlePreview = ({ bundle, mined = false, feeAssets }) => {
           mined={mined}
           addressLabel={!!bundle.meta && bundle.meta.addressLabel}
           feeAssets={feeAssets}
+          meta={!!bundle.meta && bundle.meta}
         />
       ))}
       <Details

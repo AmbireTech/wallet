@@ -51,6 +51,7 @@ const TransactionPanel = ({
                   "Cannot modify transaction bundle while a signing procedure is pending"
                 }
                 addressLabel={!!bundle.meta && bundle.meta.addressLabel}
+                meta={!!bundle.meta && bundle.meta}
               />
             );
           })}
