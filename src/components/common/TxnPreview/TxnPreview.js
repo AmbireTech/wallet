@@ -20,14 +20,14 @@ function getNetworkSymbol(networkId) {
   return network ? network.nativeAssetSymbol : 'UNKNW'
 }
 
-export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null, feeAssets }) {
+export default function TxnPreview ({ txn, onDismiss, network, account, isFirstFailing, mined, disableExpand, disableDismiss, disableDismissLabel, addressLabel = null, feeAssets, meta = null }) {
   const { constants: { tokenList, humanizerInfo } } = useConstants()
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(humanizerInfo, txn[0])
   const isUnknown = !isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account)
   
   const networkDetails = networks.find(({ id }) => id === network)
-  const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true })
+  const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, { mined, extended: true, meta })
 
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
 

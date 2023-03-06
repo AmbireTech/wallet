@@ -1,4 +1,5 @@
 import { Interface } from 'ethers/lib/utils'
+import { BigNumber } from "ethers"
 import { token } from 'lib/humanReadableTransactions'
 import WalletStakingPoolABI from 'ambire-common/src/constants/abis/WalletStakingPoolABI.json'
 
@@ -50,9 +51,11 @@ const WALLETStakingPool = (humanizerInfo) => {
       }]]
       return [`Leave the WALLET Staking Pool`]
     },
-    [iface.getSighash('withdraw')]: (txn, network, { extended = false }) => {
-      const { shares } = iface.parseTransaction(txn).args
-      if (extended) return toExtended('Withdraw', 'from', token(humanizerInfo, txn.to, shares, true), txn)
+    [iface.getSighash('withdraw')]: (txn, network, opts) => {
+      const { shares } = iface.parseTransaction(txn).args      
+      const total = BigNumber.from(parseFloat(opts.meta.xWallet.walletValue))
+
+      if (opts.extended) return toExtended('Withdraw', 'from', token(humanizerInfo, '0x88800092ff476844f74dc2fc427974bbee2794ae', total, true), txn)
       return [`Withdraw ${token(humanizerInfo, txn.to, shares)} to ${STAKING_POOLS[txn.to].name}`]
     },
     [iface.getSighash('rageLeave')]: (txn, network, { extended = false }) => {
