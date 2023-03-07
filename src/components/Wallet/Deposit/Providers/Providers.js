@@ -5,7 +5,7 @@ import TRANSAK_LOGO from 'resources/payment-providers/transak.svg';
 // import KRIPTOMAT_LOGO from 'resources/payment-providers/kriptomat.svg';
 import GUARDARIAN_LOGO from 'resources/payment-providers/guardarian.svg'
 import SWAPPIN_LOGO from 'resources/payment-providers/swappin.svg'
-// import MOONPAY_LOGO from 'resources/payment-providers/moonpay.svg'
+import MOONPAY_LOGO from 'resources/payment-providers/moonpay.svg'
 
 import { Loading, Info } from 'components/common'
 import useProviders from './useProviders'
@@ -13,7 +13,7 @@ import useProviders from './useProviders'
 import styles from './Providers.module.scss'
 
 export default function Providers({ walletAddress, networkDetails, relayerURL, portfolio,  sellMode = false, selectedAsset }) {
-    const { openRampNetwork, openPayTrie, openTransak, openGuardarian, openSwappin, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio }) // openKriptomat
+    const { openRampNetwork, openPayTrie, openTransak, openGuardarian, openSwappin, openMoonpay, isLoading } = useProviders({ walletAddress, selectedNetwork: networkDetails.id, relayerURL, portfolio }) // openKriptomat
     const initMode = sellMode ? 'sell' : 'buy'
     const providers = [
         {
@@ -41,19 +41,18 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
         //     isBuyAvailable: true,
         //     onClick: () => openKriptomat()
         // },
-        // DISABLED: The Moonpay ready to use, but at this moment we will not release it.
-        // {
-        //     logo: MOONPAY_LOGO,
-        //     name: 'MoonPay',
-        //     type: 'Credit / Debit card',
-        //     fees: 'from 1%',
-        //     limits: 'up to 5000 EUR/day',
-        //     currencies: 'EUR, USD, GBP and many more',
-        //     networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
-        //     isSellAvailable: true,
-        //     isBuyAvailable: true,
-        //     onClick: () => openMoonpay(initMode, selectedAsset)
-        // },
+        {
+            logo: MOONPAY_LOGO,
+            name: 'MoonPay',
+            type: 'Credit / Debit card',
+            fees: 'from 1%',
+            limits: '',
+            currencies: 'EUR, USD, GBP and many more',
+            networks: ['ethereum'],
+            isSellAvailable: true,
+            isBuyAvailable: true,
+            onClick: () => openMoonpay(initMode, selectedAsset)
+        },
         {
             logo: RAMP_LOGO,
             name: 'Ramp',
@@ -125,15 +124,15 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
                                 { type }
                             </div>
                             {name !== 'Swappin' ? <>
-                                <div className={styles.fees}>
+                                { (fees !== '') && <div className={styles.fees}>
                                     Fees: { fees }
-                                </div>
-                                <div className={styles.limits}>
+                                </div> }
+                                { (limits !== '') && <div className={styles.limits}>
                                     Limits: { limits }
-                                </div>
-                                <div className={styles.currencies}>
+                                </div> }
+                                { (currencies !== '') && <div className={styles.currencies}>
                                     Currencies: { currencies }
-                                </div>
+                                </div> }
                             </>
                             :   <div className={styles.fees}>
                                     { description }

@@ -452,3 +452,12 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix Topbar accounts twitching when toggling private mode.
 * Fix Collectible name is missing from data and add fallback.
 * Change Dashboard text to trigger Add token modal - If you don't see a specific token that you own, please add it manually.
+
+### v0.6.2
+- 4337 implementation in Identity.sol
+- Fixed an issue where approvals didn't succeed in the official UI of Uniswap
+- improvement / tnxs preview for mobile devices
+- improvement / Add or Remove Token button if user don't have any assets on current chain.
+- fix / apply white list for sign message for EIP 1271 support 
+- fix / signed message and sigHash can be selectable for copy
+- redesign / promo banners

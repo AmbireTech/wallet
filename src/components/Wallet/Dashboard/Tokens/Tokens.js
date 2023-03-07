@@ -85,7 +85,11 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                 shouldShowPlaceholder ? <TokensPlaceholder
                     onClickAddToken={() => setAddOrHideTokenModal({isOpen: true, defaultSection: 'Add Token'})} 
                     onClickShowToken={() => setAddOrHideTokenModal({isOpen: true, defaultSection: 'Hide Token'})}
-                    footer={footer}
+                    footer={
+                        <AddOrHideButton className={styles.tokensPlaceholderAddOrHide} onClick={openAddOrHideTokenModal}>
+                            Add or Hide Token
+                        </AddOrHideButton>
+                    }
                 /> : null
             }
             <>
@@ -148,7 +152,7 @@ const Tokens = ({ portfolio, network, account, hidePrivateValue, userSorting, se
                                         balance={hidePrivateValue(formatFloatTokenAmount(Number(balance).toFixed((balance < 1) ? 8 : 4), true, decimals))}
                                         pending={pending}
                                         unconfirmed={unconfirmed}
-                                        value={hidePrivateValue(formatFloatTokenAmount(latest ? latest.balanceUSD : balanceUSD, true, decimals))}
+                                        value={hidePrivateValue(formatFloatTokenAmount(balanceUSD, true, decimals))}
                                         price={`$${price ? hidePrivateValue(price.toFixed((price < 1) ? 5 : 2)) : '-'}`}
                                         // Actions
                                         sendUrl={`/wallet/transfer/${address}`}

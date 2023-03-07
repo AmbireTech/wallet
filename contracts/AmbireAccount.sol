@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: agpl-3.0
-pragma solidity 0.8.7;
+pragma solidity ^0.8.7;
 
 import "./libs/SignatureValidatorV2.sol";
 
-contract Identity {
+contract AmbireAccount {
 	mapping (address => bytes32) public privileges;
 	// The next allowed nonce
 	uint public nonce;
@@ -48,6 +48,19 @@ contract Identity {
 				return (0, 0x20)
 			}
 		}
+
+		// We store the fallback handler at this magic slot
+		address fallbackHandler = address(uint160(uint(privileges[address(0x6969)])));
+		if (fallbackHandler == address(0)) return;
+		assembly {
+			// We can use memory addr 0, since it's not occupied
+			calldatacopy(0, 0, calldatasize())
+			let result := delegatecall(gas(), fallbackHandler, 0, calldatasize(), 0, 0)
+			let size := returndatasize()
+			returndatacopy(0, 0, size)
+			if eq(result, 0) { revert(0, size) }
+			return(0, size)
+		}
 	}
 
 	function setAddrPrivilege(address addr, bytes32 priv)
@@ -77,6 +90,13 @@ contract Identity {
 	{
 		require(msg.sender == address(this), 'ONLY_IDENTITY_CAN_CALL');
 		(bool success, bytes memory returnData) = to.call{value: value, gas: gasleft()}(data);
+		if (!success) emit LogErr(to, value, data, returnData);
+	}
+	function tryCatchLimit(address to, uint value, bytes calldata data, uint gasLimit)
+		external
+	{
+		require(msg.sender == address(this), 'ONLY_IDENTITY_CAN_CALL');
+		(bool success, bytes memory returnData) = to.call{value: value, gas: gasLimit}(data);
 		if (!success) emit LogErr(to, value, data, returnData);
 	}
 
