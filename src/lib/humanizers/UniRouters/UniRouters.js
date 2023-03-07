@@ -338,7 +338,8 @@ const uniUniversalRouter = (humanizerInfo) => {
             : toExtended('Swap up to', 'for', token(humanizerInfo, path[0], params.amountInMax, true), token(humanizerInfo, path[path.length - 1], params.amountOut, true), recipientText(humanizerInfo, txn.from, txn.from, true), deadlineText(deadline, opts.mined))
           )
         } else if (command === COMMANDS.PERMIT2_PERMIT) {
-          parsed.push([['Approved Uniswap to use the following token via signed message.']])
+          const humanizerMsg = 'Approved Uniswap to use the following token via signed message.'
+          parsed.push(!opts.extended ? [humanizerMsg] : [[humanizerMsg]])
         } else if (command === COMMANDS.UNWRAP_WETH) {
           const { inputsDetails } = COMMANDS_DESCRIPTIONS.UNWRAP_WETH
           const params = extractParams(inputsDetails, inputs[index])
