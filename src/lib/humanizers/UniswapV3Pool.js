@@ -56,14 +56,14 @@ const UniswapV3Pool = (humanizerInfo) => {
           ? [`Supplying ${token(humanizerInfo, params.token0, params.amount0Desired)} and ${token(humanizerInfo, params.token1, params.amount1Desired)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
           : toExtended('Supplying', 'and', token(humanizerInfo, params.token0, params.amount0Desired, true), token(humanizerInfo, params.token1, params.amount1Desired, true), recipientText(humanizerInfo, params.recipient, txn.from, true))
     },
-    [ifaceV3.getSighash('unwrapWETH9')]: (txn, network, opts = {}) => {
+    [ifaceV3.getSighash('unwrapWETH9')]: (txn, network, opts = { extended: true }) => {
       const [ amountMinimum, recipient ] = ifaceV3.parseTransaction(txn).args
      
       return !opts.extended
         ? [`Unwrap at least ${nativeToken(network, amountMinimum)}${recipientText(humanizerInfo,recipient, txn.from)}`]
         : toExtendedUnwrap('Unwrap at least', network, amountMinimum, recipientText(humanizerInfo,recipient, txn.from, true))
     },
-    [ifaceV3.getSighash('sweepToken')]: (txn, network, opts = {}) => {
+    [ifaceV3.getSighash('sweepToken')]: (txn, network, opts = { extended: true }) => {
       const [ tokenA, amountMinimum, recipient ] =  ifaceV3.parseTransaction(txn).args
       
       return !opts.extended
