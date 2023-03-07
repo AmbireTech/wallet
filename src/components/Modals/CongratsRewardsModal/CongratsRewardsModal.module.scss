@@ -1,5 +1,15 @@
 .wrapper {  
+    // position: relative;
     width: 510px;
+
+    .confettiAnimation {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 800px;
+        height: 700px;
+    }
 
     :global(.title-wrapper) {
         height: 34px !important;

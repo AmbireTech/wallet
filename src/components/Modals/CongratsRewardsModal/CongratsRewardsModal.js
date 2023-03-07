@@ -1,31 +1,24 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
+import Lottie from 'lottie-react'
 import { Button, Modal } from 'components/common'
-import { useReward } from 'react-rewards'
+import AnimationData from './assets/confetti-animation.json'
 
 import styles from './CongratsRewardsModal.module.scss'
 
 const CongratsRewardsModal = ({ pendingTokensTotal }) => {
-    const { reward, isAnimating } = useReward('rewardId', 'confetti')
     const [count, setCount] = useState(0)
     const initialRewardsCount = 3
-    const playReward = useCallback(() => {
-        return reward()
-    }, [reward])
 
     useEffect(() => {
-        if (count < initialRewardsCount && !isAnimating ) {
-            playReward()
+        if (count < initialRewardsCount ) {
             setCount(prevState => prevState += 1)
         }
-    }, [count, isAnimating, playReward])
-    
-    const modalButtons = <>
-        <Button disabled={isAnimating} onClick={reward}>More confetti</Button>
-    </>
+    }, [count])
 
     return (
         <>
-            <Modal className={styles.wrapper} title="Woo-hoo!" buttons={modalButtons}>
+            <Modal className={styles.wrapper} title="Woo-hoo!" buttons={<Button>More confetti</Button>}>
+                <Lottie className={styles.confettiAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
                 <div className={styles.innerContent}>
                     <div id="rewardId" className={styles.reward} />
                     <div className={styles.logo}></div>
