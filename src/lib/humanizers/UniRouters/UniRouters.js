@@ -344,7 +344,7 @@ const uniUniversalRouter = (humanizerInfo) => {
             ? [`Unwrap at least ${nativeToken(network, params.amountMin)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
             : toExtendedUnwrap('Unwrap at least', network, params.amountMin, recipientText(humanizerInfo, params.recipient, txn.from, true))
           )
-        }
+        } else parsed.push([`Unknown Uni V3 interaction`])
       })
       
       return parsed.flat()
