@@ -10,7 +10,7 @@ export const COMMANDS = {
     PAY_PORTION: '0x06',
     V2_SWAP_EXACT_IN: '0x08',
     V2_SWAP_EXACT_OUT: '0x09',
-    // PERMIT2_PERMIT: '0x0a',
+    PERMIT2_PERMIT: '0x0a',
     WRAP_ETH: '0x0b',
     UNWRAP_WETH: '0x0c',
     // PERMIT2_TRANSFER_FROM_BATCH: '0x0d',
@@ -104,7 +104,10 @@ export const COMMANDS_DESCRIPTIONS = {
             { type: 'bool', name: 'payerIsUser' },
         ]
     },
-    //PERMIT2_PERMIT:
+    PERMIT2_PERMIT: {
+        command: '0x0a',
+        inputsDetails: []
+    },
     WRAP_ETH: {
         command: '0x0b',
         inputsDetails: [
