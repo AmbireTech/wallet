@@ -75,9 +75,11 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     })
     
     useEffect(() => {
+      if (typeof congratsModalState !== 'object' || congratsModalState === null) return
+
         if (congratsModalState.length === 0) setCongratsModalState([{ account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
         if (congratsModalState.length && !congratsModalState.find(stateItem => stateItem.account === accountId)) {
-            setCongratsModalState([...congratsModalState, { account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
+            setCongratsModalState(prev => [...prev, { account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
         }
         
         if (congratsModalState.length) {
@@ -89,9 +91,11 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
     
     useEffect(() => {
+      if (typeof congratsModalState !== 'object' || congratsModalState === null) return
+
       if (parseFloat(pendingTokensTotal) > 0 && !currentCongratsModalState.isCongratsModalShown) {
         setCongratsModalState(prev => {
-          prev.map(item => {
+          const updated = prev.map(item => {
             if (item.account === accountId) {
               return { 
                 ...item, 
@@ -101,6 +105,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
               return item
             }
           })
+          return updated
         })
         handleCongratsRewardsModal()
       }
