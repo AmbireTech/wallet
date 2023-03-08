@@ -6,7 +6,7 @@ import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
 
-export default function DropDown({ children, id, icon, className, menuClassName, handleClassName, titleClassName, title, badge, open, closeOnClick, onChange, onOpen, onClose, style, isLoading }) {
+export default function DropDown({ children, id, icon, className, menuClassName, handleClassName, titleClassName, title, badge, open, closeOnClick, onChange, onOpen, onClose, style, isLoading, testId }) {
     const ref = useRef();
     const transitionRef = useRef();
     const [isMenuOpen, setMenuOpen] = useState(false);
@@ -18,7 +18,7 @@ export default function DropDown({ children, id, icon, className, menuClassName,
     useOnClickOutside(ref, () => setMenuOpen(false));
 
     return (
-        <div id={id} style={style} className={cn(styles.dropdown, className)} ref={ref}>
+        <div id={id} style={style} className={cn(styles.dropdown, className)} ref={ref} data-testid={testId}>
             <div className={styles.content} onClick={() => setMenuOpen(prev => !prev)}>
                 {
                     icon ?

@@ -207,7 +207,7 @@ function AppInner() {
     }
     setSentTxn(sentTxn => [...sentTxn, { confirmed: false, hash }])
     addToast((
-      <span>Transaction signed and sent successfully!
+      <span data-testid='txnSignedMsg'>Transaction signed and sent successfully!
         &nbsp;Click to view on block explorer.
       </span>
     ), { url: network.explorerUrl + '/tx/' + hash, timeout: 15000 })
