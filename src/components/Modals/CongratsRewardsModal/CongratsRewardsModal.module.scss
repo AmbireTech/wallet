@@ -1,41 +1,36 @@
+@import 'variables';
+
 .wrapper {  
-    // position: relative;
-    width: 510px;
+    gap: 0;
+
+    .content {
+        position: static;
+
+        .image {
+            display: block;
+            margin: 0 auto;
+        }
+        .title {
+            font-size: 1.5625rem;
+            font-weight: 400;
+            margin-bottom: 1.25rem;
+        }
+        .text {
+            font-size: .875rem;
+            margin-bottom: 1.25rem;
+        }
+        .link {
+            display: block;
+            margin-bottom: 3.75rem;
+            color: $c-heliotrope;
+        }
+    }
 
     .confettiAnimation {
         position: absolute;
         top: 0;
         left: 50%;
-        transform: translate(-50%, -50%);
-        width: 800px;
-        height: 700px;
+        transform: translate(-50%, -25%);
+        width: 50rem;
     }
-
-    :global(.title-wrapper) {
-        height: 34px !important;
-        width: 100%;
-        justify-content: center;
-    }
-
-    .innerContent {
-        padding-bottom: 0 40px;
-
-        .reward {
-            margin: auto;
-            width: 0;
-        }
-
-        .logo {
-            margin: auto;
-            width: 225px;
-            height: 230px;
-            background-image: url('/resources/wallet-token-congrats.png') !important;
-        }
-    }
-    
-    :global(.buttons) {
-        button {
-            flex: 0 1 100% !important;
-        }
-    }    
 }
