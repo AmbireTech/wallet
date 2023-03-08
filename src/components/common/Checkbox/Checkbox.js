@@ -2,9 +2,9 @@ import React, { forwardRef } from 'react'
 import cn from 'classnames'
 import styles from './Checkbox.module.scss'
 
-const Checkbox = forwardRef(({ checked, required, onChange, disabled, label, labelClassName, className }, ref) => {
+const Checkbox = forwardRef(({ checked, required, onChange, disabled, label, labelClassName, className, testId }, ref) => {
     const inputElem =  (
-        <input type="checkbox" checked={checked} required={required} onChange={onChange} ref={ref}/>
+        <input type="checkbox" checked={checked} required={required} onChange={onChange} ref={ref} data-testid={testId}/>
     )
 
     return label ? (<label className={cn(styles.checkboxContainer, {[styles.disabled]: disabled, [className]: className})}>
