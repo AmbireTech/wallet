@@ -17,6 +17,7 @@ const STAKING_POOLS = {
     name: 'WALLET Staking Pool (Test)'
   }
 }
+const WALLET_TOKEN_ADDR = '0x88800092ff476844f74dc2fc427974bbee2794ae'
 
 const toExtended = (action, word, token, txn) => {
   return [[
@@ -61,8 +62,7 @@ const WALLETStakingPool = (humanizerInfo) => {
       if (opts.meta && opts.meta.xWallet && opts.meta.xWallet.walletValue) {
           params = {
               amount: parseUnits(opts.meta.xWallet.walletValue, 18),
-              // Wallet token address
-              tokenAddr: '0x88800092ff476844f74dc2fc427974bbee2794ae',
+              tokenAddr: WALLET_TOKEN_ADDR,
           }
       }
 
