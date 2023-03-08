@@ -7,6 +7,15 @@ import { useEffect, useState, useCallback } from "react"
 
 import styles from './WalletTokenButton.module.scss'
 
+const getDefaultCongratsModalShownState = (currentClaimStatus, pendingTokensTotal) => {
+  return !(
+    currentClaimStatus && 
+    currentClaimStatus.claimed === 0 && 
+    currentClaimStatus.mintableVesting === 0 &&
+    pendingTokensTotal && pendingTokensTotal !== '...' && parseFloat(pendingTokensTotal)
+  )
+}
+
 const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, addRequest, relayerURL, useRelayerData }) => {
     const { isLoading: rewardsIsLoading, errMsg: rewardsErrMsg, lastUpdated: rewardsLastUpdated } = rewardsData
     const claimableWalletToken = useClaimableWalletToken({
@@ -59,7 +68,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry, accountId, rewardsData.rewards.accountAddr])
    
     const [currentCongratsModalState, setCurrentCongratsModalState] = useState(null) 
-    const defaultCongratsModalShownState = (currentClaimStatus && (currentClaimStatus.claimed === 0) && (currentClaimStatus.mintableVesting === 0) && (pendingTokensTotal && pendingTokensTotal !== '...' && parseFloat(pendingTokensTotal) === 0) ) ? false : true
+    const defaultCongratsModalShownState = getDefaultCongratsModalShownState(currentClaimStatus, pendingTokensTotal)
     const [congratsModalState, setCongratsModalState] = useLocalStorage({
         key: 'congratsModalState',
         defaultValue: []
@@ -67,29 +76,35 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     
     useEffect(() => {
         if (congratsModalState.length === 0) setCongratsModalState([{ account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
-        if (congratsModalState.length && !congratsModalState.find(i => i.account === accountId)) {
+        if (congratsModalState.length && !congratsModalState.find(stateItem => stateItem.account === accountId)) {
             setCongratsModalState([...congratsModalState, { account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
         }
         
         if (congratsModalState.length) {
-            const isFound = congratsModalState.find(i => i.account === accountId)
+            const isFound = congratsModalState.find(stateItem => stateItem.account === accountId)
             if (isFound) setCurrentCongratsModalState(isFound)
         }  
     }, [accountId, congratsModalState, defaultCongratsModalShownState, setCongratsModalState])
     
     const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
-    const showCongratsRewardsModal = useCallback(() => {
-        if (parseFloat(pendingTokensTotal) > 0 && !currentCongratsModalState.isCongratsModalShown) {
-            const updated = congratsModalState.map(item => (item.account === accountId) ? 
-            { ...item, isCongratsModalShown: true } : item)
-
-            setCongratsModalState(updated)
-            handleCongratsRewardsModal()
-        }
-        
-    }, [pendingTokensTotal, currentCongratsModalState, setCongratsModalState, congratsModalState, accountId, handleCongratsRewardsModal])
     
-    useEffect(() => showCongratsRewardsModal(), [showCongratsRewardsModal])
+    useEffect(() => {
+      if (parseFloat(pendingTokensTotal) > 0 && !currentCongratsModalState.isCongratsModalShown) {
+        setCongratsModalState(prev => {
+          prev.map(item => {
+            if (item.account === accountId) {
+              return { 
+                ...item, 
+                isCongratsModalShown: true 
+              }
+            } else {
+              return item
+            }
+          })
+        })
+        handleCongratsRewardsModal()
+      }
+    }, [pendingTokensTotal, currentCongratsModalState, setCongratsModalState, congratsModalState, accountId, handleCongratsRewardsModal])
     
     return (
         !relayerURL ?
