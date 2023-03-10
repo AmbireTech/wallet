@@ -31,7 +31,43 @@
 .wrapper {
 	position: relative;
 	width: 100%;
-	transition: 0.3s linear width;
+	
+	.bannerWrapper {
+		overflow: hidden;
+		position: relative;
+		z-index: 2;
+		border-radius: $border-radius;
+		transition: .1s ease-out transform;
+	}
+
+	&::after {
+		content: '';
+		transition: none;
+		position: absolute;
+		left: 50%;
+		z-index: 1;
+		bottom: 0;
+		width: 99%;
+		height: 2.5rem;
+		transform: translateX(-50%);
+		background: rgba($c-mirage, 0.8);
+		mix-blend-mode: multiply;
+		border-radius: .625rem;
+		filter: blur(.3125rem);
+		transition: .3s ease-out opacity;
+	}
+
+	.bellIcon {
+		position: absolute;
+		transition: 0.1s ease-out transform;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%) scale(1);
+
+		&:not(.visible) {
+			transform: translate(-50%, -50%) scale(0);
+		}
+	}
 
 	&.minimized {
 		overflow: hidden;
@@ -49,179 +85,151 @@
 			height: 1.5rem;
 		}
 
-		.shadow {
-			display: none;
+		&::after {
+			opacity: 0;
 		}
 
-		.bannerAndMinimize {
-      width: 1.5rem;
-      height: 1.5rem;
-      border-radius: 0;
+		.bannerWrapper {
+			transform: scale(0);
+			opacity: 0;
+		}
+	}
 
-			.banner {
-				padding: 0;
-        display: none;
+	.banner {
+		z-index: 2;
+		position: relative;
+		display: flex;
+		align-items: center;
+		flex-wrap: wrap;
+		gap: 1.25rem;
+		padding: .8125rem 1.25rem;
+		padding-left: .8125rem;
+		color: $c-martinique-light;
+		border-left: .4375rem solid;
+
+		&.success {
+			@include GetBannerStyle($success-background-color, $success-color);
+		}
+
+		&.warning {
+			@include GetBannerStyle($warning-background-color, $warning-color);
+		}
+
+		&.danger {
+			@include GetBannerStyle($danger-background-color, $danger-color);
+		}
+
+		&.info,
+		&.degenTip {
+			@include GetBannerStyle($info-background-color, $ambire-dark-blue);
+		}
+
+		.iconWrapper,
+		.minimizeIconWrapper {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 2.125rem;
+			height: 2.125rem;
+			border-radius: $border-radius;
+		}
+
+		.iconAndBody {
+			display: flex;
+			align-items: center;
+			gap: .9375rem;
+			flex: 1;
+
+			.iconWrapper {
+				font-size: 1.25rem;
+				border-width: .0625rem;
+				border-style: solid;
+			}
+
+			.body {
+				flex: 1;
+
+				.title {
+					margin: 0;
+					font-size: 1.25rem;
+				}
+
+				.text {
+					margin: 0;
+					font-size: 1rem;
+					text-align: left;
+				}
 			}
 		}
 	}
 
-	.bannerAndMinimize {
-		overflow: hidden;
-		border-radius: $border-radius;
+	.minimizeIconWrapper {
+		cursor: pointer;
 
+		.minimizeIcon {
+			width: .75rem;
+			height: .5625rem;
+		}
+	}
+}
+
+
+
+@include md-breakpoint {
+	.wrapper {
 		.banner {
-			z-index: 2;
-			position: relative;
-			display: flex;
-			align-items: center;
-      flex-wrap: wrap;
-			gap: 1.25rem;
-			padding: .8125rem 1.25rem;
-			padding-left: .8125rem;
-			color: $c-martinique-light;
-			border-left: 7px solid;
+			flex-direction: column;
+			align-items: flex-start;
+			padding: 1.25rem;
+			border-left: none;
+			border-top: .4375rem solid;
 
-			&.success {
-				@include GetBannerStyle($success-background-color, $success-color);
+			.iconAndBody {
+				align-self: flex-start;
+
+				.body {
+					.title {
+						font-size: 1.125rem;
+						margin-bottom: .625rem;
+					}
+					.text {
+						font-size: .875rem;
+					}
+				}
 			}
-
-			&.warning {
-				@include GetBannerStyle($warning-background-color, $warning-color);
-			}
-
-			&.danger {
-				@include GetBannerStyle($danger-background-color, $danger-color);
-			}
-
-			&.info,
-			&.degenTip {
-				@include GetBannerStyle($info-background-color, $ambire-dark-blue);
-			}
-
-			.iconWrapper,
-			.minimizeIconWrapper {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 2.125rem;
-				height: 2.125rem;
-				border-radius: $border-radius;
-			}
-
-      .iconAndBody {
-        display: flex;
-        align-items: center;
-        gap: .9375rem;
-        flex: 1;
-        
-        .iconWrapper {
-          font-size: 1.25rem;
-          border-width: 1px;
-          border-style: solid;
-        }
-  
-        .body {
-          flex: 1;
-  
-          .title {
-            margin: 0;
-            font-size: 1.25rem;
-          }
-  
-          .text {
-            margin: 0;
-            font-size: 1rem;
-            text-align: left;
-          }
-        }
-      }
-
 		}
 
 		.minimizeIconWrapper {
-			cursor: pointer;
-
-			.minimizeIcon {
-				width: .75rem;
-				height: .5625rem;
-			}
+			position: absolute;
+			bottom: 1.25rem;
+			right: 1.25rem;
 		}
 	}
-
-  .shadow {
-		position: absolute;
-		left: 50%;
-		z-index: 1;
-		bottom: 0;
-		width: 99%;
-		height: 2.5rem;
-		transform: translateX(-50%);
-		background: rgba($c-mirage, 0.8);
-		mix-blend-mode: multiply;
-		border-radius: .625rem;
-		filter: blur(.3125rem);
-	}
-}
-
-@include md-breakpoint {
-  .wrapper {
-    .bannerAndMinimize {
-      .banner {
-        flex-direction: column;
-        align-items: flex-start;
-        padding: 1.25rem;
-        border-left: none;
-        border-top: 7px solid;
-
-        .iconAndBody {
-          align-self: flex-start;
-
-          .body {
-            .title {
-              font-size: 1.125rem;
-              margin-bottom: .625rem;
-            }
-            .text {
-              font-size: .875rem;
-            }
-          }
-        }
-      }
-    }
-
-    .minimizeIconWrapper {
-      position: absolute;
-      bottom: 1.25rem;
-      right: 1.25rem;
-    }
-  }
 }
 
 @include xs-breakpoint {
-  .wrapper {
-    .bannerAndMinimize {
-      text-align: center;
+	.wrapper {
+		text-align: center;
 
-      .banner {
-        align-items: center;
+		.banner {
+			align-items: center;
 
-        .iconAndBody {
-          flex-direction: column;
+			.iconAndBody {
+				flex-direction: column;
 
-          .body {
-            .text {
-              text-align: center;
-            }
-          }
-        }
-      }
+				.body {
+					.text {
+						text-align: center;
+					}
+				}
+			}
+		}
 
-      .minimizeIconWrapper {
-        position: static;
-        top: unset;
-        right: unset;
-        align-self: flex-end;
-      }
-    }
-  }
+		.minimizeIconWrapper {
+			position: static;
+			top: unset;
+			right: unset;
+			align-self: flex-end;
+		}
+	}
 }

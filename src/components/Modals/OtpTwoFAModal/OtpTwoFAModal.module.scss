@@ -8,63 +8,71 @@
         }
         .timerResetMsg {
             text-align: center;
-            margin-bottom: 2.1875rem;
-            font-size: 1.25rem;
+            font-size: 1rem;
+            margin-bottom: 1.25rem;
             color: $danger-color;
-        }
-    
-        .imgWrapper {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 2.6875rem;
-            
-            img {
-                padding: .5rem;
-                background-color: $c-white;
-                width: 9.75rem;
-                border-radius: .75rem;
-            }
-        }
-    
-        .imgMsg {
-            text-align: center;
-            margin-bottom: 4.3125rem;
-    
-            div { 
-                color: $c-turquoise;
-            }
-    
-            .clickHere {
-                cursor: pointer;
-                color: rgba($c-titan-white, .8);
-                font-size: .875rem;
-    
-                button {
-                    background-color: transparent;
-                    border: none;
-                    cursor: pointer;
-                    color: $c-heliotrope;
-                    font-family: 'Poppins';
-                }
-            }
-        
-            .clickHere:hover {
-                opacity: 1;
-            }
         }
     
         form {
             display: flex;
             flex-direction: column;
-            gap: 40rem;
+            gap: 1.875rem;
             
             h4 {
                 margin: 0;
-                margin-bottom: .625rem;
+                margin-bottom: .9375rem;
                 font-size: 1rem;
                 font-weight: 400;
             }
             
+            .qrCode { 
+                .imgWrapper {
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: .625rem;
+                    
+                    img {
+                        padding: .5rem;
+                        background-color: $c-white;
+                        width: 9.75rem;
+                        border-radius: $border-radius;
+                    }
+                }
+                .downloadQrCodeButton {
+                    display: block;
+                    width: fit-content;
+                    margin: 0 auto;
+                    color: $warning-color;
+                }
+            
+                .imgMsg {
+                    text-align: center;
+            
+                    div { 
+                        color: $c-turquoise;
+                    }
+            
+                    .clickHere {
+                        display: inline;
+                        cursor: pointer;
+                        color: rgba($c-titan-white, .8);
+                        font-size: .875rem;
+            
+                        button, a {
+                            width: auto;
+                            background-color: transparent;
+                            border: none;
+                            cursor: pointer;
+                            color: $c-heliotrope;
+                            font-family: inherit;
+                        }
+                    }
+                
+                    .clickHere:hover {
+                        opacity: 1;
+                    }
+                }
+            }
     
             .emailWrapper {
                 .emailBody {
@@ -92,18 +100,19 @@
         max-height: 90vh;
         
         .content {
-            .imgWrapper {
-                margin-bottom: 1.25rem;
-                img {
-                    width: 8.75rem;
-                }
-            }
-    
-            .imgMsg {
-                margin-bottom: 2.625rem;
-            }
-    
             form {
+                gap: 1.25rem;
+
+                .qrCode {
+                    .imgWrapper {
+                        margin-bottom: .625rem;
+
+                        img {
+                            width: 8.75rem;
+                        }
+                    }
+                }
+
                 .emailWrapper {
                     .emailBody {
                         justify-content: flex-start;
@@ -115,14 +124,6 @@
     
                         .emailInput {
                             width: 100%;
-    
-                            input {
-                                height: 3.125rem;
-                            }
-                        }
-    
-                        button {
-                            height: 3.125rem;
                         }
                     }
                 }
@@ -130,16 +131,8 @@
                     & > div {
                         flex: unset!important;
                     }
-                    input {
-                        height: 3.125rem;
-                    }
                 }
             }
         }
-        
-        .button { 
-            height: 3.125rem!important;
-        }
     }
-
 }

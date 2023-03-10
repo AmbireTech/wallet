@@ -24,6 +24,7 @@ const isRelayerless = process.env.REACT_APP_RELAYRLESS === 'true' || !process.en
   rinkeby: '/resources/networks/redesign/rinkeby.svg',
   cronos: '/resources/networks/redesign/cronos.png',
   aurora: '/resources/networks/redesign/aurora.svg',
+  mumbai: '/resources/networks/redesign/polygon.svg'
 }
 export default networks
 	.map(network => ({ ...network, icon: networkIconsById[network.id]}))

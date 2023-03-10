@@ -62,10 +62,11 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
             badge={connections.length}
             onOpen={() => checkPermission()}
             isLoading={isClipboardGranted && isWcConnecting}
+            testId='dapp-dropdown'
         >
             <div className={styles.connectDapp}>
                 <div className={styles.heading}>
-                    <Button primaryGradient small className={styles.buttonClass} icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard}>
+                    <Button primaryGradient small className={styles.buttonClass} icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard} testId='connect-btn'>
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>

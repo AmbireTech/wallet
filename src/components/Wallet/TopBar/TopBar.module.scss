@@ -124,6 +124,12 @@
         padding: 1.25rem;
         align-items: center;
 
+        .container {
+            max-width: unset;
+            width: unset;
+            flex: 1;
+        }
+
         .mobileMenu {
             padding: 0;
             width: auto;

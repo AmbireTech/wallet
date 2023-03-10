@@ -4,7 +4,7 @@ import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { getName } from 'lib/humanReadableTransactions'
 import { useModals } from 'hooks'
 import useConstants from 'hooks/useConstants'
-import { Button, Checkbox } from 'components/common'
+import { Button } from 'components/common'
 import RemoveSignerModal from 'components/Modals/RemoveSignerModal/RemoveSignerModal'
 
 import { ReactComponent as CloseIcon } from 'resources/icons/close.svg'
@@ -41,7 +41,7 @@ const Signer = ({
   const isSelected = signerAddress === addr
   const canChangePassword = isQuickAcc && !hasPendingReset
 
-  const handleCheckboxClick = () => {
+  const handleButtonClick = () => {
     if (isSelected) {
       addToast('Signer is already default.', { error: true })
       return
@@ -54,14 +54,14 @@ const Signer = ({
     <div className={cn(styles.wrapper, {[styles.active]: isSelected})}>
       <div>
         <div className={styles.manage}>
-          <Checkbox
+          <button 
+            className={cn(styles.makeDefault, {[styles.default]: isSelected})} 
+            onClick={handleButtonClick}
             disabled={isSelected}
-            checked={isSelected}
-            onChange={handleCheckboxClick}
-            className={styles.checkbox}
-            labelClassName={styles.checkboxLabel}
-            label={isSelected ? "Already default" : "Set as default"}
-          />
+            title={isSelected ? 'Signer is already default.' : 'Make default'}
+          >
+            {isSelected ? "Default" : "Make default"}
+            </button>
           <button
             className={cn(styles.close, {[styles.disabled]: isSelected})}
             title={isSelected ? 'Cannot remove the currently used signer' : 'Remove Signer'}
