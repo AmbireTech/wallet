@@ -80,6 +80,8 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
       const shouldShowCongratsModal = getDefaultCongratsModalShownState(currentClaimStatus, pendingTokensTotal)
 
       setCongratsModalState((prev) => {
+        if (!Array.isArray(prev)) return []
+        
         const currentAcc = prev.find(accItem => accItem.account === accountId)
         
         if (!currentAcc) {
