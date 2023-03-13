@@ -353,8 +353,8 @@ const uniUniversalRouter = (humanizerInfo) => {
           const params = extractParams(inputsDetails, inputs[index])
           
           parsed.push(!opts.extended 
-            ? [`Unwrap at least ${nativeToken(network, params.amountMin)}${recipientText(humanizerInfo, params.recipient, txn.from)}`]
-            : toExtendedUnwrap('Unwrap at least', network, params.amountMin, recipientText(humanizerInfo, params.recipient, txn.from, true))
+            ? [`Unwrap at least ${nativeToken(network, params.amountMin)}`]
+            : toExtendedUnwrap('Unwrap at least', network, params.amountMin)
           )
         } else parsed.push([`Unknown Uni V3 interaction`])
       })
