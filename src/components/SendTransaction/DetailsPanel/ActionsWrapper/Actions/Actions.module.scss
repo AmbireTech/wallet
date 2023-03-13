@@ -73,7 +73,7 @@
   }
 }
 
-@media screen and (max-width: 1600px) {
+@include xxl-breakpoint {
   .wrapper {
     .quickAccSigningForm {
       .inputsContainer {

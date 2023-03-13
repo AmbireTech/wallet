@@ -7,7 +7,7 @@
 
     .placeholderText {
         text-align: center;
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        text-shadow: 0 0 .625rem rgba(0, 0, 0, 0.3);
 
         h2 {
             font-size: 1.375rem;
@@ -23,7 +23,7 @@
 }
 
 .blur {
-    filter: blur(15px);
+    filter: blur(.9375rem);
     opacity: .4;
     padding-bottom: 3.125rem;
 }

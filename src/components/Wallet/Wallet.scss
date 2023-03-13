@@ -44,11 +44,11 @@
         font-weight: bold;
         text-align: center;
         color: $c-titan-white;
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-shadow: 0 0 .625rem rgba(0, 0, 0, 0.2);
     }
 
     .private-content {
-        filter: blur(20px);
+        filter: blur(1.25rem);
     }
 }
 

@@ -30,7 +30,7 @@
       padding: .8125rem 1.25rem;
       padding-left: .8125rem;
       color: $c-martinique-light;
-      border-left: 7px solid;
+      border-left: .4375rem solid;
 
       &.alertIconNextToTitle {
         padding-left: 1.25rem;
@@ -107,7 +107,7 @@
   }
 }
 
-@media screen and (max-width: 100rem) {
+@include xl-breakpoint {
   .wrapper {
     .alertWrapper {
       .alert {
@@ -168,7 +168,7 @@
         padding: 1.25rem;
         gap: .625rem;
         border-left: 0;
-        border-top: 7px solid;
+        border-top: .4375rem solid;
         text-align: center;
 
         &.info, &.degenTip {
