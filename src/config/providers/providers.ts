@@ -6,7 +6,7 @@ export const rpcUrls = {
   // ethereum: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
   // ethereum: 'https://morning-wild-water.quiknode.pro/66011d2c6bdebc583cade5365086c8304c13366c/',
   // ethereum: 'https://mainnet.infura.io/v3/d4319c39c4df452286d8bf6d10de28ae',
-  ethereum: 'https://eth-mainnet.alchemyapi.io/v2/SBG22nxioGnHZCCFJ9C93SIN82e9TUHS',
+  ethereum: 'https://eth-mainnet.alchemyapi.io/v2/e5Gr8LP_EH0SBPZiNCcC08OuEDrvgoYK',
   polygon: 'https://rpc.ankr.com/polygon', // temp - 5M per month and 170k per day
   avalanche: 'https://rpc.ankr.com/avalanche',
   'binance-smart-chain': 'https://bsc-dataseed1.defibit.io',
