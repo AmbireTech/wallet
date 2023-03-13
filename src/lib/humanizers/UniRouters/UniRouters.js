@@ -337,7 +337,15 @@ const uniUniversalRouter = (humanizerInfo) => {
             ? [`Swap up to ${token(humanizerInfo, path[0], params.amountInMax)} for ${token(humanizerInfo, path[path.length - 1], params.amountOut)}${recipientText(humanizerInfo, txn.from, txn.from)}${deadlineText(deadline, opts.mined)}`]
             : toExtended('Swap up to', 'for', token(humanizerInfo, path[0], params.amountInMax, true), token(humanizerInfo, path[path.length - 1], params.amountOut, true), recipientText(humanizerInfo, txn.from, txn.from, true), deadlineText(deadline, opts.mined))
           )
-        } else if (command === COMMANDS.PERMIT2_PERMIT) {
+        } else if (command === COMMANDS.WRAP_ETH) {
+					const { inputsDetails } = COMMANDS_DESCRIPTIONS.WRAP_ETH
+					const params = extractParams(inputsDetails, inputs[index])
+
+					parsed.push(!opts.extended
+						? [`Wrap ${nativeToken(network, params.amountMin)}`]
+						: toExtendedUnwrap('Wrap', network, params.amountMin)
+					)
+				} else if (command === COMMANDS.PERMIT2_PERMIT) {
           const humanizerMsg = 'Approved Uniswap to use the following token via signed message.'
           parsed.push(!opts.extended ? [humanizerMsg] : [[humanizerMsg]])
         } else if (command === COMMANDS.UNWRAP_WETH) {
