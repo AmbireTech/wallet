@@ -8,63 +8,71 @@
         }
         .timerResetMsg {
             text-align: center;
-            margin-bottom: 35px;
-            font-size: 20px;
+            font-size: 16px;
+            margin-bottom: 20px;
             color: $danger-color;
-        }
-    
-        .imgWrapper {
-            display: flex;
-            justify-content: center;
-            margin-bottom: 43px;
-            
-            img {
-                padding: 8px;
-                background-color: $c-white;
-                width: 156px;
-                border-radius: 12px;
-            }
-        }
-    
-        .imgMsg {
-            text-align: center;
-            margin-bottom: 69px;
-    
-            div { 
-                color: $c-turquoise;
-            }
-    
-            .clickHere {
-                cursor: pointer;
-                color: rgba($c-titan-white, .8);
-                font-size: 14px;
-    
-                button {
-                    background-color: transparent;
-                    border: none;
-                    cursor: pointer;
-                    color: $c-heliotrope;
-                    font-family: 'Poppins';
-                }
-            }
-        
-            .clickHere:hover {
-                opacity: 1;
-            }
         }
     
         form {
             display: flex;
             flex-direction: column;
-            gap: 40px;
+            gap: 30px;
             
             h4 {
                 margin: 0;
-                margin-bottom: 10px;
+                margin-bottom: 15px;
                 font-size: 16px;
                 font-weight: 400;
             }
             
+            .qrCode { 
+                .imgWrapper {
+                    display: flex;
+                    justify-content: center;
+                    margin-bottom: 10px;
+                    
+                    img {
+                        padding: 8px;
+                        background-color: $c-white;
+                        width: 156px;
+                        border-radius: 12px;
+                    }
+                }
+                .downloadQrCodeButton {
+                    display: block;
+                    width: fit-content;
+                    margin: 0 auto;
+                    color: $warning-color;
+                }
+            
+                .imgMsg {
+                    text-align: center;
+            
+                    div { 
+                        color: $c-turquoise;
+                    }
+            
+                    .clickHere {
+                        display: inline;
+                        cursor: pointer;
+                        color: rgba($c-titan-white, .8);
+                        font-size: 14px;
+            
+                        button, a {
+                            width: auto;
+                            background-color: transparent;
+                            border: none;
+                            cursor: pointer;
+                            color: $c-heliotrope;
+                            font-family: inherit;
+                        }
+                    }
+                
+                    .clickHere:hover {
+                        opacity: 1;
+                    }
+                }
+            }
     
             .emailWrapper {
                 .emailBody {
@@ -92,18 +100,19 @@
         max-height: 90vh;
         
         .content {
-            .imgWrapper {
-                margin-bottom: 20px;
-                img {
-                    width: 140px;
-                }
-            }
-    
-            .imgMsg {
-                margin-bottom: 42px;
-            }
-    
             form {
+                gap: 20px;
+
+                .qrCode {
+                    .imgWrapper {
+                        margin-bottom: 10px;
+
+                        img {
+                            width: 140px;
+                        }
+                    }
+                }
+
                 .emailWrapper {
                     .emailBody {
                         justify-content: flex-start;
@@ -115,14 +124,6 @@
     
                         .emailInput {
                             width: 100%;
-    
-                            input {
-                                height: 50px;
-                            }
-                        }
-    
-                        button {
-                            height: 50px;
                         }
                     }
                 }
@@ -130,16 +131,8 @@
                     & > div {
                         flex: unset!important;
                     }
-                    input {
-                        height: 50px;
-                    }
                 }
             }
         }
-        
-        .button { 
-            height: 50px!important;
-        }
     }
-
 }

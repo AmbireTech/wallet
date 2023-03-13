@@ -269,6 +269,7 @@ const Send = ({
                     onInput={onAmountChange}
                     button="MAX"
                     onButtonClick={() => setMaxAmount()}
+                    testId="amount"
                 />
                 
                 { validationFormMgs.messages.amount && 
@@ -281,6 +282,7 @@ const Send = ({
                         onInput={setAddress}
                         className={styles.recipientInput}
                         inputContainerClass={styles.textInputContainer}
+                        testId="recipient"
                     />
                     <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
                         <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />
@@ -310,7 +312,7 @@ const Send = ({
                         />
                     {showSWAddressWarning ? <Checkbox
                         className={styles.binanceAddressWarning}
-                        label={<span>
+                        label={<span data-testid="binance-address-warning-label">
                             I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
                             These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
                             <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20} /></a>
@@ -323,7 +325,7 @@ const Send = ({
                 { validationFormMgs.messages.address && 
                     (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
             </div>
-            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
+            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton} testId="send">Send</Button>
         </div>) : <NoFundsPlaceholder/>
 }
 
