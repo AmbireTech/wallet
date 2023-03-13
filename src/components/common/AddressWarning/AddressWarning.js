@@ -26,6 +26,7 @@ const AddressWarning = ({ address, onChange, onAddNewAddress, isKnownAddress, uD
                             label="Confirm sending to a previously unknown address"
                             checked={confirmed}
                             onChange={({ target }) => setConfirmed(target.checked)}
+                            testId="unknownAddressWarning"
                         />
                         <div className={styles.button} onClick={onAddNewAddress}>
                             <MdOutlineAdd/>

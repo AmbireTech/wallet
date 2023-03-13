@@ -21,6 +21,7 @@ export const rpcUrls = {
   optimism: 'https://opt-mainnet.g.alchemy.com/v2/WoXh70mDVRLSfHao9i7ATeLKFmK7pHwm',
   andromeda: 'https://andromeda.metis.io/?owner=1088',
   rinkeby: 'https://rinkeby.infura.io/v3/4409badb714444b299066870e0f7b631',
+  mumbai: 'https://polygon-mumbai.g.alchemy.com/v2/rxBAvusV5YEzxEHX2LF9Y_jfIoRpIEGL',
   cronos: 'https://evm-cronos.crypto.org',
   aurora: 'https://mainnet.aurora.dev',
   'ethereum-pow': 'https://mainnet.ethereumpow.org'

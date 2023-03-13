@@ -115,7 +115,11 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
 
   // Fees with no discounts applied
   const baseFeeInFeeToken = feeInFeeToken + discountInFeeToken
-
+  // Removed 'xWallet' from accepted tokens list in case if someone still has it in its Gas Tank
+  const filteredRemFeeTokens = (estimation.remainingFeeTokenBalances || [])
+    .map(x => x.symbol)
+    .filter(x => x !== 'XWALLET')
+    .join(', ')
 
   return (<>
     {insufficientFee ? <Alert
@@ -123,7 +127,7 @@ export function FeeSelector({ disabled, signer, estimation, network, setEstimati
         type="danger"
         size="small"
         title="Insufficient balance for the fee."
-        text={`Accepted tokens: ${(estimation.remainingFeeTokenBalances || []).map(x => x.symbol).join(', ')}
+        text={`Accepted tokens: ${filteredRemFeeTokens}.
           ${ isGasTankEnabled ? 'Disable your Gas Tank to use the default fee tokens.' : ''}
         `}
         iconNextToTitle={true}
