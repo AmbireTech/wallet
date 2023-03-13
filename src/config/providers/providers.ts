@@ -1,3 +1,4 @@
+// @ts-nocheck
 import networks, { NetworkId, NETWORKS, NetworkType } from 'ambire-common/src/constants/networks'
 import { providers } from 'ethers'
 
@@ -45,14 +46,11 @@ async function retryRPCPromiseWithDelay<Promise>(
 ): Promise {
     try {
         const data = await promise
-        console.log('WORKS', data)
         return data
     } catch (error) {
         if (retriesLeft === 0) {
             return Promise.reject(error)
         }
-
-        console.log(`${retriesLeft} retries left`)
         await wait(delay)
         return retryRPCPromiseWithDelay(promise, retriesLeft - 1, delay)
     }
@@ -71,7 +69,7 @@ const handleTypeFunction = async(target: any, prop: string, args: any) => {
   result = target[prop](...args)
 
   if (typeof result === 'object' && typeof result.then === 'function') {
-    const res = await retryRPCPromiseWithDelay(result, 10, 2000)
+    const res = await retryRPCPromiseWithDelay(result, TRIES_LEFT, CHECK_NET_INTERVAL_MS)
     return new Promise(resolve => resolve(res))
   }
 
