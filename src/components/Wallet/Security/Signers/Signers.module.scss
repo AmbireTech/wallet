@@ -36,11 +36,7 @@
     }
 
     &:hover {
-      border-color: $c-turquoise;
-
-      .addSignerBody {
-        color: $c-turquoise;
-      }
+      background-color: $c-mirage;
     }
   }
 }
