@@ -1,9 +1,10 @@
+import { useEffect, useCallback } from "react"
+import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletToken'
+
 import { useLocalStorage } from 'hooks'
 import useDynamicModal from "hooks/useDynamicModals"
 import { Button, ToolTip, Loading } from "components/common"
 import { WalletTokenModal, CongratsRewardsModal } from "components/Modals"
-import useClaimableWalletToken from 'ambire-common/src/hooks/useClaimableWalletToken'
-import { useEffect, useState, useCallback } from "react"
 
 import styles from './WalletTokenButton.module.scss'
 
@@ -67,34 +68,25 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
         return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
     }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry, accountId, rewardsData.rewards.accountAddr])
    
-    const [currentCongratsModalState, setCurrentCongratsModalState] = useState(null) 
-    const defaultCongratsModalShownState = getDefaultCongratsModalShownState(currentClaimStatus, pendingTokensTotal)
-    const [congratsModalState, setCongratsModalState] = useLocalStorage({
+    // The comma is important here, it's used to ignore the first value of the array.
+    const [, setCongratsModalState] = useLocalStorage({
         key: 'congratsModalState',
         defaultValue: []
     })
     
-    useEffect(() => {
-      if (typeof congratsModalState !== 'object' || congratsModalState === null) return
-
-        if (congratsModalState.length === 0) setCongratsModalState([{ account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
-        if (congratsModalState.length && !congratsModalState.find(stateItem => stateItem.account === accountId)) {
-            setCongratsModalState(prev => [...prev, { account: accountId, isCongratsModalShown: defaultCongratsModalShownState }])
-        }
-        
-        if (congratsModalState.length) {
-            const isFound = congratsModalState.find(stateItem => stateItem.account === accountId)
-            if (isFound) setCurrentCongratsModalState(isFound)
-        }  
-    }, [accountId, congratsModalState, defaultCongratsModalShownState, setCongratsModalState])
-    
     const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
-    
-    useEffect(() => {
-      if (typeof congratsModalState !== 'object' || congratsModalState === null) return
 
-      if (parseFloat(pendingTokensTotal) > 0 && !currentCongratsModalState.isCongratsModalShown) {
-        setCongratsModalState(prev => {
+    useEffect(() => {
+      const shouldShowCongratsModal = getDefaultCongratsModalShownState(currentClaimStatus, pendingTokensTotal)
+
+      setCongratsModalState((prev) => {
+        const currentAcc = prev.find(accItem => accItem.account === accountId)
+        
+        if (!currentAcc) {
+          return [...prev, { account: accountId, isCongratsModalShown: shouldShowCongratsModal }]
+        }
+        if (parseFloat(pendingTokensTotal) > 0 && currentAcc && !currentAcc.isCongratsModalShown) {
+          handleCongratsRewardsModal()
           const updated = prev.map(item => {
             if (item.account === accountId) {
               return { 
@@ -106,10 +98,11 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
             }
           })
           return updated
-        })
-        handleCongratsRewardsModal()
-      }
-    }, [pendingTokensTotal, currentCongratsModalState, setCongratsModalState, congratsModalState, accountId, handleCongratsRewardsModal])
+        }
+
+        return prev
+      })
+    }, [accountId, currentClaimStatus, handleCongratsRewardsModal, pendingTokensTotal, setCongratsModalState])
     
     return (
         !relayerURL ?
