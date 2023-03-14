@@ -37,21 +37,21 @@ const RecipientInput = ({
           testId="recipient"
           className={styles.input}
         />
+				<ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
+					<img
+						src={UDLogoImage}
+						alt="udaddress-logo"
+						className={cn(styles.inputLogo, {
+							[styles.active]: uDAddress
+						})}
+					/>
+				</ToolTip>
         <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
           <img
             src={ENSLogoImage}
             alt="ens-logo"
             className={cn(styles.inputLogo, {
               [styles.active]: ensAddress
-            })}
-          />
-        </ToolTip>
-        <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-          <img
-            src={UDLogoImage}
-            alt="udaddress-logo"
-            className={cn(styles.inputLogo, {
-              [styles.active]: uDAddress
             })}
           />
         </ToolTip>
