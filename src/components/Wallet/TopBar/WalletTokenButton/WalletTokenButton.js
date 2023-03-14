@@ -8,8 +8,8 @@ import { WalletTokenModal, CongratsRewardsModal } from "components/Modals"
 
 import styles from './WalletTokenButton.module.scss'
 
-const getDefaultCongratsModalShownState = (currentClaimStatus, pendingTokensTotal) => {
-  return !(
+const checkShouldShowCongratsModal = (currentClaimStatus, pendingTokensTotal) => {
+  return (
     currentClaimStatus && 
     currentClaimStatus.claimed === 0 && 
     currentClaimStatus.mintableVesting === 0 &&
@@ -69,42 +69,27 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry, accountId, rewardsData.rewards.accountAddr])
    
     // The comma is important here, it's used to ignore the first value of the array.
-    const [, setCongratsModalState] = useLocalStorage({
-        key: 'congratsModalState',
+    const [, setCongratsModalShownTo] = useLocalStorage({
+        key: 'congratsModalShownTo',
         defaultValue: []
     })
     
-    const handleCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
+    const showCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
 
     useEffect(() => {
-      const shouldShowCongratsModal = getDefaultCongratsModalShownState(currentClaimStatus, pendingTokensTotal)
+      const shouldShowCongratsModal = checkShouldShowCongratsModal(currentClaimStatus, pendingTokensTotal)
 
-      setCongratsModalState((prev) => {
-        if (!Array.isArray(prev)) return []
-        
-        const currentAcc = prev.find(accItem => accItem.account === accountId)
-        
-        if (!currentAcc) {
-          return [...prev, { account: accountId, isCongratsModalShown: shouldShowCongratsModal }]
-        }
-        if (parseFloat(pendingTokensTotal) > 0 && currentAcc && !currentAcc.isCongratsModalShown) {
-          handleCongratsRewardsModal()
-          const updated = prev.map(item => {
-            if (item.account === accountId) {
-              return { 
-                ...item, 
-                isCongratsModalShown: true 
-              }
-            } else {
-              return item
-            }
-          })
-          return updated
+      if (!shouldShowCongratsModal) return
+
+      setCongratsModalShownTo(prev => {
+        if (!prev.includes(accountId)) {
+          showCongratsRewardsModal()
+          return prev.concat(accountId)
         }
 
         return prev
       })
-    }, [accountId, currentClaimStatus, handleCongratsRewardsModal, pendingTokensTotal, setCongratsModalState])
+    }, [accountId, currentClaimStatus, showCongratsRewardsModal, pendingTokensTotal, setCongratsModalShownTo])
     
     return (
         !relayerURL ?
