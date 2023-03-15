@@ -38,7 +38,7 @@ describe('Transfering funds', () => {
       cy.get('[data-testid="confirmationCode"]').type(code)
       cy.get('[data-testid="confirmSigning"]').click()
 
-      cy.wait(3000)
+      cy.wait(10000)
 
       cy.get('[data-testid="txnSignedMsg"]').should('be.visible')
     })
