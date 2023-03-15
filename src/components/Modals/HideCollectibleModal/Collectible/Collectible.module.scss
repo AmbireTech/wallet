@@ -20,7 +20,7 @@
           width: 2.125rem;
           height: 2.125rem;
           background-color: rgba($c-titan-white, 0.04);
-          border-radius: .75rem;
+          border-radius: $border-radius;
           display: flex;
           align-items: center;
           justify-content: center;
@@ -29,7 +29,7 @@
       .icon {
           width: 1.5rem;
           height: 1.5rem;
-          border-radius: .75rem;
+          border-radius: $border-radius;
       }
   
       .name {
