@@ -4,6 +4,7 @@ import { Panel } from 'components/common'
 import QRCode from 'qrcode'
 import TextInput from 'components/common/TextInput/TextInput'
 import Providers from './Providers/Providers'
+import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 
 import networks from 'consts/networks'
 
@@ -28,64 +29,66 @@ export default function Deposit({ selectedAcc, selectedNetwork, accounts, addReq
     useEffect(() => generateQRCode(), [generateQRCode])
 
     return (
-        <section className={styles.deposit}>
-            <Panel className={styles.panel}>
-                <div className={styles.heading}>
-                     <div className={styles.title}>
-                        Deposit Tokens
+        <OfflineWrapper>
+            <section className={styles.deposit}>
+                <Panel className={styles.panel}>
+                    <div className={styles.heading}>
+                        <div className={styles.title}>
+                            Deposit Tokens
+                        </div>
+                        <div className={styles.subtitle}>
+                            Direct Deposit
+                        </div>
                     </div>
-                    <div className={styles.subtitle}>
-                        Direct Deposit
+                    <div className={styles.description}>
+                        <TextInput 
+                            className={styles.depositAddress}
+                            inputContainerClass={styles.inputClass}
+                            label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} 
+                            value={selectedAcc} 
+                            copy
+                        />
+                        <img className={styles.qrCode} alt="QR Code" src={qrCodeUrl}></img>
                     </div>
-                </div>
-                <div className={styles.description}>
-                    <TextInput 
-                        className={styles.depositAddress}
-                        inputContainerClass={styles.inputClass}
-                        label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`} 
-                        value={selectedAcc} 
-                        copy
+                    <div className={styles.networks}>
+                        <label className={styles.networksTitle}>Following networks supported on this address:</label>
+                        <div className={styles.list}>
+                            {
+                                networks.filter(n => !n.hide).map(({ id, icon, name }) => (
+                                    <div className={styles.network} key={id}>
+                                        <div className={styles.icon} style={{backgroundImage: `url(${icon})`}}></div>
+                                        <div className={styles.name}>{ id === 'binance-smart-chain' ? 'BSC' : name }</div>
+                                    </div>
+                                ))
+                            }
+                        </div>
+                    </div>
+                    <AssetsMigrationBanner
+                        selectedNetwork={selectedNetwork}
+                        selectedAccount={selectedAcc}
+                        accounts={accounts}
+                        addRequest={addRequest}
+                        linkMargin={true}
+                        relayerURL={relayerURL}
+                        portfolio={portfolio}
+                        useStorage={useStorage}
                     />
-                    <img className={styles.qrCode} alt="QR Code" src={qrCodeUrl}></img>
-                </div>
-                <div className={styles.networks}>
-                    <label className={styles.networksTitle}>Following networks supported on this address:</label>
-                    <div className={styles.list}>
-                        {
-                            networks.filter(n => !n.hide).map(({ id, icon, name }) => (
-                                <div className={styles.network} key={id}>
-                                    <div className={styles.icon} style={{backgroundImage: `url(${icon})`}}></div>
-                                    <div className={styles.name}>{ id === 'binance-smart-chain' ? 'BSC' : name }</div>
-                                </div>
-                            ))
-                        }
+                </Panel>
+                <Panel className={styles.panel}>
+                    <div className={styles.heading}>
+                        <div className={styles.title}>
+                            Fiat Currency
+                        </div>
+                        <div className={styles.subtitle}>
+                            Credit Card & Bank Transfer
+                        </div>
                     </div>
-                </div>
-                <AssetsMigrationBanner
-                    selectedNetwork={selectedNetwork}
-                    selectedAccount={selectedAcc}
-                    accounts={accounts}
-                    addRequest={addRequest}
-                    linkMargin={true}
-                    relayerURL={relayerURL}
-                    portfolio={portfolio}
-                    useStorage={useStorage}
-                />
-            </Panel>
-            <Panel className={styles.panel}>
-                <div className={styles.heading}>
-                    <div className={styles.title}>
-                        Fiat Currency
+                    <div className={cn(styles.description, styles.margin)}>
+                        Deposit with credit card to your account directly using one of our partners
                     </div>
-                    <div className={styles.subtitle}>
-                        Credit Card & Bank Transfer
-                    </div>
-                </div>
-                <div className={cn(styles.description, styles.margin)}>
-                    Deposit with credit card to your account directly using one of our partners
-                </div>
-                <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL} portfolio={portfolio}/>
-            </Panel>
-        </section>
+                    <Providers walletAddress={selectedAcc} networkDetails={networkDetails} relayerURL={relayerURL} portfolio={portfolio}/>
+                </Panel>
+            </section>
+        </OfflineWrapper>
     )
 }

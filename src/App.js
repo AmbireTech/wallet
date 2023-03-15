@@ -12,7 +12,6 @@ import {
 import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
 import ToastProvider from './components/ToastProvider/ToastProvider'
 import ModalProvider from './components/ModalProvider/ModalProvider'
-import OfflineProvider from './components/OfflineProvider/OfflineProvider'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useWalletConnect from './hooks/useWalletConnect'
@@ -382,17 +381,15 @@ function AppInner() {
 export default function App() {
   return (
     <Router>
-      <OfflineProvider>
-        <ConstantsProvider>
-          <ThemeProvider>
-            <ToastProvider>
-              <ModalProvider>
-                <AppInner/>
-              </ModalProvider>
-            </ToastProvider>
-          </ThemeProvider>
-        </ConstantsProvider>
-      </OfflineProvider>
+      <ConstantsProvider>
+        <ThemeProvider>
+          <ToastProvider>
+            <ModalProvider>
+              <AppInner/>
+            </ModalProvider>
+          </ToastProvider>
+        </ThemeProvider>
+      </ConstantsProvider>
     </Router>
   )
 }

@@ -1,0 +1,20 @@
+@import 'variables.scss';
+
+.wrapper {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: $info-color;
+
+    svg { 
+        width: 6em !important;
+        height: 6em !important;
+    }
+
+    .text { 
+        font-size: 22px;
+    }
+}

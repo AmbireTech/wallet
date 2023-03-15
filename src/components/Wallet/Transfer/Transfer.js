@@ -10,6 +10,7 @@ import { Panel, Tabs } from 'components/common'
 import Providers from 'components/Wallet/Deposit/Providers/Providers'
 import Send from './Send/Send'
 import Addresses from './Addresses/Addresses'
+import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 
 import styles from './Transfer.module.scss'
 
@@ -47,14 +48,16 @@ const Transfer = (props) => {
                 }
                 secondTab={
                     <div className={styles.sell}>
-                        <Providers 
-                            walletAddress={selectedAcc} 
-                            networkDetails={selectedNetwork} 
-                            relayerURL={relayerURL} 
-                            portfolio={portfolio} 
-                            sellMode={true} 
-                            selectedAsset={selectedAsset ? selectedAsset : null}
-                        />
+                        <OfflineWrapper>
+                            <Providers 
+                                walletAddress={selectedAcc} 
+                                networkDetails={selectedNetwork} 
+                                relayerURL={relayerURL} 
+                                portfolio={portfolio} 
+                                sellMode={true} 
+                                selectedAsset={selectedAsset ? selectedAsset : null}
+                            />
+                        </OfflineWrapper>
                     </div>
                 }
                 panelClassName={styles.panel}

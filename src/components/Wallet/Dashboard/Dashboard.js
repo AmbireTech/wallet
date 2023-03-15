@@ -15,7 +15,7 @@ import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNot
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
 import OfflineMsg from './OfflineMsg/OfflineMsg'
-import { useOfflineStatus } from 'components/OfflineProvider/OfflineProvider'
+import { useOfflineStatus } from 'components/OfflineWrapper/OfflineWrapper'
 
 import styles from './Dashboard.module.scss'
 

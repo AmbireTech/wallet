@@ -1,5 +1,5 @@
 import useRelayerDataCommon from 'ambire-common/src/hooks/useRelayerData'
-import { useOfflineStatus } from 'components/OfflineProvider/OfflineProvider'
+import { useOfflineStatus } from 'components/OfflineWrapper/OfflineWrapper'
 
 const useRelayerData = (props) => useRelayerDataCommon({ fetch, useOfflineStatus, ...props })
 

@@ -1,9 +1,11 @@
 import React, { useEffect, useState, useContext } from 'react'
+import OfflineView from './OfflineView'
 
 const OfflineContext = React.createContext(false)
 
-const OfflineProvider = ({ children }) => {
+const OfflineWrapper = ({ children }) => {
     const [isOffline, setIsOffline] = useState(false)
+    console.log('isOfflineWrapper', isOffline)
     useEffect(() => {
         const updateOnlineStatus = (event) => {
             setIsOffline(!navigator.onLine)
@@ -18,7 +20,7 @@ const OfflineProvider = ({ children }) => {
     }, [])
     return (
         <OfflineContext.Provider value={isOffline}>
-            {children}
+            { isOffline ? (<OfflineView/>) : (children) }
         </OfflineContext.Provider>
     )
 }
@@ -27,4 +29,4 @@ export const useOfflineStatus = () => {
     return useContext(OfflineContext)
 }
 
-export default OfflineProvider
+export default OfflineWrapper

@@ -17,8 +17,6 @@ import { ReactComponent as TransactionsIcon } from './images/transactions.svg'
 import { ReactComponent as SecurityIcon } from './images/security.svg'
 import { ReactComponent as DappsIcon } from './images/dapps.svg'
 import { ReactComponent as HelpIcon } from './images/help.svg'
-import { useOfflineStatus } from 'components/OfflineProvider/OfflineProvider'
-import { useToasts } from 'hooks/toasts'
 
 import styles from './SideBar.module.scss'
 
@@ -34,8 +32,6 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
   const routeMatch = useRouteMatch('/wallet/dapps')
-  const isOffline = useOfflineStatus()
-  const { addToast } = useToasts()
 
   const dappModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
@@ -60,13 +56,6 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
       toggleDappMode()
     }
   }, [dappModeSidebar, toggleDappMode])
-
-  const handleClick = (e) => {
-    if(isOffline){ 
-      addToast(`Not available while the application is offline`, { error: true })
-      e.preventDefault()
-    }
-}
 
   return (
     <div className={cn(styles.wrapper, {
@@ -110,58 +99,58 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         </div>
       </div>
       <nav>
-        <NavLink to={match.url + "/dashboard"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/dashboard"} activeClassName={styles.selected}>
           <div className={styles.item}>
               <DashboardIcon />Dashboard
           </div>
         </NavLink>
-        <NavLink to={match.url + "/deposit"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/deposit"} activeClassName={styles.selected}>
           <div className={styles.item}>
               <DepositIcon />Deposit
           </div>
         </NavLink>
-        <NavLink to={match.url + "/transfer"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/transfer"} activeClassName={styles.selected}>
           <div className={styles.item}>
               <TransferIcon />Transfer
           </div>
         </NavLink>
-        <NavLink to={match.url + "/swap"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/swap"} activeClassName={styles.selected}>
           <div className={styles.item}>
               <SwapIcon />Swap
           </div>
         </NavLink>
-        <NavLink to={match.url + "/gas-tank"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/gas-tank"} activeClassName={styles.selected}>
           <div className={styles.item}>
               <GasTankIcon/>Gas Tank
           </div>
         </NavLink>
-        <NavLink to={match.url + "/cross-chain"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/cross-chain"} activeClassName={styles.selected}>
           <div className={styles.item}>
               <CrossChainIcon />Cross-Chain
           </div>
         </NavLink>
-        <NavLink to={match.url + "/earn"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/earn"} activeClassName={styles.selected}>
           <div className={styles.item}>
               <EarnIcon />Earn
           </div>
         </NavLink>
-        <NavLink to={match.url + "/transactions"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/transactions"} activeClassName={styles.selected}>
           <div className={styles.item}>
                 <TransactionsIcon />Transactions
           </div>
         </NavLink>
         {/* Temporarily commented OpenSea tab. */}
-        {/* <NavLink to={match.url + "/opensea"} activeClassName={styles.selected} onClick={handleClick}>
+        {/* <NavLink to={match.url + "/opensea"} activeClassName={styles.selected}>
           <div className={styles.item}>
             <div className='opensea-icon'/>OpenSea
           </div>
         </NavLink> */}
-        <NavLink to={match.url + "/dapps"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/dapps"} activeClassName={styles.selected}>
           <div className={styles.item} onClick={onDappsClick}>
               <DappsIcon />dApps
           </div>
         </NavLink>
-        <NavLink to={match.url + "/security"} activeClassName={styles.selected} onClick={handleClick}>
+        <NavLink to={match.url + "/security"} activeClassName={styles.selected}>
           <div className={styles.item}>
             <SecurityIcon />Security
           </div>
