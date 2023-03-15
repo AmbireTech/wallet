@@ -64,7 +64,7 @@ const ToolTip = ({ children, label, htmlContent, disabled, className, labelClass
                 {children}
                 {
                     !disabled && (!!htmlContent || !!label) ?
-                        <div className={cn(styles.tooltipLabel, 'tooltip-label', labelClassName)} style={labelPosition}>
+                        <div className={cn(styles.tooltipLabel, labelClassName)} style={labelPosition}>
                             {htmlContent || newLineText(label)}
                             <div className={cn(styles.arrow, ...(arrowPosition.split(' ').map(position => styles[position])))}></div>
                         </div>
