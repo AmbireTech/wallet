@@ -4,7 +4,7 @@ import React, { createRef, useState, useCallback, useEffect } from "react"
 import { MdOutlineClose } from 'react-icons/md';
 import { TransitionGroup, CSSTransition } from 'react-transition-group';
 import { useHistory } from 'react-router-dom'
-import { useOfflineStatus } from 'components/OfflineWrapper/OfflineWrapper'
+import { useOfflineStatus } from 'components/OfflineWrapper/OfflineProvider'
 
 const ToastContext = React.createContext(null);
 const ERROR_MSG_LIMIT_COUNT = 3

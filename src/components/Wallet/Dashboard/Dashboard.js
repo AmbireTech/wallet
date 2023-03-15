@@ -14,8 +14,8 @@ import AssetsMigrationBanner from 'components/common/AssetsMigrationBanner/Asset
 import PendingRecoveryNotice from 'components/Wallet/Security/PendingRecoveryNotice/PendingRecoveryNotice'
 import usePasswordRecoveryCheck from 'hooks/usePasswordRecoveryCheck'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
-import OfflineMsg from './OfflineMsg/OfflineMsg'
-import { useOfflineStatus } from 'components/OfflineWrapper/OfflineWrapper'
+import { useOfflineStatus } from 'components/OfflineWrapper/OfflineProvider'
+import { Alert } from 'components/common'
 
 import styles from './Dashboard.module.scss'
 
@@ -84,7 +84,14 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
 
     return (
         <section className={styles.wrapper}>
-            { isOffline && (<OfflineMsg />) }
+            { isOffline && 
+                <Alert
+                    type="warning"
+                    title="Internet Connection"
+                    text={'You are currently offline.'}
+                    iconNextToTitle={true}
+                /> 
+            }
             { isBalancesCachedCurrentNetwork && (
                 <OutdatedBalancesMsg 
                     selectedNetwork={selectedNetwork}
