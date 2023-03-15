@@ -1,5 +1,4 @@
 import cn from 'classnames'
-import { MdWarning } from 'react-icons/md'
 
 import { AddressBook, ToolTip } from 'components/common'
 
@@ -9,7 +8,6 @@ import UDLogoImage from 'resources/ud-logo-active.png'
 import styles from './RecipientInput.module.scss'
 
 const RecipientInput = ({
-  gasTankDetails,
   address,
   setAddress,
   ensAddress,
@@ -22,19 +20,14 @@ const RecipientInput = ({
   selectedAcc,
   selectedNetwork
 }) => {
-  return gasTankDetails ? (
-    <p className={styles.gasTankMsg}>
-      <MdWarning />
-      {gasTankDetails?.gasTankMsg}
-    </p>
-  ) : (
+  return (
     <div className={styles.wrapper}>
       <div className={styles.inputWrapper}>
         <input
           placeholder="Recipient"
           value={address}
           onInput={(e) => setAddress(e.target.value)}
-          testId="recipient"
+          data-testId="recipient"
           className={styles.input}
         />
 				<ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
@@ -67,8 +60,7 @@ const RecipientInput = ({
         selectedNetwork={selectedNetwork}
         className={styles.addressBook}
       />
-    </div>
-  )
+    </div>)
 }
 
 export default RecipientInput

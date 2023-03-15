@@ -273,22 +273,26 @@ const Send = ({
                 />
                 
                 { validationFormMgs.messages.amount && (<div className={styles.validationError}>
-									<BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}
-								</div>)}
-								<RecipientInput
-									  gasTankDetails={gasTankDetails}
-										address={address}
-										setAddress={setAddress}
-										ensAddress={ensAddress}
-										uDAddress={uDAddress}
-										addAddress={addAddress}
-										removeAddress={removeAddress}
-										newAddress={newAddress}
-										setNewAddress={setNewAddress}
-										addresses={addresses}
-										selectedAcc={selectedAcc}
-										selectedNetwork={selectedNetwork}
-								/>
+                    <BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}
+                </div>)}
+                {gasTankDetails ? (
+                    <p className={styles.gasTankMsg}>
+                        <MdWarning />
+                        {gasTankDetails?.gasTankMsg}
+                    </p>
+                ) : (<RecipientInput
+                    address={address}
+                    setAddress={setAddress}
+                    ensAddress={ensAddress}
+                    uDAddress={uDAddress}
+                    addAddress={addAddress}
+                    removeAddress={removeAddress}
+                    newAddress={newAddress}
+                    setNewAddress={setNewAddress}
+                    addresses={addresses}
+                    selectedAcc={selectedAcc}
+                    selectedNetwork={selectedNetwork}
+                />)}
                 <div className={styles.confirmations}>
                     <AddressWarning
                         address={address}
