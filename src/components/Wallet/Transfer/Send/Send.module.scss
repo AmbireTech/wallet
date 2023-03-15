@@ -49,17 +49,6 @@
     opacity: 0.5;
   }
 
-  .gasTankMsg {
-    display: flex;
-    align-items: center;
-    gap: .75rem;
-    background-color: mix($c-ebony-clay, $warning-color, 90%);
-    color: $warning-color;
-    padding: .9375rem;
-    font-size: .875rem;
-    border-radius: $border-radius;
-  }
-
   .gasTankConvertMsg {
     display: flex;
     align-items: center;
@@ -69,58 +58,6 @@
     padding: .9375rem;
     font-size: .875rem;
     border-radius: $border-radius;
-  }
-
-  .recipientField {
-    position: relative;
-    display: flex;
-
-    .recipientInput {
-      width: 100%;
-
-      div:last-child {
-        opacity: 1;
-        padding-left: 1.25rem;
-      }
-
-      input {
-        // border-radius: $border-radius 0 0 $border-radius;
-        padding-right: 18.125rem;
-      }
-    }
-
-    .dropdown {
-      position: absolute;
-      right: 0;
-    }
-
-    .udomainsLogo {
-      position: absolute;
-      top: 1.125rem;
-      right: 15.625rem;
-      height: 1.5625rem;
-      width: 1.5625rem;
-      background-image: url('/resources/ud-logo-inactive.png');
-      background-size: cover;
-    }
-
-    .udomainsLogoActive {
-      background-image: url('/resources/ud-logo-active.png') !important;  
-    }
-
-    .ensLogo {
-      position: absolute;
-      top: 1.125rem;
-      right: 12.5rem;
-      height: 1.5625rem;
-      width: 1.5625rem;
-      background-image: url('/resources/ens-logo-inactive.png');
-      background-size: cover;
-    }
-
-    .ensLogoActive {
-      background-image: url('/resources/ens-logo-active.png') !important;  
-    }
   }
 
   .binanceAddressWarning {
@@ -142,38 +79,5 @@
   .wrapper {
     gap: 1.875rem;
     padding: 1.25rem;
-    overflow-y: visible;
-
-    .recipientField {
-      flex-direction: column;
-      gap: .625rem;
-
-      .dropdown {
-        position: relative;
-        border-radius: $border-radius!important;
-      }
-
-      .recipientInput {
-        input {
-          padding-right: 5rem;
-        }
-      }
-
-      .udomainsLogo {
-        position: absolute;
-        top: 1.125rem;
-        right: 3.125rem;
-        height: 1.5625rem;
-        width: 1.5625rem;
-      }
-
-      .ensLogo {
-        position: absolute;
-        top: 1.125rem;
-        right: .9375rem;
-        height: 1.5625rem;
-        width: 1.5625rem;
-      }
-    }
   }
 }
