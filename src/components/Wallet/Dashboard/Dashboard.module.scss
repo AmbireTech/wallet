@@ -143,3 +143,9 @@
         }
     }
 }
+
+@include sm-breakpoint {
+    .wrapper {
+        padding: 0;
+    }
+}
