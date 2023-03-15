@@ -27,7 +27,7 @@ const RecipientInput = ({
           placeholder="Recipient"
           value={address}
           onInput={(e) => setAddress(e.target.value)}
-          data-testId="recipient"
+          data-testid="recipient"
           className={styles.input}
         />
 				<ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
