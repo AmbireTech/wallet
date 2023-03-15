@@ -69,6 +69,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     }, [currentClaimStatus, hidePrivateValue, pendingTokensTotal, rewardsErrMsg, rewardsIsLoading, rewardsLastUpdated, vestingEntry, accountId, rewardsData.rewards.accountAddr])
    
     // The comma is important here, it's used to ignore the first value of the array.
+    // Here we store the accountIds of the users who have already seen the congrats modal.
     const [, setCongratsModalShownTo] = useLocalStorage({
         key: 'congratsModalShownTo',
         defaultValue: []
@@ -82,6 +83,7 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
       if (!shouldShowCongratsModal) return
 
       setCongratsModalShownTo(prev => {
+        // We want to show the congrats modal only once per account.
         if (!prev.includes(accountId)) {
           showCongratsRewardsModal()
           return prev.concat(accountId)
