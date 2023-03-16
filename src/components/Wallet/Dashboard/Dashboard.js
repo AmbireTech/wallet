@@ -87,8 +87,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
             { isOffline && 
                 <Alert
                     type="warning"
-                    title="Internet Connection"
-                    text={'You are currently offline.'}
+                    title="No Internet Connection"
                     iconNextToTitle={true}
                 /> 
             }
