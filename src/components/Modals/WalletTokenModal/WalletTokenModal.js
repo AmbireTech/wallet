@@ -6,6 +6,7 @@ import { useState } from 'react'
 import UnbondModal from './UnbondModal/UnbondModal'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import cn from 'classnames'
+
 import styles from './WalletTokenModal.module.scss'
 
 const MIN_ELIGIBLE_USD = 1000
@@ -13,9 +14,8 @@ const MIN_CLAIMABLE_WALLET = 1000
 const MIN_CLAIMABLE_ADX_USD = 1000
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
-
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
-  const { stakedAmount } = useStakedWalletToken({ accountId })
+  const { stakedAmount, isLoading } = useStakedWalletToken({ accountId })
 
   const hideUnbondModal = () => setIsUnbondModalVisible(false)
 
@@ -183,7 +183,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
         </div>
       )}
 
-      {!!stakedAmount && (
+      {!!stakedAmount && !isLoading && (
         <div className={styles.item}>
           <div className={styles.details}>
             <label>Staked WALLET</label>
