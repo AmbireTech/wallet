@@ -1,11 +1,12 @@
+import { useState } from 'react'
+import cn from 'classnames'
+import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
+
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 import { Button, Modal, ToolTip, RemoteLottie, Loading } from 'components/common'
-import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
 import MultiplierBadges from './MultiplierBadges/MultiplierBadges'
-import { useState } from 'react'
 import UnbondModal from './UnbondModal/UnbondModal'
-import { formatFloatTokenAmount } from 'lib/formatters'
-import cn from 'classnames'
 
 import styles from './WalletTokenModal.module.scss'
 
