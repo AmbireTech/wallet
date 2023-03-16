@@ -1,5 +1,5 @@
 
-import { Button, Modal, ToolTip, RemoteLottie } from 'components/common'
+import { Button, Modal, ToolTip, RemoteLottie, Loading } from 'components/common'
 import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
 import MultiplierBadges from './MultiplierBadges/MultiplierBadges'
 import { useState } from 'react'
@@ -182,20 +182,20 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
           </div>
         </div>
       )}
-
-      {!!stakedAmount && !isLoading && (
-        <div className={styles.item}>
-          <div className={styles.details}>
-            <label>Staked WALLET</label>
-            <div className={styles.balance}>
-              <div className={styles.amount}>
-                <span>{formatAmount(stakedAmount)}</span>
-              </div>
-              <div className={cn(styles.amount, styles.apy)}>{xWALLETAPYPercentage} <span>APY</span></div>
-            </div>
+      <div className={styles.item}>
+        <div className={styles.details}>
+          <label>Staked WALLET</label>
+          <div className={styles.balance}>
+            {!isLoading && <div className={styles.amount}>
+              <span>
+                {formatAmount(stakedAmount)}
+              </span>
+            </div>}
+            {isLoading && <Loading className={styles.loader} size={24} />}
+            <div className={cn(styles.amount, styles.apy)}>{xWALLETAPYPercentage} <span>APY</span></div>
           </div>
         </div>
-      )}
+      </div>
     </Modal>
   )
 }
