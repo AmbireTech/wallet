@@ -294,6 +294,9 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
           console.error('gnosis safe connector not set')
         } else {
           console.log('gnosis reply', replyData)
+          if (replyData?.error) {
+            addToast(replyData.error, { error: true })
+          }
           connector.current.send(replyData, req.forwardId, replyData.error)
         }
       }
