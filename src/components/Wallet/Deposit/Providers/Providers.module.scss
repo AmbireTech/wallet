@@ -8,8 +8,9 @@
     .provider {
         display: flex;
         justify-content: flex-start;
-        align-items: center;
+        align-items: flex-start;
         padding: 16px 35px 16px 53px;
+        height: 10rem;
         border-radius: 12px;
         background-color: $c-ebony-clay;
         border: 1px solid transparent;
@@ -22,6 +23,7 @@
             display: block;
             max-width: 30%;
             min-width: 100px;
+            align-self: center;
 
             img, svg {
                 width: 100%;
@@ -75,6 +77,8 @@
             flex-direction: column;
             gap: 20px!important;
             padding: 30px;
+            height: auto;
+            align-items: center;
 
             .logo {
                 max-width: 80%;
