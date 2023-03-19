@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { fetch, fetchCaught } from 'lib/fetch'
 
 import { useLocalStorage } from 'hooks'
-import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
+import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 
 import styles from './EmailLogin.module.scss'

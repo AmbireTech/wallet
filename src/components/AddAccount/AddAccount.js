@@ -26,7 +26,7 @@ import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 import Lottie from 'lottie-react'
 import AnimationData from './assets/confirm-email.json'
 
-import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
+import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 
 import styles from './AddAccount.module.scss'
 // Icons
