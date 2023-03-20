@@ -23,6 +23,16 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
 
     const filteredItems = search.length ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase())) : items
 
+    const handleOpen = () => {
+        setOpen(prev => {
+            if(!prev) {
+                document.dispatchEvent(new CustomEvent("show-overlay", { detail: true}))
+            }
+
+            return !prev
+        })
+    }
+    
     const selectItem = useCallback(item => {
         setOpen(false)
         setSearch('')
@@ -60,7 +70,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                 {
                     selectedItem ?
                         <div className={styles.selectContainer}>
-                            <div className={`${styles.selectInput} ${selectInputClassName}`} onClick={() => setOpen(!isOpen)}
+                            <div className={`${styles.selectInput} ${selectInputClassName}`} onClick={handleOpen}
                                 >
                                 <Image
                                     src={selectedItem.icon}

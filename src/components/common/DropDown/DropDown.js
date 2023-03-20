@@ -14,7 +14,12 @@ export default function DropDown({ children, id, icon, className, menuClassName,
     useEffect(() => setMenuOpen(open), [open]);
     useEffect(() => onChange && onChange(isMenuOpen), [onChange, isMenuOpen]);
     useEffect(() => !isMenuOpen && onClose && onClose(), [isMenuOpen, onClose]);
-    useEffect(() => isMenuOpen && onOpen && onOpen(), [isMenuOpen, onOpen])
+    useEffect(() => {
+        if(isMenuOpen) {
+            document.dispatchEvent(new CustomEvent("show-overlay", { detail: true}))
+            onOpen && onOpen()
+        }
+    }, [isMenuOpen, onOpen])
     useOnClickOutside(ref, () => setMenuOpen(false));
 
     return (
