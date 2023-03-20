@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState, useRef } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
-import { TextInput, NumberInput, Button, Select, Loading, AddressBook, AddressWarning, NoFundsPlaceholder, Checkbox, ToolTip } from 'components/common'
+import { NumberInput, Button, Select, Loading, AddressWarning, NoFundsPlaceholder, Checkbox } from 'components/common'
 import { validateSendTransferAddress, validateSendTransferAmount } from 'lib/validations/formValidations'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { MdInfo } from 'react-icons/md'
@@ -13,8 +13,8 @@ import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
+import RecipientInput from './RecipientInput/RecipientInput'
 import { useRelayerData } from 'hooks'
-import cn from 'classnames'
 
 import styles from './Send.module.scss'
 
@@ -269,36 +269,30 @@ const Send = ({
                     onInput={onAmountChange}
                     button="MAX"
                     onButtonClick={() => setMaxAmount()}
+                    testId="amount"
                 />
                 
-                { validationFormMgs.messages.amount && 
-                    (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}</div>)}
-                { gasTankDetails ? <p className={styles.gasTankMsg}><MdWarning /> {gasTankDetails?.gasTankMsg}</p> : (<div className={styles.recipientField}>
-                    <TextInput
-                        placeholder="Recipient"
-                        info="Please double-check the recipient address, blockchain transactions are not reversible."
-                        value={address}
-                        onInput={setAddress}
-                        className={styles.recipientInput}
-                        inputContainerClass={styles.textInputContainer}
-                    />
-                    <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
-                        <div className={cn(styles.ensLogo, {[styles.ensLogoActive]: ensAddress})} />
-                    </ToolTip>
-                    <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-                        <div className={cn(styles.udomainsLogo, { [styles.udomainsLogoActive]: uDAddress })} />
-                    </ToolTip>
-                    <AddressBook
-                        addresses={addresses.filter(x => x.address !== selectedAcc)}
-                        addAddress={addAddress}
-                        removeAddress={removeAddress}
-                        newAddress={newAddress}
-                        onClose={() => setNewAddress(null)}
-                        onSelectAddress={address => setAddress(address)}
-                        selectedNetwork={selectedNetwork}
-                        className={styles.dropdown}
-                    />
+                { validationFormMgs.messages.amount && (<div className={styles.validationError}>
+                    <BsXLg size={12}/>&nbsp;{validationFormMgs.messages.amount}
                 </div>)}
+                {gasTankDetails ? (
+                    <p className={styles.gasTankMsg}>
+                        <MdWarning />
+                        {gasTankDetails?.gasTankMsg}
+                    </p>
+                ) : (<RecipientInput
+                    address={address}
+                    setAddress={setAddress}
+                    ensAddress={ensAddress}
+                    uDAddress={uDAddress}
+                    addAddress={addAddress}
+                    removeAddress={removeAddress}
+                    newAddress={newAddress}
+                    setNewAddress={setNewAddress}
+                    addresses={addresses}
+                    selectedAcc={selectedAcc}
+                    selectedNetwork={selectedNetwork}
+                />)}
                 <div className={styles.confirmations}>
                     <AddressWarning
                         address={address}
@@ -310,7 +304,7 @@ const Send = ({
                         />
                     {showSWAddressWarning ? <Checkbox
                         className={styles.binanceAddressWarning}
-                        label={<span>
+                        label={<span data-testid="binance-address-warning-label">
                             I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address: <br />
                             These platforms do not support ${selectedAsset?.symbol} deposits from smart wallets
                             <a href='https://help.ambire.com/hc/en-us/articles/4415473743506-Statement-on-MATIC-BNB-deposits-to-Binance' target='_blank' rel='noreferrer'><MdInfo size={20} /></a>
@@ -323,7 +317,7 @@ const Send = ({
                 { validationFormMgs.messages.address && 
                     (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
             </div>
-            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton}>Send</Button>
+            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton} testId="send">Send</Button>
         </div>) : <NoFundsPlaceholder/>
 }
 
