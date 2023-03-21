@@ -14,7 +14,7 @@ const SignedMessages = ({ filteredMessages, privateMode, page, selectedAcc, sele
 	if (!filteredMessages.length) {
 		return (
 			<div className={styles.wrapper}>
-				No messages signed with the account {privateMode.hidePrivateValue(selectedAcc)} yet on {selectedNetwork.id}
+				<p className={styles.emptyLabel}>No messages signed with the account {privateMode.hidePrivateValue(selectedAcc)} yet on {selectedNetwork.id}</p>
 			</div>
 		)
 	}

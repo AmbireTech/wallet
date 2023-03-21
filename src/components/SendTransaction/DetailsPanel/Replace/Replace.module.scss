@@ -3,9 +3,9 @@
 .replaceInfo {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 16px;
-  border-radius: 12px;
+  gap: .75rem;
+  padding: 1rem;
+  border-radius: $border-radius;
 
   &.info {
     background-color: $info-background-color;
@@ -17,18 +17,18 @@
     color: $alert-text-color;
   }
 
-  margin-bottom: 16px;
+  margin-bottom: 1rem;
 }
 
 .wrapper {
   .buttons {
     display: flex;
     flex-direction: row;
-    gap: 1.5em;
+    gap: 1.5rem;
     flex-wrap: wrap;
 
     .button {
-      height: 75px;
+      height: 4.6875rem;
       flex-grow: 1;
     }
   }

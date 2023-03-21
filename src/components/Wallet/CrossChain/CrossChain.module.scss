@@ -3,37 +3,37 @@
 .wrapper {
     display: flex;
     flex-direction: row;
-    gap: 17px;
+    gap: 1.0625rem;
     min-height: 100%;
 
     .panel {
         flex: 1;
-        padding: 40px;
-        padding-top: 36px;
+        padding: 2.5rem;
+        padding-top: 2.25rem;
 
         & > div {
-            padding-top: 20px;
+            padding-top: 1.25rem;
         }
     }
 }
 
 // Small screen
-@media screen and (max-width: $small-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         min-height: auto;
         flex-direction: column;
 
         .panel {
-            padding: 30px;
+            padding: 1.875rem;
         }
     }
 }
 
 // Mobile screen
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
     .wrapper {
         .panel {
-            padding: 20px;
+            padding: 1.25rem;
         }
     }
 }

@@ -3,7 +3,7 @@
 .radiosContainer {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: .9375rem;
 
     &.row {
         flex-direction: row;
@@ -12,14 +12,14 @@
     .radioContainer {
         display: flex;
         flex-direction: row;
-        gap: 20px;
+        gap: 1.25rem;
         align-items: center;
 
         .radio {
             flex: 0 0 auto;
             position: relative;
-            height: 24px;
-            width: 24px;
+            height: 1.5rem;
+            width: 1.5rem;
             border-radius: 100%;
             border: 3px solid $c-scampi;
             overflow: hidden;
@@ -31,8 +31,8 @@
                 left: 50%;
                 transform: translate(-50%, -50%);
                 top: 50%;
-                width: 14px;
-                height: 14px;
+                width: .875rem;
+                height: .875rem;
                 border-radius: 100%;
                 background-color: transparent;
                 transition: .3s ease-in-out all;
@@ -41,7 +41,7 @@
 
         label {
             width: 100%;
-            font-size: 14px;
+            font-size: .875rem;
             font-weight: 300;
         }
 
@@ -75,6 +75,14 @@
             label {
                 cursor: pointer;
             }
+        }
+    }
+}
+
+@include sm-breakpoint {
+    .radiosContainer {
+        .radioContainer {
+            gap: .5rem;
         }
     }
 }

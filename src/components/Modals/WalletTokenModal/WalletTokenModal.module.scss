@@ -1,23 +1,24 @@
 @import 'variables.scss';
 
 .wrapper {
-    padding-bottom: 30px;
+    padding-bottom: 1.875rem;
+    max-height: 100%;
 
     .content {
         display: flex;
         flex-direction: column;
-        gap: 12px;
-        padding-bottom: 10px;
+        gap: .75rem;
+        padding-bottom: .625rem;
     }
 
     .rewardsProgressPath {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: .625rem;
 
         .rewardsWalletIcon {
-            width: 80px;
-            height: 80px;
+            width: 5rem;
+            height: 5rem;
             background-position: 50% 50%;
             background-size: contain;
             background-repeat: no-repeat;
@@ -25,13 +26,13 @@
         }
 
         .rewardsWalletIconAnimated {
-            width: 80px;
-            height: 80px;
+            width: 5rem;
+            height: 5rem;
         }
 
         .rewardsProgressHoldingIcon {
-            width: 50px;
-            height: 50px;
+            width: 3.125rem;
+            height: 3.125rem;
             background-position: 50% 50%;
             background-size: contain;
             background-repeat: no-repeat;
@@ -39,8 +40,8 @@
         }
 
         .rewardsProgressClaimIcon {
-            width: 50px;
-            height: 50px;
+            width: 3.125rem;
+            height: 3.125rem;
             background-position: 50% 50%;
             background-size: contain;
             background-repeat: no-repeat;
@@ -52,17 +53,17 @@
         }
 
         .rewardsProgressBar {
-            height: 4px;
+            height: .25rem;
             border-bottom: 1px dotted $c-scampi;
             flex-grow: 1;
             position: relative;
 
             .rewardsProgressBarFiller {
                 position: absolute;
-                height: 5px;
-                border-radius: 4px;
+                height: .3125rem;
+                border-radius: .25rem;
                 background: $c-scampi;
-                top: 1px;
+                top: .0625rem;
             }
 
             .rewardsProgressBarFillerActive {
@@ -71,27 +72,27 @@
 
             span {
                 position: absolute;
-                bottom: 10px;
+                bottom: .625rem;
                 width: 100%;
                 text-align: center;
-                font-size: 12px;
+                font-size: .75rem;
                 color: $c-scampi;
 
                 b {
-                    font-size: 12px;
+                    font-size: .75rem;
                 }
             }
         }
     }
 
     .rewardsProgressLabels {
-        margin-top: 8px;
+        margin-top: .5rem;
         display: flex;
         align-items: center;
         justify-content: space-between;
 
         span {
-            font-size: 12px;
+            font-size: .75rem;
             color: $c-scampi;
             text-align: center;
         }
@@ -110,7 +111,7 @@
 
 
     .info {
-        font-size: 12px;
+        font-size: .75rem;
         text-align: center;
 
         a {
@@ -119,8 +120,8 @@
     }
 
     .item {
-        border-radius: 12px;
-        padding: 15px 20px;
+        border-radius: $border-radius;
+        padding: .9375rem 1.25rem;
         display: flex;
         flex-direction: column;
         background: $c-mirage;
@@ -131,11 +132,11 @@
         }
 
         .badgeAdx {
-            width: 32px;
-            height: 32px;
+            width: 2rem;
+            height: 2rem;
             background: url("../../../resources/rewards/adx-staking-inactive.svg") no-repeat 50% 50%;
             background-size: contain;
-            margin-left: 5px;
+            margin-left: .3125rem;
         }
 
         .badgeAdxActive {
@@ -145,7 +146,7 @@
         .details {
             display: flex;
             justify-content: space-between;
-            gap: 16px;
+            gap: 1rem;
 
             label {
                 flex-grow: 1;
@@ -161,15 +162,15 @@
 
                 .amount {
                     display: flex;
-                    gap: 7px;
-                    font-size: 16px;
+                    gap: .4375rem;
+                    font-size: 1rem;
 
                     span {
                         color: $c-turquoise;
                     }
 
                     .usd, .apy {
-                        font-size: 14px;
+                        font-size: .875rem;
                     }
 
                     .usd {
@@ -190,11 +191,11 @@
         .actions {
             display: flex;
             justify-content: flex-end;
-            gap: 12px;
+            gap: .75rem;
 
             button {
-                height: 40px;
-                font-size: 13px;
+                height: 2.5rem;
+                font-size: .8125rem;
                 background-color: rgba(255, 255, 255, 0.1);
             }
 
@@ -215,14 +216,14 @@
 
     .rewardsBar {
         width: 100%;
-        height: 10px;
-        padding: 2px;
-        border-radius: 12px;
+        height: .625rem;
+        padding: .125rem;
+        border-radius: $border-radius;
         overflow: hidden;
 
         .rewardsBarProgress {
-            border-radius: 14px;
-            height: 6px;
+            border-radius: .875rem;
+            height: .375rem;
         }
     }
 
@@ -230,11 +231,11 @@
     .mainRewardInfo {
         display: flex;
         flex-direction: row;
-        gap: 16px;
+        gap: 1rem;
 
         .walletRewardsTitle {
             text-align: center;
-            margin-bottom: 4px;
+            margin-bottom: .25rem;
             text-transform: uppercase;
         }
 
@@ -244,15 +245,15 @@
             flex-basis: 50%;
 
             .walletRewardsStatus {
-                border-radius: 16px;
-                padding: 16px;
+                border-radius: 1rem;
+                padding: 1rem;
                 display: flex;
                 width: 100%;
                 flex-direction: column;
-                gap: 12px;
+                gap: .75rem;
                 justify-content: flex-start;
 
-                min-width: 130px;
+                min-width: 8.125rem;
 
                 .walletRewardsStatusInfo {
                     text-align: center;
@@ -263,11 +264,11 @@
                     flex-direction: column;
                     align-content: center;
                     justify-content: center;
-                    gap: 16px;
+                    gap: 1rem;
 
                     .walletRewardsStatusLogoImg {
-                        width: 64px;
-                        height: 64px;
+                        width: 4rem;
+                        height: 4rem;
                         background: no-repeat 50% 50% url("../../../resources/icon.png");
                         background-size: contain;
                         margin: auto;
@@ -289,11 +290,11 @@
                 display: flex;
                 flex-direction: column;
                 justify-content: flex-end;
-                gap: 8px;
+                gap: .5rem;
 
                 button {
-                    height: 32px;
-                    font-size: 13px;
+                    height: 2rem;
+                    font-size: .8125rem;
                     background-color: rgba(255, 255, 255, 0.1);
                 }
 
@@ -317,18 +318,18 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         .rewardsProgressPath {
             .rewardsProgressBar {
                 .rewardsWalletIcon {
-                    width: 70px;
-                    height: 70px;
+                    width: 4.375rem;
+                    height: 4.375rem;
                 }
                 span {
                     white-space: nowrap;
-                    bottom: 40px;
-                    left: -30px;
+                    bottom: 2.5rem;
+                    left: -1.875rem;
                 }
             }
        }

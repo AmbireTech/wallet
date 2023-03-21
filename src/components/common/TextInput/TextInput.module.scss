@@ -1,12 +1,12 @@
 @import 'variables.scss';
 
-$input-height: 60px;
+$input-height: 3.75rem;
 
 .textInput {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: .625rem;
 
     label {
         font-weight: 500;
@@ -14,7 +14,7 @@ $input-height: 60px;
 
     .container {
         position: relative;
-        border-radius: 12px;
+        border-radius: $border-radius;
         overflow: hidden;
 
         &.hasIcon {
@@ -27,15 +27,20 @@ $input-height: 60px;
                 background-color: theme(background-primary);
                 align-items: center;
                 justify-content: center;
-                width: 60px;
-                font-size: 24px;
+                width: 3.75rem;
+                font-size: 1.5rem;
                 color: theme(text-primary);
                 border-bottom: 2px solid transparent;
                 transition: all 0.1s ease-in-out;
+
+                svg {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
             }
 
             input {
-                padding-left: 48px;
+                padding-left: 3rem;
 
                 &:focus ~ .textInputContainerIcon {
                     border-bottom-color: theme(border-input);
@@ -56,6 +61,11 @@ $input-height: 60px;
             transition: $basic-transition;
             border-bottom: 2px solid transparent;
 
+            svg {
+                width: 1.25rem;
+                height: 1.25rem;
+            }
+
             &:hover {
                 background-color: rgba(0, 0, 0, 0.1);
             }
@@ -66,9 +76,9 @@ $input-height: 60px;
             width: 100%;
             color: theme(text-secondary);
             font-family: 'Poppins', sans-serif;
-            font-size: 16px;
-            padding: 18px;
-            padding-left: 20px;
+            font-size: 1rem;
+            padding: 1.125em;
+            padding-left: 1.25em;
             opacity: 1;
             border: none;
             text-overflow: ellipsis;
@@ -88,8 +98,8 @@ $input-height: 60px;
     }
 
     .info {
-        font-size: 15px;
-        padding: 0 0.4rem;
+        font-size: .9375rem;
+        padding: 0 0.4em;
         opacity: 0.5;
     }
 
@@ -102,7 +112,7 @@ $input-height: 60px;
             cursor: text;
             padding-right: 2.5em;
             font-family: 'Ubuntu Mono';
-            font-size: 1.5em;
+            font-size: 1.5rem;
 
             &:disabled {
                 opacity: 1 !important;
@@ -112,7 +122,7 @@ $input-height: 60px;
 
     &.small {
         input {
-            height: 50px;
+            height: 3.125rem;
         }
     }
 }
