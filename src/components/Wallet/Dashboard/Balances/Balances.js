@@ -105,6 +105,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
 const areEqual = (prevProps, nextProps) => {
     return prevProps.selectedNetwork.id === nextProps.selectedNetwork.id &&
         prevProps.selectedAccount === nextProps.selectedAccount &&
+        prevProps.hidePrivateValue === nextProps.hidePrivateValue &&
         prevProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0) ===
         nextProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0)
         &&
