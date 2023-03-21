@@ -13,7 +13,7 @@ const CongratsRewardsModal = ({ pendingTokensTotal }) => {
 
     return (
         <Modal 
-            size="sm" 
+            size="lg"
             className={styles.wrapper} 
             contentClassName={styles.content} 
             title="Woo-hoo!" 
