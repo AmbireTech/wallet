@@ -9,11 +9,11 @@ import { WalletTokenModal, CongratsRewardsModal } from "components/Modals"
 import styles from './WalletTokenButton.module.scss'
 
 const checkShouldShowCongratsModal = (currentClaimStatus, pendingTokensTotal) => {
-  return (
-    currentClaimStatus && 
-    currentClaimStatus.claimed === 0 &&
-    pendingTokensTotal && pendingTokensTotal !== '...' && parseFloat(pendingTokensTotal)
-  )
+    // It should be shown, if the user has pending tokens, but hasn't claimed any of them yet
+    return (
+        (pendingTokensTotal && pendingTokensTotal !== '...' && parseFloat(pendingTokensTotal))
+        && !currentClaimStatus?.claimed
+    )
 }
 
 const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, addRequest, relayerURL, useRelayerData }) => {
