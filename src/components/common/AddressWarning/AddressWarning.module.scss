@@ -2,11 +2,11 @@
 
 .wrapper {
     .button {
-        height: 40px;
+        height: 2.5rem;
         width: fit-content;
         @include flex-center-center;
-        gap: 7px;
-        padding: 0 15px;
+        gap: .4375rem;
+        padding: 0 .9375rem;
         opacity: 0.6;
 
         &:hover {
@@ -26,11 +26,11 @@
 #smart-contract-warning {
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: .3125rem;
     font-weight: bold;
     color: $danger-color;
 
     svg {
-        font-size: 20px;
+        font-size: 1.25rem;
     }
 }

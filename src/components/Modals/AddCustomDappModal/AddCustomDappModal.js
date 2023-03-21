@@ -151,7 +151,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                     <a className={styles.infoBtn} href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
                         target="_blank"
                         rel="noreferrer noopener">
-                        <MdBuildCircle size={32} />
+                        <MdBuildCircle className={styles.icon} />
                     </a>
                 </ToolTip>
                 <div>Add custom dApp</div>

@@ -1,8 +1,8 @@
 import {screen, render, waitFor} from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
-import ToastProvider from 'components/ToastProvider/ToastProvider'
-import ModalProvider from 'components/ModalProvider/ModalProvider'
+import ToastProvider from 'context/ToastProvider/ToastProvider'
+import ModalProvider from 'context/ModalProvider/ModalProvider'
 import Transfer from './Transfer'
 
 // Utilities

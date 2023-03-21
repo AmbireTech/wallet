@@ -8,12 +8,12 @@
   .listOfTransactions {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    margin-bottom: 20px;
+    gap: .625rem;
+    margin-bottom: 1.25rem;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .titleWrapper {
       flex-direction: column;

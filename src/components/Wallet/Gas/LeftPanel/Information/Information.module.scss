@@ -3,35 +3,34 @@
 .wrapper {
   p {
     margin: 0;
-    margin-bottom: 15px;
+    margin-bottom: .9375rem;
     font-weight: 300;
     opacity: .7;
   }
   
   .saveAlert {
-    // opacity: 1;
-    // color: $c-heliotrope;
-    // padding: 10px;
-    // background-color: $c-mirage;
-    // border-radius: 12px;
-    margin-bottom: 60px;
+    margin-bottom: 3.75rem;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     p {
-      margin-bottom: 10px;
+      margin-bottom: .625rem;
     }
     
     .saveAlert {
-      margin-bottom: 30px;
+      margin-bottom: 1.875rem;
     }
   }
 }
 
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
   .wrapper {
     text-align: center;
+
+    p {
+      font-size: .875rem;
+    }
   }
 }
