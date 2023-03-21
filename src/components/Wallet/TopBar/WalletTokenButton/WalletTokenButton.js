@@ -11,8 +11,7 @@ import styles from './WalletTokenButton.module.scss'
 const checkShouldShowCongratsModal = (currentClaimStatus, pendingTokensTotal) => {
   return (
     currentClaimStatus && 
-    currentClaimStatus.claimed === 0 && 
-    currentClaimStatus.mintableVesting === 0 &&
+    currentClaimStatus.claimed === 0 &&
     pendingTokensTotal && pendingTokensTotal !== '...' && parseFloat(pendingTokensTotal)
   )
 }
