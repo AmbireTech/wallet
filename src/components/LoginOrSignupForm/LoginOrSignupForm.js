@@ -1,15 +1,22 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
-import passwordChecks from 'components/AddAccount/passwordChecks'
+import passwordChecks, { checkHaveIbeenPwned } from 'components/AddAccount/passwordChecks'
 
 import AddAccountForm from 'components/AddAccount/Form/Form'
+import PasswordBreachedCheckbox from 'components/AddAccount/PasswordBreachedCheckbox/PasswordBreachedCheckbox'
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
     const [passwordStrength, setPasswordStrength] = useState({
       checks: passwordChecks,
       satisfied: false
     })
-  
+    const [passwordBreachedState, setPasswordBreachedState] = useState({
+      breached: null, // null, 'breached', 'not-breached'
+      lastPassword: ''
+    })
+    const [isPasswordBreachedChecked, setIsPasswordBreachedChecked] = useState(false)
+    const submitDisabledFromBreach = !isPasswordBreachedChecked && (passwordBreachedState.breached !== 'not-breached') && (passwordBreachedState.breached !== null)
+    
     const passConfirmInput = useRef(null)
     const passInput = useRef(null)
     const [state, setState] = useState({
@@ -28,8 +35,28 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       }))
     }
 
-    const onSubmit = e => {
+    useEffect(() => {
+      if (passwordBreachedState.lastPassword !== state.passphrase) {
+        setPasswordBreachedState(prev => ({
+          ...prev,
+          breached: null
+        }))
+        setIsPasswordBreachedChecked(false)
+      }
+    }, [passwordBreachedState.lastPassword, state.passphrase])
+
+    const onSubmit = async(e) => {
       e.preventDefault()
+      if (passwordBreachedState.breached !== 'not-breached') {
+        const breached = await checkHaveIbeenPwned(state.passphrase)
+        setPasswordBreachedState({
+          breached,
+          lastPassword: state.passphrase
+        })
+
+        if (breached === 'breached' && !isPasswordBreachedChecked) return
+      }
+
       onAccRequest({
         action: state.action,
         accType: 'QUICK',
@@ -63,7 +90,6 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       }
     }
 
-
     return (
       <form onSubmit={onSubmit}>
         <input type="email" required placeholder="Email" value={state.email} onChange={e => onUpdate({ email: e.target.value })}></input>
@@ -82,9 +108,17 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           />
 				)
 			}
-        <input type="submit" disabled={inProgress || !state.email?.length || (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied))} value={isSignup ?
+        <input type="submit" disabled={inProgress || !state.email?.length || (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied || submitDisabledFromBreach))} value={isSignup ?
           (inProgress ? "Signing up..." : "Sign Up")
           : (inProgress ? "Logging in..." : "Log In")}></input>
+        {
+          isSignup && passwordBreachedState.breached === 'breached' && (
+            <PasswordBreachedCheckbox 
+              isPasswordBreachedChecked={isPasswordBreachedChecked} 
+              setIsPasswordBreachedChecked={setIsPasswordBreachedChecked} 
+            />
+          )
+        }
       </form>
     )
 }

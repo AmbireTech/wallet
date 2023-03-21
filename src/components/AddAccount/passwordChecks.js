@@ -1,39 +1,37 @@
-import { ethers } from "ethers"
-import WEAK_PASSWORDS from 'ambire-common/src/constants/commonPasswords.json'
+import sha1 from 'js-sha1'
+
+const checkHaveIbeenPwned = async (password) => {
+  if (!password) return null
+
+  const hashedPassword = (await sha1(password)).toUpperCase()
+
+  const url = `https://api.pwnedpasswords.com/range/${hashedPassword.slice(0, 5)}`
+
+	const data = await fetch(url, {
+		headers: { Accept: 'application/vnd.haveibeenpwned.v2+json' }
+	})
+
+	const hashList = (await data.text()).split('\r\n').map((hash) => hash.split(':')[0])
+
+  // Password is found in a data breach
+  if (hashList.includes(hashedPassword.slice(5))) {
+    return 'breached'
+  }
+  
+  return 'not-breached'
+}
 
 const passwordChecks = [
-  {
-    label: 'Minimum 8 characters',
-    id: 'min8',
-    satisfied: false,
-    check: function(passphrase) {
-      return passphrase.length >= 8
-    } 
-  },
-  {
-    label: 'At least one number',
-    id: 'min1num',
-    satisfied: false,
-    check: function(passphrase) {
-      return (/\d/).test(passphrase)
-    } 
-  },
-  {
-    label: 'At least one uppercase letter',
-    id: 'min1up',
-    satisfied: false,
-    check: function (passphrase) {
-      return (/[A-Z]/).test(passphrase)
-    }
-  },
-  {
-    label: 'Password is not a common password',
-    id: 'notCommon',
-    satisfied: false,
-    check: function (passphrase) {
-      return !WEAK_PASSWORDS.includes(ethers.utils.ripemd160(ethers.utils.toUtf8Bytes(passphrase)))
-    }
-  }
+	{
+		label: 'Minimum 8 characters',
+		id: 'min8',
+		satisfied: false,
+		check: function (passphrase) {
+			return passphrase.length >= 8
+		}
+	}
 ]
 
 export default passwordChecks
+
+export { checkHaveIbeenPwned }
