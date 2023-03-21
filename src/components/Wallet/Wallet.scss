@@ -16,7 +16,7 @@
 
     &.dapp-mode {
         #wallet-container-inner {
-            padding: 20px 10px 10px;
+            padding: 1.25rem .625rem .625rem;
         }
     }
 
@@ -25,7 +25,7 @@
         width: 100%;
         overflow-y: auto;
         padding: 0 $layout-spacing;
-        padding-bottom: 40px;
+        padding-bottom: 2.5rem;
     }
 
     .placeholder-overlay {
@@ -37,42 +37,41 @@
         right: 0;
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 1.25rem;
         align-items: center;
         justify-content: center;
-        font-size: 22px;
+        font-size: 1.375rem;
         font-weight: bold;
         text-align: center;
         color: $c-titan-white;
-        text-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        text-shadow: 0 0 .625rem rgba(0, 0, 0, 0.2);
     }
 
     .private-content {
-        filter: blur(20px);
+        filter: blur(1.25rem);
     }
 }
 
-@media screen and (max-width: 1650px) {
+@include xxl-breakpoint {
     #wallet-container {
         #wallet-container-inner {
-            padding: 0 $layout-spacing / 3;
-            padding-bottom: 30px;
+            padding: 0 $layout-spacing / 2.5;
+            padding-bottom: 1.875rem;
         }
     }
 }
 
-@media screen and (max-width: $small-breakpoint-max-width) {
+@include xl-breakpoint {
     #wallet-container {
-
         #wallet-container-inner {
-            padding: 0 $layout-spacing / 4;
-            padding-bottom: 30px;
+            padding: 0 2rem;
+            padding-bottom: 1.875rem;
         }
     }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     #wallet-container {
         overflow-y: auto;
         padding-bottom: $sidebar-mobile-height !important;
@@ -82,16 +81,16 @@
         }
 
         #wallet-container-inner {
-            padding: 40px 10px 20px;
+            padding: 2.5rem .625rem 1.25rem;
         }
     }
 }
 
 // Wide screen
-@media screen and (min-width: $wide-breakpoint-min-width) {
+@media screen and (min-width: 1920px) {
     #wallet-container & :not(.dapp-mode) {
         #wallet-container-inner {
-            max-width: 1500px;
+            max-width: 93.75rem;
         }
     }
 }

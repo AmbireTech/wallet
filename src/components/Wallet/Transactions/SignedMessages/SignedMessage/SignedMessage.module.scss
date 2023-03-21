@@ -2,8 +2,8 @@
 
 .wrapper {
 	overflow: hidden;
-	padding: 16px;
-  border-radius: 12px;
+	padding: 1rem;
+  border-radius: $border-radius;
 	background-color: $c-mirage;
 
   h4, p {
@@ -14,20 +14,20 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    font-size: 14px;
+    font-size: .875rem;
     user-select: none;
 
     .dappInfo {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: .625rem;
       flex: 1.2;
 
       .dappIcon {
-        width: 36px;
-        height: 36px;
-        padding: 8px;
-        border-radius: 12px;
+        width: 2.25rem;
+        height: 2.25rem;
+        padding: .5rem;
+        border-radius: $border-radius;
         background-color: rgba($c-titan-white, 0.05);
       }
     }
@@ -46,14 +46,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: $border-radius;
       background-color: rgba($c-titan-white, 0.05);
 
       svg {
-        width: 12px;
-        height: 12px;
+        width: .75rem;
+        height: .75rem;
       }
     }
   }
@@ -61,20 +61,20 @@
   .advanced {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding-top: 15px;
+    gap: .625rem;
+    padding-top: .9375rem;
 
     .advancedItem {
       .advancedTitle {
-        margin-bottom: 5px;
-        font-size: 16px;
+        margin-bottom: .3125rem;
+        font-size: 1rem;
         font-weight: 400;
         user-select: none;
       }
 
       .advancedText {
         color: $c-scampi; 
-        font-size: 14px;
+        font-size: .875rem;
         font-weight: 300;
         word-wrap: break-word;
         white-space: break-spaces;
@@ -83,13 +83,13 @@
   }
 }
 
-@media screen and (max-width: 800px) {
+@include sm-breakpoint {
   .wrapper {    
-    padding: 12px;
+    padding: .75rem;
     
     .body {
       align-items: stretch;
-      font-size: 12px;
+      font-size: .75rem;
 
       .dappInfo {
         flex-direction: column;
@@ -107,21 +107,21 @@
 
         .type {
           color: $c-heliotrope;
-          font-size: 14px;
+          font-size: .875rem;
         }
       }
 
       .expandIcon {
-        margin-left: 10px;
+        margin-left: .625rem;
       }
     }
     .advanced {
       .advancedItem {
         .advancedTitle {
-          font-size: 12px;
+          font-size: .75rem;
         }
         .advancedText {
-          font-size: 10.5px;
+          font-size: .6563rem;
         }
       }
     }

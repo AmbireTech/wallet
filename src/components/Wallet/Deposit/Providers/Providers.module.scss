@@ -3,26 +3,26 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 20px!important;
+    gap: 1.25rem!important;
 
     .provider {
         display: flex;
         justify-content: flex-start;
         align-items: flex-start;
-        padding: 16px 35px 16px 53px;
+        padding: 1rem 2.1875rem 1rem 3.3125rem;
         height: 10rem;
-        border-radius: 12px;
+        border-radius: $border-radius;
         background-color: $c-ebony-clay;
         border: 1px solid transparent;
         box-shadow: $box-shadow;
         cursor: pointer;
         transition: all 0.3s ease-out;
-        gap: 57px!important;
+        gap: 3.5625rem!important;
 
         .logo {
             display: block;
             max-width: 30%;
-            min-width: 100px;
+            min-width: 10rem;
             align-self: center;
 
             img, svg {
@@ -35,14 +35,14 @@
             text-align: left;
 
             .type {
-                margin-bottom: 8px;
-                font-size: 12px;
+                margin-bottom: .5rem;
+                font-size: .75rem;
             }
             .fees,
             .limits,
             .currencies {
                 color: $c-blue-bell;
-                font-size: 12px;
+                font-size: .75rem;
             }
         }
 
@@ -64,19 +64,19 @@
 
     .info {
         label {
-            font-size: 12px;
+            font-size: .75rem;
             opacity: 0.8;
         }
     }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         .provider {
             flex-direction: column;
-            gap: 20px!important;
-            padding: 30px;
+            gap: 1.25rem!important;
+            padding: 1.875rem;
             height: auto;
             align-items: center;
 

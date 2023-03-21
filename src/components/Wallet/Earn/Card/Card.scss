@@ -4,15 +4,15 @@
     display: flex;
     flex: 1;
     flex-direction: column;
-    gap: 30px;
-    padding: 20px 25px;
-    padding-bottom: 25px;
+    gap: 1.875rem;
+    padding: 1.25rem 1.5625rem;
+    padding-bottom: 1.5625rem;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
-    border-radius: 12px;
-    max-height: 700px;
-    min-height: 450px;
-    max-width: 450px;
+    border-radius: $border-radius;
+    max-height: 43.75rem;
+    min-height: 28.125rem;
+    max-width: 28.125rem;
 
     .amount-label {
         width: 100%;
@@ -22,7 +22,7 @@
         span {
             text-align: right;
             opacity: 0.8;
-            max-width: 150px;
+            max-width: 9.375rem;
             text-overflow: ellipsis;
             overflow: hidden;
         }
@@ -31,10 +31,10 @@
     .title {
         display: flex;
         justify-content: center;
-        padding: 15px 0;
+        padding: .9375rem 0;
 
         img {
-            height: 35px;
+            height: 2.1875rem;
         }
     }
 
@@ -48,14 +48,14 @@
         height: 100%;
         display: flex;
         flex-direction: column !important;
-        gap: 15px;
+        gap: .9375rem;
 
         .details {
             display: flex;
             flex-direction: column;
-            gap: 5px;
+            gap: .3125rem;
             list-style-type: none;
-            padding: 0 5px;
+            padding: 0 .3125rem;
             margin: 0;
 
             li {
@@ -72,18 +72,18 @@
 
         .warning-msg {
             background: mix($warning-color, $c-ebony-clay, 5%);
-            border: 1px solid $warning-color;
+            border: .0625rem solid $warning-color;
             color: $warning-color;
-            padding: 8px;
-            font-size: 14px;
-            border-radius: 12px;
+            padding: .5rem;
+            font-size: .875rem;
+            border-radius: $border-radius;
         }
 
         .details-placeholder {
-            height: 76px;
+            height: 4.75rem;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: .625rem;
             opacity: 0.5;
 
             div {
@@ -103,7 +103,7 @@
         .info-message {
             display: flex;
             align-items: center;
-            min-height: 102px;
+            min-height: 6.375rem;
         }
 
         .separator {
@@ -113,11 +113,11 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .card {
         min-height: unset;
         max-height: unset;
         width: 100%;
-        padding: 20px;
+        padding: 1.25rem;
     }
 }

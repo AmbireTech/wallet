@@ -488,7 +488,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       <MetamaskIcon className={styles.metamask} width={25} /> Web3 Wallet
     </button>
     <button onClick={() => wrapErr(open)}>
-      <VscJson size={25} />
+      <VscJson className={styles.jsonIcon} />
       Import from JSON
     </button>
     <input {...getInputProps()} />

@@ -1,14 +1,14 @@
 @import 'variables.scss';
 
-$badge-size-width: 64px;
-$badge-size-height: 90px;
+$badge-size-width: 4rem;
+$badge-size-height: 5.625rem;
 
 .wrapper {
     width: 100%;
     display: flex;
     justify-content: center;
-    gap: 20px;
-    padding-top: 12px;
+    gap: 1.25rem;
+    padding-top: .75rem;
     margin-bottom: 0; // Badges svg already have visual margin
 
     a {
@@ -23,21 +23,21 @@ $badge-size-height: 90px;
         flex-direction: column;
         align-items: center;
         justify-content: center;
-        margin-bottom: 10px;
+        margin-bottom: .625rem;
         user-select: none;
         opacity: 0.3;
         transition: transform 0.1s ease-out;
 
         .multiplier {
-            font-size: 12px;
+            font-size: .75rem;
             font-weight: bold;
             color: $c-titan-white;
         }
 
         .iconSvg {
             background-size: contain;
-            width: 98px;
-            height: 112px;
+            width: 6.125rem;
+            height: 7rem;
             display: block;
             background-repeat: no-repeat;
             background-position: 50% 50%;
@@ -68,7 +68,7 @@ $badge-size-height: 90px;
             opacity: 1;
 
             &:hover {
-                filter: drop-shadow(0 0 5px rgba(0, 0, 0, 0.3));
+                filter: drop-shadow(0 0 .3125rem rgba(0, 0, 0, 0.3));
                 transform: scale(1.05);
             }
         }

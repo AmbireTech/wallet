@@ -3,7 +3,7 @@
 .wrapper {
     display: flex;
     flex-direction: row;
-    gap: 17px;
+    gap: 1.0625rem;
 
     p {
         margin: 0;
@@ -11,18 +11,18 @@
 
     .panel {
         flex: 0 1 50%;
-        padding: 30px 40px;
-        gap: 40px;
+        padding: 1.875rem 2.5rem;
+        gap: 2.5rem;
 
         &Title {
             font-weight: 400;
-            font-size: 25px;
+            font-size: 1.5625rem;
         }
 
         .export {
             .button {
-                margin-bottom: 20px;
-                height: 60px;
+                margin-bottom: 1.25rem;
+                height: 3.75rem;
                 width: 100%;
                 background: transparent linear-gradient(90deg, $ambire-dark-blue 0%, $ambire-dark-blue 100%) 0% 0%;
                 border: none;
@@ -36,8 +36,8 @@
     
         .import {
             .button { 
-                margin-bottom: 20px;
-                height: 60px;
+                margin-bottom: 1.25rem;
+                height: 3.75rem;
                 width: 100%;
                 background: transparent linear-gradient(90deg, $c-turquoise 0%, #007D8A 100%) 0% 0%;
                 border: none;
@@ -52,9 +52,9 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         flex-direction: column;
-        gap: 1em;
+        gap: 1rem;
     }
 }
