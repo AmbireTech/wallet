@@ -1,23 +1,23 @@
 @import 'variables.scss';
 
 .wrapper {
-    padding: 13px 20px;
+    padding: .8125rem 1.25rem;
     background: $c-lavender-mist;
     color: $c-martinique-light;
-    border-radius: 13px;
-    border-left: 2px solid $c-heliotrope;
+    border-radius: $border-radius;
+    border-left: .125rem solid $c-heliotrope;
 
     svg {
-        width: 34px;
-        height: 34px;
+        width: 2.125rem;
+        height: 2.125rem;
     }
 
     label {
-        font-size: 20px;
+        font-size: 1.25rem;
         font-weight: 600;
     }
 
     p {
-        font-size: 16px;
+        font-size: 1rem;
     }
 }

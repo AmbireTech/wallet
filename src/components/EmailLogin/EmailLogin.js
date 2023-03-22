@@ -5,7 +5,7 @@ import cn from 'classnames'
 import { fetch, fetchCaught } from 'lib/fetch'
 
 import { useLocalStorage } from 'hooks'
-import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
+import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
 
 import styles from './EmailLogin.module.scss'
@@ -139,7 +139,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress}></LoginOrSignup>
         <div className={styles.magicLink}>A password will not be required, we will send a magic login link to your email.</div>
         <a className={styles.backButton} href="#/add-account">
-          <ChevronLeftIcon />
+          <ChevronLeftIcon className={styles.backIcon} />
           {' '}
           Back to Register
         </a>
