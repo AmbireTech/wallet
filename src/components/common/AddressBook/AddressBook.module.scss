@@ -16,7 +16,7 @@ $heading-height: 2.8125rem;
     background-color: $c-mirage-dark!important;
     border: none!important;
     border-radius: 0 $border-radius $border-radius 0!important;
-    padding: 0 .625rem;
+    padding: 0;
     opacity: 1;
     transition: .3s ease-in-out opacity;
 
@@ -28,6 +28,7 @@ $heading-height: 2.8125rem;
         display: flex;
         align-items: center;
         gap: 10px;
+        margin: 0 auto;
 
         .addressBookIcon {
             width: 35px;
@@ -152,6 +153,7 @@ $heading-height: 2.8125rem;
 @include lg-breakpoint {
     .addressBook {
         .dropdownTitle {
+            margin: 0;
             .addressBookTitle {
                 display: block;
             }
