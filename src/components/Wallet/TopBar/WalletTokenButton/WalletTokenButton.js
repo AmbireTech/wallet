@@ -12,7 +12,7 @@ const checkShouldShowCongratsModal = (currentClaimStatus, pendingTokensTotal) =>
     // It should be shown, if the user has pending tokens, but hasn't claimed any of them yet
     return (
         (pendingTokensTotal && pendingTokensTotal !== '...' && parseFloat(pendingTokensTotal))
-        && currentClaimStatus?.claimed === 0
+        && (currentClaimStatus?.claimed === 0 && currentClaimStatus?.claimedInitial === 0)
     )
 }
 
