@@ -1,7 +1,10 @@
 import cn from 'classnames'
-import styles from './AddressList.module.scss'
+
+import { ResponsiveAddress } from 'components/common'
 
 import { MdOutlineDelete } from 'react-icons/md'
+
+import styles from './AddressList.module.scss'
 
 const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress, className, addressClassName }) => {
     const items = addresses.filter(({ isAccount }) => !(isAccount && noAccounts))
@@ -17,8 +20,8 @@ const AddressList = ({ noAccounts, addresses, onSelectAddress, removeAddress, cl
                             <div className={styles.inner} onClick={() => onSelectAddress && onSelectAddress(address)}>
                                 <div className={styles.icon} style={{ backgroundImage: `url(${icon})`}}></div>
                                 <div className={styles.details}>
-                                    <label>{ name }</label>
-                                    <div className={styles.address}>{ address }</div>
+                                    <label className={styles.label}>{ name }</label>
+                                    <ResponsiveAddress className={styles.address} address={address} />
                                 </div>
                             </div>
                             {

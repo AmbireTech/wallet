@@ -76,7 +76,15 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     }, [address, selectedNetwork.unstoppableDomainsChain])
 
     return (
-        <DropDown title={<><AddressBookIcon className={styles.dropdownTitleIcon} />Address Book</>} className={cn(styles.addressBook, className || '')} menuClassName={styles.menu} handleClassName={styles.handle} open={isOpen} onChange={onDropDownChange}>
+        <DropDown 
+            title={<><AddressBookIcon className={styles.addressBookIcon} /><span className={styles.addressBookTitle}>Address Book</span></>} 
+            titleClassName={styles.dropdownTitle} 
+            className={cn(styles.addressBook, className)} 
+            menuClassName={styles.menu} 
+            handleClassName={styles.handle} 
+            open={isOpen} 
+            onChange={onDropDownChange}
+        >
             <div className={styles.heading}>
                 <div className={styles.title}>
                     <FaAddressCard /> Address Book

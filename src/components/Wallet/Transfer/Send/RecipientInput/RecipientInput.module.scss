@@ -16,7 +16,7 @@
   grid-template-areas:
     'input book'
     'message message';
-  grid-template-columns: 2fr 12rem;
+  grid-template-columns: 2fr 4rem;
   grid-template-rows: 1fr 1fr;
 	gap: .625rem 0;
 
@@ -67,7 +67,13 @@
   }
 }
 
-@media screen and (max-width: 48rem) {
+@media screen and (max-width: 1280px) {
+  .wrapper {
+    grid-template-columns: 2fr 12rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
   .wrapper {
     grid-template-areas:
       'input'
