@@ -11,7 +11,7 @@
             .row {
                 display: flex;
                 justify-content: space-between;
-                padding: 20px;
+                padding: 1.25rem;
                 background-color: rgba(255, 255, 255, 0.04);
     
                 div {
@@ -19,10 +19,10 @@
                 }
 
                 &:first-child {
-                    border-radius: 12px 12px 0 0;
+                    border-radius: $border-radius $border-radius 0 0;
                 }
                 &:last-child {
-                    border-radius: 0 0 12px 12px;
+                    border-radius: 0 0 $border-radius $border-radius;
                 }
             }
 
@@ -31,7 +31,7 @@
             }
     
             .loading-wrapper {
-                min-height: 560px;
+                min-height: 35rem;
             }
         }
     }

@@ -79,7 +79,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
         <DropDown 
             title={<><AddressBookIcon className={styles.addressBookIcon} /><span className={styles.addressBookTitle}>Address Book</span></>} 
             titleClassName={styles.dropdownTitle} 
-            className={cn(styles.addressBook, className || '')} 
+            className={cn(styles.addressBook, className)} 
             menuClassName={styles.menu} 
             handleClassName={styles.handle} 
             open={isOpen} 

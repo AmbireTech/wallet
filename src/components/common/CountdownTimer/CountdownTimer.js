@@ -29,7 +29,7 @@ const CountdownTimer = ({ seconds, setTimeIsUp, className }) => {
         <div
             className={cn(styles.wrapper, className, {[styles.isTimeUp]: isTimeIsUp})}
         >
-            <ClockIcon /> 
+            <ClockIcon className={styles.clockIcon} /> 
             <label>{timerFormatted}</label>
         </div>
     )

@@ -1,18 +1,18 @@
 @import 'variables';
 
 .wrapper {
-  padding-right: 15px; // Temporary fix until we find a better solution for the scrollbar
+  padding-right: .9375rem; // Temporary fix until we find a better solution for the scrollbar
 }
 
 // Adding this padding for laptop screens, because we are sure that the user will
 // see a scrollbar below this width
 @media screen and (max-width: 1600px) {
   .wrapper {
-    padding-right: 20px;
+    padding-right: 1.25rem;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     padding-right: 0;
   }

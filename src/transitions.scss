@@ -1,22 +1,22 @@
 .slide-fade-enter {
     opacity: 0;
-    transform: translateY(50px);
+    transform: translateY(3.125rem);
 }
 
 .slide-fade-enter.slide-fade-enter-active {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateY(0);
     transition: opacity 0.2s ease-in-out, transform 0.1s ease-in-out;
 }
 
 .slide-fade-enter-done {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateY(0);
 }
 
 .slide-fade-exit {
     opacity: 1;
-    transform: translateY(0px);
+    transform: translateY(0);
 }
 
 .slide-fade-exit.slide-fade-exit-active {

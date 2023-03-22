@@ -1,5 +1,5 @@
 @import 'variables.scss';
-$arrow-size: 15px;
+$arrow-size: .9375rem;
 
 .tooltip {
     display: contents;
@@ -7,14 +7,14 @@ $arrow-size: 15px;
     .tooltipLabel {
         z-index: 50;
         position: fixed;
-        max-width: 300px;
-        padding: 15px 20px;
-        font-size: 15px;
+        max-width: 18.75rem;
+        padding: .9375rem 1.25rem;
+        font-size: .9375rem;
         font-weight: 500;
         color: theme(text-primary);
         background-color: theme(background-primary);
         box-shadow: $box-shadow;
-        border-radius: 12px;
+        border-radius: $border-radius;
         white-space: normal;
         opacity: 0;
         overflow: visible;
@@ -54,7 +54,7 @@ $arrow-size: 15px;
         }
     }
 
-    @media screen and (max-width: $mobile-breakpoint-max-width) {
+    @include lg-breakpoint {
         .tooltipLabel {
             transition-delay: 400ms;
         }
