@@ -80,17 +80,17 @@ const ToastProvider = ({ children }) => {
         toasts.forEach((t) => t.error && errToastsCount++)
         
         if ((toasts.length > ERROR_MSG_LIMIT_COUNT) && (errToastsCount > ERROR_MSG_LIMIT_COUNT)) {
-            setToasts(toasts => toasts.slice(toasts.length - ERROR_MSG_LIMIT_COUNT, toasts.length))
+            setToasts(prevToasts => prevToasts.slice(prevToasts.length - ERROR_MSG_LIMIT_COUNT, prevToasts.length))
         }
     }, [toasts])
 
-    useEffect(() => updateToastsPositions(), [toasts, updateToastsPositions])
+    useEffect(() => updateToastsPositions(), [updateToastsPositions])
     useEffect(() => {
         const onResize = () => updateToastsPositions()
         window.addEventListener('resize', onResize, false);
         return () => window.removeEventListener('resize', onResize, false);
     }, [updateToastsPositions])
-    useEffect(()=> LimitsErrorMsgs(), [toasts, LimitsErrorMsgs])
+    useEffect(()=> LimitsErrorMsgs(), [LimitsErrorMsgs])
 
     const onToastClick = (id, onClick, url, route) => {
         if (url) window.open(url, '_blank')

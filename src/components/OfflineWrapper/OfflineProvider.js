@@ -3,7 +3,7 @@ import React, { useEffect, useState, useContext } from 'react'
 const OfflineContext = React.createContext(false)
 
 const OfflineProvider = ({ children }) => {
-    const [isOffline, setIsOffline] = useState(false)
+    const [isOffline, setIsOffline] = useState(!navigator.onLine)
     
     useEffect(() => {
         const updateOnlineStatus = (event) => {

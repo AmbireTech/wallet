@@ -10,6 +10,7 @@ import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import Signers from './Signers/Signers'
+import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 
 import styles from './Security.module.scss'
 
@@ -145,30 +146,32 @@ const Security = ({
     </Panel>
   )
   return (
-    <section className={cn(
-      styles.wrapper,
-      {
-        [styles.activeStyle]: isDragActive,
-        [styles.acceptStyle]: isDragAccept,
-        [styles.rejectStyle]: isDragReject
-      })
-    }
-      {...getRootProps()}
-    >
-      {
-        (isDragAccept || isDragReject)
-        && (<div className={isDragAccept ? styles.acceptStyleIcon : styles.rejectStyleIcon}><RiDragDropLine size={100}/></div>)
+    <OfflineWrapper>
+      <section className={cn(
+        styles.wrapper,
+        {
+          [styles.activeStyle]: isDragActive,
+          [styles.acceptStyle]: isDragAccept,
+          [styles.rejectStyle]: isDragReject
+        })
       }
-      
-      <input {...getInputProps()} />
-      {signersFragment}
+        {...getRootProps()}
+      >
+        {
+          (isDragAccept || isDragReject)
+          && (<div className={isDragAccept ? styles.acceptStyleIcon : styles.rejectStyleIcon}><RiDragDropLine size={100}/></div>)
+        }
+        
+        <input {...getInputProps()} />
+        {signersFragment}
 
-      <Backup 
-        selectedAccount={selectedAccount}
-        onOpen={open}
-        onAddAccount={onAddAccount}
-      />
-    </section>
+        <Backup 
+          selectedAccount={selectedAccount}
+          onOpen={open}
+          onAddAccount={onAddAccount}
+        />
+      </section>
+    </OfflineWrapper>
   )
 }
 

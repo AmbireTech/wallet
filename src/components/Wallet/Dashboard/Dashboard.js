@@ -88,7 +88,7 @@ export default function Dashboard({ portfolio, selectedNetwork, selectedAccount,
                 <Alert
                     type="warning"
                     title="No Internet Connection"
-                    iconNextToTitle={true}
+                    iconNextToTitle
                 /> 
             }
             { isBalancesCachedCurrentNetwork && (

@@ -9,12 +9,12 @@
     flex-direction: column;
     color: $info-color;
 
-    svg { 
-        width: 6em !important;
-        height: 6em !important;
+    .icon { 
+        width: 6rem;
+        height: 6rem;
     }
 
     .text { 
-        font-size: 22px;
+        font-size: 1.375rem;
     }
 }

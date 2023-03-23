@@ -48,8 +48,7 @@ async function retryRPCPromiseWithDelay<Promise>(
     delay: number
 ): Promise {
     try {
-        const data = await promise
-        return data
+        return await promise
     } catch (error) {
         if (retriesLeft === 0) {
             return Promise.reject(error)
@@ -86,20 +85,20 @@ const setProvider = (_id: NetworkId) => {
   if (!network) return null
 
   const { id: name, chainId, ensName } = network as NetworkType
-  let prov
+  let provider
   if (url.startsWith('wss:')) {
-    prov = new providers.WebSocketProvider(url, {
+    provider = new providers.WebSocketProvider(url, {
       name: ensName || name,
       chainId
     })
   } else {
-    prov = new providers.StaticJsonRpcProvider(url, {
+    provider = new providers.StaticJsonRpcProvider(url, {
       name: ensName || name,
       chainId
     })
   }
   
-  return new Proxy(prov, {
+  return new Proxy(provider, {
     get: function (target: any, prop: string, receiver) {
       if (typeof target[prop] === 'function') {
         return async function() {
