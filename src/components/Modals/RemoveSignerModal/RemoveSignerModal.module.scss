@@ -1,26 +1,15 @@
 @import 'variables';
 
 .wrapper {
-  min-height: 350px;
-  max-height: 500px;
-  max-width: 600px;
-  padding-bottom: 140px!important;
+  min-height: 21.875rem;
+  max-height: 31.25rem;
 
   .animation {
-    width: 173px;
+    width: 10.8125rem;
     margin: 0 auto;
   }
   .text {
     text-align: center;
     margin: 0;
-  }
-
-  :global(.content) {
-    padding-top: 0;
-  }
-  :global(.buttons) {
-    padding: 40px;
-    padding-top: 0;
-    height: auto;
   }
 }

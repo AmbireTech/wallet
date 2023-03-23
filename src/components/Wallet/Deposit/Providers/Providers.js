@@ -48,7 +48,7 @@ export default function Providers({ walletAddress, networkDetails, relayerURL, p
             fees: 'from 1%',
             limits: '',
             currencies: 'EUR, USD, GBP and many more',
-            networks: ['ethereum', 'polygon', 'avalanche', 'binance-smart-chain'],
+            networks: ['ethereum'],
             isSellAvailable: true,
             isBuyAvailable: true,
             onClick: () => openMoonpay(initMode, selectedAsset)

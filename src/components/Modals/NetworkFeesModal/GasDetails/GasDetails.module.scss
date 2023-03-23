@@ -9,26 +9,26 @@ $thead-background-color: darken($c-ebony-clay, 2%);
   }
 
   .date {
-    font-size: 12px;
+    font-size: .75rem;
     color: $c-scampi;
-    margin-bottom: 17px;
+    margin-bottom: 1.0625rem;
   }
 
   .speedRow {
     display: flex;
-    gap: 11px;
+    gap: .6875rem;
     flex-wrap: wrap;
-    margin-bottom: 44px;
+    margin-bottom: 2.75rem;
   
     .speedBlock {
       text-align: center;
       flex: 1;
       color: $c-titan-white;
       background: $c-mirage;
-      padding: 12px;
+      padding: .75rem;
       border: 2px solid transparent;
-      border-radius: 12px;
-      min-width: 100px;
+      border-radius: $border-radius;
+      min-width: 6.25rem;
   
       &.selected {
         border-color: $c-heliotrope;
@@ -36,13 +36,13 @@ $thead-background-color: darken($c-ebony-clay, 2%);
       }
   
       .speedName {
-        font-size: 16px;
-        margin-bottom: 7px;
+        font-size: 1rem;
+        margin-bottom: .4375rem;
         text-transform: capitalize;
       }
   
       .speedPrice {
-        font-size: 14px;
+        font-size: .875rem;
         opacity: 0.7;
         font-weight: 300;
       }
@@ -53,14 +53,14 @@ $thead-background-color: darken($c-ebony-clay, 2%);
     font-weight: normal;
     color: $c-titan-white;
     margin-top: 0;
-    margin-bottom: 24px;
+    margin-bottom: 1.5rem;
   }
 
   .tableWrapper {
-    border-radius: 12px;
+    border-radius: $border-radius;
     overflow-y: hidden;
     // overflow-x: auto;
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem;
 
     .gasActionCosts {
       width: 100%;
@@ -73,8 +73,8 @@ $thead-background-color: darken($c-ebony-clay, 2%);
 
         th {
           text-transform: capitalize;
-          padding: 16px 20px;
-          font-size: 14px;
+          padding: 1rem 1.25rem;
+          font-size: .875rem;
           text-align: center;
           font-weight: 500;
         }
@@ -93,7 +93,7 @@ $thead-background-color: darken($c-ebony-clay, 2%);
       }
 
       td {
-        padding: 16px;
+        padding: 1rem;
         font-size: 0.8em;
         text-align: center;
       }
@@ -101,7 +101,7 @@ $thead-background-color: darken($c-ebony-clay, 2%);
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .tableTitle {
       text-align: center;

@@ -11,6 +11,7 @@ import {
   WC2_SUPPORTED_METHODS
 } from 'hooks/walletConnect/wcConsts'
 import networks from 'consts/networks'
+import { ethers } from 'ethers'
 
 const STORAGE_KEY = 'wc2_state'
 const WC2_VERBOSE = process.env.REACT_APP_WC2_VERBOSE || 0
@@ -238,8 +239,9 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
 
       const namespaces = {
         eip155: {
+          chains: supportedChains,
           accounts: usedChains.map(a => a + ':' + account),
-          methods: DEFAULT_EIP155_METHODS,
+          methods: WC2_SUPPORTED_METHODS,
           events: DEFAULT_EIP155_EVENTS
         }
       }
@@ -305,7 +307,6 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
         if (WC2_VERBOSE) console.log('requestEvent.request.method', method)
 
         const connection = getConnectionFromSessionTopic(topic)
-
         if (connection) {
           const dappName = connection.session?.peerMeta?.name || ''
           if (method === 'personal_sign' || wcRequest.method === 'eth_sign') {
@@ -352,7 +353,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
             }
           }
 
-          if (txn) {
+          if (txn && ethers.utils.isAddress(requestAccount)) {
             const request = {
               id,
               type: method,
@@ -361,8 +362,14 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
               txn,
               chainId,
               topic,
-              account: requestAccount,
-              notification: true
+              account: ethers.utils.getAddress(requestAccount),
+              notification: true,
+              dapp: connection.session?.peerMeta ? {
+                name: connection.session.peerMeta.name,
+                description: connection.session.peerMeta.description,
+                icons: connection.session.peerMeta.icons,
+                url: connection.session.peerMeta.url,
+              } : null
             }
             setRequests(prev => [...prev, request])
             if (WC2_VERBOSE) console.log('WC2 request added :', request)

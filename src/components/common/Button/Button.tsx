@@ -20,7 +20,8 @@ const Button: FC<ButtonProps> = ({
 	title,
 	type,
 	form,
-	loadingText
+	loadingText,
+	testId
 }) => {
 	return (
 		<button
@@ -35,11 +36,12 @@ const Button: FC<ButtonProps> = ({
 				},
 				className
 			)}
-			// disabled={disabled} // causing pointer-events to not trigger
+			disabled={disabled}
 			title={title}
 			// used with <form>
 			type={type}
 			form={form}
+			data-testid={testId}
 		>
 			{(!loading && startIcon) && startIcon}
 			{!loading ? (

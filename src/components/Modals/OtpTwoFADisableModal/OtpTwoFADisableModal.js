@@ -80,13 +80,14 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
             {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}
             <CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp} className={styles.timer} />
             <div>
-              <h4>Authenticator app code</h4>
+              <h4>Enter the code from your authenticator app</h4>
                 <TextInput
                   className={styles.input}
                   placeholder="Enter the code from authenticator app"
                   onInput={setReceivedOTP}
                   value={receivedOtp}
                   pattern="[0-9]{6}"
+                  small
                   required
                 />
             </div>

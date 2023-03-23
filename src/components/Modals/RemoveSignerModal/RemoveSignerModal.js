@@ -8,22 +8,20 @@ import styles from './RemoveSignerModal.module.scss'
 const RemoveSignerModal = ({ onClick,  }) => {
   const { hideModal } = useModals()
 
-  const Buttons = <>
-    <Button onClick={hideModal}>
-      Cancel
-    </Button>
-    <Button variant="danger" onClick={() => {
-      hideModal()
-      onClick()
-    }}>
-      Remove
-    </Button>
-  </>
-
   return (
     <Modal 
       title="Remove Signer"
-      buttons={Buttons}
+      buttons={<>
+        <Button onClick={hideModal}>
+          Cancel
+        </Button>
+        <Button onClick={() => {
+          hideModal()
+          onClick()
+        }}>
+          Remove
+        </Button>
+      </>}
       isCloseBtnShown={false}
       className={styles.wrapper}
     >

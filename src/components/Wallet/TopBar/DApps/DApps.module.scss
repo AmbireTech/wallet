@@ -8,19 +8,19 @@
     .title {
         display: flex;
         align-items: center;
-        gap: 10px;
-        
+        gap: .625rem;
+
         label {
-            font-size: 14px;
+            font-size: .875rem;
         }
     }
 
     .menu {
-        width: 400px;
+        width: 25rem;
     }
 
     .dappList {
-        max-height: calc(65px * 5);
+        max-height: calc(4.0625rem * 5);
         overflow-x: hidden;
         overflow-y: auto;
     }
@@ -34,8 +34,8 @@
             position: relative;
             flex: 0 0 auto;
             @include flex-center-center;
-            height: 40px;
-            width: 40px;
+            height: 2.5rem;
+            width: 2.5rem;
             border-radius: 100%;
             overflow: hidden;
             color: rgba(255, 255, 255, 0.2);
@@ -58,10 +58,10 @@
             flex: 0 1 auto;
 
             .details {
-                max-width: 190px;
+                max-width: 11.875rem;
                 display: flex;
                 align-items: center;
-                gap: 10px;
+                gap: .625rem;
                 cursor: pointer;
 
                 .name {
@@ -87,9 +87,9 @@
 
         button {
             flex: 0 0 auto;
-            height: 25px;
-            padding: 0 10px;
-            font-size: 11px;
+            height: 1.5625rem;
+            padding: 0 .625rem;
+            font-size: .6875rem;
             font-weight: bold;
             border: 1px solid $c-titan-white;
             text-transform: uppercase;
@@ -110,14 +110,19 @@
         width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        padding: 10px;
+        gap: .625rem;
+        padding: .625rem;
 
         .heading {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding-right: 6px;
+            gap: .625rem;
+            padding-right: .375rem;
+
+            .helpIcon {
+                width: 1.375rem;
+                height: 1.375rem;
+            }
 
             .buttonClass {
                 width: 100%;
@@ -130,31 +135,24 @@
         }
 
         label {
-            font-size: 14px;
+            font-size: .875rem;
             color: $c-titan-white;
             font-weight: 300;
-            margin-bottom: 21px;
+            margin-bottom: 1.3125rem;
         }
     }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
-        .title {
-            svg {
-                width: 32px;
-                height: 32px;
-            }
-        }    
-      
         .menu {
             min-width: unset;
             width: 100%;
         }
         .dappsItem {
             .details {
-                max-width: 130px !important;
+                max-width: 8.125rem !important;
             }
         }
     }

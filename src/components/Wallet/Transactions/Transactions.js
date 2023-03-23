@@ -156,9 +156,21 @@ function Transactions ({ relayerURL, selectedAcc, selectedNetwork, showSendTxns,
   const paginationControls = (
     <div className={styles.paginationControls}>
       <div className={styles.paginationTitle}>Page</div>
-      <Button size="xsm" variant="secondary" onClick={() => page > 1 && setPage(page => page - 1)}><HiOutlineChevronLeft/></Button>
+      <Button 
+        size="xsm" variant="secondary"
+        className={styles.paginationButton} 
+        onClick={() => page > 1 && setPage(page => page - 1)}
+      >
+        <HiOutlineChevronLeft/>
+      </Button>
       <div className={styles.paginationCurrent}>{ page } <span>/ { maxPages }</span></div>
-      <Button size="xsm" variant="secondary" onClick={() => page < maxPages && setPage(page => page + 1)}><HiOutlineChevronRight/></Button>
+      <Button 
+        size="xsm" variant="secondary"
+        className={styles.paginationButton} 
+        onClick={() => page < maxPages && setPage(page => page + 1)}
+      >
+        <HiOutlineChevronRight/>
+      </Button>
     </div>
   )
 

@@ -1,38 +1,34 @@
 @import 'variables';
 
 .wrapper {
-  max-width: 680px;
   width: 100%;
 
-  :global(.content) {
-    overflow-x: auto;
-  }
-
-  .description {
+  .content {
     display: flex;
     flex-direction: column;
-    gap: 5px;
+    gap: .3125rem;
     text-align: left;
-    font-size: 16px;
+    font-size: 1rem;
     color: $c-titan-white;
     user-select: none;
+    overflow-x: auto;
 
     .feesInfo {
       margin: 0;
-      margin-bottom: 12px;
+      margin-bottom: .75rem;
     }
-  }
-  
-  .error {
-    color: $danger-color;
+ 
+    .error {
+      color: $danger-color;
+    }
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
-    .description {
+    .content {
       .feesInfo {
-        font-size: 14px;
+        font-size: .875rem;
         text-align: center;
       }
     }   

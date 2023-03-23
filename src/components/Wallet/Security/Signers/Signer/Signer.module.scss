@@ -5,12 +5,12 @@
   flex-direction: column;
   justify-content: space-between;
   width: 100%;
-  max-width: 240px;
+  max-width: 15rem;
   background: $c-mirage;
-  border: 1px solid $c-scampi;
-  border-radius: 12px;
-  padding: 20px;
-  padding-top: 15px;
+  border: .0625rem solid $c-scampi;
+  border-radius: $border-radius;
+  padding: .875rem;
+  padding-top: .9375rem;
 
   &.active {
     border-color: $c-turquoise;
@@ -21,33 +21,37 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem;
 
-    .checkbox {
-      gap: 10px;
-      align-items: center;
-      margin: 0;
-      
-      &Label {
-        flex: unset;
-        opacity: 0;
-        transition: .3s ease-in-out;
-      }
+    .makeDefault {
+      padding: 0 .75rem;
+      height: 2.125rem;
+      border-radius: $border-radius;
+      background-color: transparent;
+      border: .125rem solid $c-scampi;
+      font-family: inherit;
+      color: $c-scampi;
+      font-weight: 500;
+      font-size: .875rem;
+      cursor: pointer;
 
-      &:hover {
-        .checkboxLabel {
-          opacity: 1;
-        }
+      &.default {
+        cursor: not-allowed;
+        color: $c-turquoise;
+        border-color: $c-turquoise;
       }
     }
 
     .close {
-      width: 34px;
-      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.125rem;
+      height: 2.125rem;
       padding: 0;
       background-color: transparent;
-      border: 1px rgba($danger-color, 0.8) solid;
-      border-radius: 12px;
+      border: .0625rem rgba($danger-color, 0.8) solid;
+      border-radius: $border-radius;
       cursor: pointer;
 
       &.disabled {
@@ -57,16 +61,16 @@
 
       svg {
         color: $danger-color;
-        width: 34px;
-        height: 34px;
+        width: 2.125rem;
+        height: 2.125rem;
       }
     }
   }
 
   .body {
-    margin-bottom: 50px;
+    margin-bottom: 3.125rem;
     text-align: left;
-    font-size: 16px;
+    font-size: 1rem;
 
     label {
       display: block;
@@ -74,7 +78,7 @@
       word-wrap: break-word;
 
       &:first-child {
-        margin-bottom: 10px;
+        margin-bottom: .625rem;
       }
     }
     
@@ -87,14 +91,20 @@
     margin-top: auto;
     .button {
       width: 100%;
-      height: 50px;
-      font-size: 16px;
-      padding: 13px 0;
-      margin-bottom: 10px;
+      height: 3.125rem;
+      font-size: 1rem;
+      padding: .8125rem 0;
+      margin-bottom: .625rem;
 
       &:last-child {
         margin-bottom: 0;
       }
     }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    max-width: 17.5rem;
   }
 }

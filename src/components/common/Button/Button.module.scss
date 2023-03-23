@@ -15,12 +15,12 @@
 .wrapper {
     @include flex-center-center;
     gap: 0.5em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
-    height: 60px;
+    height: 3.75rem;
     padding: 0 1em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
     font-family: 'Poppins', sans-serif;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 500;
-    border-radius: 12px;
+    border-radius: $border-radius;
     border: none;
     outline: none;
     transition: 0.3s ease-in-out;
@@ -65,7 +65,7 @@
         display: inline;
         background-color: transparent;
         border: none;
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: 400;
         padding: 0;
         height: auto;
@@ -77,13 +77,13 @@
 
     // Sizes
     &.sm {
-        font-size: 17px;
-        height: 50px;
+        font-size: 1.0625rem;
+        height: 3.125rem;
     }
 
     &.xsm {
-        height: 40px;
-        font-size: 14px;
+        height: 2.5rem;
+        font-size: .875rem;
         padding: 0 0.8em;
     }
 
@@ -126,5 +126,11 @@
     &.disabled {
         opacity: .2;
         cursor: not-allowed;
+    }
+}
+
+@include lg-breakpoint {
+    .wrapper {
+        font-size: 1rem;
     }
 }

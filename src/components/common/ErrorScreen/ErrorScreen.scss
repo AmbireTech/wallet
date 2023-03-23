@@ -8,11 +8,11 @@
     justify-content: center;
 
     .error-screen-content {
-        max-width: 500px;
+        max-width: 31.25rem;
         text-align: center;
         background: $c-ebony-clay;
         border: 1px solid $c-fiord;
-        border-radius: 12px;
+        border-radius: $border-radius;
 
         p {
             margin: 0;
@@ -25,8 +25,8 @@
 
     .logo {
         display: inline-block;
-        height: 70px;
-        width: 235px;
+        height: 4.375rem;
+        width: 14.6875rem;
         background-image: url('/resources/logo.png');
         background-size: contain;
         background-repeat: no-repeat;
@@ -38,7 +38,7 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
-        margin-top: 20px;
+        margin-top: 1.25rem;
 
         > a {
             width: 50%;

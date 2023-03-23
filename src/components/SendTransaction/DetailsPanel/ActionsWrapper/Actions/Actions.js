@@ -388,6 +388,7 @@ const Actions = ({
             disabled={isRecoveryMode}
             onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
             className={styles.textInput}
+            testId="password"
           ></TextInput>
           {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
           {signingStatus.confCodeRequired !== 'notRequired' &&
@@ -399,6 +400,7 @@ const Actions = ({
               value={quickAccCredentials.code}
               onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
               className={styles.textInput}
+              testId="confirmationCode"
             ></TextInput>
           }
         </div>
@@ -420,6 +422,7 @@ const Actions = ({
               if (!form.current.checkValidity()) return
               approveTxn({ quickAccCredentials })
             }}
+            testId="confirmSigning"
           >
             Confirm
           </Button>
@@ -430,7 +433,7 @@ const Actions = ({
 
   return (<div className={styles.buttons}>
       {rejectButton}
-      <Button variant="primaryGradient" className={cn(styles.button, styles.confirm)} disabled={!estimation} loading={signingStatus?.inProgress} loadingText="Signing..." onClick={approveTxn}>
+      <Button variant="primaryGradient" className={cn(styles.button, styles.confirm)} disabled={!estimation} loading={signingStatus?.inProgress} loadingText="Signing..." onClick={approveTxn} testId="approveTxn">
         Sign and Send
       </Button>
   </div>)

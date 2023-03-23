@@ -1,9 +1,9 @@
 @import 'variables.scss';
 
-$account-height: 60px;
+$account-height: 3.75rem;
 
 .wrapper {
-    max-width: 220px;
+    max-width: 13.75rem;
     width: 100%;
     color: $c-titan-white;
 
@@ -16,15 +16,16 @@ $account-height: 60px;
         align-items: center;
         justify-content: space-between;
         width: 100%;
-        max-width: 110px;
-        gap: 5px;
+        max-width: 6.875rem;
+        gap: .3125rem;
         
         p {
             margin: 0;
         }
 
         .selectedAddressCopyIcon {
-            width: 18px;
+            width: 1.125rem;
+            height: 1.125rem;
             transition: .3s ease-in-out opacity;
 
             &:hover {
@@ -35,8 +36,8 @@ $account-height: 60px;
 
     .menu {
         background-color: $c-mirage;
-        padding-top: 15px;
-        min-width: 560px;
+        padding-top: .9375rem;
+        min-width: 35rem;
         
 
         .list {
@@ -46,11 +47,11 @@ $account-height: 60px;
             scrollbar-width: thin;
 
             .sortButtons {
-                padding: 0 10px;
+                padding: 0 .625rem;
             }
 
             .account {
-                padding: 0 10px;
+                padding: 0 .625rem;
                 position: relative;
                 display: flex;
                 align-items: center;
@@ -75,26 +76,26 @@ $account-height: 60px;
                     flex: 1;
                     align-items: center;
                     justify-content: flex-start;
-                    gap: 15px;
-                    margin-right: 10px;
+                    gap: 1.3125rem;
+                    margin-right: .625rem;
                     opacity: 0.6;
-                    padding: 0 10px;
-                    border-radius: 12px;
+                    padding: 0 .625rem;
+                    border-radius: $border-radius;
                     cursor: pointer;
 
                     .icon {
                         flex: 0 0 auto;
-                        height: 32px;
-                        width: 32px;
+                        height: 2rem;
+                        width: 2rem;
                         @include flex-center-center;
-                        border-radius: 12px;
+                        border-radius: $border-radius;
                         background-size: cover;
                     }
 
                     .details {
                         display: flex;
                         flex-direction: column;
-                        gap: 2px;
+                        gap: .125rem;
                         overflow: hidden;
 
                         .address, label {
@@ -104,12 +105,12 @@ $account-height: 60px;
                         }
 
                         .address {
-                            font-size: 14px;
+                            font-size: .875rem;
                             font-weight: 400;
                         }
 
                         label {
-                            font-size: 12px;
+                            font-size: .75rem;
                             font-weight: 500;
                             opacity: 0.5;
                             cursor: pointer;
@@ -135,18 +136,18 @@ $account-height: 60px;
                     .button {
                         display: block;
                         flex: 0 0 auto;
-                        height: 60px;
-                        width: 50px;
+                        height: 3.75rem;
+                        width: 3.125rem;
                         @include flex-center-center;
                         color: $c-titan-white;
-                        font-size: 28px;
+                        font-size: 2.5rem;
                         cursor: pointer;
-                        border-radius: 12px;
+                        border-radius: $border-radius;
 
                         svg {
                             opacity: 0.4;
-                            width: 28px;
-                            height: 28px;
+                            width: 1.75rem;
+                            height: 1.75rem;
                         }
 
                         &:hover {
@@ -175,18 +176,18 @@ $account-height: 60px;
         .confirmDeleteAccount {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 1.3125rem;
             
             .message {
                 margin: 0;
-                margin-left: 10px;
-                font-size: 15px;
+                margin-left: .625rem;
+                font-size: .9375rem;
             }
         }
     }
     .addAccount {
-        padding: 20px 10px;
-        padding-bottom: 18px;
+        padding: 1.25rem .625rem;
+        padding-bottom: 1.125rem;
     
         button {
             width: 100%;
@@ -196,12 +197,12 @@ $account-height: 60px;
 
 // Mobile 
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         max-width: 100%;
 
         .selectedAddress {
-            max-width: 140px;
+            max-width: 8.75rem;
         }
 
         .menu {
@@ -210,7 +211,7 @@ $account-height: 60px;
 
             .confirmDeleteAccount {
                 .message {
-                    font-size: 14px;
+                    font-size: .875rem;
                     word-wrap: break-word;
                 }
             }

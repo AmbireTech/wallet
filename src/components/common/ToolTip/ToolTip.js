@@ -1,14 +1,12 @@
-import styles from './ToolTip.module.scss'
 import { useState, useRef, useCallback } from 'react'
 import cn from 'classnames'
 
-const newLineText = (text = '') => {
-    return text.split('\n').map((str, key) => <div key={key}>{str}</div>)
-}
+import { ReactComponent as InfoCircleIcon } from 'resources/icons/information.svg'
+
+import styles from './ToolTip.module.scss'
 
 const ToolTip = ({ children, label, htmlContent, disabled, className, labelClassName }) => {
     const [labelPosition, setLabelPosition] = useState({ top: 0, left: 0 })
-    const [arrowPosition, setArrowPosition] = useState('top left')
     const ref = useRef(null)
 
     const margin = 15
@@ -49,7 +47,6 @@ const ToolTip = ({ children, label, htmlContent, disabled, className, labelClass
         }
 
         setLabelPosition(tooltipPosition)
-        setArrowPosition(`${position.vertical} ${position.horizontal}`)
     }, [ref])
 
 
@@ -64,9 +61,9 @@ const ToolTip = ({ children, label, htmlContent, disabled, className, labelClass
                 {children}
                 {
                     !disabled && (!!htmlContent || !!label) ?
-                        <div className={cn(styles.tooltipLabel, 'tooltip-label', labelClassName)} style={labelPosition}>
-                            {htmlContent || newLineText(label)}
-                            <div className={cn(styles.arrow, ...(arrowPosition.split(' ').map(position => styles[position])))}></div>
+                        <div className={cn(styles.tooltipLabel, labelClassName)} style={labelPosition}>
+                            <InfoCircleIcon className={styles.icon} />
+                            {htmlContent ? (htmlContent) : (<p className={styles.label}>{label}</p>)}
                         </div>
                         :
                         null

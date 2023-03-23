@@ -1,11 +1,8 @@
 @import 'variables';
 
 .modal {
-  padding-top: 15px;
-  max-width: 500px;
   width: 100%;
-  min-height: unset;
-  height: 600px!important;
+  height: 37.5rem;
 }
 
 .closeButton {
@@ -13,5 +10,5 @@
 }
 
 .body {
-  padding-top: 40px;
+  padding-top: 2.5rem;
 }

@@ -26,7 +26,7 @@ import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 import Lottie from 'lottie-react'
 import AnimationData from './assets/confirm-email.json'
 
-import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
+import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 
 import styles from './AddAccount.module.scss'
 // Icons
@@ -488,7 +488,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       <MetamaskIcon className={styles.metamask} width={25} /> Web3 Wallet
     </button>
     <button onClick={() => wrapErr(open)}>
-      <VscJson size={25} />
+      <VscJson className={styles.jsonIcon} />
       Import from JSON
     </button>
     <input {...getInputProps()} />

@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import cn from 'classnames'
 import { BsXLg } from "react-icons/bs"
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -22,7 +23,6 @@ import { ReactComponent as GridPlusIcon } from 'resources/providers/grid-plus.sv
 import { ReactComponent as MetaMaskIcon } from 'resources/providers/metamask-fox.svg'
 
 import styles from './AddAuthSignerModal.module.scss'
-import cn from 'classnames'
 
 const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) => {
   const { addToast } = useToasts()
@@ -239,23 +239,23 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
 
   // Here we are choosing the Signer firstly
   const stepOne = () => <>
-    <div className={cn(styles.subtitle, styles.chooseSignerSubtitle)}>Choose Signer</div>
+    <h2 className={cn(styles.subtitle, styles.chooseSignerSubtitle)}>Choose Signer</h2>
     <div className={styles.signers}>
       <div className={styles.signer} onClick={() => wrapErr(connectTrezorAndGetAccounts)}>
-        <TrezorIcon width={172} />
+        <TrezorIcon className={styles.trezor} />
       </div>
       <div className={styles.signer} onClick={() => wrapErr(connectLedgerAndGetAccounts)}>
-        <LedgerIcon width={172} />
+        <LedgerIcon className={styles.ledger} />
       </div>
       <div className={styles.signer} onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
-        <GridPlusIcon width={127} className={styles.gridplus}/>
+        <GridPlusIcon className={styles.gridplus} />
       </div>
       <div className={styles.signer} onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
-        <MetaMaskIcon width={70} className={styles.metamask} />
+        <MetaMaskIcon className={styles.metamask} />
       </div>
     </div>
 
-    <div className={styles.subtitle}>- or -</div>
+    <p className={styles.subtitle}>- or -</p>
 
     <div className={styles.manualSigner}>
       <TextInput

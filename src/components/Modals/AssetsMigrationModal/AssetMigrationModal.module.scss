@@ -1,16 +1,14 @@
 @import 'variables';
 
 .wrapper {
-  :global(.content) {
-    padding-top: 0;
-  }
+  height: 100%;
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
-    :global(.buttons) {
+    .buttons {
       button {
-        font-size: 14px!important;
+        font-size: .875rem!important;
       }
     }
   }
