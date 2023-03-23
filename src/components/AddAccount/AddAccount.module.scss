@@ -15,10 +15,8 @@
         background-position: top center;
         background-repeat: no-repeat;
 
-        input {
-            &:not([type=submit]):focus {
-                border-bottom-color: $c-white;
-            }
+        input:focus {
+            border-bottom-color: $c-white;
         }
     }
 
@@ -29,7 +27,7 @@
         margin-bottom: 2.6875rem;
     }
 
-    button, input {
+    button:not([type=submit]), input {
         font-size: 1rem;
         border: 0;
         background: none; /* #282c34; */
@@ -72,7 +70,7 @@
         width: 100%;
         font-size: 1rem;
 
-        &:not([type=submit]):focus {
+        &:focus {
             border-bottom-color: $c-electric-violet;
         }
     }

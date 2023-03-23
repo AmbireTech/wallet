@@ -16,13 +16,13 @@
         background-repeat: no-repeat;
 
         input {
-            &:not([type=submit]):focus {
+            &:focus {
                 border-bottom-color: $c-white;
             }
         }
     }
 
-    button, input {
+    button:not([type=submit]), input {
         font-size: 1rem;
         border: 0;
         background: none; /* #282c34; */
@@ -64,7 +64,7 @@
         width: 100%;
         font-size: 1rem;
 
-        &:not([type=submit]):focus {
+        &:focus {
             border-bottom-color: #6000ff;        
         }
     }
