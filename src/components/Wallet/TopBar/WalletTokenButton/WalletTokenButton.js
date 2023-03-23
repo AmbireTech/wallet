@@ -77,6 +77,12 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     const showCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
 
     useEffect(() => {
+      // Temporarily disable Congrats Modal, as there are 2 issues, but we want to deploy the current release.
+      // Here are the issues we are facing:
+      // - in the case we are switching the account, `currentClaimStatus` has the prev account's data
+      // - we should change the logic and show the modal only if the balance > $1000
+      return false
+
       const shouldShowCongratsModal = checkShouldShowCongratsModal(currentClaimStatus, pendingTokensTotal)
 
       if (!shouldShowCongratsModal) return
