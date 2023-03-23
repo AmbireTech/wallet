@@ -31,14 +31,14 @@ describe('Transfering funds', () => {
     cy.get('[data-testid="password"]').type(Cypress.env('ACCOUNT_PASSWORD'))
 
     // Wait for the email code.
-    // Later we can make a polling mechanism for checking the code, instead of waiting 10 seconds.
-    cy.wait(10000)
+    // Later we can make a polling mechanism for checking the code, instead of waiting 30 seconds.
+    cy.wait(30000)
 
     cy.task('get-confirm-code').then(code => {
       cy.get('[data-testid="confirmationCode"]').type(code)
       cy.get('[data-testid="confirmSigning"]').click()
 
-      cy.wait(3000)
+      cy.wait(10000)
 
       cy.get('[data-testid="txnSignedMsg"]').should('be.visible')
     })

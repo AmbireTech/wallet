@@ -1,6 +1,6 @@
 import { RiDragDropLine } from 'react-icons/ri'
 import { useState, useEffect, useCallback, useMemo } from 'react'
-import { Loading, Panel } from 'components/common'
+import { Loading, Panel, Alert } from 'components/common'
 import { AbiCoder, keccak256 } from 'ethers/lib/utils'
 import cn from 'classnames'
 import { useRelayerData } from 'hooks'
@@ -9,7 +9,6 @@ import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
-import Alert from './Alert/Alert'
 import Signers from './Signers/Signers'
 
 import styles from './Security.module.scss'
@@ -99,7 +98,20 @@ const Security = ({
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (
   <div>
-    <Alert network={selectedNetwork.name} />
+    <Alert
+      className={styles.alert}
+      title="Please note:"
+      text={<>Signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.{' '}
+        <a
+          href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' 
+          target='_blank' 
+          rel='noreferrer'
+          className={styles.link}
+        >
+          Need help? Click here.
+        </a>
+      </>}
+    />
     <Panel className={styles.panel} title="Authorized signers" titleClassName={styles.title}>
       {hasPendingReset && !showLoading && (<PendingRecoveryNotice
         recoveryLock={recoveryLock}

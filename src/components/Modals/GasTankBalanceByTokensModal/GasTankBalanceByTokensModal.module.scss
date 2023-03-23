@@ -4,39 +4,39 @@
     .content {
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: .625rem;
         
         .token {
             display: flex;
             background-color: $c-mirage;
-            border-radius: 12px;
-            padding: 8px 20px;
+            border-radius: $border-radius;
+            padding: .5rem 1.25rem;
 
             p {
                 opacity: .9;
                 font-weight: 300;
                 margin: 0;
-                font-size: 14px;
+                font-size: .875rem;
             }
 
             .iconAndName {
                 display: flex;
                 flex: 2 0 0; 
-                gap: 10px;
+                gap: .625rem;
                 align-items: center;
 
                 .icon {
                     display: flex;
                     align-items: center;
                     justify-content: center;
-                    width: 34px;
-                    height: 34px;
-                    border-radius: 12px;
+                    width: 2.125rem;
+                    height: 2.125rem;
+                    border-radius: $border-radius;
                     background-color: rgba($c-titan-white, 0.05);
 
                     img {
-                        width: 18px;
-                        height: 18px;
+                        width: 1.125rem;
+                        height: 1.125rem;
                     }
                 }
             }
@@ -59,7 +59,7 @@
     }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         .content {
             .token {
@@ -71,7 +71,7 @@
                 }
                 .amountAndValue {
                     flex: unset;
-                    gap: 5px;
+                    gap: .3125rem;
                     flex-direction: column;
                     align-items: flex-end;
                 }

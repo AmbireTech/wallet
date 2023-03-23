@@ -16,13 +16,13 @@
     margin-bottom: 40px;
     background-color: theme(background-terniary);
     border: 1px solid theme(border-secondary);
-    border-radius: 12px;
+    border-radius: $border-radius;
 
     .siteLogo {
       width: 64px;
       height: 64px;
       margin-bottom: 20px;
-      border-radius: 12px;
+      border-radius: $border-radius;
       background-color: #7549E8;
     }
 

@@ -3,11 +3,11 @@
 #earn {
     display: flex;
     flex-direction: row;
-    gap: 30px;
+    gap: 1.875rem;
 
     .cards {
         display: flex;
-        gap: 30px;
+        gap: 1.875rem;
         width: 100%;
         flex-wrap: wrap;
         align-items: stretch;
@@ -15,9 +15,9 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     #earn {
-        padding-bottom: 40px;
+        padding-bottom: 2.5rem;
         .cards {
             width: 100%;
             flex-direction: column;

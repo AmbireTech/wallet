@@ -1,17 +1,22 @@
 @import 'variables.scss';
 
-$heading-height: 45px;
+$heading-height: 2.8125rem;
 
 .handle {
     display: none!important;
 }
 
+.dropdownTitleIcon {
+    width: 2.5rem;
+    height: 2.5rem;
+}
+
 .addressBook {
-    height: 60px !important;
+    height: 3.75rem !important;
     background-color: $c-mirage-dark!important;
     border: none!important;
-    border-radius: 0 12px 12px 0!important;
-    padding: 0 10px;
+    border-radius: 0 $border-radius $border-radius 0!important;
+    padding: 0;
     opacity: 1;
     transition: .3s ease-in-out opacity;
 
@@ -19,29 +24,41 @@ $heading-height: 45px;
         cursor: pointer;
     }
 
-    .content {
-        cursor: pointer;
+    .dropdownTitle {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0 auto;
 
-        .title {
-            flex-direction: row !important;
+        .addressBookIcon {
+            width: 35px;
+            height: 35px;
+        }
+
+        .addressBookTitle {
+            display: none;
         }
     }
 
+    .content {
+        cursor: pointer;
+    }
+
     .menu {
-        top: 70px !important;
+        top: 4.375rem !important;
         display: flex;
         flex-direction: column;
         gap: 0;
         padding: 0;
         white-space: nowrap;
-        min-width: 260px;
-        max-width: 400px;
+        min-width: 16.25rem;
+        max-width: 25rem;
     }
 
     .button {
         height: 100%;
         @include flex-center-center;
-        font-size: 17px;
+        font-size: 1.0625rem;
         font-weight: bold;
         color: $c-titan-white;
 
@@ -61,16 +78,16 @@ $heading-height: 45px;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        padding-left: 20px;
+        padding-left: 1.25rem;
         background-color: $c-mirage;
 
         .title {
             display: flex;
             flex-direction: row !important;
             align-items: center;
-            gap: 10px;
-            font-size: 15px;
-            font-weight: bold;
+            gap: .625rem;
+            font-size: .9375rem;
+            font-weight: 400;
         }
 
         .button {
@@ -79,7 +96,7 @@ $heading-height: 45px;
     }
 
     .content {
-        max-height: 250px;
+        max-height: 15.625rem;
         display: flex;
         flex-direction: column;
         padding: 0;
@@ -92,7 +109,8 @@ $heading-height: 45px;
         }
 
         .emptyText {
-            padding: 15px;
+            padding: .9375rem;
+            font-size: .875rem;
             margin: 0;
         }
 
@@ -102,38 +120,44 @@ $heading-height: 45px;
     }
 
     .addAddress {
-        padding: 10px;
+        padding: .625rem;
 
         .fields {
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: .625rem;
 
             input[type=text] {
                 display: block;
-                height: 40px;
-                width: 300px;
+                height: 2.5rem;
+                width: 18.75rem;
                 margin: 0 auto;
                 font-size: 1em !important;
                 background-color: $c-mirage;
-                border-radius: 8px;
+                border-radius: .5rem;
                 color: $c-titan-white;
             }
         }
 
         button {
             width: 100%;
-            max-width: 300px;
+            max-width: 18.75rem;
             margin: 0 auto;
-            margin-top: 15px;
+            margin-top: .9375rem;
             color: $c-titan-white;
         }
     }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .addressBook {
+        .dropdownTitle {
+            margin: 0;
+            .addressBookTitle {
+                display: block;
+            }
+        }
         .menu {
             width: 100%;
         }

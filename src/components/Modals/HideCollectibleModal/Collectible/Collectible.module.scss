@@ -5,11 +5,11 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
-  height: 50px;
-  padding: 8px 20px;
+  gap: .9375rem;
+  height: 3.125rem;
+  padding: .5rem 1.25rem;
   margin-bottom: 0;
-  border-radius: 12px;
+  border-radius: $border-radius;
   background-color: $c-mirage;
 
   .info {
@@ -17,23 +17,23 @@
       align-items: center;
       
       .iconWrapper {
-          width: 34px;
-          height: 34px;
+          width: 2.125rem;
+          height: 2.125rem;
           background-color: rgba($c-titan-white, 0.04);
-          border-radius: 12px;
+          border-radius: $border-radius;
           display: flex;
           align-items: center;
           justify-content: center;
-          margin-right: 10px;
+          margin-right: .625rem;
       }
       .icon {
-          width: 24px;
-          height: 24px;
-          border-radius: 12px;
+          width: 1.5rem;
+          height: 1.5rem;
+          border-radius: $border-radius;
       }
   
       .name {
-          font-size: 14px;
+          font-size: .875rem;
           font-weight: 400;
           margin: 0;
   
