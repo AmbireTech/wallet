@@ -32,6 +32,7 @@ const Transfer = (props) => {
     return (
         <div className={styles.wrapper}>
             {!gasTankDetails ? <Tabs 
+                className={styles.tab}
                 firstTabLabel='Send'
                 secondTabLabel='Sell Crypto'
                 firstTab={

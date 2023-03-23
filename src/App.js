@@ -10,8 +10,6 @@ import {
   Prompt
 } from 'react-router-dom'
 import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
-import ToastProvider from './components/ToastProvider/ToastProvider'
-import ModalProvider from './components/ModalProvider/ModalProvider'
 import OfflineProvider from 'components/OfflineWrapper/OfflineProvider'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
@@ -31,7 +29,10 @@ import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 import useRewards from 'ambire-common/src/hooks/useRewards'
 import allNetworks from './consts/networks'
 import { Loading } from 'components/common'
-import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
+import ConstantsProvider from 'context/ConstantsProvider/ConstantsProvider'
+import ToastProvider from 'context/ToastProvider/ToastProvider'
+import ModalProvider from 'context/ModalProvider/ModalProvider'
+import ThemeProvider from 'context/ThemeProvider/ThemeProvider'
 import useDapps from 'ambire-common/src/hooks/useDapps'
 import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
@@ -44,7 +45,6 @@ import SignMessage from './components/SignMessage/SignMessage'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
-import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
 
 const MATCH = { url: "/wallet" };
 

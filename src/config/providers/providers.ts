@@ -24,7 +24,9 @@ export const rpcUrls = {
   mumbai: 'https://polygon-mumbai.g.alchemy.com/v2/rxBAvusV5YEzxEHX2LF9Y_jfIoRpIEGL',
   cronos: 'https://evm-cronos.crypto.org',
   aurora: 'https://mainnet.aurora.dev',
-  'ethereum-pow': 'https://mainnet.ethereumpow.org'
+  'ethereum-pow': 'https://mainnet.ethereumpow.org',
+  okc: 'https://exchainrpc.okex.org',
+  sepolia: 'https://eth-sepolia.g.alchemy.com/v2/nauTOhyzYtvU9NjWY00XrC73z0yzBYm_'
 }
 
 // @ts-ignore

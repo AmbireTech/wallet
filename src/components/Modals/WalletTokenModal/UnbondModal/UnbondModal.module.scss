@@ -13,26 +13,26 @@
   justify-content: center;
 
   .modal {
-    min-height: 530px;
+    min-height: 33.125rem;
     padding-top: 0;
   }
 
   .modalContentWrapper {
-    max-width: 500px;
+    max-width: 31.25rem;
     background: $c-ebony-clay 0% 0% no-repeat padding-box;
-    box-shadow: 0px 0px 15px #00000040;
+    box-shadow: 0 0 .9375rem #00000040;
   }
   .content {
     text-align: center;
-    padding-top: 40px;
+    padding-top: 2.5rem;
 
     .dangerAnimationWrapper {
       position: relative;
       .dangerAnimation {
-        width: 124px;
-        height: 124px;
+        width: 7.75rem;
+        height: 7.75rem;
         margin: 0 auto;
-        margin-bottom: 40px;
+        margin-bottom: 2.5rem;
       }
 
       .dangerAnimationCircle {
@@ -44,16 +44,16 @@
     }
 
     .warningTitle {
-      font-size: 24px;
+      font-size: 1.5rem;
       color: $danger-color;
       font-weight: 700;
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem;
     }
 
     .warningText {
-      font-size: 16px;
-      line-height: 22px;
-      margin-bottom: 42px;
+      font-size: 1rem;
+      line-height: 1.375rem;
+      margin-bottom: 2.625rem;
     }
   }
   .buttons {
@@ -61,13 +61,13 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    padding: 0 34px;
+    padding: 0 2.125rem;
     justify-content: center;
     align-items: center;
-    margin-bottom: 15px;
+    margin-bottom: .9375rem;
 
     .button:first-child {
-      margin-bottom: 10px;
+      margin-bottom: .625rem;
     }
 
     .button:last-child {
@@ -77,7 +77,7 @@
       color: $c-titan-white;
       width: 100%;
       box-sizing: border-box;
-      padding: 21px 0;
+      padding: 1.3125rem 0;
     }
   }
 }

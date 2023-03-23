@@ -1,39 +1,39 @@
 @import 'variables.scss';
 
 .unavailable {
-  padding-top: 50px;
-  max-width: 800px;
+  padding-top: 3.125rem;
+  max-width: 50rem;
   margin: 0 auto;
 }
 
 .wrapper {
   display: flex;
   justify-content: center;
-  gap: 17px;
+  gap: 1.0625rem;
   min-height: 100%;
 
   .panel {
     flex: 1;
-    padding: 40px;
+    padding: 2.5rem;
     min-height: 100%;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     flex-direction: column;
 
     .panel {
-      padding: 30px;
+      padding: 1.875rem;
       min-height: unset;
     }
   }
 }
 
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
   .wrapper {
     .panel {
-      padding: 20px;
+      padding: 1.25rem;
     }
   }
 }

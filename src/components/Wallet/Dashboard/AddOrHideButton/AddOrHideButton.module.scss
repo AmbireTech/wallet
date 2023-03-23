@@ -2,12 +2,12 @@
 
 .wrapper {
   width: 100%;
-  padding: 28.5px 30px;
-  font-size: 16px;
+  padding: 1.7813rem 1.875rem;
+  font-size: 1rem;
   color: $c-titan-white;
   background-color: transparent;
   font-weight: 400;
-  border-radius: 12px;
+  border-radius: $border-radius;
   border: 1px dashed $c-scampi;
   cursor: pointer;
 }
