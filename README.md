@@ -463,3 +463,11 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 - fix / apply white list for sign message for EIP 1271 support 
 - fix / signed message and sigHash can be selectable for copy
 - redesign / promo banners
+
+### v0.7.0
+- OKX Chain support added.
+- Sepolia Chain support added as testnet.
+- Fixed namespaces for Wallet Connect v2 connections with dApps.
+- Improve wallet responsiveness.
+- UX optimization for 4k.
+- Optimizations of visual elements.
