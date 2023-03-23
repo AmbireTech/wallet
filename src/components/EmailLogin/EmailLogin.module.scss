@@ -57,19 +57,6 @@
         cursor: default;
     }
 
-    input[type=submit] {
-        height: 3.75rem;
-        width: 100%;
-        border: none;
-        background: theme(gradient-primary);
-        border-radius: $border-radius;
-        color: $c-white;
-        font-size: 1.25rem;
-        font-weight: 500;
-        padding: 0;
-        margin-bottom: 1.875rem;
-    }
-
     input {
         color: theme(text-secondary);
         margin: 2rem 0;

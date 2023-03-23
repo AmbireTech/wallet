@@ -65,19 +65,6 @@
         cursor: default;
     }
 
-    input[type=submit] {
-        height: 3.75rem;
-        width: 100%;
-        border: none;
-        background: theme(gradient-primary);
-        border-radius: $border-radius;
-        color: $c-titan-white;
-        font-size: 1.25rem;
-        font-weight: 500;
-        padding: 0;
-        margin-bottom: 1.875rem;
-    }
-
     input {
         color: $c-scampi;
         margin: 2rem 0;
@@ -143,10 +130,6 @@
         max-width: 50rem;
         /* TODO some sort of vertical alignment */
         margin: 0em auto 0em;
-
-        input[type=submit]:hover {
-            opacity: 1.0;
-        }
 
         .loginSeparator {
             width: .0625rem;
