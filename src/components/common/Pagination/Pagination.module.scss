@@ -1,16 +1,7 @@
 @import 'variables.scss';
 
-.paginationControlsHolder {
+.wrapper {
     display: flex;
     justify-content: right;
-    margin: 8px 0;
-
-    .paginationControls {
-        display: flex;
-        align-items: center;
-        align-self: flex-end;
-        gap: 1em;
-        font-size: 15px;
-        font-weight: 500;
-    }
+    margin: .5rem 0;
 }

@@ -1,14 +1,16 @@
-import styles from './AddressBook.module.scss'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import cn from 'classnames'
+
+import { resolveENSDomain } from 'lib/ensDomains'
+import { resolveUDomain } from 'lib/unstoppableDomains'
+import { Button, DropDown, TextInput } from 'components/common'
+import Addresses from './Addresses/Addresses'
 
 import { FaAddressCard } from 'react-icons/fa'
 import { MdOutlineAdd, MdClose } from 'react-icons/md'
-import { Button, DropDown, TextInput } from 'components/common'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import AddressList from './AddressList/AddressList'
-import { resolveUDomain } from 'lib/unstoppableDomains'
-import { resolveENSDomain } from 'lib/ensDomains'
 import { ReactComponent as AddressBookIcon } from './images/address-book.svg'
-import cn from 'classnames'
+
+import styles from './AddressBook.module.scss'
 
 const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose, onSelectAddress, selectedNetwork, className }) => {
     const [address, setAddress] = useState('')
@@ -74,7 +76,15 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     }, [address, selectedNetwork.unstoppableDomainsChain])
 
     return (
-        <DropDown title={<><AddressBookIcon />Address Book</>} className={cn(styles.addressBook, className || '')} menuClassName={styles.menu} handleClassName={styles.handle} open={isOpen} onChange={onDropDownChange}>
+        <DropDown 
+            title={<><AddressBookIcon className={styles.addressBookIcon} /><span className={styles.addressBookTitle}>Address Book</span></>} 
+            titleClassName={styles.dropdownTitle} 
+            className={cn(styles.addressBook, className)} 
+            menuClassName={styles.menu} 
+            handleClassName={styles.handle} 
+            open={isOpen} 
+            onChange={onDropDownChange}
+        >
             <div className={styles.heading}>
                 <div className={styles.title}>
                     <FaAddressCard /> Address Book
@@ -104,14 +114,15 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
                     :
                     !addresses.length ?
                         <div className={styles.content}>
-                            Your Address Book is empty.
+                            <p className={styles.emptyText}>Your Address Book is empty.</p>
                         </div>
                         :
                         <div className={styles.content}>
-                            <AddressList
+                            <Addresses
                                 addresses={addresses}
-                                onSelectAddress={selectAddress}
+                                selectAddress={selectAddress}
                                 removeAddress={removeAddress}
+                                addressClassName={styles.address}
                             />
                         </div>
             }

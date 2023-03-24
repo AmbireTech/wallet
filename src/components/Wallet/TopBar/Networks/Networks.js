@@ -1,9 +1,9 @@
-import styles from './Networks.module.scss'
 import { Select } from 'components/common';
 import { useDragAndDrop, useCheckMobileScreen } from 'hooks';
 import { ToolTip } from 'components/common';
 import { MdDragIndicator, MdOutlineSort } from 'react-icons/md';
 import SortButtons from 'components/common/Select/SortButtons/SortButtons';
+import styles from './Networks.module.scss'
 
 const Networks = ({
     network,
@@ -73,10 +73,11 @@ const Networks = ({
             onChange={({ value }) => setNetwork(value)}
             iconClassName={styles.iconClassName}
             labelClassName={styles.labelClassName}
+            optionClassName={styles.optionClassName}
             draggableHeader={
                 <SortButtons>
                     <ToolTip label='Sorted networks by drag and drop'>
-                        <MdDragIndicator color={sortType === "custom" ? "#80ffdb" : ""} cursor="pointer" 
+                        <MdDragIndicator color={sortType === "custom" ? "#27e8a7" : ""} cursor="pointer" 
                         onClick={() => setUserSorting(prev => ({
                             ...prev,
                             networks: {
@@ -86,7 +87,7 @@ const Networks = ({
                         }))} />
                     </ToolTip>
                     <ToolTip label='Sorted networks by default'>
-                        <MdOutlineSort color={sortType === "default" ? "#80ffdb" : ""} cursor="pointer" 
+                        <MdOutlineSort color={sortType === "default" ? "#27e8a7" : ""} cursor="pointer" 
                         onClick={() => setUserSorting(prev => ({
                             ...prev,
                             networks: {

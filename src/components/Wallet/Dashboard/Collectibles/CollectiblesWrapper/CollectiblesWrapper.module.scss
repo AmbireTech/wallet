@@ -1,0 +1,41 @@
+@import 'variables.scss';
+
+$collectible-size: 12.75rem;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: .9375rem;
+  padding: 0 3.125rem;
+  margin-top: .75rem;
+
+  .relative {
+    position: relative;
+  }
+
+  .collectiblesWrapper {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax($collectible-size, 1fr));
+    gap: 1.875rem 2.875rem;
+    justify-items: center;
+  }
+}
+// Mobile
+@include lg-breakpoint {
+  .wrapper {
+    padding: 0 1.25rem;
+
+    .collectiblesWrapper {
+      gap: 1.5rem;
+    }
+  }
+}
+
+@include xs-breakpoint {
+  .wrapper {
+    .collectiblesWrapper {
+      gap: 1rem;
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+}

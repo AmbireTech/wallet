@@ -1,33 +1,25 @@
 @import 'variables.scss';
 
-$max-width: 650px;
+$max-width: 40.625rem;
 
 .wrapper {
   position: fixed;
-  top: 0px;
-  left: 0px;
-  right: 0px;
-  bottom: 0px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 999;
   overflow-y: auto;
-  background: rgb(61,68,106);
-  background: transparent linear-gradient(180deg, $c-fiord 0%, $c-ebony-clay 100%) 0% 0% no-repeat padding-box;
+  background: theme(background-gradient);
 
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
-  padding: 32px;
-  box-sizing: border-box;
+  gap: 1.0625rem;
+  padding: 2rem;
 
   .panel {
     width: $max-width;
-
-    .title {
-      align-items: center;
-      justify-content: flex-start;
-      gap: 8px;
-    }
 
     .content {
       flex-wrap: wrap;
@@ -43,85 +35,50 @@ $max-width: 650px;
       .signMessageTitleSignatureType {
         display: flex;
         align-items: center;
-        background-color: $c-mirage;
-        padding: 2px 8px;
+        background-color: theme(background-primary);
+        padding: .125rem .5rem;
         color: $text-container-color;
         font-weight: 300;
-        font-size: 16px;
-        border-radius: 12px;
+        font-size: 1rem;
+        border-radius: $border-radius;
 
         span {
-          margin-left: 4px;
+          margin-left: .25rem;
         }
       }
-    }
-  }
-
-
-  .signingAccountContent {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    font-family: 'Ubuntu Mono';
-    font-size: 15px;
-    font-weight: bold;
-    flex-wrap: wrap;
-
-    .signingAccountAccount {
-      display: flex;
-      gap: 10px;
-      flex-grow: 1;
-      align-items: center;
-      overflow-wrap: anywhere;
-    }
-
-    .signingAccountNetwork {
-      display: flex;
-      gap: 10px;
-      justify-content: right;
-      align-items: center;
-
-      .icon {
-        background-size: contain;
-      }
-    }
-
-    .icon {
-      height: 20px;
-      width: 20px;
-      border-radius: 100%;
     }
   }
 
   .requestMessage {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 1rem;
     font-weight: 500;
 
     .dappMessage {
       display: flex;
       flex-direction: row;
-      gap: 8px;
-      row-gap: 3px;
+      gap: .5rem;
+      row-gap: .1875rem;
       align-items: center;
       flex-wrap: wrap;
 
       .dapp {
         display: flex;
         flex-direction: row;
-        gap: 8px;
+        gap: .5rem;
+        color: theme(highlight-primary);
 
         .icon {
-          height: 22px;
-          width: 22px;
+          height: 1.375rem;
+          width: 1.375rem;
           border-radius: 100%;
           @include flex-center-center;
           background-size: contain;
-          background-color: rgba(0, 0, 0, 0.2);
+          background-color: theme(background-icon);
 
           svg {
-            font-size: 12px;
+            font-size: .75rem;
             opacity: 0.2;
           }
         }
@@ -139,50 +96,36 @@ $max-width: 650px;
 
   .signMessage {
     width: auto;
-    padding: 32px;
-    color: #ccc;
-    min-height: 300px;
-    background-color: rgba(0,0,0,0.4);
-    border: 0px;
-    border-radius: 12px;
+    padding: 2rem;
+    color: theme(text-secondary);
+    min-height: 18.75rem;
+    background-color: theme(background-primary);
+    border: 0;
+    border-radius: $border-radius;
     resize: none;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 300;
+    font-size: .875rem;
   }
 
   .actions {
     form {
       display: flex;
       flex-direction: column;
-      gap: 24px;
+      gap: 1.5rem;
 
       .buttons {
         display: flex;
-        gap: 24px;
+        gap: 1.5rem;
 
-        button {
+        .button {
           flex: 1 1 50%;
-          text-transform: uppercase;
-          font-weight: 800;
-          min-height: 75px;
-          vertical-align: middle;
-          position: relative;
-
-          .loading {
-            width: auto;
-          }
-
-          &.reject {
-            color: $c-titan-white;
-
-            svg {
-              color: $c-titan-white;
-            }
-          }
         }
 
         .icon {
           position: absolute;
-          top: 20px;
-          left: 20px;
+          top: 1.25rem;
+          left: 1.25rem;
         }
       }
     }
@@ -190,16 +133,58 @@ $max-width: 650px;
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
-    gap: 16px;
-    padding: 16px;
+    gap: 1rem;
+    padding: 1rem;
 
     .panel {
       width: 100%;
       min-width: auto !important;
       max-width: 100% !important;
-      padding: 32px 16px !important;
+      padding: 1.25rem 1rem !important;
+
+      .panelTitle {
+        justify-content: center;
+        font-size: 1.25rem;
+      }
+
+      .signMessageTitle {
+        .signMessageTitleSignatureType {
+          font-size: .75rem;
+        }
+      }
+    }
+
+    .requestMessage {
+      .dappMessage {
+        font-size: .75rem;
+
+        a {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
+    .signMessage {
+      font-size: .75rem;
+      min-height: 11.25rem;
+      padding: .625rem 1.25rem;
+      padding-bottom: .9375rem;
+    }
+    .actions {
+      form {
+        .buttons {
+          flex-direction: column-reverse;
+          gap: .625rem;
+
+          .button {
+            flex: unset;
+            font-size: 1rem;
+            height: 3.125rem;
+          }
+        }
+      }
     }
   }
 }

@@ -20,7 +20,6 @@ import Swap from "./Swap/Swap"
 import Earn from "./Earn/Earn"
 import Security from "./Security/Security"
 import Transactions from './Transactions/Transactions'
-import Signatures from './Signatures/Signatures'
 import Collectible from "./Collectible/Collectible"
 import CrossChain from "./CrossChain/CrossChain"
 import OpenSea from "./OpenSea/OpenSea"
@@ -56,7 +55,6 @@ export default function Wallet(props) {
         useStorage={props.useStorage}
         userSorting={props.userSorting}
         setUserSorting={props.setUserSorting}
-        match={props.match}
         showSendTxns={props.showSendTxns}
       />
     },
@@ -117,7 +115,7 @@ export default function Wallet(props) {
       />
     },
     {
-      path: '/transactions/:page?',
+      path: '/transactions/:page?/(messages)?/:page?',
       component: <Transactions
         relayerURL={props.relayerURL}
         selectedAcc={props.selectedAcc}
@@ -126,14 +124,7 @@ export default function Wallet(props) {
         eligibleRequests={props.eligibleRequests}
         showSendTxns={props.showSendTxns}
         setSendTxnState={props.setSendTxnState}
-      />
-    },
-    {
-      path: '/messages/:page?',
-      component: <Signatures
         privateMode={props.privateMode}
-        selectedAcc={props.selectedAcc}
-        selectedNetwork={props.network}
       />
     },
     {
@@ -229,6 +220,9 @@ export default function Wallet(props) {
 
   // On pathname change (i.e. navigating to different page), always scroll to top
   useEffect(() => {
+    // Removes scroll top when we navigate from Tokens to Collectibles and vice-versa
+    if (pathname === '/wallet/dashboard/collectibles' || pathname === '/wallet/dashboard') return
+
     const scrollTimeout = setTimeout(() => walletContainerInner.current && walletContainerInner.current.scrollTo({ top: 0, behavior: 'smooth' }), 0)
     return () => clearTimeout(scrollTimeout)
   }, [pathname])

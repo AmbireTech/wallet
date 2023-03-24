@@ -1,0 +1,49 @@
+@import 'variables';
+
+.wrapper {
+  margin-left: 3.75rem;
+  margin-top: 1.1875rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: .5rem;
+
+  &.extraMargin {
+    margin-left: 5.9375rem;
+  }
+
+  .ovals {
+    display: flex;
+    gap: .625rem;
+    align-items: center;
+
+    .oval {
+      display: block;
+      border: 1px solid $warning-color;
+      color: $warning-color;
+      border-radius: .9375rem;
+      font-size: .75rem;
+      font-weight: 300;
+      padding: .3125rem .75rem;
+      margin: 0;
+    }
+  }
+
+  .latest {
+    margin: 0;
+    font-size: 1rem;
+    color: $c-turquoise;
+    opacity: 0.4;
+    span {
+      font-weight: 500;
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    align-items: center;
+    margin-left: 0;
+  }
+}

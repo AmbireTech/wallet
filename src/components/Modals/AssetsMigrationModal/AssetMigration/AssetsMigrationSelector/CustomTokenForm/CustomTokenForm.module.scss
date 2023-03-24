@@ -1,0 +1,36 @@
+@import 'variables';
+
+.wrapper {
+  margin-bottom: 1.25rem;
+
+  .input {
+    margin-bottom: .625rem;
+  }
+
+  .buttons {
+    display: flex;
+    gap: .625rem;
+
+    .button {
+      flex: 1;
+    }
+  }
+
+  .loading {
+    padding: .5rem;
+    text-align: center;
+    background: $c-mirage;
+  }
+
+  .error {
+    background: $danger-color;
+    color: $c-white;
+    padding: .5rem;
+    margin-bottom: 1.125rem;
+    border-radius: $border-radius;
+  }
+
+  .openFormButton {
+    width: 100%;
+  }
+}

@@ -4,6 +4,7 @@
     display: flex;
     flex-direction: column;
     height: 100%;
+    overflow: hidden;
 
     .greenHighlight {
         color: $c-turquoise;
@@ -16,30 +17,21 @@
     .otherBalances {
         display: flex;
         flex-direction: column;
-        max-height: 215px;
-        height: 100%;
         overflow-y: auto;
         mask-image: linear-gradient(to bottom, transparent 0, black var(--top-mask-size, 0), black calc(100% - var(--bottom-mask-size, 0)), transparent 100%);
 
         &.bottomOverflow {
-            --bottom-mask-size: 60px;
+            --bottom-mask-size: 3.75rem;
         }
 
         .icon {
-            flex: 0 0 auto;
-            height: 32px;
-            width: 32px;
-            background-size: cover;
             border-radius: 100%;
-          }
-      
-          .iconSvg {
-            display: flex;
-            align-items: center;
-      
-            svg {
-                fill: $danger-color;
-            } 
+            width: 1.875rem;
+            height: 1.875rem;
+        }
+
+        .loadingOtherBalancesWrapper {
+            overflow: hidden;
         }
 
         .noOtherBalancesWrapper {
@@ -49,15 +41,18 @@
 
             .noOtherBalances {
               display: flex;
-              gap: 10px;
-              max-width: 250px;
+              gap: .625rem;
+              max-width: 15.625rem;
         
               label {
                 flex: 1;
+                font-size: .875rem;
               }
         
               svg {
-                margin-top: 5px;
+                margin-top: .3125rem;
+                width: 1.5rem;
+                height: 1.5rem;
               }
             }
       
@@ -65,10 +60,25 @@
     }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include xl-breakpoint {
     .wrapper {
         .otherBalances {
-            gap: 9px;
+            .icon {
+                width: 2rem;
+                height: 2rem;
+            }
+        }
+    }
+}
+
+@include lg-breakpoint {
+    .wrapper {
+        padding: .625rem 1.25rem;
+        background: $c-ebony-clay;
+        border: 1px solid $c-fiord;
+        border-radius: $border-radius;
+        .otherBalances {
+            gap: .5625rem;
         }
     }
 }

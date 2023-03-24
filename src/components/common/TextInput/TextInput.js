@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 import { MdContentCopy } from 'react-icons/md';
 import { useToasts } from 'hooks/toasts';
 
-const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, required, minLength, maxLength, placeholder, info, label, buttonLabel, password, disabled, copy, small, onInput, onChange, onButtonClick, style, icon, inputContainerClass }, ref) => {
+const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, required, minLength, maxLength, placeholder, info, label, buttonLabel, password, disabled, copy, small, onInput, onChange, onButtonClick, style, icon, inputContainerClass, testId }, ref) => {
     const { addToast } = useToasts();
 
     const onClick = async () => {
@@ -36,6 +36,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                     onChange={ev => onChange && onChange(ev.target.value)}
                     ref={ref}
                     style={style}
+                    data-testid={testId}
                     />
                     {
                         icon &&
@@ -46,7 +47,7 @@ const TextInput = forwardRef(({ value, className, title, pattern, autoComplete, 
                 {
                     copy ?
                         <div className={styles.button}>
-                            <MdContentCopy size={20}/>
+                            <MdContentCopy />
                         </div>
                         :
                         null

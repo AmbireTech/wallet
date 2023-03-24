@@ -1,0 +1,135 @@
+@import 'variables';
+
+$body-size: 1.875rem;
+$top-item-mobile-up-distance: .3438rem;
+$bottom-item-mobile-up-distance: .8125rem;
+$item-mobile-distance: .625rem;
+
+.wrapper {
+  padding-top: 1.8125rem; // The height of the checkbox + .3125rem gap
+
+  .body {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .8125rem;
+
+    .stepItem {
+      position: absolute;
+      bottom: calc(#{$body-size} + #{$top-item-mobile-up-distance});
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+
+      .stepItemIcon {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-radius: 50%;
+      }
+
+      .stepItemName {
+        margin: 0;
+        font-weight: 400;
+        font-size: .875rem;
+      }
+    }
+
+    .iconWrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 1.875rem;
+      height: 1.875rem;
+      background-color: rgba($c-titan-white, 0.05);
+      border-radius: $border-radius;
+
+      .icon {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-radius: $border-radius;
+      }
+
+      .fromAmount,
+      .toAmount {
+        margin: 0;
+        position: absolute;
+        top: calc(#{$body-size} + #{$bottom-item-mobile-up-distance});
+        left: 0;
+      }
+
+      .toAmount {
+        left: unset;
+        right: 0;
+      }
+    }
+
+    .middlewareWrapper {
+      height: 1.875rem;
+      // We hardcode the width in order to fix the width problems
+      width: 1.875rem;
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+
+      .middlewareAssetIcon {
+        width: 1.125rem;
+        height: 1.125rem;
+        border-radius: 50%;
+        border: 2px solid $c-mirage;
+        // We add transform to both icons in order to center them
+        transform: translateX(.1563rem);
+
+        &:last-child {
+          transform: translateX(-0.1563rem);
+        }
+      }
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    padding-top: 0;
+    overflow: hidden;
+
+    .body {
+      flex-direction: column;
+      margin-bottom: 1.25rem;
+
+      .stepItem {
+        top: .3125rem;
+        left: calc(#{$body-size} + #{$item-mobile-distance});
+        transform: unset;
+        flex-wrap: wrap;
+        height: 1.25rem;
+        width: 6.25rem;
+
+        .stepItemIcon {
+          width: 1.25rem;
+          height: 1.25rem;
+        }
+
+        .stepItemName {
+          font-size: .8125rem;
+        }
+      }
+
+      .iconWrapper {
+        .swapIcon {
+          transform: rotate(90deg);
+        }
+
+        .fromAmount,
+        .toAmount {
+          top: .3125rem;
+          font-size: .8125rem;
+          left: unset;
+          right: calc(#{$body-size} + #{$item-mobile-distance});
+        }
+      }
+    }
+  }
+}

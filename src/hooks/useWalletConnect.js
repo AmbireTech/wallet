@@ -4,7 +4,7 @@ import useWalletConnectV2 from 'hooks/walletConnect/walletConnectV2'
 import useWalletConnectLegacy from 'hooks/walletConnect/walletConnectLegacy'
 import { isFirefox } from 'lib/isFirefox'
 
-export default function useWalletConnect({ account, chainId, initialWcURI, allNetworks, setNetwork, useStorage }) {
+export default function useWalletConnect({ account, chainId, initialWcURI, allNetworks, setNetwork, useStorage, setRequests }) {
 
   const { addToast } = useToasts()
 
@@ -40,7 +40,8 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     chainId,
     allNetworks,
     setNetwork,
-    useStorage
+    useStorage,
+    setRequests
   })
 
   const {
@@ -55,6 +56,7 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     clearWcClipboard,
     getClipboardText,
     chainId,
+    setRequests
   })
 
   const requests = useMemo(() => [
@@ -102,13 +104,13 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     }
   }, [connectV2, connectLegacy, addToast] )
 
-  const disconnect = (connectionId, wcVersion) => {
+  const disconnect = useCallback((connectionId, wcVersion) => {
     if (wcVersion === 2) {
       disconnectV2(connectionId)
     } else if (wcVersion === 1) {
       disconnectLegacy(connectionId)
     }
-  }
+  }, [disconnectV2, disconnectLegacy])
 
 
   // clipboard stuff

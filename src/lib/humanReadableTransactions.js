@@ -112,11 +112,11 @@ export function token(humanizerInfo, addr, amount, extended = false) {
             amount: formatUnits(amount, assetInfo[1])
         }
     } else {
-        return !extended ? `${formatUnits(amount, 0)} units of unknown token` : {
+        return !extended ? ` ${!amount ? 'unknown' : formatUnits(amount, 0)} units of unknown token` : {
             address,
             symbol: null,
             decimals: null,
-            amount: formatUnits(amount, 0)
+            amount: !amount ? null : formatUnits(amount, 0)
         }
     }
 }

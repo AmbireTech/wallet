@@ -1,0 +1,90 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: $c-mirage;
+  border-radius: $border-radius;
+  padding: .625rem .9375rem;
+  
+  &:hover {
+    background-color: $c-mirage;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: $border-radius;
+    background: rgba($c-titan-white, 0.05);
+
+    .icon {
+      width: 1.25rem;
+      height: 1.25rem;
+    }
+  }
+
+  .name {
+    font-weight: 500;
+    font-size: 1rem;
+    margin-left: .625rem;
+  }
+
+  .usd {
+    color: $c-manatee;
+    padding-right: .5rem;
+  }
+
+  .amount {
+    font-size: .875rem;
+    opacity: .9;
+    margin-left: .5rem;
+    flex-shrink: 1;
+
+    .amountUsd {
+      color: $c-manatee;
+    }
+  }
+
+  .status {
+    margin-left: auto;
+    font-size: .875rem;
+    opacity: .8;
+
+    .warning {
+      color: $warning-color;
+    }
+
+    .success {
+      color: $c-turquoise;
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    flex-direction: column;
+    justify-content: center;
+    gap: .625rem;
+    padding: .9375rem 1.25rem;
+
+    .name {
+      margin-left: 0;
+    }
+
+    .amount {
+      margin-bottom: .625rem;
+    }
+
+    .status {
+      margin: 0;
+    }
+  }
+}

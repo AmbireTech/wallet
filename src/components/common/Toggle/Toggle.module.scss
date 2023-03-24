@@ -1,14 +1,14 @@
 @import 'variables.scss';
 
-$toggle-height: 14px;
-$slider-margin: 8px;
+$toggle-height: .875rem;
+$slider-margin: .5rem;
 $slider-size: calc(#{$toggle-height} - #{$slider-margin});
 
 .toggle {
     flex: 0 0 auto;
     position: relative;
     display: inline-block;
-    width: 35px;
+    width: 2.1875rem;
     height: $toggle-height;
 
     input {
@@ -33,12 +33,12 @@ $slider-size: calc(#{$toggle-height} - #{$slider-margin});
         &:before {
             position: absolute;
             content: "";
-            height: 20px;
-            width: 20px;
+            height: 1.25rem;
+            width: 1.25rem;
             top: 50%;
             transform: translateY(-50%);
             box-shadow: 1px 0 1px 2px rgba(#000, 0.15);
-            left: -2px;
+            left: -0.125rem;
             border-radius: 50%;
             background-color: $danger-color;
             transition: .4s;
@@ -52,8 +52,8 @@ $slider-size: calc(#{$toggle-height} - #{$slider-margin});
     }
     
     input:checked + .slider:before {
-        box-shadow: -1px 0px 1px 2px rgba(#000, 0.15);
-        left: calc(100% - 18px);// Circle width - 2px
+        box-shadow: -1px 0 1px 2px rgba(#000, 0.15);
+        left: calc(100% - 1.125rem);// Circle width - .125rem
         background-color: $c-turquoise;
     }
 }

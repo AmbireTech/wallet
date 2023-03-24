@@ -1,0 +1,95 @@
+@import 'variables';
+
+@mixin Icon($width, $height) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: $width;
+  height: $height;
+  border-radius: $border-radius;
+  background-color: rgba($c-titan-white, 0.05);
+}
+
+// Networks
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  .mobileSwapIcon {
+    display: none;
+  }
+
+  .network {
+    display: flex;
+    gap: .625rem;
+    align-items: center;
+
+    .iconWrapper {
+      @include Icon(2.5rem, 2.5rem);
+
+      .icon {
+        width: 2.25rem;
+        height: 2.25rem;
+      }
+    }
+
+    .networkName {
+      font-size: .875rem;
+
+      .name {
+        margin: 0;
+        font-size: 1rem;
+        font-weight: 600;
+      }
+    }
+
+    &.toNetwork {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+  }
+}
+
+// Mobile
+@include lg-breakpoint {
+  // Networks
+  .wrapper {
+    .network {
+      flex-direction: column;
+      align-items: flex-start;
+
+      &.toNetwork {
+        flex-direction: column;
+        align-items: flex-end;
+        text-align: right;
+      }
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    position: relative;
+
+    .mobileSwapIcon {
+      display: block;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: .3125rem;
+      width: 1.875rem;
+      height: 1.875rem;
+    }
+    .network {
+      .networkName {
+        font-size: .75rem;
+
+        .name {
+          font-size: .875rem;
+        }
+      }
+    }
+  }
+}

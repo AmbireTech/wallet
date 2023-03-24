@@ -1,0 +1,85 @@
+@import 'variables';
+
+.wrapper {
+  .title {
+    margin: 0;
+    margin-bottom: 1.25rem;
+    font-size: 1.125rem;
+    font-weight: 400;
+    text-align: center;
+  }
+
+  .fees {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .625rem;
+    margin-bottom: 1.25rem;
+
+    .fee {
+      flex: 1;
+      text-align: center;
+      padding: .9375rem;
+      background: $c-mirage;
+      border: 1px solid $c-mirage;
+      border-radius: $border-radius;
+      user-select: none;
+      cursor: pointer;
+
+      transition: 0.3s ease-out all;
+
+      &.selected {
+        border: 1px solid $c-heliotrope;
+      }
+
+      .feeName {
+        margin: 0;
+        font-size: 1rem;
+        text-transform: capitalize;
+      }
+    }
+  }
+
+  .details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .9375rem 1.25rem;
+    background-color: $c-mirage;
+    border-radius: $border-radius;
+    opacity: .8;
+
+    p {
+      margin: 0;
+    }
+
+    .detailsLabel {
+      .actions {
+        padding-left: .5rem;
+        color: $c-manatee;
+      }
+    }
+
+    .detailsAmount {
+      opacity: 0.8;
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .fees {
+      gap: .625rem;
+      margin-bottom: .625rem;
+      
+      .fee {
+        min-width: 6.25rem;
+      }
+    }
+
+    .details {
+      flex-direction: column;
+      justify-content: center;
+      gap: .9375rem;
+    }
+  }
+}

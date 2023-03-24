@@ -74,6 +74,9 @@ const Signers = ({
   }
 
   const onAddBtnClickedHandler = newSignerAddress => {
+    const signerIsAdded = signers?.find(s => s[0]?.toLowerCase() === newSignerAddress.address.toLowerCase())
+    if (signerIsAdded) return addToast('You have already added this signer', { timeout: 3000, error: true })
+    
     const txn = craftTransaction(
       newSignerAddress.address,
       privilegesOptions.true
@@ -110,6 +113,7 @@ const Signers = ({
     try {
       addRequest({
         id: `setPriv_${txn.data}`,
+        dateAdded: new Date().valueOf(),
         type: 'eth_sendTransaction',
         txn: txn,
         chainId: selectedNetwork.chainId,
@@ -147,7 +151,7 @@ const Signers = ({
       className={styles.addSigner} 
       onClick={() => {
         showModal(
-          <AddAuthSignerModal 
+          <AddAuthSignerModal
             selectedAcc={selectedAccount} 
             selectedNetwork={selectedNetwork} 
             onAddBtnClicked={onAddBtnClickedHandler} 

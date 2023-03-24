@@ -1,14 +1,14 @@
 @import 'variables.scss';
 
 .wrapper {
-    height: 60px;
-    border-radius: 12px;
+    height: 3.75rem;
+    border-radius: $border-radius;
     @include flex-center-center;
-    gap: 10px;
-    padding: 0 20px;
+    gap: .5em;
+    padding: 0 1.25em;
     border: none;
     font-family: 'Poppins', sans-serif;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 500;
     background-color: transparent;
     color: $c-turquoise;
@@ -19,11 +19,16 @@
     .iconButton {
         @include flex-center-center;
         color: $c-turquoise !important;
+
+        svg {
+            max-width: 1.3em;
+            max-height: 1.3em;
+        }
     }
 
     &.small {
-        height: 50px;
-        font-size: 17px;
+        height: 3.125rem;
+        font-size: 1.0625rem;
     }
 
     &.full {
@@ -31,10 +36,8 @@
     }
 
     &.mini {
-        gap: 5px;
-        height: 40px;
-        padding: 0 10px;
-        font-size: 14px;
+        height: 2.5rem;
+        font-size: .875rem;
     }
 
     &.danger {
@@ -63,7 +66,7 @@
 
     &.primaryGradient {
         border: none;
-        background: transparent linear-gradient(90deg, $c-turquoise 0%, #6000FF 100%) 0% 0% no-repeat padding-box;
+        background: theme(gradient-primary);
         color: $c-titan-white;
 
         .iconButton {
@@ -71,9 +74,9 @@
         }
     }
 
-    &.purpleGradient {
+    &.secondaryGradient {
         border: none;
-        background: transparent linear-gradient(90deg, $c-heliotrope 0%, $c-electric-violet 100%) 0% 0% no-repeat padding-box;
+        background: theme(gradient-secondary);
         color: $c-titan-white;
 
         .iconButton {
@@ -81,9 +84,9 @@
         }
     }
 
-    &.greenGradient {
+    &.terniaryGradient {
         border: none;
-        background: transparent linear-gradient(90deg, $c-turquoise 0%, $c-blue-lagoon 100%) 0% 0% no-repeat padding-box;
+        background: theme(gradient-terniary);
         color: $c-titan-white;
 
         .iconButton {
@@ -107,22 +110,18 @@
         height: auto;
         background: 0;
         border: none;
-        color: $c-titan-white;
-        font-size: 1em;
+        color: theme(text-primary);
+        font-size: 1rem;
         display: inline-flex;
     }
 
     &.border {
-        color: $c-turquoise;
+        color: theme(highlight-secondary);
         background-color: transparent;
-        border: 2px solid $c-turquoise;
+        border: 2px solid theme(highlight-secondary);
 
         .iconButton {
-            color: $c-turquoise !important;
-        }
-
-        &:not([disabled]):hover {
-            background-color: rgba(0, 0, 0, 0.2);
+            color: theme(highlight-secondary) !important;
         }
     }
 
@@ -139,5 +138,11 @@
         &:active {
             opacity: 0.6;
         }
+    }
+}
+
+@include lg-breakpoint {
+    .wrapper {
+        font-size: 1rem;
     }
 }

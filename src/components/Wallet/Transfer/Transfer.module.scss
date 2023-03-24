@@ -2,35 +2,51 @@
 
 .panel {
     padding: 0;
-    flex: 0 1 50%;
+    flex: 1;
+
+    &.sendOnly {
+        max-width: 46.875rem;
+    }
 }
 
 .wrapper {
     display: flex;
     justify-content: center;
-    gap: 30px;
+    gap: 1.0625rem;
     overflow-y: hidden;
     height: 100%;
 
     .gasTankSendTitle {
         margin: 0;
-        font-size: 25px;
+        font-size: 1.5625rem;
         font-weight: 400;
     }
-}
-
-@media screen and (max-width: 1400px) {
-    .wrapper {
+    .sell {
+        height: 100%;
+        display: flex;
         flex-direction: column;
+        justify-content: space-between;
+        padding: 2.5rem;
+        padding-top: .9375rem;
+        gap: 2.5rem;
+        overflow-y: auto;
     }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
-        gap: 15px;
+        flex-direction: column;
+        gap: .9375rem;
         height: auto;
-        overflow-y: auto;
+
+        .tab {
+            overflow-y: visible;
+        }
+
+        .sell {
+            padding: 1.25rem;
+        }
     }
 
     .panel {

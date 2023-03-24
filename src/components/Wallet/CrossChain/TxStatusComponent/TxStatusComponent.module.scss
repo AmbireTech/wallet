@@ -1,0 +1,48 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.125rem;
+  padding: 1.25rem;
+  padding-bottom: .9375rem;
+  border-radius: $border-radius;
+  background-color: $c-mirage;
+
+  p {
+    margin: 0;
+  }
+
+  .body {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: .9375rem;
+  }
+}
+
+// Mobile
+@include lg-breakpoint {
+  .wrapper {
+    flex-direction: column;
+    gap: 1.875rem;
+    padding: 1.25rem;
+
+    .body {
+      flex-direction: column;
+      align-items: center;
+      gap: 1.25rem;
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    .body {
+      gap: .625rem;
+    }
+  }
+}

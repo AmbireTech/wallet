@@ -9,17 +9,17 @@ const IdentityMapping = (humanizerInfo) => {
   return {
     [iface.getSighash('setAddrPrivilege')]: (txn, network) => {
       const [ addr, privLevel ] = iface.parseTransaction(txn).args
-      const name = getName(humanizerInfo, addr)
       const isQuickAccManager = addr.toLowerCase() === accountPresets.quickAccManager.toLowerCase()
+      
       if (privLevel === privilegesOptions.false) {
-        if (isQuickAccManager) return [`Revoke email/password access`]
-        else return [`Revoke access for signer ${name}`]
+        if (isQuickAccManager) return [['Revoke email/password access']]
+        return [['Revoke access for signer', { type: 'address', address: addr, name: getName(humanizerInfo, addr) }]]
       } else if (privLevel === privilegesOptions.true) {
-        if (isQuickAccManager) return [`INVALID PROCEDURE - DO NOT SIGN`]
-        return [`Authorize signer ${name}`]
+        if (isQuickAccManager) return ['INVALID PROCEDURE - DO NOT SIGN']
+        return [['Authorize signer', { type: 'address', address: addr, name: getName(humanizerInfo, addr) }]]
       } else {
-        if (isQuickAccManager) return [`Add a new email/password signer`]
-        return [`Set special authorization for ${name}`]
+        if (isQuickAccManager) return ['Add a new email/password signer']
+        return [['Set special authorization for', { type: 'address', address: addr, name: getName(humanizerInfo, addr) }]]
       }
     }
   }

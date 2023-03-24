@@ -1,6 +1,6 @@
 import { RiDragDropLine } from 'react-icons/ri'
-import { useState, useEffect, useCallback } from 'react'
-import { Loading, Panel } from 'components/common'
+import { useState, useEffect, useCallback, useMemo } from 'react'
+import { Loading, Panel, Alert } from 'components/common'
 import { AbiCoder, keccak256 } from 'ethers/lib/utils'
 import cn from 'classnames'
 import { useRelayerData } from 'hooks'
@@ -9,7 +9,6 @@ import { useDropzone } from 'react-dropzone'
 import { validateImportedAccountProps, fileSizeValidator } from 'lib/validations/importedAccountValidations'
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
-import Alert from './Alert/Alert'
 import Signers from './Signers/Signers'
 
 import styles from './Security.module.scss'
@@ -37,7 +36,11 @@ const Security = ({
     ? `${relayerURL}/identity/${selectedAcc}/${selectedNetwork.id}/privileges?cacheBreak=${cacheBreak}`
     : null
   const { data, errMsg, isLoading } = useRelayerData({ url })
-  const privileges = data ? data.privileges : {}
+  const privileges = useMemo(() => data ? data.privileges : {}, [data])
+  // We are converting the privileges to an alphabetically sorted list, in order to map and render them easily.
+  // Also, we are sorting it via `a[0].localeCompare(b[0])` in order to keep the same sorting order,
+  // as it was in the privileges object before that (returned by Relayer).
+  const privilegesList = useMemo(() => Object.entries(privileges).sort((a, b) => a[0].localeCompare(b[0])), [privileges])
   const recoveryLock = data && data.recoveryLock
   const { addToast } = useToasts()
   const selectedAccount = accounts.find(x => x.id === selectedAcc)
@@ -95,7 +98,20 @@ const Security = ({
   const showLoading = isLoading && !data
   const signersFragment = relayerURL ? (
   <div>
-    <Alert network={selectedNetwork.name} />
+    <Alert
+      className={styles.alert}
+      title="Please note:"
+      text={<>Signer settings are network-specific. You are currently looking at and modifying the signers on {selectedNetwork.name}.{' '}
+        <a
+          href='https://help.ambire.com/hc/en-us/articles/4410885684242-Signers' 
+          target='_blank' 
+          rel='noreferrer'
+          className={styles.link}
+        >
+          Need help? Click here.
+        </a>
+      </>}
+    />
     <Panel className={styles.panel} title="Authorized signers" titleClassName={styles.title}>
       {hasPendingReset && !showLoading && (<PendingRecoveryNotice
         recoveryLock={recoveryLock}
@@ -106,10 +122,10 @@ const Security = ({
       {errMsg && (
         <h3 className={styles.error}>Error getting authorized signers: {errMsg}</h3>
       )}
-      {(!showLoading && Object.entries(privileges)) ? <Signers 
+      {(!showLoading && privilegesList.length) ? <Signers 
         relayerURL={relayerURL}
         relayerData={data} 
-        signers={Object.entries(privileges)} 
+        signers={privilegesList} 
         onAddAccount={onAddAccount}
         cacheBreak={cacheBreak}
         setCacheBreak={setCacheBreak}

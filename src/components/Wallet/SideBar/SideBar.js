@@ -17,7 +17,6 @@ import { ReactComponent as TransactionsIcon } from './images/transactions.svg'
 import { ReactComponent as SecurityIcon } from './images/security.svg'
 import { ReactComponent as DappsIcon } from './images/dapps.svg'
 import { ReactComponent as HelpIcon } from './images/help.svg'
-import { ReactComponent as SignedMessagesIcon } from './images/signed-messages.svg'
 
 import styles from './SideBar.module.scss'
 
@@ -27,7 +26,8 @@ const round = num => Math.round((num + Number.EPSILON) * 100) / 100
 
 const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
   const networkBalance = portfolio.balance.total.full
-  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : networkBalance.toFixed(2)
+  const allTokensWithoutPrice = portfolio?.tokens.length && portfolio?.tokens.every(t => !t.price)
+  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : (allTokensWithoutPrice && !networkBalance ? ' -' : networkBalance.toFixed(2))
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
@@ -37,11 +37,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
 
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
-            3: '2em',
-            5: '1.5em',
-            7: '1.3em',
-            9: '1.2em',
-            11: '1em',
+            3: '2.2rem',
+            5: '1.8rem',
+            7: '1.6rem',
+            9: '1.4rem',
+            11: '1.2rem',
         }
 
         const charLength = portfolio.balance.total.truncated.length
@@ -137,11 +137,6 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
         <NavLink to={match.url + "/transactions"} activeClassName={styles.selected}>
           <div className={styles.item}>
                 <TransactionsIcon />Transactions
-          </div>
-        </NavLink>
-        <NavLink to={match.url + "/messages"} activeClassName={styles.selected}>
-          <div className={styles.item}>
-            <SignedMessagesIcon />Signed Messages
           </div>
         </NavLink>
         {/* Temporarily commented OpenSea tab. */}

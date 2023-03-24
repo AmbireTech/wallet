@@ -1,4 +1,4 @@
-import { Modal, Button, TextInput, Loading } from 'components/common'
+import { Modal, Button, TextInput, Loading, ToolTip } from 'components/common'
 import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
 import cn from 'classnames'
@@ -136,55 +136,66 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     return (
         <Modal
-            className={styles.modal}
-            buttons={!isLoading ? (<Button form="enable2faForm" primaryGradient type="submit" disabled={isTimeIsUp} className={styles.button}>Enable 2FA</Button>) : (<Button disabled className={styles.button}><Loading /></Button>)}
+            className={styles.wrapper}
+            contentClassName={styles.content}
+            buttons={!isLoading ? (<Button small form="enable2faForm" primaryGradient type="submit" disabled={isTimeIsUp} className={styles.button}>Enable 2FA</Button>) : (<Button small disabled className={styles.button}><Loading /></Button>)}
             title="Two Factor Authentication" 
         >
-            <div className={styles.wrapper}>
-                {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}
-                <CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp} className={styles.timer} />
-                <div className={styles.imgWrapper}>
-                    <img alt="qr-code" src={imageURL}></img>
-                </div>
-                <div className={cn(styles.imgMsg, {[styles.showSecret]: showSecret})}>
-                    {!showSecret && 
-                    (<span className={styles.clickHere}>
-                        Unable to scan code? <button onClick={() => setShowSecret(prevState => !prevState)}>Click here.</button>
-                    </span>)}
-                    {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
-                </div>
-                <form onSubmit={handleSubmit} id="enable2faForm">
-                    <div className={styles.emailWrapper}>
-                        <h4>Confirmation code sent via Email</h4>
-                        <div className={styles.emailBody}>
-                            <TextInput
-                                className={styles.emailInput}
-                                title='Confirmation code should be 6 digits'
-                                autoComplete='nope'
-                                required minLength={6} maxLength={6}
-                                placeholder='Confirmation code'
-                                value={emailConfirmCode}
-                                onInput={value => setEmailConfirmCode(value)}
-                            ></TextInput>
-                            
-                            <Button type="button" primaryGradient disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
-                        </div>
-                    </div>
-                    <div className={styles.authenticatorWrapper}>
-                        <h4>Authenticator app code</h4>
+            {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}
+            <CountdownTimer seconds={TIMER_IN_SECONDS} setTimeIsUp={handleTimeIsUp} className={styles.timer} />
+            <form onSubmit={handleSubmit} id="enable2faForm">
+                {/* First step- Email code */}
+                <div className={styles.emailWrapper}>
+                    <h4>1&#41; Request and confirm the code sent to your Email</h4>
+                    <div className={styles.emailBody}>
+                        <Button small type="button" primaryGradient disabled={isTimeIsUp} onClick={sendEmail}>Send Email</Button>
                         <TextInput
-                            placeholder="Enter the code from authenticator app"
-                            onInput={setReceivedOTP}
-                            value={receivedOtp}
-                            pattern="[0-9]{6}"
-                            required
-                        />
+                            small
+                            className={styles.emailInput}
+                            title='Confirmation code should be 6 digits'
+                            autoComplete='nope'
+                            required minLength={6} maxLength={6}
+                            placeholder='Confirmation code'
+                            value={emailConfirmCode}
+                            onInput={value => setEmailConfirmCode(value)}
+                        ></TextInput>
                     </div>
-                    {/* <div className="buttons">
-                        {!isLoading ? (<Button type="submit" disabled={isTimeIsUp} className='button'>Enable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
-                    </div> */}
-                </form>
-            </div>
+                </div>
+                {/* Second step- Qr Code  */}
+                <div className={styles.qrCode}>
+                    <h4>2&#41; Scan the QR code with an authenticator app</h4> 
+                    <div className={styles.imgWrapper}>
+                        <img alt="qr-code" src={imageURL}></img>
+                    </div>
+                    <ToolTip label="Back up the QR code in a secure place. It will allow you to recover your 2FA in case you lose access to the device.">
+                        <a className={styles.downloadQrCodeButton} href={imageURL} download="ambire-authenticator-code.png">
+                            Download QR Code.
+                        </a>
+                    </ToolTip>
+                    <div className={cn(styles.imgMsg, {[styles.showSecret]: showSecret})}>
+                        {!showSecret && 
+                        (<span className={styles.clickHere}>
+                            Unable to scan code? <button onClick={() => setShowSecret(prevState => !prevState)}>Click here.</button>
+                        </span>)}
+                        {showSecret && (<><span>Enter this OTP in your app:</span><div>{secret}</div></>)}
+                    </div>
+                </div>
+                {/* Third step - Enter the code from authenticator app */}
+                <div className={styles.authenticatorWrapper}>
+                    <h4>3&#41; Enter the code from your authenticator app</h4>
+                    <TextInput
+                        placeholder="Enter the code from authenticator app"
+                        onInput={setReceivedOTP}
+                        value={receivedOtp}
+                        pattern="[0-9]{6}"
+                        small
+                        required
+                    />
+                </div>
+                {/* <div className="buttons">
+                    {!isLoading ? (<Button type="submit" disabled={isTimeIsUp} className='button'>Enable 2FA</Button>) : (<Button disabled className='button'><Loading /></Button>)}
+                </div> */}
+            </form>
         </Modal>
     )
 }

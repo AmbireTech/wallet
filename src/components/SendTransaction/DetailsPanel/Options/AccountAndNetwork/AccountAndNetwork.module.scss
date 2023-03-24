@@ -1,79 +1,21 @@
 @import 'variables';
 
 .wrapper {
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
 
   .title {
     margin: 0;
-    margin-bottom: 10px;
-    font-size: 16px;
+    margin-bottom: .625rem;
+    font-size: 1rem;
     font-weight: 300;
-    color: $c-titan-white;
-  }
-
-  .body {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 10px 30px;
-
-    .account {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-
-      .avatar {
-        width: 40px;
-        height: 40px;
-        border-radius: 12px;
-      }
-
-      .address {
-        color: $c-titan-white;
-        font-size: 16px;
-        margin: 0;
-        word-break: break-all;
-      }
-    }
-
-    .network {
-      display: flex;
-      justify-self: flex-end;
-      align-items: center;
-      gap: 10px;
-      color: $c-scampi;
-      font-size: 14px;
-      margin: 0;
-
-      .icon {
-        border-radius: 12px;
-        width: 24px;
-        height: 24px;
-        background-color: rgba($c-titan-white, 0.05);
-      }
-    }
+    color: theme(text-primary);
   }
 }
 
-@media (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .title {
       text-align: center;
-    }
-
-    .body {
-      flex-direction: column;
-      gap: 10px;
-
-      .account {
-        flex-direction: column;
-
-        .address {
-          font-size: 13px;
-          text-align: center;
-        }
-      }
     }
   }
 }

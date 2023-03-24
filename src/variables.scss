@@ -1,19 +1,10 @@
-$sidebar-desktop-width: 260px;
-$sidebar-desktop-small-width: 150px;
-$sidebar-small-breakpoint: 1439px; // We want to show the bigger sidebar for MacBook Pro (1440px). That's the reason we trigger the smaller sidebar at 1px below.
-$sidebar-mobile-height: 80px;
+@import 'breakpoints';
 
-$topbar-dapp-mode-height: 60px;
-$topbar-mobile-dapp-mode-height: 50px;
-// We want to target Tablets and mobile Landscape here too, because we don't have a specific design for these resolutions yet.
-// That's the reason we set a higher breakpoint value (1279px) to target both tablets and mobile.
-// Keep in mind that with this setup, the desktop design will be triggered for 1280x720, which is also our goal.
-$mobile-breakpoint-max-width: 1279px; // this is the breakpoint, where the mobile design is triggered
-$small-breakpoint-max-width: 1439px;
-$wide-breakpoint-min-width: 1920px;
+$sidebar-mobile-height: 5rem;
 
 $basic-transition: all 0.1s ease-in-out;
-$box-shadow: 0px 5px 10px #00000026;
+$border-radius: .75rem;
+$box-shadow: 0 .3125rem .625rem #00000026;
 
 @mixin flex-center-center {
     display: flex;
@@ -36,8 +27,7 @@ $box-shadow: 0px 5px 10px #00000026;
     right: 0;
 }
 
-$layout-spacing: 150px;
-$max-container-width: 1690px;
+$layout-spacing: 9.375rem;
 
 // Redesign variables. Later we will apply them in the current variables naming pattern.
 $c-ebony-clay: #24263d;
@@ -55,11 +45,11 @@ $c-heliotrope: #ae60ff;
 $c-electric-violet: #6000FF;
 $c-turquoise: #27e8a7;
 $c-blue-lagoon: #007D8A;
-$c-aquamarine: #80ffdb;
 $c-picton-blue: #47AEE9;
 $c-half-spanish-white: #fef5db;
 $c-titan-white: #ebecff;
 $c-white: #ffffff;
+$c-lavender-mist: #ede2ff;
 
 $tertiary-accent-color: #C3D4F6;
 $success-color: $c-turquoise;
@@ -71,8 +61,13 @@ $warning-background-color: $c-half-spanish-white;
 $success-background-color: #C8FFFE;
 $info-color: #7189ff;
 $info-background-color: #EDE2FF;
+$alert-text-color: $c-martinique-light;
 
 $ambire-dark-blue: #6000FF;
 $ambire-purple: #AF50FF;
 
 $text-container-color: mix($c-titan-white, $c-ebony-clay, 60%);
+
+@function theme($color-name) {
+    @return var(--#{$color-name});
+}

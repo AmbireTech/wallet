@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react"
+import cn from 'classnames'
 import { BsXLg } from "react-icons/bs"
 import { LedgerSubprovider } from '@0x/subproviders/lib/src/subproviders/ledger' // https://github.com/0xProject/0x-monorepo/issues/1400
 import { ledgerEthereumBrowserClientFactoryAsync } from '@0x/subproviders/lib/src' // https://github.com/0xProject/0x-monorepo/issues/1400
@@ -9,9 +10,10 @@ import { ledgerGetAddresses, PARENT_HD_PATH } from "lib/ledgerWebHID"
 import { latticeConnect, latticeGetAddresses, latticeInit } from "lib/lattice"
 import { validateAddAuthSignerAddress } from "lib/validations/formValidations"
 import { isFirefox } from "lib/isFirefox"
+import humanizeError from "lib/errors/metamask"
 
 import { useToasts } from "hooks/toasts"
-import { Button, Loading, Modal, TextInput } from "components/common"
+import { Button, Modal, TextInput } from "components/common"
 import LatticePair from "components/common/LatticePair/LatticePair"
 import SelectSignerAccount from "components/common/SelectSignerAccount/SelectSignerAccount"
 
@@ -30,10 +32,9 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
     address: '',
     index: 0,
   })
-  const [modalToggle, setModalToggle] = useState(true)
-  const [latticeToggle, setLatticeToggle] = useState(false)
+
+  const [isLatticePairing, setIsLatticePairing] = useState(false)
   const [signersToChoose, setChooseSigners] = useState(null)
-  const [showLoading, setShowLoading] = useState(false)
   const [textInputInfo, setTextInputInfo] = useState('')
   const [validationFormMgs, setValidationFormMgs] = useState({ 
     success: false, 
@@ -42,7 +43,6 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
 
   const onSignerAddressClicked = useCallback(value => {
     setSignerAddress(value)
-    modalHandler()
     if (signersToChoose) setTextInputInfo(`${signersToChoose.signerName} address # ${value.index + 1}`)
     setChooseSigners(null)
   }, [signersToChoose])
@@ -66,7 +66,6 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
     // cause one call won't be aware of the other's attempt to connect
       const addresses = await provider.getAccountsAsync(100)
       setChooseSigners({ addresses, signerName: 'Ledger' })
-      setModalToggle(true)
   }
 
   async function connectLedgerAndGetAccountsWebHID() {
@@ -80,7 +79,6 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
         })
       } else {
         setChooseSigners({ address: addrData, signerName: 'Ledger' })
-        setModalToggle(true)
       }
     } catch (e) {
       console.log(e)
@@ -114,7 +112,6 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
     })
     const addresses = await provider.getAccountsAsync(100)
     setChooseSigners({ addresses, signerName: 'Trezor' })
-    setModalToggle(true)
   }
 
   async function connectWeb3AndGetAccounts() {
@@ -137,7 +134,10 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       throw new Error('No accounts connected')
     }
 
-    const addresses = accountsPermission.caveats[0].value
+    // Depending on the MM version, the addresses are returned by a different caveat identifier.
+    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
+    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
+    const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
 
     if (addresses.length === 1)
       return onSignerAddressClicked({
@@ -146,7 +146,6 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       })
 
     setChooseSigners({ addresses, signerName: 'Web3' })
-    setModalToggle(true)
   }
 
   const setLatticeAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
@@ -159,9 +158,10 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       }
     })
 
-    setModalToggle(true)
+    setIsLatticePairing(false)
   }
-  
+
+  // In case Lattice is already paired, we are going to the final step of choosing the Signer account/address
   async function connectGridPlusAndGetAccounts() {
     if (selectedAcc.signerExtra && 
       selectedAcc.signerExtra.type === 'Lattice' && 
@@ -169,20 +169,16 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
         const { commKey, deviceId } = selectedAcc.signerExtra
         const client = latticeInit(commKey)
 
-        setShowLoading(true)
-
         const { isPaired, errConnect } = await latticeConnect(client, deviceId)
         if (errConnect) {
-          setShowLoading(false)
-          setLatticeToggle(false)
+          setIsLatticePairing(false)
           addToast(errConnect.message || errConnect, { error: true })
 
           return
         }
 
         if (!isPaired) {
-          setShowLoading(false)
-          setLatticeToggle(false)
+          setIsLatticePairing(false)
           // Canceling the visualization of the secret code on the device's screen.
           client.pair('')
 
@@ -193,25 +189,19 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
 
         const { res, errGetAddresses } = await latticeGetAddresses(client)
         if (errGetAddresses) {
-            setShowLoading(false)
-            setLatticeToggle(false)
+            setIsLatticePairing(false)
             addToast(`Lattice: ${errGetAddresses}`, { error: true })
 
             return
         }
         
         if (res) {
-          setShowLoading(false)
-          setLatticeToggle(false)
+          setIsLatticePairing(false)
           setLatticeAddresses({ addresses: res, deviceId, commKey, isPaired: true })
         }
       } else {
-        setLatticeToggle(true)
+        setIsLatticePairing(true)
       }
-  }
-
-  const modalHandler = () => {
-    setModalToggle(prevState => !prevState)
   }
 
   const wrapErr = async fn => {
@@ -219,6 +209,10 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       await fn()
     } catch (e) {
       console.error(e)
+
+      const humanizedError = humanizeError(e)
+      if (humanizedError) return addToast(humanizedError, { error: true})
+
       addToast(`Unexpected error: ${e.message || e}`, { error: true})
     }
   }
@@ -243,58 +237,88 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
   }, [selectedAcc, signerAddress.address])
 
 
-  return !showLoading ? (
-    <Modal 
-    title="Add Signer" 
-    className={styles.wrapper}
-    buttons={
-      <Button
-        className={styles.button}
-        disabled={disabled}
-        onClick={() => onAddBtnClicked(signerAddress)}
-        primaryGradient
-      >
-      Add
-    </Button>
-    }
-    >
-      <div className={styles.signers}>
-        <div className={styles.signer} onClick={() => wrapErr(connectTrezorAndGetAccounts)}>
-          <TrezorIcon />
-        </div>
-        <div className={styles.signer} onClick={() => wrapErr(connectLedgerAndGetAccounts)}>
-          <LedgerIcon />
-        </div>
-        <div className={styles.signer} onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
-          <GridPlusIcon className={styles.gridplus}/>
-        </div>
-        <div className={styles.signer} onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
-          <MetaMaskIcon className={styles.metamask} />
-        </div>
+  // Here we are choosing the Signer firstly
+  const stepOne = () => <>
+    <h2 className={cn(styles.subtitle, styles.chooseSignerSubtitle)}>Choose Signer</h2>
+    <div className={styles.signers}>
+      <div className={styles.signer} onClick={() => wrapErr(connectTrezorAndGetAccounts)}>
+        <TrezorIcon className={styles.trezor} />
       </div>
+      <div className={styles.signer} onClick={() => wrapErr(connectLedgerAndGetAccounts)}>
+        <LedgerIcon className={styles.ledger} />
+      </div>
+      <div className={styles.signer} onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
+        <GridPlusIcon className={styles.gridplus} />
+      </div>
+      <div className={styles.signer} onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
+        <MetaMaskIcon className={styles.metamask} />
+      </div>
+    </div>
+
+    <p className={styles.subtitle}>- or -</p>
+
+    <div className={styles.manualSigner}>
       <TextInput
-        placeholder="Enter signer address"
-        className={styles.signerAddress}
-        value={signerAddress.address}
-        info={textInputInfo}
-        onInput={onTextInput}
+          placeholder="Enter signer address manually"
+          className={styles.signerAddress}
+          value={signerAddress.address}
+          info={textInputInfo}
+          onInput={onTextInput}
       />
-      { validationFormMgs.message && 
-        <div className={styles.validationeError}><BsXLg size={12}/>&nbsp;{validationFormMgs.message}</div>
-      }
 
-      {latticeToggle && <LatticePair addresses={setLatticeAddresses} />}
+      { validationFormMgs.message && <div className={styles.errorMessage}>
+        <BsXLg size={12}/> { validationFormMgs.message }
+      </div> }
 
-      {modalToggle && signersToChoose && <SelectSignerAccount
-          showTitle
-          signersToChoose={signersToChoose.addresses}
-          selectedNetwork={selectedNetwork}
-          onSignerAddressClicked={onSignerAddressClicked}
-          description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
-          onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
-      />}
-    </Modal>
-  ) : <Loading />
+      <Button
+          className={styles.button}
+          disabled={disabled}
+          onClick={() => onAddBtnClicked(signerAddress)}
+          primaryGradient
+      >
+        Add
+      </Button>
+    </div>
+  </>
+
+  // In case of Lattice Signer, we are handling the Lattice Pairing process on our end in the same Modal
+  const stepTwo = () => <LatticePair addresses={setLatticeAddresses} title="Connect to Lattice Device" />
+
+  // Once we have a paired Signer, we need to select which Signer Accounts/address to use as a final step
+  const stepThree = () => <SelectSignerAccount
+      showTitle
+      signersToChoose={signersToChoose.addresses}
+      selectedNetwork={selectedNetwork}
+      onSignerAddressClicked={onSignerAddressClicked}
+      description={`You will authorize the selected ${signersToChoose.signerName} address to sign transactions for your account.`}
+      onCloseBtnClicked={handleSelectSignerAccountModalCloseClicked}
+  />
+
+  const steps = [stepOne, stepTwo, stepThree]
+
+  // steps are zero-index based
+  const getCurrentStepIndex = () => {
+      if (isLatticePairing) return 1
+
+      if (signersToChoose) return 2
+
+      return 0
+  }
+
+
+  return <Modal
+    title="Add Signer"
+    className={styles.wrapper}
+    isBackBtnShown={getCurrentStepIndex() > 0}
+    isTitleCentered
+    onBack={() => {
+      // Going back to step one
+      setIsLatticePairing(false)
+      setChooseSigners(null)
+    }}
+  >
+    { steps[getCurrentStepIndex()]() }
+  </Modal>
 }
 
 export default AddAuthSignerModal

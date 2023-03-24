@@ -1,5 +1,9 @@
 ## Ambire Wallet
 
+### About
+Ambire Wallet is a self-custodial crypto wallet designed with power and ease of use in mind. Unlike most crypto wallets, Ambire focuses on user experience and human-friendliness, while not compromising on features. Ambire is unopinionated, it can be connected to any dApp and it supports most of the popular EVM networks. Ambire is also a Web3 superapp: you can swap, lend, borrow, perform cross-chain transfers, deposit FIAT, all without the app.
+
+It's built on smart contract wallet technology, enabling powerful features such as transaction batching, account recovery, multisigs, key rotation and paying for transactions in stablecoins (gas abstractions).
 
 ### All documentation
 
@@ -18,6 +22,9 @@
 
 **NOTE 2: we test on Polygon,** because it's cheap enough and it's a real environment with all the supported protocols - Sushiswap, Uniswap, Aave, and others. Ping #dev-wallet channel on Slack so we can send you some MATIC tokens.
 
+### Running the relayer
+**IMPORTANT: if you are running from public repositories, and do not have access to the relayer, please skip this step and run in relayerless mode!**
+
 First, clone and run the relayer
 ```
 git clone https://github.com/AmbireTech/relayer.git -b wallet-v2
@@ -25,6 +32,8 @@ cd relayer
 npm i
 NODE_ENV=development npm start
 ```
+
+### Running the wallet
 
 Then run the Ambire Wallet:
 ```
@@ -167,7 +176,9 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * Batcher: 0x460fad03099f67391d84c9cc0ea7aa2457969cea
 * WALLET token: 0x88800092ff476844f74dc2fc427974bbee2794ae
 * xWALLET staking: 0x47Cd7E91C3CBaAF266369fe8518345fc4FC12935
+* xWALLETSpendable: 0x0b62eC5F3b445d2CDd024E736c3f4f1f92be43fd
 * SupplyController: 0x6FDb43bca2D8fe6284242d92620156205d4fA028
+* adexStakingSpendable: 0x2685DdE658fAA0465130bC1672904d32c42cecb7
 
 Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) are deployed cross-chain on the same addresses across Ethereum, Polygon, BSC, Fantom, Avalanche, Arbitrum, Moonbeam, Moonriver, Cronos, Metis, Gnosis Chain (formerly xDAI), NEAR Aurora
 
@@ -372,3 +383,91 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Fix: Adx staking details
 * Fix: popping up the addresses modal when add new signer via Trezor
 * Fix: AAVE earn card
+
+### v0.6.0
+* Redesign the dark theme
+* New dapps section
+* Added support for relayerless chains only
+* Added ethpow chain for relayerless
+* Upgraded "trezor-connect": "^8.2.8" to "@trezor/connect-web": "^9.0.2"
+* Added new params for feeTokens: disableGasTankDeposit and disableAsFeeToken
+* Sign message - supporting custom typed data v4 call
+* Hide token modal not closing when clicking on the side
+* Earn card minor fixes in text
+* Optimize bundle size
+* switch from claim to claimWithRootUpdate for rewards
+* SignatureValidator fix
+* Dapps message for sign message unsupported dapps
+* Trezor manifest
+* Send transaction gasTank badge improvement
+* Wc 2.0 implementation
+* Added signMessage history
+* Swappin as offramp
+* Offramp section in transfer page
+* Added copy button next to current identity address
+* Refactore sign message hook - move into common repo
+* New rewards modal
+* QuickAccManager: fix cancelability
+* Feature / Configurable Providers
+* Provide param to relayer for estimation isGasTankEnabled
+* New Swap release based by Uniswap v2 and v3
+* Socket v2 API
+* humanizer - Uniswap v2 & v3 improvements & AAVE address
+* Aapps iframe allow copy & paste
+* On creating account with MM, added a option to choose the address from MM if have more then one.
+* Update uniswap integrated swap with working v2 routing.
+* Portfolio V2 and dashboard redesign with pending balances by pending and unsigned transactions.
+* Fix / View amount in the rewards button
+* Fix / On a Signer removal button click, hide the modal
+* Fix / Change signers error message
+* Fix / Infinitive Gas tank loading indicator
+* Fix / Native fees decimals numbers in sign txn
+* Fix / NFT images from ipfs by hash
+* Fix / Handle error if WalletConnect if session is not initialized
+* Fix / Wallet stacking unbond period
+* Fix / Gas-tank top up
+* Fix / Bug fixed removed xWallet from feeAssets in gas tank
+* Fix / Styles email confirm view in Add Account page
+* Fix / Wallet staking unbond period
+* Fix / Now the wallet token is on first position in a fee assets list
+* Fix / Change github Workflow on deploy to not remove stagings folders
+* Fix / Multiple requests on earn page in Aave card
+
+### v0.6.1
+* Assets Migration - redesign, increased gasLimit for native and erc20 tokens.
+* Lattice pairing - redesign + reusing the repetitve logic into a hook.
+* Choosing a Signer list (on Add Account and Security) - redesign.
+* Signed Messages - improve responsiveness, code readability and markup.
+* Addressbook search.
+* Disable Code Splitting.
+* Github workflow for auto deploying PR previews.
+* Memoizing DApps, Balances, Link components, because of performance reasons.
+* Modified Unirouter humanizer. Now it's showing "Swap X.X USDT for at least X.XXX matic" instead of "Swap 3.0 USDT for at least 3.760145095713324034 matic and send it to "0xxxxx" Unwrap at least X.X matic"
+* Restore email confirmation in permission modal - because of already existing, old accounts which would be not confirmed yet.
+* Arbitrum gas limit mod.
+* Fix Dashboard last update value to 23hour format.
+* Fix Metamask addresses query (MM 9.8.4) - depending on the MM version, the addresses are returned by a different caveat identifier.
+* Fix Tabs shadow overlaping with content.
+* Fix Movr humanizer bug.
+* Fix Dashboard tokens sort icons color and alignment.
+* Fix Accounts menu on logout when logged in with a single account (Topbar).
+* Fix Topbar accounts twitching when toggling private mode.
+* Fix Collectible name is missing from data and add fallback.
+* Change Dashboard text to trigger Add token modal - If you don't see a specific token that you own, please add it manually.
+
+### v0.6.2
+- 4337 implementation in Identity.sol
+- Fixed an issue where approvals didn't succeed in the official UI of Uniswap
+- improvement / tnxs preview for mobile devices
+- improvement / Add or Remove Token button if user don't have any assets on current chain.
+- fix / apply white list for sign message for EIP 1271 support 
+- fix / signed message and sigHash can be selectable for copy
+- redesign / promo banners
+
+### v0.7.0
+- OKX Chain support added.
+- Sepolia Chain support added as testnet.
+- Fixed namespaces for Wallet Connect v2 connections with dApps.
+- Improve wallet responsiveness.
+- UX optimization for 4k.
+- Optimizations of visual elements.

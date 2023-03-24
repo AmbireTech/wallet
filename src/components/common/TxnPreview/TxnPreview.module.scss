@@ -1,36 +1,36 @@
 @import 'variables.scss';
 
-$txn-height: 54px;
-$extended-summary-height: 36px;
+$txn-height: 3.375rem;
+$extended-summary-height: 2.25rem;
 
 .wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     flex: 0 0 auto;
-    background-color: $c-mirage;
-    color: $c-titan-white;
-    border-radius: 12px;
     min-height: $txn-height;
-    position: relative;
-    user-select: none;
     overflow: hidden;
+    background-color: theme(background-primary);
+    color: theme(text-primary);
+    border-radius: $border-radius;
+    user-select: none;
     transition: .3s ease-out;
 
     &:hover {
-        background-color: rgba($c-mirage, 0.8)
+        opacity: .8;
     }
 
     .heading {
-        width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
         justify-content: space-between;
-        gap: 15px;
+        gap: .9375rem;
+        box-sizing: border-box;
+        width: 100%;
+        padding: .625rem 1.25rem;
         margin: 0;
         cursor: pointer;
-        box-sizing: border-box;
-        padding: 10px 20px;
 
         .info {
             min-width: 0;
@@ -40,26 +40,26 @@ $extended-summary-height: 36px;
             flex-direction: column;
             align-items: flex-start;
             justify-content: center;
-            gap: 30px;
+            gap: .625rem;
 
 
             .summaryContainer {
                 width: 100%;
                 display: flex;
                 align-items: center;
-                gap: 20px;
+                gap: 1.25rem;
 
                 .expandTxn {
                     align-self: flex-start;
-                    min-width: 36px;
-                    min-height: 36px;
+                    min-width: 2.25rem;
+                    min-height: 2.25rem;
                     @include flex-center-center;
-                    background-color: rgba($c-titan-white, 0.05);
-                    border-radius: 12px;
+                    background-color: theme(background-icon);
+                    border-radius: $border-radius;
                     
                     .icon {
                         transition: .2s ease-out transform;
-                        width: 10px;
+                        width: .625rem;
                     }
 
                     &.reversedChevron {
@@ -73,37 +73,38 @@ $extended-summary-height: 36px;
                     width: 100%;
                     display: flex;
                     align-items: center;
-                    column-gap: 10px;
-                    row-gap: 8px;
+                    column-gap: .625rem;
+                    row-gap: .5rem;
                     flex-wrap: wrap;
                     word-break: break-word;
-                    font-size: 14px;
+                    font-size: .875rem;
                 }
             }
 
             .warning {
-                font-size: 13px;
+                font-size: .8125rem;
                 font-weight: 300;
-                padding: 10px 15px;
+                padding: .625rem .9375rem;
                 text-align: center;
                 background-color: $danger-color;
-                border-radius: 12px;
+                color: $c-titan-white;
+                border-radius: $border-radius;
                 margin: 0;
             }
         }
 
-        .actionIcons {
+        .dissmissTxnWrapper {
             align-self: flex-start;
-            height: 36px;
+            height: 2.25rem;
 
             .dismissTxn {
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                width: 36px;
-                height: 36px;
-                border-radius: 12px;
-                background-color: rgba($c-titan-white, 0.05);
+                width: 2.25rem;
+                height: 2.25rem;
+                border-radius: $border-radius;
+                background-color: theme(background-icon);
                 transition: all 0.1s ease-in-out;
                 opacity: 1;
 
@@ -116,8 +117,8 @@ $extended-summary-height: 36px;
                 }
 
                 .icon {
-                    width: 22px;
-                    height: 22px;
+                    width: 1.375rem;
+                    height: 1.375rem;
                 }
             }
         }
@@ -126,54 +127,76 @@ $extended-summary-height: 36px;
     .advanced {
         display: flex;
         flex-direction: column;
-        gap: 10px;
-        padding: 10px 20px;
-        padding-right: 27px;
-        padding-bottom: 13px;
+        gap: .625rem;
+        padding: .625rem 1.25rem;
+        padding-right: 1.6875rem;
+        padding-bottom: .8125rem;
         
         p {
             margin: 0;
             word-break: break-word;
-            font-size: 13.5px;
+            font-size: .8438rem;
             font-weight: 300;
-            color: $c-scampi;
+            color: theme(text-secondary);
             user-select: text;
         }
     }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         position: relative;
 
         .heading {
-            gap: 5px;
-            flex-direction: column-reverse;
+            gap: .3125rem;
+            padding: .625rem .9375rem;
 
-            .actionIcons {
-                align-self: flex-end;
-                height: 36px;
+            .dissmissTxnWrapper {
+                .dismissTxn {
+                    width: 2rem;
+                    height: 2rem;
+
+                    .icon {
+                        width: 1rem;
+                        height: 1rem;
+                    }
+                }
+            }
+
+            .info {
+                gap: .625rem;
+
+                .summaryContainer {      
+                    gap: .625rem;
+                              
+                    .expandTxn {
+                        min-width: 2rem;
+                        min-height: 2rem;
+                        border-radius: $border-radius;
+                    }
+        
+                    .summary {
+                        column-gap: .3125rem;
+                        row-gap: .125rem;
+                        font-size: .6875rem;
+                    }
+                }
+                
+                .warning {
+                    font-size: .75rem;
+                    padding: .625rem;
+                    width: 100%;
+                }
             }
         }
-
-        .summaryContainer {
-            flex-direction: column;
-        
-            .expandTxn {
-                position: absolute;
-                top: 10px;
-                left: 20px;
-            }
-
-            .summary {
-                text-align: center;
-                justify-content: center;
-            }
-        }
-        
         .advanced {
-            text-align: center;
+            gap: .3125rem;
+            padding-top: .3125rem;
+            
+            p {
+                font-size: .75rem;
+            }
         }
     }
 }

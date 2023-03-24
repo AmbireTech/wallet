@@ -1,0 +1,15 @@
+@import 'variables';
+
+.wrapper {
+  height: 100%;
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .buttons {
+      button {
+        font-size: .875rem!important;
+      }
+    }
+  }
+}

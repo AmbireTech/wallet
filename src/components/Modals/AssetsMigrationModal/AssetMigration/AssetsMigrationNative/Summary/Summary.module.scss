@@ -1,0 +1,58 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: .9375rem;
+
+  .item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    border-bottom: .0625rem solid $c-mirage;
+    background-color: $c-mirage;
+    border-radius: $border-radius;
+    padding: .9375rem 1.25rem;
+
+    .itemTitle {
+      flex-grow: 1;
+    }
+
+    .amountInput input {
+      height: 2.5rem;
+      padding: .625rem;
+      font-size: 1rem;
+      max-width: 10rem;
+    }
+  }
+
+  .usd {
+    color: $c-manatee;
+  }
+
+  .selection {
+    cursor: pointer;
+    color: $c-heliotrope;
+    border-bottom: .0625rem dashed $c-heliotrope;
+  }
+
+  .message {
+    margin: .9375rem;
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .item {
+      flex-direction: column;
+      justify-content: center;
+      gap: .9375rem;
+      padding: 1.25rem;
+      padding-bottom: .9375rem;
+
+      .selection {
+        margin-bottom: .625rem;
+      }
+    }
+  }
+}

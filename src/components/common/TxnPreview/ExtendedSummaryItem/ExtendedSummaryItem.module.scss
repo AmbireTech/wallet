@@ -1,14 +1,14 @@
 @import "variables";
 
-$txn-height: 65px;
-$extended-summary-height: 36px;
+$txn-height: 4.0625rem;
+$extended-summary-height: 2.25rem;
 
 .action {
   display: flex;
   align-items: center;
   height: $extended-summary-height;
-  color: $c-turquoise;
-  font-size: 14px;
+  color: theme(highlight-secondary);
+  font-size: .875rem;
 
   &.unknown {
     color: #d06f1b;
@@ -20,8 +20,8 @@ $extended-summary-height: 36px;
 }
 
 .word {
-  font-size: 13px;
-  color: $c-scampi;
+  font-size: .8125rem;
+  color: theme(text-secondary);
 }
 
 .token,
@@ -30,35 +30,75 @@ $extended-summary-height: 36px;
 .erc721 {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-size: 14px;
+  gap: .625rem;
+  font-size: .875rem;
   flex-wrap: wrap;
-  color: $c-titan-white;
+  color: theme(text-primary);
 
   .icon {
-    height: 36px;
-    width: 36px;
-    padding: 8px;
-    border-radius: 12px;
-    background-color: rgba($c-titan-white, 0.05);
+    height: 2.25rem;
+    width: 2.25rem;
+    padding: .5rem;
+    border-radius: $border-radius;
+    background-color: theme(background-icon);
   }
 }
 
+.erc721, .address {
+  .toAddress.short {
+    display: none;
+  }
+}
 .externalLink {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
+  .word {
+    font-size: .6875rem;
+  }
+
+  .action,
   .token,
   .address,
   .network,
-  .erc721,
-  .word,
-  .action,
+  .erc721 {
+    font-size: .75rem;
+
+    .icon {
+      height: 1.5rem;
+      width: 1.5rem;
+      padding: .25rem;
+      border-radius: $border-radius;
+      background-color: theme(background-icon);
+    }
+  }
+
+  .token,
+  .address,
+  .network,
+  .erc721 {
+    gap: .3125rem;
+    row-gap: .125rem;
+  }
+
+  .action {
+    height: auto;
+  }
+
+  .erc721, .address {
+    .toAddress {
+      display: none;
+    }
+
+    .toAddress.short {
+      display: block;
+    }
+  }
+
   .externalLink {
-    align-items: center;
-    text-align: center;
-    margin: 0 auto;
+    width: 1rem;
+    height: 1rem;
   }
 }

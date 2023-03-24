@@ -1,0 +1,71 @@
+@import 'variables.scss';
+
+.wrapper {
+  overflow: hidden;
+
+  .relative {
+    position: relative;
+  }
+
+  .title {
+    display: flex;
+    align-items: center;
+    padding: 0 1.875rem;
+    font-size: 1.25rem;
+    margin-bottom: .875rem;
+
+    .titleSpacedLeft {
+      margin-left: 2.1875rem;
+    }
+    h3 {
+      font-weight: 400;
+      font-size: 1.25rem;
+      margin: 0;
+    }
+
+    & > * {
+      flex: 1;
+    }
+
+    .token {
+      flex: 1.5;
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      
+      .sortButtons {
+        display: flex;
+      }
+    }
+
+    .price {
+      flex: 1.2;
+    }
+
+    .actions {
+      text-align: end;
+    }
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: .625rem;
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .title {
+      padding: 0 1.25rem;
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    .title {
+      display: none;
+    }
+  }
+}

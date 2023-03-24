@@ -1,0 +1,107 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.875rem .625rem;
+  padding: .3125rem .9375rem;
+  border-radius: $border-radius;
+  margin-bottom: .625rem;
+  background-color: $c-mirage;
+  border-bottom: 1px solid $c-mirage;
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  p {
+    margin: 0;
+  }
+
+  .checkboxWrapper {
+    display: flex;
+    align-items: center;
+   
+    .checkbox {
+      display: flex;
+      align-items: center;
+      gap: .625rem;
+      margin: 0;
+  
+      .checkboxLabel {
+        display: flex;
+        align-items: center;
+        gap: .3125rem;
+    
+        .tokenIcon {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+
+        .tokenName {
+          white-space: nowrap;
+          padding-left: .25rem;
+          padding-top: 0;
+        }
+      }
+
+      div { // Checkbox mark
+        margin-top: 0;
+      }
+    }
+  }
+
+  .amountWrapper {
+    display: flex;
+    align-items: center;
+    gap: .9375rem;
+    margin-left: auto;
+
+    .amountUsd {
+      margin-left: .625rem;
+    }
+
+    .amountInput {
+      input {
+        width: 12.5rem;
+        height: 2.5rem;
+        padding: .3125rem .625rem;
+      }
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    padding: .9375rem 1.25rem;
+    flex-direction: column;
+    justify-content: center;
+
+    .checkboxWrapper {
+      .checkbox {
+        display: flex;
+        justify-content: center;
+
+        .checkboxLabel {
+          justify-content: flex-end;
+        }
+      }
+    }
+
+    .amountWrapper {
+      justify-content: space-between;
+      margin: 0;
+
+      .amountUsd {
+        margin-left: 0;
+      }
+      
+      .amountInput {
+        input {
+          max-width: 12.5rem;
+          width: 100%;
+        }
+      }
+    }
+  }
+}

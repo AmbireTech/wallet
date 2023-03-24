@@ -1,0 +1,67 @@
+@import 'variables';
+
+.wrapper {
+  .title {
+    font-size: 20px;
+    text-align: center;
+    margin: 0;
+    margin-bottom: 12px;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 36px;
+    margin-bottom: 40px;
+    background-color: theme(background-terniary);
+    border: 1px solid theme(border-secondary);
+    border-radius: $border-radius;
+
+    .siteLogo {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 20px;
+      border-radius: $border-radius;
+      background-color: #7549E8;
+    }
+
+    .siteName {
+      font-size: 20px;
+      margin: 0;
+      margin-bottom: 20px;
+    }
+
+    .message {
+      margin: 0;
+      margin-bottom: 45px;
+      font-size: 12px;
+      text-align: center;
+
+      &.smallMb {
+        margin-bottom: 14px;
+      }
+    }
+  }
+
+  .button {
+    font-size: 16px;
+    padding: 0 12px;
+  }
+
+  .buttons {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 40px;
+
+    .button {
+      flex: 1;
+    }
+  }
+
+  .singleButton {
+    width: 100%;
+    margin-bottom: 40px;
+  }
+}
