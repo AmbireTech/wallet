@@ -10,6 +10,7 @@ module.exports = {
       typescript: {}
     },
   },
+  plugins: ["only-warn"],
   rules: {
     // Since a lot of files contain JSX, but are with .js extension,
     // do not require specifically .jsx extension, since converting all files

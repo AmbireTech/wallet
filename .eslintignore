@@ -2,10 +2,10 @@ build/*.js
 node_modules/*.js
 
 # The paths bellow have to be removed when all the files are linted
-*.js
-src/**/*.js
-src/**/*.jsx
-src/**/*.tsx
+# *.js
+# src/**/*.js
+# src/**/*.jsx
+# src/**/*.tsx
 # -----------------------------
 # Allowing paths for checks. 
 # That's how we can add every file/folder that is already linted. 
