@@ -189,8 +189,8 @@ const GuardarianDepositProviderModal = ({ relayerURL, walletAddress, selectedNet
                 || guardarian?.estimateInfo?.isLoading 
                 || guardarian?.txn?.isLoading
                 || guardarian?.amount === ''
-                || sendTransactionLoading
-            } 
+            }
+            loading={sendTransactionLoading}
             onClick={sendTxn}
             className={styles.button}
             variant="primaryGradient"
