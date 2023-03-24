@@ -66,7 +66,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
         >
             <div className={styles.connectDapp}>
                 <div className={styles.heading}>
-                    <Button variant="primaryGradient" size="sm" className={styles.buttonClass} loading={isWcConnecting} startIcon={<ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard} testId='connect-btn'>
+                    <Button variant="primaryGradient" size="sm" className={styles.buttonClass} loading={isWcConnecting} loadingText="Connecting..." startIcon={<ConnectIcon />} disabled={isClipboardGranted || isWcConnecting} onClick={readClipboard} testId='connect-btn'>
                         Connect dApp
                     </Button>
                     <a href='https://help.ambire.com/hc/en-us/articles/4410889965842' target='_blank' rel='noreferrer'>
