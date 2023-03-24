@@ -49,6 +49,23 @@
     opacity: 0.5;
   }
 
+  .gasTankMsg {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    background-color: mix($c-ebony-clay, $warning-color, 90%);
+    color: $warning-color;
+    padding: .9375rem;
+    font-size: .875rem;
+    border-radius: $border-radius;
+
+    svg {
+      color: $c-ebony-clay;
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+  }
+
   .gasTankConvertMsg {
     display: flex;
     align-items: center;
