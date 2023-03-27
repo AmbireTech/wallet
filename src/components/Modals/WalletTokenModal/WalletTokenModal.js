@@ -92,10 +92,12 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
                 <RemoteLottie
                   remoteJson="/resources/rewards/rewards-active.mp4.lottie.json"
                   className={styles.rewardsWalletIconAnimated}
-                  background="transparent"
-                  speed="1"
-                  loop
-                  autoplay
+                  lottieProps={{
+                    background: 'transparent',
+                    speed: 1,
+                    loop: true,
+                    autoplay: true
+                  }}
                 />
               </ToolTip>
             ) : (
