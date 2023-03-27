@@ -236,7 +236,11 @@ const PermissionsModal = ({
             We do not send any other notifications.
           </div>
         </div>
-        <Toggle checked={isNoticationsGranted} onChange={() => requestNotificationsPermission()} />
+        <Toggle
+          id="notifications-toggle"
+          checked={isNoticationsGranted}
+          onChange={() => requestNotificationsPermission()}
+        />
       </div>
       <div className={cn(styles.permission, { [styles.disabled]: isFirefox() })}>
         <div className={styles.details}>
@@ -256,7 +260,11 @@ const PermissionsModal = ({
             </div>
           ) : null}
         </div>
-        <Toggle checked={isClipboardGranted} onChange={() => requestClipboardPermission()} />
+        <Toggle
+          id="clipboard-toggle"
+          checked={isClipboardGranted}
+          onChange={() => requestClipboardPermission()}
+        />
       </div>
       {!isBackupOptout && (
         <div className={styles.permission}>

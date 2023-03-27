@@ -1,10 +1,11 @@
 import styles from './Toggle.module.scss'
 
-const Toggle = ({ defaultChecked, checked, onChange }) => {
+const Toggle = ({ defaultChecked, checked, onChange, id }) => {
   return (
-    <label className={styles.toggle}>
+    <label htmlFor={id} className={styles.toggle}>
       <input
         type="checkbox"
+        id={id}
         defaultChecked={defaultChecked}
         checked={checked}
         onChange={onChange}
