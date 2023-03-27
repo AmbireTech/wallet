@@ -23,6 +23,7 @@ module.exports = {
     "import/no-relative-parent-imports": "error",
     "no-return-await": "off",
     "react/prop-types": "off",
-    "react/react-in-jsx-scope": "off"
+    "react/react-in-jsx-scope": "off",
+    "import/no-relative-parent-imports": "off"
   }
 }
