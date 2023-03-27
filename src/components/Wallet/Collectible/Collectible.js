@@ -141,7 +141,13 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
                 })
             }
 
-            timer.current = setTimeout(async() => validateForm().catch(console.error), 300)
+            timer.current = setTimeout(async() => {
+                try {
+                    validateForm()
+                  } catch (e) {
+                    console.log(e)
+                }
+            }, 300)
         } 
 
         return () => clearTimeout(timer.current)

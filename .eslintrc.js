@@ -17,6 +17,7 @@ module.exports = {
     // results huuuuuge diff in git + history gets lost. Blah.
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     // Require absolute paths for parent components/files
-    "import/no-relative-parent-imports": "error"
+    "import/no-relative-parent-imports": "error",
+    "no-return-await": "off"
   }
 }

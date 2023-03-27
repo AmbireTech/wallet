@@ -239,7 +239,7 @@ const Send = ({
           }
 
           timer.current = setTimeout(async () => {
-              return validateForm().catch(console.error)
+              return await validateForm().catch(console.error)
           }, 300)
       }
       return () => clearTimeout(timer.current)
