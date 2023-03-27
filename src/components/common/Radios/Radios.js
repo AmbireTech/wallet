@@ -5,27 +5,31 @@ const Radios = ({ radios, defaultValue, onChange, value, row, className, radioCl
   const [currentValue, setCurrentValue] = useState(defaultValue || null)
   const controlledValue = value || currentValue
 
-  const onSelect = (value) => {
-    setCurrentValue(value)
-    onChange && onChange(value)
+  const onSelect = (radioItemValue, disabled) => {
+    console.log(radioItemValue, disabled)
+    if (disabled) return
+
+    setCurrentValue(radioItemValue)
+    onChange && onChange(radioItemValue)
   }
 
   return (
     <div className={`${styles.radiosContainer}${row ? ` ${styles.row}` : ''} ${className || ''}`}>
-      {radios.map(({ label, value, disabled }, i) => (
-        <div
-          className={`${styles.radioContainer} ${value === controlledValue ? styles.active : ''} ${
-            disabled ? styles.disabled : ''
-          } ${radioClassName || ''}`}
-          key={`radio-${i}`}
-          onClick={() => !disabled && onSelect(value)}
+      {radios.map(({ label, value: radioItemValue, disabled }) => (
+        <button
+          type="button"
+          className={`${styles.radioContainer} ${
+            radioItemValue === controlledValue ? styles.active : ''
+          } ${disabled ? styles.disabled : ''} ${radioClassName || ''}`}
+          key={label}
+          onClick={() => onSelect(radioItemValue, disabled)}
         >
           {/* <div className={styles.radio}></div> */}
           <div className={styles.radio}>
             <div className={styles.radioInner} />
           </div>
-          <label>{label}</label>
-        </div>
+          <p className={styles.label}>{label}</p>
+        </button>
       ))}
     </div>
   )
