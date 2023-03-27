@@ -22,8 +22,9 @@
         gap: 2.5rem;
 
         .formItem {
-            label {
+            .formItemText {
                 display: block;
+                margin: 0;
                 margin-bottom: .625rem;
             }
         }
