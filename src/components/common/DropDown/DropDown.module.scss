@@ -13,6 +13,13 @@
         background-color: $c-mirage;
     }
 
+    button {
+        background-color: transparent;
+        border: none;
+        color: inherit;
+        text-align: left;
+    }
+
     .content {
         height: 100%;
         display: flex;
