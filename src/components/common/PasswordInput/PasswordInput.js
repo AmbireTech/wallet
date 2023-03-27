@@ -25,7 +25,7 @@ const PasswordInput = forwardRef(
 
     return (
       <div className={cn(styles.passwordInput, className || '')}>
-        {label ? <label>{label}</label> : null}
+        {label ? <p className={styles.label}>{label}</p> : null}
         <div className={styles.inputContainer}>
           <input
             value={value}
@@ -37,16 +37,15 @@ const PasswordInput = forwardRef(
             onChange={(ev) => onChange && onChange(ev.target.value)}
             ref={ref}
           />
-          {peakPassword ? (
-            !showPassword ? (
-              <div className={styles.button} onClick={() => setShowPassword(true)}>
-                <VisibleIcon />
-              </div>
-            ) : (
-              <div className={styles.button} onClick={() => setShowPassword(false)}>
-                <InvisibleIcon />
-              </div>
-            )
+          {peakPassword && !showPassword ? (
+            <button type="button" className={styles.button} onClick={() => setShowPassword(true)}>
+              <VisibleIcon />
+            </button>
+          ) : null}
+          {peakPassword && showPassword ? (
+            <button type="button" className={styles.button} onClick={() => setShowPassword(false)}>
+              <InvisibleIcon />
+            </button>
           ) : null}
         </div>
       </div>
