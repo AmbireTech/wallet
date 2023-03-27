@@ -16,7 +16,7 @@ const Checkbox = forwardRef(
     )
 
     return label ? (
-      <label
+      <div
         className={cn(styles.checkboxContainer, {
           [styles.disabled]: disabled,
           [className]: className
@@ -25,7 +25,7 @@ const Checkbox = forwardRef(
         {inputElem}
         <div className={styles.checkboxMark} />
         <div className={`${styles.label}${` ${labelClassName}`}`}>{label}</div>
-      </label>
+      </div>
     ) : (
       <div>
         {inputElem}
@@ -35,4 +35,4 @@ const Checkbox = forwardRef(
   }
 )
 
-export { Checkbox as default }
+export default Checkbox
