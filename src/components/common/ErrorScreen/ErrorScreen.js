@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import './ErrorScreen.scss'
 import { Button } from 'components/common'
 
