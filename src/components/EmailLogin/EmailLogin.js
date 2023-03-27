@@ -57,8 +57,8 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         setErr(`Email confirmation needed but unable to request: ${requestAuthResp.status}`)
         return
       }
-      const loginSessionKey = (await requestAuthResp.json()).sessionKey
-      setLoginSessionKey(loginSessionKey)
+      const currentLoginSessionKey = (await requestAuthResp.json()).sessionKey
+      setLoginSessionKey(currentLoginSessionKey)
       setRequiresConfFor({ email, passphrase })
       return
     }
@@ -71,6 +71,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
 
     if (resp.status === 200) {
       const identityInfo = body
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       const { _id, salt, identityFactoryAddr, baseIdentityAddr, bytecode } = identityInfo
       const { quickAccSigner, primaryKeyBackup } = identityInfo.meta
 
@@ -131,7 +132,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         <div className={styles.logo} />
         <h3 className={styles.error}>Email login not supported without the relayer.</h3>
         <a href={importJSONHref}>
-          <button>Import JSON</button>
+          <button type="button">Import JSON</button>
         </a>
       </section>
     )
@@ -154,9 +155,9 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
         <br />
         Please check your inbox and click
         <br />
-        "Authorize New Device".
+        &quot;Authorize New Device&quot;.
       </p>
-      {err ? <p className={styles.error}>{err}</p> : <></>}
+      {err ? <p className={styles.error}>{err}</p> : null}
     </div>
   ) : (
     <div className={styles.loginEmail}>
@@ -167,7 +168,7 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
       <a className={styles.backButton} href="#/add-account">
         <ChevronLeftIcon className={styles.backIcon} /> Back to Register
       </a>
-      {err ? <p className={styles.error}>{err}</p> : <></>}
+      {err ? <p className={styles.error}>{err}</p> : null}
 
       {/* <a href={importJSONHref}>Import JSON</a> */}
     </div>
