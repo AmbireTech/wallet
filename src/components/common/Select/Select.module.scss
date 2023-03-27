@@ -19,7 +19,8 @@
         opacity: 0.5;
     }
 
-    label {
+    .label {
+        margin: 0;
         font-weight: 500;
     }
 
@@ -55,6 +56,8 @@
         cursor: pointer;
 
         .selectInput {
+            width: 100%;
+            text-align: left;
             position: relative;
             height: 3.75rem;
             display: flex;
@@ -118,6 +121,8 @@
             }
 
             .option {
+                width: 100%;
+                text-align: left;
                 height: 3.125rem;
                 display: flex;
                 align-items: center;
