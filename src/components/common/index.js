@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import Alert from 'components/common/Alert/Alert'
 import AddressBook from './AddressBook/AddressBook'
 import AddressList from './AddressList/AddressList'
@@ -35,7 +36,6 @@ import Icon from './Icon/Icon'
 import RemoteLottie from './RemoteLottie/RemoteLottie'
 import ResponsiveAddress from './ResponsiveAddress/ResponsiveAddress'
 import Info from './Info/Info'
-import Note from './Note/Note'
 
 export {
   AddressBook,
@@ -74,6 +74,5 @@ export {
   Icon,
   RemoteLottie,
   ResponsiveAddress,
-  Info,
-  Note
+  Info
 }
