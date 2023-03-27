@@ -1,6 +1,9 @@
 import { forwardRef } from 'react'
+import cn from 'classnames'
 import { MdContentCopy } from 'react-icons/md'
+
 import { useToasts } from 'hooks/toasts'
+
 import styles from './TextInput.module.scss'
 
 const TextInput = forwardRef(
@@ -28,7 +31,8 @@ const TextInput = forwardRef(
       style,
       icon,
       inputContainerClass,
-      testId
+      testId,
+      labelClassName
     },
     ref
   ) => {
@@ -45,12 +49,15 @@ const TextInput = forwardRef(
           className || ''
         }`}
       >
-        {label ? <label>{label}</label> : null}
+        {label ? <p className={cn(styles.label, labelClassName)}>{label}</p> : null}
         <div
+          role="button"
           className={`${styles.container}${inputContainerClass ? ` ${inputContainerClass}` : ''}${
             icon ? ` ${styles.hasIcon}` : ''
           }`}
           onClick={copy ? onClick : null}
+          onKeyUp={(e) => e.key === 'Enter' && copy && onClick()}
+          tabIndex="0"
         >
           <input
             value={value}
@@ -76,9 +83,9 @@ const TextInput = forwardRef(
             </div>
           ) : null}
           {buttonLabel ? (
-            <div className={styles.button} onClick={onButtonClick}>
+            <button type="button" className={styles.button} onClick={onButtonClick}>
               {buttonLabel}
-            </div>
+            </button>
           ) : null}
         </div>
         {info ? <div className={styles.info}>{info}</div> : null}
