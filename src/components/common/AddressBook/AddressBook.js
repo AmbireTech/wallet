@@ -154,7 +154,8 @@ const AddressBook = ({
         <div className={styles.content}>
           <p className={styles.emptyText}>Your Address Book is empty.</p>
         </div>
-      ) : (
+      ) : null}
+      {!openAddAddress && addresses.length ? (
         <div className={styles.content}>
           <Addresses
             addresses={addresses}
@@ -163,7 +164,7 @@ const AddressBook = ({
             addressClassName={styles.address}
           />
         </div>
-      )}
+      ) : null}
     </DropDown>
   )
 }
