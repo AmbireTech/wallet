@@ -94,6 +94,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     setErr('')
 
     // async hack to let React run a tick so it can re-render before the blocking Wallet.createRandom()
+    // eslint-disable-next-line no-promise-executor-return
     await new Promise((resolve) => setTimeout(resolve, 0))
 
     const extraEntropy = id(
@@ -247,10 +248,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   useEffect(() => {
     if (resendTimeLeft) {
       const resendInterval = setInterval(
-        () =>
-          setResendTimeLeft((resendTimeLeft) =>
-            resendTimeLeft > 0 ? resendTimeLeft - EMAIL_AND_TIMER_REFRESH_TIME : 0
-          ),
+        () => setResendTimeLeft((prev) => (prev > 0 ? prev - EMAIL_AND_TIMER_REFRESH_TIME : 0)),
         EMAIL_AND_TIMER_REFRESH_TIME
       )
       return () => clearTimeout(resendInterval)
@@ -306,37 +304,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     [relayerURL, utmTracking]
   )
 
-  async function connectWeb3AndGetAccounts() {
-    if (typeof window.ethereum === 'undefined') {
-      throw new Error('MetaMask not available')
-    }
-    const ethereum = window.ethereum
-
-    const permissions = await ethereum.request({
-      method: 'wallet_requestPermissions',
-      params: [{ eth_accounts: {} }]
-    })
-
-    const accountsPermission = permissions.find(
-      (permission) => permission.parentCapability === 'eth_accounts'
-    )
-
-    if (!accountsPermission) {
-      throw new Error('No accounts connected')
-    }
-
-    // Depending on the MM version, the addresses are returned by a different caveat identifier.
-    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
-    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
-    const addresses = accountsPermission.caveats.find(
-      (caveat) => caveat.type === 'restrictReturnedAccounts' || caveat.name === 'exposedAccounts'
-    ).value
-
-    if (addresses.length === 1) return onEOASelected(addresses[0], { type: 'Web3' })
-
-    setChooseSigners({ addresses, signerName: 'Web3' })
-  }
-
   const getAccountByAddr = useCallback(
     async (idAddr, signerAddr) => {
       // In principle, we need these values to be able to operate in relayerless mode,
@@ -370,16 +337,70 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           )
           const privEntries = Object.entries(await resp.json())
           // discard the privileges value, we do not need it as we wanna add all accounts EVER owned by this eoa
-          privEntries.forEach(([id, _]) => (allUniqueOwned[id] = getAddress(signerAddr)))
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          privEntries.forEach(([entryId, _]) => {
+            allUniqueOwned[entryId] = getAddress(signerAddr)
+          })
         })
       )
 
       return await Promise.all(
-        Object.entries(allUniqueOwned).map(([id, signer]) => getAccountByAddr(id, signer))
+        Object.entries(allUniqueOwned).map(([entryId, signer]) => getAccountByAddr(entryId, signer))
       )
     },
     [getAccountByAddr, relayerURL]
   )
+
+  const onEOASelected = useCallback(
+    async (addr, signerExtra) => {
+      const addAccount = (acc, opts) => onAddAccount({ ...acc, signerExtra }, opts)
+      // when there is no relayer, we can only add the 'default' account created from that EOA
+      // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
+      //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
+      if (!relayerURL)
+        return addAccount(await createFromEOA(addr, signerExtra.type), { select: true })
+      // otherwise check which accs we already own and add them
+      const owned = await getOwnedByEOAs([addr])
+      if (!owned.length) {
+        addAccount(await createFromEOA(addr, signerExtra.type), { select: true, isNew: true })
+      } else {
+        addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
+        owned.forEach((acc, i) => addAccount(acc, { select: i === 0 }))
+      }
+    },
+    [addToast, createFromEOA, getOwnedByEOAs, onAddAccount, relayerURL]
+  )
+
+  async function connectWeb3AndGetAccounts() {
+    if (typeof window.ethereum === 'undefined') {
+      throw new Error('MetaMask not available')
+    }
+    const ethereum = window.ethereum
+
+    const permissions = await ethereum.request({
+      method: 'wallet_requestPermissions',
+      params: [{ eth_accounts: {} }]
+    })
+
+    const accountsPermission = permissions.find(
+      (permission) => permission.parentCapability === 'eth_accounts'
+    )
+
+    if (!accountsPermission) {
+      throw new Error('No accounts connected')
+    }
+
+    // Depending on the MM version, the addresses are returned by a different caveat identifier.
+    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
+    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
+    const addresses = accountsPermission.caveats.find(
+      (caveat) => caveat.type === 'restrictReturnedAccounts' || caveat.name === 'exposedAccounts'
+    ).value
+
+    if (addresses.length === 1) return onEOASelected(addresses[0], { type: 'Web3' })
+
+    setChooseSigners({ addresses, signerName: 'Web3' })
+  }
 
   const getGridPlusAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
     setChooseSigners({
@@ -412,17 +433,10 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       signerName: 'Trezor',
       signerExtra: {
         type: 'trezor',
+        // eslint-disable-next-line no-underscore-dangle
         info: JSON.parse(JSON.stringify(provider._initialDerivedKeyInfo))
       }
     })
-  }
-
-  async function connectLedgerAndGetAccounts() {
-    if (isFirefox()) {
-      await connectLedgerAndGetAccountsU2F()
-    } else {
-      await connectLedgerAndGetAccountsWebHID()
-    }
   }
 
   async function connectLedgerAndGetAccountsU2F() {
@@ -435,6 +449,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     // there is a bug in the ledger subprovider (race condition), so it will think we're trying to make two connections simultaniously
     // cause one call won't be aware of the other's attempt to connect
     const addresses = await provider.getAccountsAsync(50)
+    // eslint-disable-next-line no-underscore-dangle
     const signerExtra = await provider._initialDerivedKeyInfoAsync().then((info) => ({
       type: 'ledger',
       info: JSON.parse(JSON.stringify(info))
@@ -469,25 +484,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     }
   }
 
-  const onEOASelected = useCallback(
-    async (addr, signerExtra) => {
-      const addAccount = (acc, opts) => onAddAccount({ ...acc, signerExtra }, opts)
-      // when there is no relayer, we can only add the 'default' account created from that EOA
-      // @TODO in the future, it would be nice to do getLogs from the provider here to find out which other addrs we control
-      //   ... maybe we can isolate the code for that in lib/relayerless or something like that to not clutter this code
-      if (!relayerURL)
-        return addAccount(await createFromEOA(addr, signerExtra.type), { select: true })
-      // otherwise check which accs we already own and add them
-      const owned = await getOwnedByEOAs([addr])
-      if (!owned.length) {
-        addAccount(await createFromEOA(addr, signerExtra.type), { select: true, isNew: true })
-      } else {
-        addToast(`Found ${owned.length} existing accounts with signer ${addr}`, { timeout: 15000 })
-        owned.forEach((acc, i) => addAccount(acc, { select: i === 0 }))
-      }
-    },
-    [addToast, createFromEOA, getOwnedByEOAs, onAddAccount, relayerURL]
-  )
+  async function connectLedgerAndGetAccounts() {
+    if (isFirefox()) {
+      await connectLedgerAndGetAccountsU2F()
+    } else {
+      await connectLedgerAndGetAccountsWebHID()
+    }
+  }
 
   const onSignerAddressClicked = useCallback(
     (val) => {
@@ -567,23 +570,23 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   // Adding accounts from existing signers
   const addFromSignerButtons = (
     <>
-      <button onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
+      <button type="button" onClick={() => wrapProgress(connectTrezorAndGetAccounts, 'hwwallet')}>
         {/* Trezor */}
         <TrezorIcon />
       </button>
-      <button onClick={() => wrapProgress(connectLedgerAndGetAccounts, 'hwwallet')}>
+      <button type="button" onClick={() => wrapProgress(connectLedgerAndGetAccounts, 'hwwallet')}>
         {/* Ledger */}
         <LedgerIcon />
       </button>
-      <button onClick={() => wrapProgress(connectGridPlusAndGetAccounts, 'hwwallet')}>
+      <button type="button" onClick={() => wrapProgress(connectGridPlusAndGetAccounts, 'hwwallet')}>
         {/* Grid+ Lattice1 */}
         <GridPlusIcon className={styles.gridplus} />
       </button>
-      <button onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
+      <button type="button" onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
         {/* Metamask / Browser */}
         <MetamaskIcon className={styles.metamask} width={25} /> Web3 Wallet
       </button>
-      <button onClick={() => wrapErr(open)}>
+      <button type="button" onClick={() => wrapErr(open)}>
         <VscJson className={styles.jsonIcon} />
         Import from JSON
       </button>
@@ -604,9 +607,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
               <p className={styles.error} style={{ maxWidth: '800px' }}>
                 {addAccErr}
               </p>
-            ) : (
-              <></>
-            )}
+            ) : null}
           </div>
         </section>
       </div>
@@ -635,11 +636,11 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
               </span>
               .
               <br />
-              Please check your inbox for "Welcome to
+              Please check your inbox for &quot;Welcome to
               <br />
-              Ambire Wallet" email and click "Verify".
+              Ambire Wallet&quot; email and click &quot;Verify&quot;.
             </p>
-            {err ? <p className={styles.error}>{err}</p> : <></>}
+            {err ? <p className={styles.error}>{err}</p> : null}
             <div className={styles.btnWrapper}>
               {!isEmailConfirmed && !isEmailResent && (
                 <ToolTip
@@ -658,9 +659,9 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
                 </ToolTip>
               )}
             </div>
-            <div className={styles.backButton} onClick={handleBackBtnClicked}>
+            <button type="button" className={styles.backButton} onClick={handleBackBtnClicked}>
               <ChevronLeftIcon /> Back to Register
-            </div>
+            </button>
           </div>
         </>
       ) : (
@@ -684,7 +685,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
                 onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
                 action="SIGNUP"
               />
-              {err ? <p className={styles.error}>{err}</p> : <></>}
+              {err ? <p className={styles.error}>{err}</p> : null}
             </div>
 
             <div className={styles.loginSeparator} />
@@ -693,13 +694,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
               {inProgress !== 'hwwallet' ? (
                 <>
                   <Link to="/email-login">
-                    <button>
+                    <button type="button">
                       <EmailIcon className={styles.email} />
                       Email login
                     </button>
                   </Link>
                   {addFromSignerButtons}
-                  {addAccErr ? <p className={styles.error}>{addAccErr}</p> : <></>}
+                  {addAccErr ? <p className={styles.error}>{addAccErr}</p> : null}
                 </>
               ) : (
                 <div className={styles.accountLoader}>
