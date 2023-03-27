@@ -46,8 +46,9 @@ const AssetsMigrationBanner = ({
   const closeMigrationMessage = useCallback(() => {
     setMigrationMessageSeen(true)
     setMigrationMessageSeenStorage((old) => {
-      old[selectedAccount + selectedNetwork.id] = true
-      return old
+      const newMigrationMessageSeenStorage = { ...old }
+      newMigrationMessageSeenStorage[selectedAccount + selectedNetwork.id] = true
+      return newMigrationMessageSeenStorage
     })
   }, [selectedAccount, selectedNetwork, setMigrationMessageSeenStorage])
 
@@ -56,11 +57,11 @@ const AssetsMigrationBanner = ({
     let unmounted = false
 
     setHasSignerAssets(false)
-    const checkSignerAssets = ({ networkId, identityAccount, accounts }) => {
-      const currentAccount = accounts.find((a) => a.id === identityAccount)
-      if (!currentAccount.signer) return
+    const checkSignerAssets = ({ networkId, identityAccount }) => {
+      const currentSignerAccount = accounts.find((a) => a.id === identityAccount)
+      if (!currentSignerAccount.signer) return
 
-      assetMigrationDetector({ networkId, account: currentAccount.signer.address })
+      assetMigrationDetector({ networkId, account: currentSignerAccount.signer.address })
         .then((assets) => {
           if (unmounted) return
           const relevantAssets = assets.filter((a) => a.balanceUSD > 0.001)
@@ -71,9 +72,11 @@ const AssetsMigrationBanner = ({
         })
     }
 
-    checkSignerAssets({ identityAccount: selectedAccount, networkId: selectedNetwork.id, accounts })
+    checkSignerAssets({ identityAccount: selectedAccount, networkId: selectedNetwork.id })
 
-    return () => (unmounted = true)
+    return () => {
+      unmounted = true
+    }
   }, [selectedAccount, selectedNetwork, accounts])
 
   // checking if closable message has been seen(closed) or not
@@ -88,7 +91,7 @@ const AssetsMigrationBanner = ({
   const shouldShow =
     wallet?.provider ||
     (currentAccount.signerExtra && supportedHWWalletTypes.includes(currentAccount.signerExtra.type))
-  if (!shouldShow) return <></>
+  if (!shouldShow) return null
 
   return (
     hasSignerAssets &&
@@ -97,7 +100,8 @@ const AssetsMigrationBanner = ({
         <p className={styles.message}>
           We detected that your signer account has tokens that can be transferred to your Ambire
           account. We recommend doing this in order to maximize your $WALLET rewards.
-          <span
+          <button
+            type="button"
             className={cn(styles.link, { [styles.linkMargin]: linkMargin })}
             onClick={() => {
               showModal(
@@ -113,7 +117,7 @@ const AssetsMigrationBanner = ({
             }}
           >
             Click here to migrate those tokens
-          </span>
+          </button>
         </p>
         {closeable && (
           <CloseIcon className={styles.close} onClick={() => closeMigrationMessage()} />
