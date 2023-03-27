@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import cn from 'classnames'
 
@@ -30,21 +31,27 @@ const AddressBook = ({
   const [uDAddress, setUDAddress] = useState('')
   const [ensAddress, setEnsAddress] = useState('')
 
-  const selectAddress = (address) => {
-    onSelectAddress && onSelectAddress(uDAddress || ensAddress || address)
+  const selectAddress = (selectedAddress) => {
+    onSelectAddress && onSelectAddress(uDAddress || ensAddress || selectedAddress)
     setOpenMenu(false)
   }
 
   const isAddAddressFormValid =
     address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress || ensAddress || address)
   const onAddAddress = useCallback(() => {
+    let addedAddressType = 'pub'
+
+    if (uDAddress) {
+      addedAddressType = 'ud'
+    } else if (ensAddress) {
+      addedAddressType = 'ens'
+    }
+
     setOpenMenu(false)
     setOpenAddAddress(false)
-    addAddress(
-      name,
-      address,
-      uDAddress ? { type: 'ud' } : ensAddress ? { type: 'ens' } : { type: 'pub' }
-    )
+    addAddress(name, address, {
+      type: addedAddressType
+    })
   }, [addAddress, name, address, uDAddress, ensAddress])
 
   const onDropDownChange = useCallback((state) => {
@@ -72,10 +79,10 @@ const AddressBook = ({
 
     const validateForm = async () => {
       const UDAddress = await resolveUDomain(address, null, selectedNetwork.unstoppableDomainsChain)
-      const ensAddress = await resolveENSDomain(address)
+      const resolvedEnsAddress = await resolveENSDomain(address)
 
       if (UDAddress) setUDAddress(UDAddress)
-      else if (ensAddress) setEnsAddress(ensAddress)
+      else if (resolvedEnsAddress) setEnsAddress(resolvedEnsAddress)
       else {
         setUDAddress('')
         setEnsAddress('')
@@ -113,13 +120,13 @@ const AddressBook = ({
           <FaAddressCard /> Address Book
         </div>
         {!openAddAddress ? (
-          <div className={styles.button} onClick={() => setOpenAddAddress(true)}>
+          <button type="button" className={styles.button} onClick={() => setOpenAddAddress(true)}>
             <MdOutlineAdd />
-          </div>
+          </button>
         ) : (
-          <div className={styles.button} onClick={() => setOpenAddAddress(false)}>
+          <button type="button" className={styles.button} onClick={() => setOpenAddAddress(false)}>
             <MdClose />
-          </div>
+          </button>
         )}
       </div>
       {openAddAddress ? (
@@ -142,7 +149,8 @@ const AddressBook = ({
             <MdOutlineAdd /> Add Address
           </Button>
         </div>
-      ) : !addresses.length ? (
+      ) : null}
+      {!openAddAddress && !addresses.length ? (
         <div className={styles.content}>
           <p className={styles.emptyText}>Your Address Book is empty.</p>
         </div>
