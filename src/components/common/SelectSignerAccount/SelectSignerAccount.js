@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Info } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'
-import PaginationButtons from 'components/common/Pagination/PaginationButtons'
+import PaginationButtons from 'components/common/Pagination/PaginationButtons/PaginationButtons'
 import styles from './SelectSignerAccount.module.scss'
 
 const SelectSignerAccount = ({

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from 'react-icons/hi'
 import { Button } from 'components/common'
 import styles from './PaginationButtons.module.scss'
