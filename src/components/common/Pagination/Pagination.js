@@ -1,11 +1,10 @@
-import styles from './Pagination.module.scss'
 import { useHistory, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
+import styles from './Pagination.module.scss'
 import PaginationButtons from './PaginationButtons'
 
 // Pagination component based on url. necessary to be independent and synced
 const Pagination = ({ items, setPaginatedItems, itemsPerPage, url, parentPage = null }) => {
-
   const history = useHistory()
   const localParams = useParams()
 
@@ -21,19 +20,24 @@ const Pagination = ({ items, setPaginatedItems, itemsPerPage, url, parentPage = 
 
   useEffect(() => {
     const parsedItems = JSON.parse(jsonItems)
-    setPaginatedItems(parsedItems.slice(routerPage * itemsPerPage, routerPage * itemsPerPage + itemsPerPage))
+    setPaginatedItems(
+      parsedItems.slice(routerPage * itemsPerPage, routerPage * itemsPerPage + itemsPerPage)
+    )
   }, [jsonItems, routerPage, setPaginatedItems, itemsPerPage])
 
-  return !!items.length &&
-    <div className={styles.wrapper}>
-      <PaginationButtons
+  return (
+    !!items.length && (
+      <div className={styles.wrapper}>
+        <PaginationButtons
           page={routerPage}
           items={items}
           itemsPerPage={itemsPerPage}
           onPrev={() => handlePageChange(routerPage - 1)}
           onNext={() => handlePageChange(routerPage + 1)}
-      />
-    </div>
+        />
+      </div>
+    )
+  )
 }
 
 export default Pagination

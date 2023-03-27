@@ -15,7 +15,8 @@ const History = ({ network, gasTankFilledTxns, feeAssetsRes }) => {
                   feeAssetsRes && feeAssetsRes.length
                     ? feeAssetsRes.find(
                         ({ address, network }) =>
-                          address.toLowerCase() === item.address.toLowerCase() && network === item.network
+                          address.toLowerCase() === item.address.toLowerCase() &&
+                          network === item.network
                       )
                     : null
                 if (!tokenDetails) return null // txn to gas Tank with not eligible token

@@ -1,73 +1,66 @@
 import './GnosisSafeApps.scss'
 
 import { useEffect, useRef, useState } from 'react'
-import {
-    Skeleton,
-    AmbireLoading
-} from 'components/common'
+import { Skeleton, AmbireLoading } from 'components/common'
 
 export default function GnosisSafeAppIframe({
-    selectedApp = {},
-    title = 'Ambire Plugin',
-    network,
-    selectedAcc,
-    gnosisConnect,
-    gnosisDisconnect,
-    className
+  selectedApp = {},
+  title = 'Ambire Plugin',
+  network,
+  selectedAcc,
+  gnosisConnect,
+  gnosisDisconnect,
+  className
 }) {
+  const { chainId } = network || {}
+  const { url } = selectedApp || {}
+  const [loading, setLoading] = useState(true)
+  const [hash, setHash] = useState('')
+  const iframeRef = useRef(null)
 
-    const { chainId } = network || {}
-    const { url } = selectedApp || {}
-    const [loading, setLoading] = useState(true)
-    const [hash, setHash] = useState('')
-    const iframeRef = useRef(null);
+  useEffect(() => {
+    const newHash = url + chainId + selectedAcc
+    setHash(newHash)
+  }, [chainId, selectedAcc, url])
 
+  useEffect(() => {
+    setLoading(true)
+  }, [hash])
 
-    useEffect(() => {
-        const newHash = url + chainId + selectedAcc
-        setHash(newHash)
-    }, [chainId, selectedAcc, url])
+  useEffect(() => {
+    gnosisConnect({
+      selectedAcc,
+      iframeRef,
+      app: selectedApp
+    })
 
-    useEffect(() => {
-        setLoading(true)
-    }, [hash])
+    return () => {
+      gnosisDisconnect()
+    }
+  }, [selectedApp, network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
 
-    useEffect(() => {
-        gnosisConnect({
-            selectedAcc,
-            iframeRef,
-            app: selectedApp
-        });
+  return (
+    <div id="plugin-gnosis-container" className={className}>
+      {loading && (
+        <div className="iframe-placeholder">
+          <Skeleton>
+            <AmbireLoading />
+          </Skeleton>
+        </div>
+      )}
 
-        return () => {
-            gnosisDisconnect()
-        }
-
-    }, [selectedApp, network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
-
-    return (
-        <div id="plugin-gnosis-container" className={className}>
-            {
-                loading &&
-                <div className='iframe-placeholder'>
-                    <Skeleton >
-                        <AmbireLoading />
-                    </Skeleton>
-                </div>
-            }
-
-            {
-                url &&
-                <iframe
-                    id={hash}
-                    key={hash}
-                    ref={iframeRef}
-                    title={title}
-                    src={url}
-                    onLoad={() => setLoading(false)}
-                    style={loading ? { display: 'none' } : {}}
-                    allow='clipboard-read; clipboard-write'
-                />
-            }
-        </div>)
+      {url && (
+        <iframe
+          id={hash}
+          key={hash}
+          ref={iframeRef}
+          title={title}
+          src={url}
+          onLoad={() => setLoading(false)}
+          style={loading ? { display: 'none' } : {}}
+          allow="clipboard-read; clipboard-write"
+        />
+      )}
+    </div>
+  )
 }

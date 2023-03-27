@@ -24,17 +24,17 @@ const AssetsMigrationPermitter = ({
   setModalButtons,
   relayerURL,
   gasSpeed,
-  hidden,
+  hidden
 }) => {
-  //storing user sign/send or rejection
+  // storing user sign/send or rejection
   const [tokensPermissions, setTokensPermissions] = useState([])
 
-  //storing transfer status for non permittable tokens
+  // storing transfer status for non permittable tokens
   const [tokensTransfers, setTokensTransfers] = useState({})
 
-  //to be able to have UI feedback without trigerring useEffects
+  // to be able to have UI feedback without trigerring useEffects
   const [tokensPendingStatus, setTokensPendingStatus] = useState({})
-  //error display logic if a user has rejected one or more MM popup
+  // error display logic if a user has rejected one or more MM popup
   const [hasRefusedOnce, setHasRefusedOnce] = useState(false)
   const [lastRefusalError, setLastRefusalError] = useState(null)
 
@@ -44,7 +44,7 @@ const AssetsMigrationPermitter = ({
 
   const [wallet, setWallet] = useState(null)
 
-  //using a callback would return not up to date data + would trigger useEffect prompt loop while we do not want that
+  // using a callback would return not up to date data + would trigger useEffect prompt loop while we do not want that
   const getConsolidatedTokensPure = (
     selected,
     tokensPermissions = [],
@@ -54,13 +54,13 @@ const AssetsMigrationPermitter = ({
     return selected
       .filter((t) => t.address !== ZERO_ADDRESS)
       .map((t) => {
-        let remapped = {
+        const remapped = {
           ...t,
           signing: null,
           signature: null,
           sent: false,
           pending: false,
-          allowance: 0,
+          allowance: 0
         }
         if (tokensPermissions[t.address]) {
           remapped.signing = tokensPermissions[t.address].signing
@@ -87,8 +87,8 @@ const AssetsMigrationPermitter = ({
         if (!connected) {
           setError(
             <>
-              Please make sure your signer wallet is unlocked, and connected with <b>{signer.address}</b> to the correct
-              chain: <b>{network.id}</b>
+              Please make sure your signer wallet is unlocked, and connected with{' '}
+              <b>{signer.address}</b> to the correct chain: <b>{network.id}</b>
             </>
           )
           return false
@@ -96,15 +96,20 @@ const AssetsMigrationPermitter = ({
         return true
       })
       .catch((e) => {
-        setError('Could not check signer connection status: ' + e.error)
+        setError(`Could not check signer connection status: ${e.error}`)
         return false
       })
   }, [network, setError, signer, wallet])
 
-  //number of tokens that are ready to migrate (sent / permitted)
+  // number of tokens that are ready to migrate (sent / permitted)
   const readyTokensCount = useCallback(() => {
     let count = 0
-    getConsolidatedTokensPure(selectedTokensWithAllowance, tokensPermissions, tokensTransfers, []).forEach((t) => {
+    getConsolidatedTokensPure(
+      selectedTokensWithAllowance,
+      tokensPermissions,
+      tokensTransfers,
+      []
+    ).forEach((t) => {
       if (t.sent) {
         count++
       }
@@ -112,7 +117,7 @@ const AssetsMigrationPermitter = ({
     return count
   }, [selectedTokensWithAllowance, tokensPermissions, tokensTransfers])
 
-  //Send MM prompt
+  // Send MM prompt
   const sendToken = useCallback(
     async (address, waitForRcpt = false) => {
       if (!(await checkWalletConnection())) return
@@ -122,10 +127,10 @@ const AssetsMigrationPermitter = ({
 
       const sendData = ERC20PermittableInterface.encodeFunctionData('transfer', [
         identityAccount,
-        new BigNumber(tokenToMigrate.amount).toFixed(0),
+        new BigNumber(tokenToMigrate.amount).toFixed(0)
       ])
 
-      //UI pending status
+      // UI pending status
       setTokensPendingStatus((old) => {
         old[address] = true
         return { ...old }
@@ -139,13 +144,13 @@ const AssetsMigrationPermitter = ({
           data: sendData,
           gasLimit: 110000,
           gasPrice: currentGasPrice,
-          chainId: network.chainId,
+          chainId: network.chainId
         })
         .then(async (rcpt) => {
           setTokensPermissions((old) => {
             old[address] = {
               ...old[address],
-              signing: true,
+              signing: true
             }
             return { ...old }
           })
@@ -165,7 +170,7 @@ const AssetsMigrationPermitter = ({
             setTokensPermissions((old) => {
               old[address] = {
                 ...old[address],
-                signing: false,
+                signing: false
               }
               return { ...old }
             })
@@ -195,7 +200,7 @@ const AssetsMigrationPermitter = ({
             setTokensPermissions((old) => {
               old[address] = {
                 ...old[address],
-                signing: false,
+                signing: false
               }
               return { ...old }
             })
@@ -213,11 +218,11 @@ const AssetsMigrationPermitter = ({
       currentGasPrice,
       network,
       signer,
-      checkWalletConnection,
+      checkWalletConnection
     ]
   )
 
-  //going to assets selection
+  // going to assets selection
   const cancelMigration = useCallback(() => {
     setError(null)
     setTokensTransfers([])
@@ -226,9 +231,9 @@ const AssetsMigrationPermitter = ({
     setStep(0)
   }, [setError, setTokensPermissions, setTokensTransfers, setStep])
 
-  //batch transactions
+  // batch transactions
   const completeMigration = useCallback(() => {
-    //reset assets migration status
+    // reset assets migration status
     cancelMigration()
     hideModal()
   }, [cancelMigration, hideModal])
@@ -236,9 +241,9 @@ const AssetsMigrationPermitter = ({
   useEffect(() => {
     setWallet(
       getWallet({
-        signer: signer,
-        signerExtra: signerExtra,
-        chainId: network.chainId,
+        signer,
+        signerExtra,
+        chainId: network.chainId
       })
     )
   }, [network, signer, signerExtra])
@@ -260,13 +265,13 @@ const AssetsMigrationPermitter = ({
         setCurrentGasPrice(gasPrice)
       })
       .catch((err) => {
-        setError(err.message + ' ' + url)
+        setError(`${err.message} ${url}`)
       })
   }, [network, relayerURL, setError, gasSpeed])
 
-  //Automatic permit ask chain
+  // Automatic permit ask chain
   useEffect(() => {
-    //Skip initial useEffect
+    // Skip initial useEffect
     if (!hasCorrectAccountAndChainId) return
     if (!Object.values(tokensTransfers).length) return
     if (!currentGasPrice) return
@@ -279,14 +284,14 @@ const AssetsMigrationPermitter = ({
     ).map((t) => {
       return {
         address: t.address,
-        signed: t.signing,
+        signed: t.signing
       }
     })
 
     const nextTokenToAsk = tokensWithPermission.find((a) => a.signed === null)
 
     if (nextTokenToAsk) {
-      //avoid MM popup losing focus when immediately running the next action
+      // avoid MM popup losing focus when immediately running the next action
       setTimeout(() => {
         sendToken(nextTokenToAsk.address, true)
       }, 150)
@@ -297,7 +302,7 @@ const AssetsMigrationPermitter = ({
     tokensPermissions,
     tokensTransfers,
     hasCorrectAccountAndChainId,
-    currentGasPrice,
+    currentGasPrice
   ])
 
   useEffect(() => {
@@ -312,13 +317,14 @@ const AssetsMigrationPermitter = ({
   useEffect(() => {
     if (hasRefusedOnce) {
       setError(
-        'Every asset below needs to be sent to complete the migration' +
-          (lastRefusalError ? ' (' + lastRefusalError + ')' : '')
+        `Every asset below needs to be sent to complete the migration${
+          lastRefusalError ? ` (${lastRefusalError})` : ''
+        }`
       )
     }
   }, [hasRefusedOnce, setError, lastRefusalError])
 
-  //Clearing UI error if all the tokens are validated
+  // Clearing UI error if all the tokens are validated
   useEffect(() => {
     if (readyTokensCount() === selectedTokensWithAllowance.length) {
       setError(null)
@@ -350,7 +356,7 @@ const AssetsMigrationPermitter = ({
     selectedTokensWithAllowance,
     setModalButtons,
     hidden,
-    hideModal,
+    hideModal
   ])
 
   if (hidden) return <></>
@@ -362,7 +368,9 @@ const AssetsMigrationPermitter = ({
           getConsolidatedTokensPure(selectedTokensWithAllowance).length - readyTokensCount()
         } actions left to complete the migration`}</div>
       ) : (
-        <div className="notification-hollow mb-3 success">Your tokens were migrated. You can close this window</div>
+        <div className="notification-hollow mb-3 success">
+          Your tokens were migrated. You can close this window
+        </div>
       )}
       {getConsolidatedTokensPure(
         selectedTokensWithAllowance,
@@ -370,7 +378,12 @@ const AssetsMigrationPermitter = ({
         tokensTransfers,
         tokensPendingStatus
       ).map((item, index) => (
-        <Token data={item} sendToken={sendToken} key={index} isSendDisabled={!hasCorrectAccountAndChainId}/>
+        <Token
+          data={item}
+          sendToken={sendToken}
+          key={index}
+          isSendDisabled={!hasCorrectAccountAndChainId}
+        />
       ))}
     </div>
   )

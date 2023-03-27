@@ -5,9 +5,8 @@ import cn from 'classnames'
 import { getWallet } from 'lib/getWallet'
 
 import { Button, Loading } from 'components/common'
-import Summary from './Summary/Summary'
-
 import { GiToken } from 'react-icons/gi'
+import Summary from './Summary/Summary'
 
 import styles from './AssetsMigrationNative.module.scss'
 
@@ -27,7 +26,7 @@ const AssetsMigrationNative = ({
   setModalButtons,
   setBeforeCloseModalHandler,
   gasSpeed,
-  hidden,
+  hidden
 }) => {
   const [failedImg, setFailedImg] = useState([])
   const [hasMigratedNative, setHasMigratedNative] = useState(false)
@@ -38,16 +37,16 @@ const AssetsMigrationNative = ({
   let wallet
   try {
     wallet = getWallet({
-      signer: signer,
-      signerExtra: signerExtra,
-      chainId: network.chainId,
+      signer,
+      signerExtra,
+      chainId: network.chainId
     })
   } catch (err) {
     // in case of no window.ethereum was injected from extension
     setError('No Web3 wallet connected. Please connect a Web3 wallet and reload the page')
   }
 
-  //going back to assets selection
+  // going back to assets selection
   const cancelMigration = useCallback(() => {
     setStep(0)
     setSelectedTokensWithAllowance([])
@@ -57,8 +56,7 @@ const AssetsMigrationNative = ({
     setStep(2)
   }, [setStep])
 
-
-  //Pops MM modal to send native to Identity
+  // Pops MM modal to send native to Identity
   const migrateNative = useCallback(async () => {
     if (!wallet) return
     setError(null)
@@ -68,9 +66,11 @@ const AssetsMigrationNative = ({
       setBeforeCloseModalHandler(null)
     }
 
-    let hasCorrectChainAndAccount = await wallet.isConnected(signer.address, network.chainId).catch((e) => {
-      setError('Could not check signer connection status: ' + e.error)
-    })
+    const hasCorrectChainAndAccount = await wallet
+      .isConnected(signer.address, network.chainId)
+      .catch((e) => {
+        setError(`Could not check signer connection status: ${e.error}`)
+      })
 
     if (hasCorrectChainAndAccount) {
       wallet
@@ -79,8 +79,8 @@ const AssetsMigrationNative = ({
           to: identityAccount,
           gasLimit: 30000 + (network.id === 'arbitrum' ? 200000 : 0),
           gasPrice: currentGasPrice,
-          value: '0x' + new BigNumber(nativeAmount).toString(16),
-          chainId: network.chainId,
+          value: `0x${new BigNumber(nativeAmount).toString(16)}`,
+          chainId: network.chainId
         })
         .then(async (rcpt) => {
           await rcpt.wait()
@@ -95,7 +95,7 @@ const AssetsMigrationNative = ({
           if (err && err.message.includes('must provide an Ethereum address')) {
             setError(`Make sure your wallet is unlocked and connected with ${signer.address}.`)
           } else {
-            setError('Native asset migration failed: ' + err.message)
+            setError(`Native asset migration failed: ${err.message}`)
           }
 
           return false
@@ -103,8 +103,8 @@ const AssetsMigrationNative = ({
     } else {
       setError(
         <>
-          Please make sure your signer wallet is unlocked, and connected with <b>{signer.address}</b> to the correct
-          chain: <b>{network.id}</b>
+          Please make sure your signer wallet is unlocked, and connected with{' '}
+          <b>{signer.address}</b> to the correct chain: <b>{network.id}</b>
         </>
       )
       setIsMigrationPending(false)
@@ -118,17 +118,21 @@ const AssetsMigrationNative = ({
     signer,
     identityAccount,
     nativeAmount,
-    currentGasPrice,
+    currentGasPrice
   ])
 
   useEffect(() => {
     if (hidden) return
     const getDisplayedButtons = () => {
-      let buttons = []
+      const buttons = []
       if (hasMigratedNative) {
         if (hasERC20Tokens) {
           buttons.push(
-            <Button primaryGradient className={styles.fullWidthBtn} onClick={() => continueMigration()}>
+            <Button
+              primaryGradient
+              className={styles.fullWidthBtn}
+              onClick={() => continueMigration()}
+            >
               Next
             </Button>
           )
@@ -155,13 +159,24 @@ const AssetsMigrationNative = ({
 
         if (isMigrationPending) {
           buttons.push(
-            <Button primaryGradient disabled className={styles.fullWidthBtn} icon={<Loading />} key="1">
+            <Button
+              primaryGradient
+              disabled
+              className={styles.fullWidthBtn}
+              icon={<Loading />}
+              key="1"
+            >
               Moving {nativeTokenData.name}...
             </Button>
           )
         } else {
           buttons.push(
-            <Button primaryGradient className={styles.fullWidthBtn} onClick={() => migrateNative()} key="1">
+            <Button
+              primaryGradient
+              className={styles.fullWidthBtn}
+              onClick={() => migrateNative()}
+              key="1"
+            >
               Move {nativeTokenData.name}
             </Button>
           )
@@ -182,7 +197,7 @@ const AssetsMigrationNative = ({
     continueMigration,
     wallet,
     nativeTokenData,
-    hidden,
+    hidden
   ])
 
   if (hidden) return null

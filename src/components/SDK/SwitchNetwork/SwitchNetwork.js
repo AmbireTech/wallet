@@ -16,22 +16,31 @@ const SwitchNetwork = () => {
         {/* Placeholder logo */}
         <div className={styles.siteLogo} />
         <h2 className={styles.siteName}>app.pooltogether.com</h2>
-        <p className={cn(styles.message, {[styles.smallMb]: !supported})}>
-          {supported ? 'Allow this site to switch the network?' : "Ambire Wallet doesn't support this network"}
+        <p className={cn(styles.message, { [styles.smallMb]: !supported })}>
+          {supported
+            ? 'Allow this site to switch the network?'
+            : "Ambire Wallet doesn't support this network"}
         </p>
-        {supported ? <Networks
-          fromNetworkId="polygon"
-          fromNetworkName="Polygon"
-          toNetworkId="ethereum"
-          toNetworkName="Ethereum"
-        /> : null}
+        {supported ? (
+          <Networks
+            fromNetworkId="polygon"
+            fromNetworkName="Polygon"
+            toNetworkId="ethereum"
+            toNetworkName="Ethereum"
+          />
+        ) : null}
       </div>
       {supported ? (
         <div className={styles.buttons}>
           <Button small danger className={styles.button}>
             Reject
           </Button>
-          <Button small primaryGradient className={styles.button} onClick={() => setSupported((prev) => !prev)}>
+          <Button
+            small
+            primaryGradient
+            className={styles.button}
+            onClick={() => setSupported((prev) => !prev)}
+          >
             Switch Network
           </Button>
         </div>

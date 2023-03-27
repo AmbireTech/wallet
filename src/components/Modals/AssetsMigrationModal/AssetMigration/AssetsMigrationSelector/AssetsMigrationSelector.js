@@ -33,7 +33,7 @@ const AssetsMigrationSelector = ({
   setSelectedTokensWithAllowance,
   setGasSpeed,
   setStepperSteps,
-  hidden,
+  hidden
 }) => {
   const [selectableTokens, setSelectableTokens] = useState([])
   const [selectableTokensUserInputs, setSelectableTokensUserInputs] = useState([])
@@ -58,7 +58,7 @@ const AssetsMigrationSelector = ({
         setSelectableTokensUserInputs([
           ...selectableTokensUserInputs.slice(0, index),
           updated,
-          ...selectableTokensUserInputs.slice(index + 1),
+          ...selectableTokensUserInputs.slice(index + 1)
         ])
       }
     },
@@ -69,7 +69,8 @@ const AssetsMigrationSelector = ({
     (speed) => {
       if (!estimatedGasFees) return false
       const nativeToSpend =
-        selectableTokensUserInputs.find((t) => t.address === ZERO_ADDRESS && t.selected)?.amount || 0
+        selectableTokensUserInputs.find((t) => t.address === ZERO_ADDRESS && t.selected)?.amount ||
+        0
 
       return new BigNumber(estimatedGasFees.gasFees[speed].signerTransactionsCost)
         .plus(nativeToSpend)
@@ -78,12 +79,16 @@ const AssetsMigrationSelector = ({
     [selectableTokensUserInputs, estimatedGasFees, nativeToken]
   )
 
-  const consolidatedSelectableTokens = (selectableTokens, selectableTokensUserInputs = [], tokensAllowances = []) => {
+  const consolidatedSelectableTokens = (
+    selectableTokens,
+    selectableTokensUserInputs = [],
+    tokensAllowances = []
+  ) => {
     return selectableTokens.map((st) => {
       return {
         ...st,
         ...selectableTokensUserInputs.find((t) => t.address === st.address),
-        ...tokensAllowances.find((t) => t?.address === st.address),
+        ...tokensAllowances.find((t) => t?.address === st.address)
       }
     })
   }
@@ -100,7 +105,7 @@ const AssetsMigrationSelector = ({
     setSelectedTokensWithAllowance(
       tokensToMigrate.map((a) => {
         return {
-          ...a,
+          ...a
         }
       })
     )
@@ -121,7 +126,7 @@ const AssetsMigrationSelector = ({
     setIsSelectionConfirmed,
     setStep,
     setGasSpeed,
-    selectedGasSpeed,
+    selectedGasSpeed
   ])
 
   useEffect(() => {
@@ -138,7 +143,7 @@ const AssetsMigrationSelector = ({
         setSelectableTokens(
           assets.map((t) => {
             return {
-              ...t,
+              ...t
             }
           })
         )
@@ -150,7 +155,7 @@ const AssetsMigrationSelector = ({
               selectedAmount: 0,
               amount: t.availableBalance,
               humanAmount: new BigNumber(t.availableBalance).div(10 ** t.decimals).toFixed(),
-              selected: false,
+              selected: false
             }
           })
         )
@@ -178,15 +183,18 @@ const AssetsMigrationSelector = ({
     const adjustedApprovalCost = network.id === 'arbitrum' ? 200000 : 0
 
     const signerTransactionsConsumption =
-      regularTransfersCount * (25000 + TRANSFER_CONSUMPTION + adjustedApprovalCost) + nativeTransfersCount * 25000
+      regularTransfersCount * (25000 + TRANSFER_CONSUMPTION + adjustedApprovalCost) +
+      nativeTransfersCount * 25000
 
     const nativeRate = gasData.gasFeeAssets.native / 10 ** 18 // should decimals be returned in the API?
 
     const gasFees = {}
     GAS_SPEEDS.forEach((speed) => {
-      let gasPrice =
+      const gasPrice =
         gasData.gasPrice[speed] +
-        (gasData.gasPrice.maxPriorityFeePerGas ? gasData.gasPrice.maxPriorityFeePerGas[speed] * 1 : 0)
+        (gasData.gasPrice.maxPriorityFeePerGas
+          ? gasData.gasPrice.maxPriorityFeePerGas[speed] * 1
+          : 0)
 
       const signerTransactionsCost = signerTransactionsConsumption * gasPrice
       const signerTransactionsCostUSD = signerTransactionsCost * nativeRate
@@ -195,16 +203,24 @@ const AssetsMigrationSelector = ({
         speed,
         signerTransactionsCost,
         signerTransactionsCostUSD,
-        signerTransactionsConsumption,
+        signerTransactionsConsumption
       }
     })
 
     setEstimatedGasFees({
       regularTransfersCount,
       nativeTransfersCount,
-      gasFees,
+      gasFees
     })
-  }, [selectableTokens, selectableTokensUserInputs, portfolio, gasData, selectedGasSpeed, tokensAllowances, network])
+  }, [
+    selectableTokens,
+    selectableTokensUserInputs,
+    portfolio,
+    gasData,
+    selectedGasSpeed,
+    tokensAllowances,
+    network
+  ])
 
   // getting gasPrice data from relayer
   useEffect(() => {
@@ -229,7 +245,7 @@ const AssetsMigrationSelector = ({
           .then((allowance) => {
             return {
               address: t.address,
-              allowance: allowance.toString(),
+              allowance: allowance.toString()
             }
           })
           .catch((err) => {
@@ -238,7 +254,7 @@ const AssetsMigrationSelector = ({
       }
       return {
         address: t.address,
-        allowance: 0,
+        allowance: 0
       }
     })
 
@@ -254,7 +270,8 @@ const AssetsMigrationSelector = ({
         <Button clear small onClick={hideModal}>
           Close
         </Button>
-        {selectableTokensUserInputs.filter((a) => a.selected).length > 0 && canCoverGasFees(selectedGasSpeed) ? (
+        {selectableTokensUserInputs.filter((a) => a.selected).length > 0 &&
+        canCoverGasFees(selectedGasSpeed) ? (
           <Button small primaryGradient onClick={() => confirmTokenSelection()}>
             Move {selectableTokensUserInputs.filter((a) => a.selected).length} assets
           </Button>
@@ -272,7 +289,7 @@ const AssetsMigrationSelector = ({
     hideModal,
     confirmTokenSelection,
     hidden,
-    canCoverGasFees,
+    canCoverGasFees
   ])
 
   const onAssetAmountChange = useCallback(
@@ -282,23 +299,31 @@ const AssetsMigrationSelector = ({
           return {
             ...old,
             humanAmount: 0,
-            amount: 0,
+            amount: 0
           }
         }
         if (
           (val.endsWith('.') && val.split('.').length === 2) ||
-          (val.split('.').length === 2 && val.endsWith('0') && new BigNumber(val).isEqualTo(old.humanAmount))
+          (val.split('.').length === 2 &&
+            val.endsWith('0') &&
+            new BigNumber(val).isEqualTo(old.humanAmount))
         ) {
           return {
             ...old,
-            humanAmount: val,
+            humanAmount: val
           }
         }
 
         if (!isNaN(val)) {
           let newHumanAmount = new BigNumber(val).toFixed(item.decimals)
-          if (new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).comparedTo(item.availableBalance) === 1) {
-            newHumanAmount = new BigNumber(item.availableBalance).dividedBy(10 ** item.decimals).toFixed(item.decimals)
+          if (
+            new BigNumber(newHumanAmount)
+              .multipliedBy(10 ** item.decimals)
+              .comparedTo(item.availableBalance) === 1
+          ) {
+            newHumanAmount = new BigNumber(item.availableBalance)
+              .dividedBy(10 ** item.decimals)
+              .toFixed(item.decimals)
           }
           // trim trailing . or 0
           newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
@@ -306,7 +331,7 @@ const AssetsMigrationSelector = ({
           return {
             ...old,
             humanAmount: newHumanAmount,
-            amount: new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).toFixed(0),
+            amount: new BigNumber(newHumanAmount).multipliedBy(10 ** item.decimals).toFixed(0)
           }
         }
         return old
@@ -324,17 +349,25 @@ const AssetsMigrationSelector = ({
   useEffect(() => {
     const steps = ['Selection']
 
-    const native = selectableTokensUserInputs.find((a) => a.address.toLowerCase() === ZERO_ADDRESS && a.selected)
+    const native = selectableTokensUserInputs.find(
+      (a) => a.address.toLowerCase() === ZERO_ADDRESS && a.selected
+    )
     if (native) {
       steps.push(`Send ${selectableTokens.find((t) => t.address === native.address).name}`)
     }
 
-    if (selectableTokensUserInputs.find((a) => a.address.toLowerCase() !== ZERO_ADDRESS && a.selected)) {
-      let tokensTitleActions = []
-      if (selectableTokensUserInputs.find((a) => a.selected && a.address.toLowerCase() !== ZERO_ADDRESS))
+    if (
+      selectableTokensUserInputs.find((a) => a.address.toLowerCase() !== ZERO_ADDRESS && a.selected)
+    ) {
+      const tokensTitleActions = []
+      if (
+        selectableTokensUserInputs.find(
+          (a) => a.selected && a.address.toLowerCase() !== ZERO_ADDRESS
+        )
+      )
         tokensTitleActions.push('Send')
 
-      steps.push(tokensTitleActions.join(' and ') + ' tokens')
+      steps.push(`${tokensTitleActions.join(' and ')} tokens`)
     }
 
     if (steps.length === 1) {
@@ -359,7 +392,8 @@ const AssetsMigrationSelector = ({
           ) : (
             <div>
               <h2 className={styles.title}>
-                Please select the assets you would like to migrate from your signer wallet to your Ambire wallet
+                Please select the assets you would like to migrate from your signer wallet to your
+                Ambire wallet
               </h2>
               <MigratableAssets
                 selectableTokens={selectableTokens}

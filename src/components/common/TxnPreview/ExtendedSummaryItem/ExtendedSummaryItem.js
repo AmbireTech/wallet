@@ -18,13 +18,15 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
     const foundToken =
       feeAssets &&
       feeAssets.find(
-        (i) => i.address === item.address && (!item.symbol || i.symbol.toLowerCase() === item.symbol.toLowerCase())
+        (i) =>
+          i.address === item.address &&
+          (!item.symbol || i.symbol.toLowerCase() === item.symbol.toLowerCase())
       )
     return (
       <div className={styles.token}>
-        {item.amount > 0 ? (<span>
-          {formatFloatTokenAmount(item.amount, true, item.decimals)}
-        </span>) : null}
+        {item.amount > 0 ? (
+          <span>{formatFloatTokenAmount(item.amount, true, item.decimals)}</span>
+        ) : null}
         {item.decimals !== null && item.symbol ? (
           <>
             {item.address ? (
@@ -36,7 +38,7 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
             ) : null}
             {item.symbol}
           </>
-        ) : (item.amount > 0) ? (
+        ) : item.amount > 0 ? (
           'units of unknown token'
         ) : null}
       </div>
@@ -44,7 +46,10 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
   }
 
   if (item.type === 'address') {
-    const shortenedAddress = item.address.substring(0, 8) + '...' + item.address.substring(item.address.length - 3, item.address.length)
+    const shortenedAddress = `${item.address.substring(0, 8)}...${item.address.substring(
+      item.address.length - 3,
+      item.address.length
+    )}`
 
     return (
       <a
@@ -55,11 +60,9 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <ToolTip disabled={!item.address} label={item.address}>
-          <span className={styles.toAddress}>
-            {item.name ? item.name : item.address}
-          </span>
+          <span className={styles.toAddress}>{item.name ? item.name : item.address}</span>
           <span className={cn(styles.toAddress, styles.short)}>
-            {item.name ? item.name : ((item.address.length > 14) ? shortenedAddress : item.address)}
+            {item.name ? item.name : item.address.length > 14 ? shortenedAddress : item.address}
           </span>
           {item.address ? <ExternalLinkIcon className={styles.externalLink} /> : null}
         </ToolTip>
@@ -70,11 +73,7 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
   if (item.type === 'network')
     return (
       <div className={styles.network}>
-        {item.icon ? <img
-          className={styles.icon}
-          alt=""
-          src={item.icon}
-        /> : null}
+        {item.icon ? <img className={styles.icon} alt="" src={item.icon} /> : null}
         {item.name}
       </div>
     )
@@ -90,7 +89,12 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         onClick={(e) => e.stopPropagation()}
       >
         <span className={styles.toAddress}>{item.name}</span>
-        <span className={cn(styles.toAddress, styles.short)}>{item.name.substring(0, 5) + '...' + item.name.substring(item.name.length-5, item.name.length)}</span>
+        <span className={cn(styles.toAddress, styles.short)}>
+          {`${item.name.substring(0, 5)}...${item.name.substring(
+            item.name.length - 5,
+            item.name.length
+          )}`}
+        </span>
         {canShowLink ? <ExternalLinkIcon /> : null}
       </a>
     )

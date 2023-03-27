@@ -20,14 +20,14 @@ const AssetsMigrationBanner = ({
   portfolio,
   closeable = false,
   linkMargin = false,
-  useStorage,
+  useStorage
 }) => {
   const [hasSignerAssets, setHasSignerAssets] = useState(false)
   const [migrationMessageSeen, setMigrationMessageSeen] = useState(false)
   const { showModal } = useModals()
   const [migrationMessageSeenStorage, setMigrationMessageSeenStorage] = useStorage({
     key: 'migrationSeen',
-    defaultValue: {},
+    defaultValue: {}
   })
 
   // in the meantime that we integrate HW wallets...
@@ -37,7 +37,7 @@ const AssetsMigrationBanner = ({
     wallet = getWallet({
       signer: currentAccount.signer,
       signerExtra: currentAccount.signerExtra,
-      chainId: selectedNetwork.chainId,
+      chainId: selectedNetwork.chainId
     })
   } catch (err) {
     // in case of no window.ethereum was injected from extension
@@ -51,7 +51,7 @@ const AssetsMigrationBanner = ({
     })
   }, [selectedAccount, selectedNetwork, setMigrationMessageSeenStorage])
 
-  //fetching relevant assets
+  // fetching relevant assets
   useEffect(() => {
     let unmounted = false
 
@@ -60,7 +60,7 @@ const AssetsMigrationBanner = ({
       const currentAccount = accounts.find((a) => a.id === identityAccount)
       if (!currentAccount.signer) return
 
-      assetMigrationDetector({ networkId: networkId, account: currentAccount.signer.address })
+      assetMigrationDetector({ networkId, account: currentAccount.signer.address })
         .then((assets) => {
           if (unmounted) return
           const relevantAssets = assets.filter((a) => a.balanceUSD > 0.001)
@@ -76,15 +76,18 @@ const AssetsMigrationBanner = ({
     return () => (unmounted = true)
   }, [selectedAccount, selectedNetwork, accounts])
 
-  //checking if closable message has been seen(closed) or not
+  // checking if closable message has been seen(closed) or not
   useEffect(() => {
-    setMigrationMessageSeen(closeable && !!migrationMessageSeenStorage[selectedAccount + selectedNetwork.id])
+    setMigrationMessageSeen(
+      closeable && !!migrationMessageSeenStorage[selectedAccount + selectedNetwork.id]
+    )
   }, [closeable, selectedAccount, selectedNetwork, migrationMessageSeenStorage])
 
   // We either have a provider (web3) or we use a supported HW wallet
   const supportedHWWalletTypes = ['ledger', 'trezor', 'Lattice']
   const shouldShow =
-    wallet?.provider || (currentAccount.signerExtra && supportedHWWalletTypes.includes(currentAccount.signerExtra.type))
+    wallet?.provider ||
+    (currentAccount.signerExtra && supportedHWWalletTypes.includes(currentAccount.signerExtra.type))
   if (!shouldShow) return <></>
 
   return (
@@ -92,8 +95,8 @@ const AssetsMigrationBanner = ({
     !migrationMessageSeen && (
       <div className={styles.wrapper}>
         <p className={styles.message}>
-          We detected that your signer account has tokens that can be transferred to your Ambire account. We recommend
-          doing this in order to maximize your $WALLET rewards.
+          We detected that your signer account has tokens that can be transferred to your Ambire
+          account. We recommend doing this in order to maximize your $WALLET rewards.
           <span
             className={cn(styles.link, { [styles.linkMargin]: linkMargin })}
             onClick={() => {
@@ -112,7 +115,9 @@ const AssetsMigrationBanner = ({
             Click here to migrate those tokens
           </span>
         </p>
-        {closeable && <CloseIcon className={styles.close} onClick={() => closeMigrationMessage()} />}
+        {closeable && (
+          <CloseIcon className={styles.close} onClick={() => closeMigrationMessage()} />
+        )}
       </div>
     )
   )

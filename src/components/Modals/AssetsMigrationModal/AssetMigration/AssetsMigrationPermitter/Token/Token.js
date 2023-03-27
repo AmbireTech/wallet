@@ -13,10 +13,10 @@ const Token = ({ data, sendToken, isSendDisabled }) => {
     <div className={styles.wrapper}>
       <div className={styles.iconWrapper}>
         <Image
-            src={data.icon}
-            alt="Token Icon"
-            imageClassName={styles.icon}
-            fallback={<GiToken className={styles.icon} />}
+          src={data.icon}
+          alt="Token Icon"
+          imageClassName={styles.icon}
+          fallback={<GiToken className={styles.icon} />}
         />
       </div>
       <p className={styles.name}>{data.name}</p>
@@ -25,14 +25,22 @@ const Token = ({ data, sendToken, isSendDisabled }) => {
         <span className={styles.amountUsd}>(${(data.amount * data.rate).toFixed(2)})</span>
       </p>
       <div className={styles.status}>
-        {!((data.allowance && ethers.BigNumber.from(data.allowance).gte(data.amount)) || data.sent) ? (
+        {!(
+          (data.allowance && ethers.BigNumber.from(data.allowance).gte(data.amount)) ||
+          data.sent
+        ) ? (
           <>
             {data.pending || data.signing ? (
               <div className={styles.warning}>
                 <FaHourglass /> Sending...
               </div>
             ) : (
-              <Button small primaryGradient onClick={() => sendToken(data.address)} disabled={isSendDisabled}>
+              <Button
+                small
+                primaryGradient
+                onClick={() => sendToken(data.address)}
+                disabled={isSendDisabled}
+              >
                 Send
               </Button>
             )}

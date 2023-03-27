@@ -6,14 +6,16 @@ import { ReactComponent as DepositIcon } from 'components/Wallet/SideBar/images/
 import styles from './NoFundsPlaceholder.module.scss'
 
 const NoFundsPlaceholder = () => {
-    return (
-        <div className={styles.wrapper}>
-            <label>You don't have any funds on this account.</label>
-            <NavLink to="/wallet/deposit">
-                <Button small icon={<DepositIcon />}>Deposit</Button>
-            </NavLink>
-        </div>
-    )
+  return (
+    <div className={styles.wrapper}>
+      <label>You don't have any funds on this account.</label>
+      <NavLink to="/wallet/deposit">
+        <Button small icon={<DepositIcon />}>
+          Deposit
+        </Button>
+      </NavLink>
+    </div>
+  )
 }
 
 export default NoFundsPlaceholder
