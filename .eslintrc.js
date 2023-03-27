@@ -3,6 +3,9 @@ module.exports = {
   parserOptions: {
     project: './tsconfig.json'
   },
+  "env": {
+    "browser": true
+  },
   settings: {
     // So that the eslint is able to resolve relative import paths
     // {@link https://stackoverflow.com/a/63451047/1333836}
@@ -18,6 +21,8 @@ module.exports = {
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
     // Require absolute paths for parent components/files
     "import/no-relative-parent-imports": "error",
-    "no-return-await": "off"
+    "no-return-await": "off",
+    "react/prop-types": "off",
+    "react/react-in-jsx-scope": "off"
   }
 }

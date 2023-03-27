@@ -14,6 +14,8 @@ import ThemeProvider from 'context/ThemeProvider/ThemeProvider'
 import useDapps from 'ambire-common/src/hooks/useDapps'
 import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
+import { initRpcProviders } from 'ambire-common/src/services/provider'
+import { rpcProviders } from 'config/providers'
 import useAccounts from './hooks/accounts'
 import useWalletConnect from './hooks/useWalletConnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
@@ -36,9 +38,6 @@ import AddAccount from './components/AddAccount/AddAccount'
 import Wallet from './components/Wallet/Wallet'
 import SendTransaction from './components/SendTransaction/SendTransaction'
 import SignMessage from './components/SignMessage/SignMessage'
-import { initRpcProviders } from 'ambire-common/src/services/provider'
-
-import { rpcProviders } from 'config/providers'
 
 const MATCH = { url: '/wallet' }
 
