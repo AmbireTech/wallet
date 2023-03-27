@@ -24,12 +24,14 @@ const Tabs = ({
     <Panel className={cn(styles.panel, panelClassName)}>
       <div className={styles.buttons}>
         <button
+          type="button"
           onClick={handleOpenFirst}
           className={cn(styles.button, buttonClassName, { [styles.active]: currentTab === 1 })}
         >
           {firstTabLabel}
         </button>
         <button
+          type="button"
           onClick={handleOpenSecond}
           className={cn(styles.button, buttonClassName, { [styles.active]: currentTab === 2 })}
         >
