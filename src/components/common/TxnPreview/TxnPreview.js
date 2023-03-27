@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import cn from 'classnames'
 import { useEffect, useState } from 'react'
 import { formatUnits } from 'ethers/lib/utils'
@@ -55,7 +56,11 @@ export default function TxnPreview({
   return (
     <div className={cn(styles.wrapper, { [styles.firstFailing]: isFirstFailing })}>
       <div className={styles.heading}>
-        <div className={styles.info} onClick={() => !disableExpand && setExpanded((e) => !e)}>
+        <button
+          type="button"
+          className={styles.info}
+          onClick={() => !disableExpand && setExpanded((e) => !e)}
+        >
           <div className={styles.summaryContainer}>
             {!disableExpand && (
               <div className={cn(styles.expandTxn, { [styles.reversedChevron]: isExpanded })}>
@@ -88,7 +93,8 @@ export default function TxnPreview({
                   disabled={!disableDismiss || !disableDismissLabel}
                   label={disableDismissLabel}
                 >
-                  <div
+                  <button
+                    type="button"
                     className={cn(styles.dismissTxn, { [styles.disabled]: disableDismiss })}
                     onClick={(e) => {
                       e.stopPropagation()
@@ -96,7 +102,7 @@ export default function TxnPreview({
                     }}
                   >
                     <TrashIcon className={styles.icon} />
-                  </div>
+                  </button>
                 </ToolTip>
               </div>
             ) : null}
@@ -109,7 +115,7 @@ export default function TxnPreview({
               Warning: interacting with an unknown contract or address.
             </p>
           )}
-        </div>
+        </button>
       </div>
       {isExpanded ? (
         <div className={styles.advanced}>

@@ -18,9 +18,9 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
     const foundToken =
       feeAssets &&
       feeAssets.find(
-        (i) =>
+        (assetsItem) =>
           i.address === item.address &&
-          (!item.symbol || i.symbol.toLowerCase() === item.symbol.toLowerCase())
+          (!item.symbol || assetsItem.symbol.toLowerCase() === item.symbol.toLowerCase())
       )
     return (
       <div className={styles.token}>
@@ -38,9 +38,10 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
             ) : null}
             {item.symbol}
           </>
-        ) : item.amount > 0 ? (
-          'units of unknown token'
         ) : null}
+        {!(item.decimals !== null && item.symbol) && item.amount > 0
+          ? 'units of unknown token'
+          : null}
       </div>
     )
   }
@@ -62,7 +63,8 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         <ToolTip disabled={!item.address} label={item.address}>
           <span className={styles.toAddress}>{item.name ? item.name : item.address}</span>
           <span className={cn(styles.toAddress, styles.short)}>
-            {item.name ? item.name : item.address.length > 14 ? shortenedAddress : item.address}
+            {item.name ? item.name : null}
+            {!item.name && item.address.length > 14 ? shortenedAddress : item.address}
           </span>
           {item.address ? <ExternalLinkIcon className={styles.externalLink} /> : null}
         </ToolTip>
