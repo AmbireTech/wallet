@@ -37,9 +37,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
   const noBackupDisclaimer = `In case you forget your password or lose your backup, you will have to wait ${days} days and pay the recovery fee to restore access to your account.`
   const additionalOnSignup = state.backupOptout ? (
     <Checkbox label={noBackupDisclaimer} required />
-  ) : (
-    <></>
-  )
+  ) : null
   const Link = ({ href, children }) => (
     <a href={href} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
       {children}
@@ -93,9 +91,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       />
       {additionalOnSignup}
     </>
-  ) : (
-    <></>
-  )
+  ) : null
 
   return (
     <form onSubmit={onSubmit}>
@@ -108,13 +104,15 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       />
       {
         // Trick the password manager into putting in the email
-        !isSignup ? <input type="password" style={{ display: 'none' }} /> : <></>
+        !isSignup ? <input type="password" style={{ display: 'none' }} /> : null
       }
       {additionalInputs}
       <input
         type="submit"
         disabled={inProgress}
         value={
+          // (Fixed in Buttons PR, no need to refactor)
+          // eslint-disable-next-line no-nested-ternary
           isSignup
             ? inProgress
               ? 'Signing up...'
