@@ -24,6 +24,10 @@ module.exports = {
     "no-return-await": "off",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
-    "import/no-relative-parent-imports": "off"
+    "import/no-relative-parent-imports": "off",
+    "jsx-a11y/label-has-associated-control": [ 2, {
+      "assert": "either",
+      "depth": 3,
+    }]
   }
 }
