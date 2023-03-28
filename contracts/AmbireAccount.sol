@@ -91,7 +91,7 @@ contract AmbireAccount {
 
 	// WARNING: if the signature of this is changed, we have to change IdentityFactory
 	function execute(Transaction[] calldata txns, bytes calldata signature)
-		external
+		public
 	{
 		uint currentNonce = nonce;
 		// NOTE: abi.encode is safer than abi.encodePacked in terms of collision safety
@@ -139,6 +139,12 @@ contract AmbireAccount {
 		executeBatch(txns);
 		// The actual anti-bricking mechanism - do not allow a signerKey to drop their own priviledges
 		require(privileges[signerKey] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
+	}
+
+	// built-in batching of multiple execute()'s; useful when performing timelocked recoveries
+	struct ExecuteArgs { Transaction[] txns; bytes signature; }
+	function executeMultiple(ExecuteArgs[] calldata toExec) external {
+		for (uint i = 0; i != toExec.length; i++) execute(toExec[i].txns, toExec[i].signature);
 	}
 
 	// no need for nonce management here cause we're not dealing with sigs
