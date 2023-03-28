@@ -324,12 +324,12 @@ const Send = ({
   ])
 
   const amountLabel = (
-    <div className={styles.amountLabel}>
+    <span className={styles.amountLabel}>
       Available Amount:{' '}
       <span>
         {maxAmountFormatted} {selectedAsset?.symbol}
       </span>
-    </div>
+    </span>
   )
 
   const sortedAssetsItems = [
