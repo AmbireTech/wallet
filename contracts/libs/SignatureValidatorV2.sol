@@ -26,6 +26,13 @@ library SignatureValidator {
 	// secp256k1 group order
 	uint256 constant internal Q = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141;
 
+	function splitSignature(bytes memory sig) internal pure returns (bytes memory, uint8) {
+		uint8 modeRaw;
+		unchecked { modeRaw = uint8(sig[sig.length - 1]); }
+		sig.trimToSize(sig.length - 1);
+		return (sig, modeRaw);
+	}
+
 	function recoverAddr(bytes32 hash, bytes memory sig) internal view returns (address) {
 		return recoverAddrImpl(hash, sig, false);
 	}

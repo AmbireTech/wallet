@@ -104,7 +104,8 @@ contract AmbireAccount {
 		// @TODO: cleaner mode constants?
 		uint8 sigMode = uint8(signature[signature.length - 1]);
 		if (sigMode >= 254) {
-			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner, address postRecoverySigner,) = abi.decode(signature, (RecoveryInfo, bytes, address, address, uint8));
+			(bytes memory sig,) = SignatureValidator.splitSignature(signature);
+			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner, address postRecoverySigner) = abi.decode(sig, (RecoveryInfo, bytes, address, address));
 			bool isCancellation = sigMode == 255;
 			bytes32 recoveryInfoHash = keccak256(abi.encode(recoveryInfo));
 			require(privileges[recoverySigner] == recoveryInfoHash, 'RECOVERY_NOT_AUTHORIZED');
