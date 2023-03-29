@@ -119,6 +119,9 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
       if (account) connect({ uri: initialWcURI })
       else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
     }
+
+    if (typeof window === 'undefined' || !window.location.href.includes('/?uri=')) return
+    
     const uriRaw = window.location.href.split('/?uri=')[1]
 
     const wcUri = uriRaw.split('#')[0]
