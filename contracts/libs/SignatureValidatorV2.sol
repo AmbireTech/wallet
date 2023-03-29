@@ -15,6 +15,7 @@ library SignatureValidator {
 		EthSign,
 		SmartWallet,
 		Spoof,
+		Multisig,
 		// WARNING: must always be last
 		LastUnused
 	}
@@ -58,6 +59,16 @@ library SignatureValidator {
 			sig.trimToSize(newLen);
 			require(ERC1271_MAGICVALUE_BYTES32 == wallet.isValidSignature(hash, sig), "SV_WALLET_INVALID");
 			return address(wallet);
+		} else if (mode == SignatureMode.Multisig) {
+			sig.trimToSize(sig.length - 1);
+			(bytes[] memory signatures) = abi.decode(sig, (bytes[]));
+			address signer;
+			for (uint i = 0; i != signatures.length; i++) {
+				signer = address(uint160(uint256(
+					keccak256(abi.encodePacked(signer, recoverAddrImpl(hash, signatures[i], false)))
+				)));
+			}
+			return signer;
 		// {address}{mode}; the spoof mode is used when simulating calls
 		} else if (mode == SignatureMode.Spoof && allowSpoofing) {
 			// This is safe cause it's specifically intended for spoofing sigs in simulation conditions, where tx.origin can be controlled
