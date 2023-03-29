@@ -18,16 +18,15 @@ const WC2_VERBOSE = process.env.REACT_APP_WC2_VERBOSE || 0
 
 const getDefaultState = () => ({ connections: [], requests: [] })
 
-let client
 
 export default function useWalletConnectV2({ account, chainId, clearWcClipboard, setRequests }) {
-
   // This is needed cause of the WalletConnect event handlers
   const stateRef = useRef()
   stateRef.current = { account, chainId }
 
   const [initialized, setInitialized] = useState(false)
   const [isConnecting, setIsConnecting] = useState(false)
+  const [client, setClient] = useState(null)
 
   const { addToast } = useToasts()
 
@@ -44,17 +43,18 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
         }
       })
         .then(signClient => {
-          client = signClient
-          setInitialized(true)
+          setClient(signClient)
           if (typeof signClient === 'undefined') {
             throw new Error('Client is not initialized')
           }
           if (WC2_VERBOSE) console.log('WC2 signClient initialized')
-          return true
+          setInitialized(true)
         })
 
     } catch (err) {
+      setInitialized(false)
       alert(err)
+      console.log(err)
     }
   }, [])
 
@@ -130,7 +130,6 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
   }, [state])
 
   const connect = useCallback(async (connectorOpts) => {
-
     if (!client) {
       if (WC2_VERBOSE) console.log('WC2: Client not initialized')
       return
@@ -153,7 +152,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
       addToast(e.message)
     }
 
-  }, [addToast])
+  }, [addToast, client, setIsConnecting])
 
   const disconnect = useCallback(connectionId => {
     // connector might not be there, either cause we disconnected before,
@@ -177,7 +176,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
 
     dispatch({ type: 'disconnected', connectionId })
 
-  }, [state])
+  }, [client, state])
 
   const resolveMany = (ids, resolution) => {
     state.requests.forEach(({ id, topic }) => {
@@ -275,7 +274,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
         setIsConnecting(false)
       }
     }
-    , [account, addToast, clearWcClipboard])
+    , [client, account, addToast, clearWcClipboard])
 
   const onSessionRequest = useCallback(
     async (requestEvent) => {
@@ -387,7 +386,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
         })
       }
     },
-    [addToast, getConnectionFromSessionTopic, setRequests]
+    [client, addToast, getConnectionFromSessionTopic, setRequests]
   )
 
   const onSessionDelete = useCallback((deletion) => {
@@ -408,7 +407,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
       connectionId: connectionToDelete.connectionId
     })
 
-  }, [dispatch, getConnectionFromSessionTopic])
+  }, [client, dispatch, getConnectionFromSessionTopic])
 
 ////////////////////////
 // SESSION HANDLERS STOP
@@ -448,35 +447,28 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
       })
     }
 
-  }, [state, account, chainId])
+  }, [client, state, account, chainId])
 
-// Initialization effects
   useEffect(() => {
+    if (initialized) return
 
-    if (!initialized) {
-      onInitialize().then(res => {
-        if (WC2_VERBOSE) console.log('WC2 Client INITIALIZED')
-      }).catch(err => {
-        console.error('WC2 Inititialization error: ' + err.message)
-      })
-    }
-
-  }, [connect, account, onInitialize, initialized])
+    onInitialize()
+  }, [onInitialize, initialized])
 
   useEffect(() => {
     if (initialized) {
       client.on('session_proposal', onSessionProposal)
       client.on('session_request', onSessionRequest)
       client.on('session_delete', onSessionDelete)
-
+  
       return () => {
         client.removeListener('session_proposal', onSessionProposal)
         client.removeListener('session_request', onSessionRequest)
         client.removeListener('session_delete', onSessionDelete)
       }
     }
-
-  }, [connect, initialized, onSessionProposal, onSessionRequest, onSessionDelete, dispatch, account])
+    
+  }, [client, connect, initialized, onSessionProposal, onSessionRequest, onSessionDelete, dispatch, account])
 
   return {
     connections: state.connections,

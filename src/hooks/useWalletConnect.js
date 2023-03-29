@@ -119,8 +119,13 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
       if (account) connect({ uri: initialWcURI })
       else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
     }
-    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
-    const wcUri = query.get('uri')
+    const uriRaw = window.location.href.split('/?uri=')[1]
+
+    const wcUri = uriRaw.split('#')[0]
+
+    if (!wcUri) return
+    if (!wcUri.includes('key=') && !wcUri.includes('symKey=')) return addToast('Invalid WalletConnect uri', { error: true })
+
     if (wcUri) connect({ uri: wcUri })
 
     // hax TODO: ask why? seems working without
