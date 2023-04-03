@@ -41,6 +41,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
         }
     }, [])
 
+    const handleSubmit = () => onAddAddress()
     useEffect(() => !isOpen && onClose ? onClose() : null, [isOpen, onClose])
 
     useEffect(() => {
@@ -103,13 +104,15 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
             {
                 openAddAddress ?
                     <div className={cn(styles.addAddress, styles.content)}>
-                        <div className={styles.fields}>
-                            <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)} />
-                            <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)} />
-                        </div>
-                        <Button clear small disabled={!isAddAddressFormValid} onClick={onAddAddress}>
-                            <MdOutlineAdd /> Add Address
-                        </Button>
+                        <form onSubmit={handleSubmit}>
+                            <div className={styles.fields}>
+                                <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)} />
+                                <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)} />
+                            </div>
+                            <Button type='submit' clear small disabled={!isAddAddressFormValid}>
+                                <MdOutlineAdd /> Add Address
+                            </Button>
+                        </form>
                     </div>
                     :
                     !addresses.length ?

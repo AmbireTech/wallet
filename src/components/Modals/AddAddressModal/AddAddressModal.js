@@ -68,6 +68,7 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
         onClose && onClose(values)
         hideModal()
     }
+    const handleSubmit = () => onConfirm()
 
     return (
         <Modal
@@ -77,26 +78,28 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
             title={title} 
             buttons={<>
                 <Button clear small onClick={hideModal}>Cancel</Button>
-                <Button primaryGradient small disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+                <Button primaryGradient small type='submit' form="addAddressForm" disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
             </>}
         >
-            {
-                inputsFields.map(({ id, label, placeholder, ref, type }) => (
-                    <div className={styles.inputWrapper} key={id + label}>
-                        <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref} className={styles.input} />
-                        {(type === 'address') &&
-                            <>
-                                <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-                                    <span className={cn(styles.udomainsLogo, {[styles.active]: uDAddress})} />
-                                </ToolTip>
-                                <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
-                                    <div className={cn(styles.ensLogo, {[styles.active]: ensAddress})} />
-                                </ToolTip>
-                            </>
-                        }
-                    </div>
-                ))
-            }
+            <form onSubmit={handleSubmit} id="addAddressForm">
+                {
+                    inputsFields.map(({ id, label, placeholder, ref, type }) => (
+                        <div className={styles.inputWrapper} key={id + label}>
+                            <TextInput label={label} placeholder={placeholder} onInput={onInput} ref={ref} className={styles.input} />
+                            {(type === 'address') &&
+                                <>
+                                    <ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
+                                        <span className={cn(styles.udomainsLogo, {[styles.active]: uDAddress})} />
+                                    </ToolTip>
+                                    <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
+                                        <div className={cn(styles.ensLogo, {[styles.active]: ensAddress})} />
+                                    </ToolTip>
+                                </>
+                            }
+                        </div>
+                    ))
+                }
+            </form>
         </Modal>
     )
 }
