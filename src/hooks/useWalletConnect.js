@@ -130,7 +130,9 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     if (!wcUri.includes('key=') && !wcUri.includes('symKey=')) return addToast('Invalid WalletConnect uri', { error: true })
 
     if (wcUri) connect({ uri: wcUri })
+  }, [account, initialWcURI, connect, addToast])
 
+  useEffect(() => {
     // hax TODO: ask why? seems working without
     // window.wcConnect = uri => connect({ uri })
 
@@ -140,6 +142,7 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
       if (!account) return
       if (isFirefox()) return
       try {
+        console.log('here')
         const clipboard = await navigator.clipboard.readText()
         if (clipboard.match(/wc:[a-f0-9-]+@[12]\?/)) {
           connect({ uri: clipboard })
@@ -155,7 +158,7 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     return () => {
       window.removeEventListener('focus', tryReadClipboard)
     }
-  }, [connect, account, addToast, initialWcURI])
+  }, [connect, account, addToast])
 
   return {
     connections: connections,
