@@ -39,18 +39,14 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
         backupOptout: state.backupOptout,
       })
     }
-
-    const onContinueAnyway = () => {
-      handleRegister()
-    }
-
+    
     const onSubmit = async(e) => {
       e.preventDefault()
 
       const breached = await checkHaveIbeenPwned(state.passphrase)
-      
+
       if (breached) {
-        showModal(<WeakPasswordModal onContinueAnyway={onContinueAnyway} />)
+        showModal(<WeakPasswordModal onContinueAnyway={handleRegister} />)
         return
       }
 
