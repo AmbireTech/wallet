@@ -39,7 +39,7 @@
     }
     
     &.secondary {
-        @include FilledButton(rgba(0, 0, 0, 0.1));
+        @include FilledButton(rgba(0, 0, 0, 0.15));
     }
 
     &.danger {
