@@ -1,22 +1,17 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 
+import { useModals } from 'hooks'
+import { WeakPasswordModal } from 'components/Modals'
 import passwordChecks, { checkHaveIbeenPwned } from 'components/AddAccount/passwordChecks'
-
 import AddAccountForm from 'components/AddAccount/Form/Form'
-import PasswordBreachedCheckbox from 'components/AddAccount/PasswordBreachedCheckbox/PasswordBreachedCheckbox'
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
+    const { showModal } = useModals()
     const [passwordStrength, setPasswordStrength] = useState({
       checks: passwordChecks,
       satisfied: false
     })
-    const [passwordBreachedState, setPasswordBreachedState] = useState({
-      breached: null, // null, 'breached', 'not-breached'
-      lastPassword: ''
-    })
-    const [isPasswordBreachedChecked, setIsPasswordBreachedChecked] = useState(false)
-    const submitDisabledFromBreach = !isPasswordBreachedChecked && (passwordBreachedState.breached !== 'not-breached') && (passwordBreachedState.breached !== null)
-    
+
     const passConfirmInput = useRef(null)
     const passInput = useRef(null)
     const [state, setState] = useState({
@@ -35,28 +30,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       }))
     }
 
-    useEffect(() => {
-      if (passwordBreachedState.lastPassword !== state.passphrase) {
-        setPasswordBreachedState(prev => ({
-          ...prev,
-          breached: null
-        }))
-        setIsPasswordBreachedChecked(false)
-      }
-    }, [passwordBreachedState.lastPassword, state.passphrase])
-
-    const onSubmit = async(e) => {
-      e.preventDefault()
-      if (passwordBreachedState.breached !== 'not-breached') {
-        const breached = await checkHaveIbeenPwned(state.passphrase)
-        setPasswordBreachedState({
-          breached,
-          lastPassword: state.passphrase
-        })
-
-        if (breached === 'breached' && !isPasswordBreachedChecked) return
-      }
-
+    const handleRegister = () => {
       onAccRequest({
         action: state.action,
         accType: 'QUICK',
@@ -65,6 +39,24 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
         backupOptout: state.backupOptout,
       })
     }
+
+    const onContinueAnyway = () => {
+      handleRegister()
+    }
+
+    const onSubmit = async(e) => {
+      e.preventDefault()
+
+      const breached = await checkHaveIbeenPwned(state.passphrase)
+      
+      if (breached) {
+        showModal(<WeakPasswordModal onContinueAnyway={onContinueAnyway} />)
+        return
+      }
+
+      handleRegister()
+    }
+
     const onUpdate = updates => {
       const newState = { ...state, ...updates }
       setState(newState)
@@ -108,17 +100,9 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           />
 				)
 			}
-        <input type="submit" disabled={inProgress || !state.email?.length || (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied || submitDisabledFromBreach))} value={isSignup ?
+        <input type="submit" disabled={inProgress || !state.email?.length || (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied))} value={isSignup ?
           (inProgress ? "Signing up..." : "Sign Up")
           : (inProgress ? "Logging in..." : "Log In")}></input>
-        {
-          isSignup && passwordBreachedState.breached === 'breached' && (
-            <PasswordBreachedCheckbox 
-              isPasswordBreachedChecked={isPasswordBreachedChecked} 
-              setIsPasswordBreachedChecked={setIsPasswordBreachedChecked} 
-            />
-          )
-        }
       </form>
     )
 }
