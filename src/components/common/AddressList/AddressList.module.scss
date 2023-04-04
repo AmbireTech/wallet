@@ -24,6 +24,9 @@
         border-radius: $border-radius;
 
         .inner {
+            background-color: transparent;
+            border: none;
+            color: inherit;
             height: 100%;
             width: 100%;
             min-width: 0;
@@ -51,7 +54,9 @@
                 padding-right: 1.25rem;
                 overflow: hidden;
 
-                .label {
+                .addressName {
+                    margin: 0;
+                    text-align: left;
                     width: 100%;
                     overflow: hidden;
                     white-space: nowrap;
@@ -70,6 +75,8 @@
         }
 
         .button {
+            background-color: transparent;
+            border: none;
             flex: 0 0 auto;
             height: 100%;
             width: 3.125rem;

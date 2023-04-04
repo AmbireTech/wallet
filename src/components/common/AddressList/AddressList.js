@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import cn from 'classnames'
 
 import { ResponsiveAddress } from 'components/common'
@@ -23,20 +24,25 @@ const AddressList = ({
       ) : (
         items.map(({ isAccount, icon, name, address, type }) => (
           <div className={cn(styles.item, addressClassName)} key={address + name}>
-            <div
+            <button
+              type="button"
               className={styles.inner}
               onClick={() => onSelectAddress && onSelectAddress(address)}
             >
               <div className={styles.icon} style={{ backgroundImage: `url(${icon})` }} />
               <div className={styles.details}>
-                <label className={styles.label}>{name}</label>
+                <p className={styles.addressName}>{name}</p>
                 <ResponsiveAddress className={styles.address} address={address} />
               </div>
-            </div>
+            </button>
             {!isAccount ? (
-              <div className={styles.button} onClick={() => removeAddress(name, address, type)}>
+              <button
+                type="button"
+                className={styles.button}
+                onClick={() => removeAddress(name, address, type)}
+              >
                 <MdOutlineDelete />
-              </div>
+              </button>
             ) : null}
           </div>
         ))

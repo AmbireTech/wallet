@@ -133,9 +133,8 @@
         flex: 0.9;
     }
 
-    .loginEmail form > :not(label), .loginEmail button,
-    .addAccount form > :not(label), .addAccount button {
-        /* TODO */
+    .loginEmail form > input,
+    .addAccount form > input {
         display: block;
     }
 

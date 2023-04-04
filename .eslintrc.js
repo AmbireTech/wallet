@@ -18,12 +18,16 @@ module.exports = {
     // Since a lot of files contain JSX, but are with .js extension,
     // do not require specifically .jsx extension, since converting all files
     // results huuuuuge diff in git + history gets lost. Blah.
-    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
+    "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".tsx"] }],
     // Require absolute paths for parent components/files
     "import/no-relative-parent-imports": "error",
     "no-return-await": "off",
     "react/prop-types": "off",
     "react/react-in-jsx-scope": "off",
-    "import/no-relative-parent-imports": "off"
+    "import/no-relative-parent-imports": "off",
+    "jsx-a11y/label-has-associated-control": [ 2, {
+      "assert": "either",
+      "depth": 3,
+    }]
   }
 }

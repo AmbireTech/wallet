@@ -1,14 +1,17 @@
+/* eslint-disable import/no-cycle */
 import { useHistory, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
+
+import PaginationButtons from './PaginationButtons/PaginationButtons'
+
 import styles from './Pagination.module.scss'
-import PaginationButtons from './PaginationButtons'
 
 // Pagination component based on url. necessary to be independent and synced
 const Pagination = ({ items, setPaginatedItems, itemsPerPage, url, parentPage = null }) => {
   const history = useHistory()
   const localParams = useParams()
 
-  const routerPage = parseInt(parentPage || localParams.page || 0)
+  const routerPage = parseInt(parentPage || localParams.page || 0, 10)
 
   const handlePageChange = (page) => {
     const newUrl = url.replace('{p}', page)

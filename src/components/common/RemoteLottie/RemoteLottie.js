@@ -5,30 +5,26 @@ import { MdImage, MdBrokenImage } from 'react-icons/md'
 import cn from 'classnames'
 import styles from './RemoteLottie.module.scss'
 
-const RemoteLottie = (props) => {
+const RemoteLottie = ({ remoteJson, className, lottieProps }) => {
   const [animationData, setAnimationData] = useState(null)
   const [animationError, setAnimationError] = useState(false)
 
   useEffect(() => {
-    fetchGet(props.remoteJson)
+    fetchGet(remoteJson)
       .then((res) => {
         setAnimationData(res)
       })
       .catch((err) => {
-        console.error(`RemoteLottie: could not load lottie "${props.remoteJson}" : ${err.message}`)
+        console.error(`RemoteLottie: could not load lottie "${remoteJson}" : ${err.message}`)
         setAnimationError(true)
       })
-  }, [props.remoteJson])
-
-  // hacky...not to trigger React does not recognize the `remoteJson` prop on a DOM element.
-  const lottieProps = { ...props }
-  delete lottieProps.remoteJson
+  }, [remoteJson])
 
   if (animationData) {
-    return <Lottie {...lottieProps} animationData={animationData} />
+    return <Lottie {...lottieProps} className={className} animationData={animationData} />
   }
   return (
-    <div className={cn(styles.remoteLottie, props.className)}>
+    <div className={cn(styles.remoteLottie, className)}>
       {animationError ? (
         <>
           <MdBrokenImage />

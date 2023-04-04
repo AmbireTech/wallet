@@ -49,6 +49,7 @@ export default function Deposit({
         <div className={styles.description}>
           <TextInput
             className={styles.depositAddress}
+            labelClassName={styles.textInputLabel}
             inputContainerClass={styles.inputClass}
             label={`Send ${networkDetails.nativeAssetSymbol}, tokens or collectibles (NFTs) to this address:`}
             value={selectedAcc}

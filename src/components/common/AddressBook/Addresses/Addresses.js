@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { useState } from 'react'
 
 import { AddressList, TextInput } from 'components/common'

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { MdOutlineAdd } from 'react-icons/md'
 import { Checkbox } from 'components/common'
 import { useEffect, useMemo, useState } from 'react'
@@ -26,24 +27,20 @@ const AddressWarning = ({
     if (onChange) onChange(confirmed)
   }, [confirmed, onChange])
 
-  return (
-    <>
-      {!smartContractWarning && unknownWarning && address !== accountPresets.feeCollector ? (
-        <div className={styles.wrapper}>
-          <Checkbox
-            label="Confirm sending to a previously unknown address"
-            checked={confirmed}
-            onChange={({ target }) => setConfirmed(target.checked)}
-            testId="unknownAddressWarning"
-          />
-          <div className={styles.button} onClick={onAddNewAddress}>
-            <MdOutlineAdd />
-            Add it to the address book
-          </div>
-        </div>
-      ) : null}
-    </>
-  )
+  return !smartContractWarning && unknownWarning && address !== accountPresets.feeCollector ? (
+    <div className={styles.wrapper}>
+      <Checkbox
+        label="Confirm sending to a previously unknown address"
+        checked={confirmed}
+        onChange={({ target }) => setConfirmed(target.checked)}
+        testId="unknownAddressWarning"
+      />
+      <button type="button" className={styles.button} onClick={onAddNewAddress}>
+        <MdOutlineAdd />
+        Add it to the address book
+      </button>
+    </div>
+  ) : null
 }
 
 export default AddressWarning

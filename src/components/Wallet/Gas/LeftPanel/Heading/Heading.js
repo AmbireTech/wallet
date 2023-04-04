@@ -93,7 +93,11 @@ const Heading = ({ network, relayerURL, portfolio, account, gasTankState, setGas
         </div>
 
         <div className={styles.toggleWrapper}>
-          <Toggle checked={currentAccGasTankState.isEnabled} onChange={() => toggleGasTank()} />
+          <Toggle
+            id="gas-toggle"
+            checked={currentAccGasTankState.isEnabled}
+            onChange={toggleGasTank}
+          />
           <span className={styles.toggleLabel}>
             {currentAccGasTankState.isEnabled ? 'Enabled' : 'Disabled'}
           </span>

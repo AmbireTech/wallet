@@ -25,7 +25,7 @@ const NumberInput = ({
 
   return (
     <div className={cn(styles.numberInput, { [styles.disabled]: disabled })}>
-      {label ? <label>{label}</label> : null}
+      {label ? <p className={styles.label}>{label}</p> : null}
       <div className={styles.input}>
         <input
           type="text"
@@ -35,9 +35,9 @@ const NumberInput = ({
           data-testid={testId}
         />
         {button ? (
-          <div className={styles.button} onClick={onButtonClick}>
+          <button type="button" className={styles.button} onClick={onButtonClick}>
             {button}
-          </div>
+          </button>
         ) : null}
       </div>
     </div>

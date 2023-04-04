@@ -13,8 +13,13 @@
         background-color: $c-mirage;
     }
 
+    button {
+        text-align: left;
+    }
+
     .content {
         height: 100%;
+        width: 100%;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -26,6 +31,7 @@
             width: 2rem;
             background-size: cover;
             border-radius: $border-radius;
+            // flex: 1;
         }
 
         .title {
@@ -33,6 +39,7 @@
             align-items: center;
             gap: .625rem;
             font-size: .875rem;
+            flex: 1;
         }
 
         .badge {

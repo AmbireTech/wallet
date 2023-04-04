@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import useOnClickOutside from 'hooks/onClickOutside'
@@ -43,7 +44,7 @@ const Select = ({
   })
 
   const filteredItems = search.length
-    ? items.filter(({ label }) => label.toLowerCase().includes(search.toLowerCase()))
+    ? items.filter(({ itemLabel }) => itemLabel.toLowerCase().includes(search.toLowerCase()))
     : items
 
   const selectItem = useCallback(
@@ -57,7 +58,7 @@ const Select = ({
   )
 
   useEffect(() => {
-    const item = items.find((item) => item.value === defaultValue) || items[0]
+    const item = items.find((i) => i.value === defaultValue) || items[0]
     if (item && selectedItem.value !== item.value) selectItem(item)
   }, [items, defaultValue, selectedItem, selectItem])
 
@@ -81,10 +82,11 @@ const Select = ({
       } ${searchable ? styles.searchable : ''} ${className || ''}`}
       ref={ref}
     >
-      {label ? <label>{label}</label> : null}
+      {label ? <p className={styles.label}>{label}</p> : null}
       {selectedItem ? (
         <div className={styles.selectContainer}>
-          <div
+          <button
+            type="button"
             className={`${styles.selectInput} ${selectInputClassName}`}
             onClick={() => setOpen(!isOpen)}
           >
@@ -97,7 +99,7 @@ const Select = ({
             <Icon size="sm" className={cn(styles.handle, { [styles.open]: isOpen })}>
               <ChevronDownIcon />
             </Icon>
-          </div>
+          </button>
           <CSSTransition
             unmountOnExit
             in={isOpen}
@@ -121,7 +123,8 @@ const Select = ({
                 />
               ) : null}
               {filteredItems.map((item, i) => (
-                <div
+                <button
+                  type="button"
                   className={`${styles.option} ${
                     item.value === selectedItem.value && item.label === selectedItem.label
                       ? styles.active
@@ -144,7 +147,7 @@ const Select = ({
                   <Image src={item.icon} alt="" className={cn(styles.icon, iconClassName)} />
                   <div className={styles.label}>{item.label || item.value}</div>
                   {item.extra && <div className={styles.extra}>{item.extra}</div>}
-                </div>
+                </button>
               ))}
               {children}
             </div>

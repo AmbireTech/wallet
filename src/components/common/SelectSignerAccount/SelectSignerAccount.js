@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Info } from 'components/common'
 import { HiOutlineExternalLink } from 'react-icons/hi'
-import PaginationButtons from 'components/common/Pagination/PaginationButtons'
+import PaginationButtons from 'components/common/Pagination/PaginationButtons/PaginationButtons'
 import styles from './SelectSignerAccount.module.scss'
 
 const SelectSignerAccount = ({
@@ -55,7 +55,8 @@ const SelectSignerAccount = ({
       <div className={styles.signers}>
         {!!signersToChoose &&
           pages[currentPage].map((addr, index) => (
-            <div
+            <button
+              type="button"
               key={addr}
               className={styles.signer}
               onClick={() => onAddressClicked(addr, currentPage * pageSize + index)}
@@ -70,7 +71,7 @@ const SelectSignerAccount = ({
               >
                 <HiOutlineExternalLink size={25} />
               </a>
-            </div>
+            </button>
           ))}
       </div>
 

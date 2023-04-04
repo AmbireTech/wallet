@@ -4,8 +4,8 @@ import { ReactComponent as ClockIcon } from 'resources/icons/clock.svg'
 
 import styles from './CountdownTimer.module.scss'
 
-const CountdownTimer = ({ seconds, setTimeIsUp, className }) => {
-  const [counter, setCounter] = useState(seconds)
+const CountdownTimer = ({ seconds: initialSeconds, setTimeIsUp, className }) => {
+  const [counter, setCounter] = useState(initialSeconds)
   const [timerFormatted, setTimerFormatted] = useState('')
 
   const isTimeIsUp = timerFormatted === '0:00'
@@ -27,7 +27,7 @@ const CountdownTimer = ({ seconds, setTimeIsUp, className }) => {
   return (
     <div className={cn(styles.wrapper, className, { [styles.isTimeUp]: isTimeIsUp })}>
       <ClockIcon className={styles.clockIcon} />
-      <label>{timerFormatted}</label>
+      <p className={styles.text}>{timerFormatted}</p>
     </div>
   )
 }

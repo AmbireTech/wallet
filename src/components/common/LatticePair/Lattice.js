@@ -28,7 +28,7 @@ const Lattice = ({
       {title && <div className={styles.title}>{title} </div>}
       <div className={styles.content}>
         <div className={styles.formItem}>
-          <label>1. Enter Device</label>
+          <p className={styles.formItemText}>1. Enter Device</p>
           <TextInput
             disabled={isSecretFieldShown}
             placeholder="Enter the device ID"
@@ -37,7 +37,7 @@ const Lattice = ({
         </div>
         {isSecretFieldShown && (
           <div className={styles.formItem}>
-            <label>2. Enter Secret</label>
+            <p className={styles.formItemText}>2. Enter Secret</p>
             <TextInput
               ref={inputSecretRef}
               placeholder="Enter secret"

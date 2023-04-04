@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import cn from 'classnames'
 
 import { useModals } from 'hooks'

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import cn from 'classnames'
 import { useEffect, useRef, useState } from 'react'
 import { Borders as LoadingBorders, Icon } from 'components/common'
@@ -43,7 +44,7 @@ export default function DropDown({
       ref={ref}
       data-testid={testId}
     >
-      <div className={styles.content} onClick={() => setMenuOpen((prev) => !prev)}>
+      <button type="button" className={styles.content} onClick={() => setMenuOpen((prev) => !prev)}>
         {icon ? <div className={styles.icon} style={{ backgroundImage: `url(${icon})` }} /> : null}
         <div className={cn(styles.title, titleClassName)}>{title}</div>
         {badge ? <div className={styles.badge}>{badge > 9 ? '9+' : badge}</div> : null}
@@ -56,7 +57,7 @@ export default function DropDown({
         </Icon>
 
         {isLoading && <LoadingBorders />}
-      </div>
+      </button>
       <CSSTransition
         unmountOnExit
         in={isMenuOpen}
@@ -64,13 +65,14 @@ export default function DropDown({
         classNames="fade"
         nodeRef={transitionRef}
       >
-        <div
+        <button
+          type="button"
           className={cn(styles.menu, menuClassName)}
           ref={transitionRef}
           onClick={closeOnClick ? () => setMenuOpen(false) : null}
         >
           {children}
-        </div>
+        </button>
       </CSSTransition>
     </div>
   )

@@ -2,6 +2,9 @@
 
 .wrapper {
     .button {
+        background-color: transparent;
+        border: none;
+        color: inherit;
         height: 2.5rem;
         width: fit-content;
         @include flex-center-center;
