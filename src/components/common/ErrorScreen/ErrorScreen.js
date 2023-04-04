@@ -17,7 +17,7 @@ const ErrorScreen = () => {
         <p>If the problem persists,<br />please contact us via our Help Center.</p>
         <div className="error-screen-buttons">
           <a href="https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet" target="_blank" rel="noreferrer">
-            <Button title="Visit the Help center" small>Help center</Button>
+            <Button title="Visit the Help center" size="sm">Help center</Button>
           </a>
         </div>
       </div>

@@ -186,8 +186,8 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
                     </div>
                     <Button 
                         disabled={lockedRemainingTime > 0}
-                        icon={<BsArrowUpSquare/>}
-                        onClick={() => onWithdraw()}
+                        startIcon={<BsArrowUpSquare/>}
+                        onClick={onWithdraw}
                     >
                         Withdraw    
                     </Button>

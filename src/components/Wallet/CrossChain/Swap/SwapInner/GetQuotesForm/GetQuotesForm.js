@@ -117,7 +117,7 @@ const GetQuotesForm = ({
           />
         </FormSection>
       </div>
-      <Button primaryGradient={true} className={styles.button} disabled={formDisabled} onClick={getQuotes}>
+      <Button variant="primaryGradient" className={styles.button} disabled={formDisabled} onClick={getQuotes}>
         Get Quotes
       </Button>
     </div>

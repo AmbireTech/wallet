@@ -317,7 +317,7 @@ const Send = ({
                 { validationFormMgs.messages.address && 
                     (<div className={styles.validationError}><BsXLg size={12}/>&nbsp;{validationFormMgs.messages.address}</div>)}
             </div>
-            <Button primaryGradient disabled={disabled} onClick={sendTx} className={styles.transferButton} testId="send">Send</Button>
+            <Button variant="primaryGradient" disabled={disabled} onClick={sendTx} className={styles.transferButton} testId="send">Send</Button>
         </div>) : <NoFundsPlaceholder/>
 }
 

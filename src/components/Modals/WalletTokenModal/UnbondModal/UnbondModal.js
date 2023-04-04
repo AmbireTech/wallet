@@ -25,8 +25,8 @@ const UnbondModal = ({ isVisible, hideModal, text, onClick }) => {
           </p>
         </div>
         <div className={styles.buttons}>
-          <Button className={styles.button} danger onClick={onClick}>Yes, Claim anyway</Button>
-          <Button className={styles.button} clear icon={<MdOutlineClose/>} onClick={hideModal}>Close</Button>
+          <Button className={styles.button} variant="danger" onClick={onClick}>Yes, Claim anyway</Button>
+          <Button className={styles.button} variant="secondary" startIcon={<MdOutlineClose/>} onClick={hideModal}>Close</Button>
         </div>
       </div>
     </div>

@@ -32,7 +32,7 @@ const Token = ({ data, sendToken, isSendDisabled }) => {
                 <FaHourglass /> Sending...
               </div>
             ) : (
-              <Button small primaryGradient onClick={() => sendToken(data.address)} disabled={isSendDisabled}>
+              <Button size="sm" variant="primaryGradient" onClick={() => sendToken(data.address)} disabled={isSendDisabled}>
                 Send
               </Button>
             )}

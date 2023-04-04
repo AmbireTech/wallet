@@ -30,7 +30,7 @@ const AmbireEarnDetailsModal = ({ title = 'Details', apy, accountId, msToDaysHou
             className={styles.wrapper} 
             contentClassName={styles.content} 
             title={title} 
-            buttons={<Button clear small onClick={hideModal}>Close</Button>}
+            buttons={<Button variant="secondary" size="sm" onClick={hideModal}>Close</Button>}
         >
            {!isLoading ? (
                 <div className={styles.table}>

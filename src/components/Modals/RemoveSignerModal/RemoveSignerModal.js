@@ -12,10 +12,10 @@ const RemoveSignerModal = ({ onClick,  }) => {
     <Modal 
       title="Remove Signer"
       buttons={<>
-        <Button border onClick={hideModal}>
+        <Button onClick={hideModal}>
           Cancel
         </Button>
-        <Button border className={styles.removeButton} onClick={() => {
+        <Button onClick={() => {
           hideModal()
           onClick()
         }}>
