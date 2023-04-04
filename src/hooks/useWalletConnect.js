@@ -141,8 +141,9 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     const tryReadClipboard = async () => {
       if (!account) return
       if (isFirefox()) return
+      if (document.visibilityState !== 'visible') return
+
       try {
-        console.log('here')
         const clipboard = await navigator.clipboard.readText()
         if (clipboard.match(/wc:[a-f0-9-]+@[12]\?/)) {
           connect({ uri: clipboard })
@@ -153,10 +154,10 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     }
 
     tryReadClipboard()
-    window.addEventListener('focus', tryReadClipboard)
+    document.addEventListener('visibilitychange', tryReadClipboard)
 
     return () => {
-      window.removeEventListener('focus', tryReadClipboard)
+      document.removeEventListener('visibilitychange', tryReadClipboard)
     }
   }, [connect, account, addToast])
 
