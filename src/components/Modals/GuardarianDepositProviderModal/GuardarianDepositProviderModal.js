@@ -224,7 +224,6 @@ const GuardarianDepositProviderModal = ({
         </div>
       </div>
       <Button
-        small
         disabled={
           validationMsg !== '' ||
           guardarian?.marketInfo?.isLoading ||
@@ -236,6 +235,7 @@ const GuardarianDepositProviderModal = ({
         onClick={sendTxn}
         className={styles.button}
         variant="primaryGradient"
+        size="sm"
       >
         {guardarian.mode === 'buy' ? 'Buy' : 'Sell'}
       </Button>

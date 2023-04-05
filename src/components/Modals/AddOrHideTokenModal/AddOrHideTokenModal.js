@@ -38,7 +38,7 @@ const AddOrHideTokenModal = ({
       className={styles.modal}
       isCloseBtnShown={false}
       buttons={
-        <Button small onClick={handleHideModal} className={styles.closeButton}>
+        <Button size="sm" onClick={handleHideModal} className={styles.closeButton}>
           Close
         </Button>
       }

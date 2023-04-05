@@ -422,7 +422,6 @@ const Actions = ({
             <Button
               variant="danger"
               disabled={signingStatus?.inProgress}
-              type="button"
               className={cn(styles.button, styles.danger)}
               onClick={cancelSigning}
             >

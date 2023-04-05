@@ -225,7 +225,7 @@ const Accounts = ({
       </div>
       <div className={styles.addAccount}>
         <NavLink to="/add-account">
-          <Button small primaryGradient>
+          <Button size="sm" variant="primaryGradient">
             Add Account
           </Button>
         </NavLink>

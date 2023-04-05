@@ -339,9 +339,7 @@ const AssetsMigrationPermitter = ({
           Back
         </Button>
         {readyTokensCount() === getConsolidatedTokensPure(selectedTokensWithAllowance).length ? (
-          <Button onClick={() => hideModal()}>
-            Close
-          </Button>
+          <Button onClick={() => hideModal()}>Close</Button>
         ) : (
           <Button variant="primaryGradient" disabled>
             Complete

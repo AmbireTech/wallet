@@ -205,8 +205,8 @@ const PermissionsModal = ({
                 disabled={resendTimeLeft === 0}
               >
                 <Button
-                  mini
-                  clear
+                  size="xsm"
+                  variant="secondary"
                   icon={<AiOutlineReload />}
                   disabled={resendTimeLeft !== 0}
                   onClick={sendConfirmationEmail}

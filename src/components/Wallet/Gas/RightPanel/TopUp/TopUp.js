@@ -73,7 +73,11 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
       </div>
       <div>
         {zeroBalanceOnAllTokens ? (
-          <Button primaryGradient disabled={zeroBalanceOnAllTokens} className={styles.depositBtn}>
+          <Button
+            variant="primaryGradient"
+            disabled={zeroBalanceOnAllTokens}
+            className={styles.depositBtn}
+          >
             Top up Gas Tank
           </Button>
         ) : (
@@ -87,7 +91,7 @@ const TopUp = ({ portfolio, network, availableFeeAssets }) => {
               }
             }}
           >
-            <Button primaryGradient className={styles.depositBtn}>
+            <Button variant="primaryGradient" className={styles.depositBtn}>
               Top up Gas Tank
             </Button>
           </NavLink>

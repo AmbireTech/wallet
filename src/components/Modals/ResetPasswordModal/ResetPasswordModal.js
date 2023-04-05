@@ -236,12 +236,12 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
       title="Reset Password"
       buttons={
         <>
-          <Button small clear onClick={() => hideModal()}>
+          <Button size="sm" variant="secondary" onClick={() => hideModal()}>
             Cancel
           </Button>
           <Button
-            small
-            primaryGradient
+            size="sm"
+            variant="primaryGradient"
             disabled={disabled}
             onClick={() => (type === 'change' ? changePassword() : resetPassword())}
           >

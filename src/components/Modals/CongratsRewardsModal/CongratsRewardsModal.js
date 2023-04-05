@@ -18,7 +18,11 @@ const CongratsRewardsModal = ({ pendingTokensTotal }) => {
       contentClassName={styles.content}
       title="Woo-hoo!"
       isCloseBtnShown={false}
-      buttons={<Button onClick={hideModal}>Close</Button>}
+      buttons={
+        <Button variant="secondary" onClick={hideModal}>
+          Close
+        </Button>
+      }
     >
       <Lottie
         className={styles.confettiAnimation}

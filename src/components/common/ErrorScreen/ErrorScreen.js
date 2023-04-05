@@ -32,7 +32,7 @@ const ErrorScreen = () => {
             target="_blank"
             rel="noreferrer"
           >
-            <Button title="Visit the Help center" small>
+            <Button title="Visit the Help center" size="sm">
               Help center
             </Button>
           </a>

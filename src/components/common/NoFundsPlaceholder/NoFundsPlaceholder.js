@@ -11,7 +11,7 @@ const NoFundsPlaceholder = () => {
     <div className={styles.wrapper}>
       <p className={styles.text}>You don&apos;t have any funds on this account.</p>
       <NavLink to="/wallet/deposit">
-        <Button small icon={<DepositIcon />}>
+        <Button size="sm" startIcon={<DepositIcon />}>
           Deposit
         </Button>
       </NavLink>

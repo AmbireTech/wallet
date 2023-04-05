@@ -180,7 +180,13 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
         <div className={styles.emailWrapper}>
           <h4>1&#41; Request and confirm the code sent to your Email</h4>
           <div className={styles.emailBody}>
-            <Button small type="button" primaryGradient disabled={isTimeIsUp} onClick={sendEmail}>
+            <Button
+              type="button"
+              size="sm"
+              variant="primaryGradient"
+              disabled={isTimeIsUp}
+              onClick={sendEmail}
+            >
               Send Email
             </Button>
             <TextInput
