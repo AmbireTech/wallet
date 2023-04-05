@@ -109,6 +109,9 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
                 border
                 onClick={showWalletTokenModal}
                 className={styles.button}
+                disabled={(currentClaimStatus.loading && !currentClaimStatus.lastUpdated) 
+                  || (rewardsIsLoading && !rewardsLastUpdated)
+                  || !(rewardsData?.rewards?.accountAddr?.toLowerCase() === accountId.toLowerCase())}
             >
                 { renderRewardsButtonText() }  
             </Button>
