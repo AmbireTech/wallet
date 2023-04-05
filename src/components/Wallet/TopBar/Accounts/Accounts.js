@@ -182,12 +182,16 @@ const Accounts = ({
                 </div>
               </div>
               <div className={styles.buttons}>
-                <div className={styles.button} onClick={() => copyAddress(id)}>
+                <button type="button" className={styles.button} onClick={() => copyAddress(id)}>
                   <Copy />
-                </div>
-                <div className={styles.button} onClick={() => setLogoutWarning(id)}>
+                </button>
+                <button
+                  type="button"
+                  className={styles.button}
+                  onClick={() => setLogoutWarning(id)}
+                >
                   <LogOut />
-                </div>
+                </button>
               </div>
             </div>
           ) : (
@@ -197,7 +201,8 @@ const Accounts = ({
             >
               <p className={styles.message}>Are you sure you want to log out from this account ?</p>
               <div className={styles.buttons}>
-                <div
+                <button
+                  type="button"
                   className={cn(styles.button, styles.danger)}
                   onClick={() => {
                     setLogoutWarning(false)
@@ -205,10 +210,14 @@ const Accounts = ({
                   }}
                 >
                   <MdOutlineCheck />
-                </div>
-                <div className={styles.button} onClick={() => setLogoutWarning(false)}>
+                </button>
+                <button
+                  type="button"
+                  className={styles.button}
+                  onClick={() => setLogoutWarning(false)}
+                >
                   <MdOutlineClose />
-                </div>
+                </button>
               </div>
             </div>
           )

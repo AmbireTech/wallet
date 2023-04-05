@@ -1,6 +1,6 @@
 import { useModals } from 'hooks'
 import { fetchPost } from 'lib/fetch'
-import { Modal, Button, TextInput, Loading, CountdownTimer } from 'components/common'
+import { Modal, Button, TextInput, CountdownTimer } from 'components/common'
 import { useState, useEffect } from 'react'
 import { useToasts } from 'hooks/toasts'
 import { ethers } from 'ethers'
@@ -79,15 +79,16 @@ const OtpTwoFADisableModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
       className={styles.wrapper}
       title="Disable Two Factor Authentication"
       buttons={
-        !isLoading ? (
-          <Button form="disable2faForm" small primaryGradient type="submit" disabled={isTimeIsUp}>
-            Disable 2FA
-          </Button>
-        ) : (
-          <Button small primaryGradient disabled>
-            <Loading />
-          </Button>
-        )
+        <Button
+          form="disable2faForm"
+          className={styles.button}
+          variant="primaryGradient"
+          type="submit"
+          disabled={isTimeIsUp}
+          loading={isLoading}
+        >
+          Disable 2FA
+        </Button>
       }
     >
       <form onSubmit={handleSubmit} id="disable2faForm">

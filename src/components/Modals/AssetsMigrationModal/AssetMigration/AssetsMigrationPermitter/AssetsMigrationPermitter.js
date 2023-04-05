@@ -335,15 +335,15 @@ const AssetsMigrationPermitter = ({
     if (hidden) return
     setModalButtons(
       <>
-        <Button clear icon onClick={() => cancelMigration()}>
+        <Button variant="secondary" onClick={() => cancelMigration()}>
           Back
         </Button>
         {readyTokensCount() === getConsolidatedTokensPure(selectedTokensWithAllowance).length ? (
-          <Button border icon onClick={() => hideModal()}>
+          <Button onClick={() => hideModal()}>
             Close
           </Button>
         ) : (
-          <Button primaryGradient disabled icon>
+          <Button variant="primaryGradient" disabled>
             Complete
           </Button>
         )}

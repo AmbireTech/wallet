@@ -227,7 +227,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                     alt="add custom dapps icon"
                   />
                 </div>
-                <Button border mini onClick={openCustomDappModal}>
+                <Button size="xsm" onClick={openCustomDappModal}>
                   Add custom dApp
                 </Button>
               </div>

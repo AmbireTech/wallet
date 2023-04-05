@@ -230,12 +230,12 @@ const GuardarianDepositProviderModal = ({
           guardarian?.marketInfo?.isLoading ||
           guardarian?.estimateInfo?.isLoading ||
           guardarian?.txn?.isLoading ||
-          guardarian?.amount === '' ||
-          sendTransactionLoading
+          guardarian?.amount === ''
         }
+        loading={sendTransactionLoading}
         onClick={sendTxn}
         className={styles.button}
-        primaryGradient
+        variant="primaryGradient"
       >
         {guardarian.mode === 'buy' ? 'Buy' : 'Sell'}
       </Button>

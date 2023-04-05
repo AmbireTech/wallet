@@ -32,12 +32,12 @@ const SwitchNetwork = () => {
       </div>
       {supported ? (
         <div className={styles.buttons}>
-          <Button small danger className={styles.button}>
+          <Button size="sm" variant="danger" className={styles.button}>
             Reject
           </Button>
           <Button
-            small
-            primaryGradient
+            size="sm"
+            variant="primaryGradient"
             className={styles.button}
             onClick={() => setSupported((prev) => !prev)}
           >
@@ -46,8 +46,8 @@ const SwitchNetwork = () => {
         </div>
       ) : (
         <Button
-          danger
-          small
+          variant="danger"
+          size="sm"
           className={cn(styles.button, styles.singleButton)}
           onClick={() => setSupported((prev) => !prev)}
         >

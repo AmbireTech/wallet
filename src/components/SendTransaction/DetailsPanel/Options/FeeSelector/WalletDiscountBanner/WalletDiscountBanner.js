@@ -77,7 +77,7 @@ const WalletDiscountBanner = ({
         </a>
       </div>
       {!!action && (
-        <Button onClick={action} mini className={styles.button}>
+        <Button onClick={action} size="xsm" className={styles.button}>
           {actionTxt}
         </Button>
       )}

@@ -115,7 +115,7 @@ const SelectFeeType = ({
               </div>
               <div>
                 Min estimated fee: &nbsp;
-                <Button textOnly onClick={() => setCustomFee(baseMinFee)}>
+                <Button variant="text" onClick={() => setCustomFee(baseMinFee)}>
                   {baseMinFee} {symbol}
                 </Button>
                 {!isNaN(baseMinFeeUSD) && (
@@ -132,7 +132,7 @@ const SelectFeeType = ({
               </div>
               <div>
                 Recommended max fee: &nbsp;
-                <Button textOnly onClick={() => setCustomFee(baseMaxFee)}>
+                <Button variant="text" onClick={() => setCustomFee(baseMaxFee)}>
                   {baseMaxFee} {symbol}
                 </Button>
                 {!isNaN(baseMaxFeeUSD) && (

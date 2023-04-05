@@ -151,12 +151,12 @@ const WalletTokenButton = ({
 
   return !relayerURL ? (
     <ToolTip label="WALLET rewards are not available without a connection to the relayer">
-      <Button small border disabled>
+      <Button size="sm" disabled>
         Rewards
       </Button>
     </ToolTip>
   ) : (
-    <Button small border onClick={showWalletTokenModal} className={styles.button}>
+    <Button size="sm" onClick={showWalletTokenModal} className={styles.button}>
       {renderRewardsButtonText()}
     </Button>
   )

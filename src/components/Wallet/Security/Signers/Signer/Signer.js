@@ -57,6 +57,7 @@ const Signer = ({
       <div>
         <div className={styles.manage}>
           <button
+            type="button"
             className={cn(styles.makeDefault, { [styles.default]: isSelected })}
             onClick={handleButtonClick}
             disabled={isSelected}
@@ -65,6 +66,7 @@ const Signer = ({
             {isSelected ? 'Default' : 'Make default'}
           </button>
           <button
+            type="button"
             className={cn(styles.close, { [styles.disabled]: isSelected })}
             title={isSelected ? 'Cannot remove the currently used signer' : 'Remove Signer'}
             disabled={isSelected}
@@ -82,11 +84,11 @@ const Signer = ({
         {isQuickAcc &&
           otpEnabled !== null &&
           (otpEnabled ? (
-            <Button className={styles.button} red onClick={handleDisableOtp}>
+            <Button className={styles.button} variant="danger" onClick={handleDisableOtp}>
               Disable 2FA
             </Button>
           ) : (
-            <Button className={styles.button} primaryGradient onClick={handleEnableOtp}>
+            <Button className={styles.button} variant="primaryGradient" onClick={handleEnableOtp}>
               Enable 2FA
             </Button>
           ))}

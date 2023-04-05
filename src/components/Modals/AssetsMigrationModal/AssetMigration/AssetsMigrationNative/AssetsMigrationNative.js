@@ -4,7 +4,7 @@ import cn from 'classnames'
 
 import { getWallet } from 'lib/getWallet'
 
-import { Button, Loading } from 'components/common'
+import { Button } from 'components/common'
 import { GiToken } from 'react-icons/gi'
 import Summary from './Summary/Summary'
 
@@ -129,7 +129,7 @@ const AssetsMigrationNative = ({
         if (hasERC20Tokens) {
           buttons.push(
             <Button
-              primaryGradient
+              variant="primaryGradient"
               className={styles.fullWidthBtn}
               onClick={() => continueMigration()}
             >
@@ -138,7 +138,11 @@ const AssetsMigrationNative = ({
           )
         } else {
           buttons.push(
-            <Button primaryGradient className={styles.fullWidthBtn} onClick={() => hideModal()}>
+            <Button
+              variant="primaryGradient"
+              className={styles.fullWidthBtn}
+              onClick={() => hideModal()}
+            >
               Close
             </Button>
           )
@@ -146,13 +150,18 @@ const AssetsMigrationNative = ({
       } else if (!wallet) {
         // will have to restart the process anyway as web3.ethereum is not injected (not to confuse with not unlocked)
         buttons.push(
-          <Button clear className={styles.fullWidthBtn} onClick={() => hideModal()}>
+          <Button variant="secondary" className={styles.fullWidthBtn} onClick={() => hideModal()}>
             Close
           </Button>
         )
       } else {
         buttons.push(
-          <Button clear className={styles.fullWidthBtn} onClick={() => cancelMigration()} key="0">
+          <Button
+            variant="secondary"
+            className={styles.fullWidthBtn}
+            onClick={() => cancelMigration()}
+            key="0"
+          >
             Back
           </Button>
         )
@@ -160,10 +169,10 @@ const AssetsMigrationNative = ({
         if (isMigrationPending) {
           buttons.push(
             <Button
-              primaryGradient
-              disabled
+              variant="primaryGradient"
+              loading
+              loadingText={`Moving ${nativeTokenData.name}...`}
               className={styles.fullWidthBtn}
-              icon={<Loading />}
               key="1"
             >
               Moving {nativeTokenData.name}...
@@ -172,7 +181,7 @@ const AssetsMigrationNative = ({
         } else {
           buttons.push(
             <Button
-              primaryGradient
+              variant="primaryGradient"
               className={styles.fullWidthBtn}
               onClick={() => migrateNative()}
               key="1"

@@ -70,8 +70,8 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
       <div className={styles.connectDapp}>
         <div className={styles.heading}>
           <Button
-            primaryGradient
-            small
+            variant="primaryGradient"
+            size="sm"
             className={styles.buttonClass}
             icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />}
             disabled={isClipboardGranted || isWcConnecting}
@@ -130,7 +130,9 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
               </div>
             </span>
             <DropDownItemSeparator />
-            <button onClick={() => disconnect(connectionId, wcVersion)}>Disconnect</button>
+            <button type="button" onClick={() => disconnect(connectionId, wcVersion)}>
+              Disconnect
+            </button>
           </DropDownItem>
         ))}
       </div>

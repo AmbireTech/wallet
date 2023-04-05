@@ -33,10 +33,10 @@ const InputModal = ({ title, inputs, onClose }) => {
       title={title}
       buttons={
         <>
-          <Button clear small onClick={hideModal}>
+          <Button size="sm" variant="secondary" onClick={hideModal}>
             Cancel
           </Button>
-          <Button small primaryGradient disabled={isDisabled} onClick={onConfirm}>
+          <Button size="sm" variant="primaryGradient" disabled={isDisabled} onClick={onConfirm}>
             Confirm
           </Button>
         </>

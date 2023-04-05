@@ -29,22 +29,20 @@ const Token = ({ data, sendToken, isSendDisabled }) => {
           (data.allowance && ethers.BigNumber.from(data.allowance).gte(data.amount)) ||
           data.sent
         ) ? (
-          <>
-            {data.pending || data.signing ? (
-              <div className={styles.warning}>
-                <FaHourglass /> Sending...
-              </div>
-            ) : (
-              <Button
-                small
-                primaryGradient
-                onClick={() => sendToken(data.address)}
-                disabled={isSendDisabled}
-              >
-                Send
-              </Button>
-            )}
-          </>
+          data.pending || data.signing ? (
+            <div className={styles.warning}>
+              <FaHourglass /> Sending...
+            </div>
+          ) : (
+            <Button
+              size="sm"
+              variant="primaryGradient"
+              onClick={() => sendToken(data.address)}
+              disabled={isSendDisabled}
+            >
+              Send
+            </Button>
+          )
         ) : (
           <div className={styles.success} onClick={() => sendToken(data.address)}>
             <FaCheck /> Sent

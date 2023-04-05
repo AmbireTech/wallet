@@ -153,22 +153,17 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
       className={styles.wrapper}
       contentClassName={styles.content}
       buttons={
-        !isLoading ? (
-          <Button
-            small
-            form="enable2faForm"
-            primaryGradient
-            type="submit"
-            disabled={isTimeIsUp}
-            className={styles.button}
-          >
-            Enable 2FA
-          </Button>
-        ) : (
-          <Button small disabled className={styles.button}>
-            <Loading />
-          </Button>
-        )
+        <Button
+          variant="primaryGradient"
+          size="sm"
+          loading={isLoading}
+          form="enable2faForm"
+          type="submit"
+          disabled={isTimeIsUp}
+          className={styles.button}
+        >
+          Enable 2FA
+        </Button>
       }
       title="Two Factor Authentication"
     >

@@ -284,14 +284,13 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
           className={styles.button}
           disabled={disabled}
           onClick={() => onAddBtnClicked(signerAddress)}
-          primaryGradient
+          variant="primaryGradient"
         >
           Add
         </Button>
       </div>
     </>
   )
-
   // In case of Lattice Signer, we are handling the Lattice Pairing process on our end in the same Modal
   const stepTwo = () => (
     <LatticePair addresses={setLatticeAddresses} title="Connect to Lattice Device" />

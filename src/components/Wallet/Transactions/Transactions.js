@@ -191,8 +191,8 @@ function Transactions({
     <div className={styles.paginationControls}>
       <div className={styles.paginationTitle}>Page</div>
       <Button
-        clear
-        mini
+        size="xsm"
+        variant="secondary"
         className={styles.paginationButton}
         onClick={() => page > 1 && setPage((page) => page - 1)}
       >
@@ -202,8 +202,8 @@ function Transactions({
         {page} <span>/ {maxPages}</span>
       </div>
       <Button
-        clear
-        mini
+        size="xsm"
+        variant="secondary"
         className={styles.paginationButton}
         onClick={() => page < maxPages && setPage((page) => page + 1)}
       >
@@ -237,12 +237,12 @@ function Transactions({
               </div>
               <div className={styles.actions}>
                 {/*
-                <Button small className='cancel' onClick={
+                <Button size="sm" className='cancel' onClick={
                   () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
                 }>Reject all</Button> */}
                 <Button
-                  small
-                  primaryGradient
+                  size="sm"
+                  variant="primaryGradient"
                   className={styles.gradient}
                   onClick={() => showSendTxns(null)}
                 >
@@ -265,15 +265,15 @@ function Transactions({
             <div className={styles.bundle}>
               <BundlePreview bundle={firstPending} feeAssets={feeAssets} />
               <div className={styles.actions}>
-                <Button small className={styles.cancel} onClick={() => cancel(firstPending)}>
+                <Button size="sm" className={styles.cancel} onClick={() => cancel(firstPending)}>
                   Cancel
                 </Button>
-                <Button small className={styles.speedUp} onClick={() => speedup(firstPending)}>
+                <Button size="sm" className={styles.speedUp} onClick={() => speedup(firstPending)}>
                   Speed up
                 </Button>
                 <Button
-                  small
-                  primaryGradient
+                  size="sm"
+                  variant="primaryGradient"
                   className={styles.gradient}
                   onClick={() => replace(firstPending)}
                 >

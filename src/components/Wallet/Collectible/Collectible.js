@@ -387,7 +387,12 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             onChange={(value) => setAddressConfirmed(value)}
             isKnownAddress={isKnownAddress}
           />
-          <Button icon={<AiOutlineSend />} disabled={isTransferDisabled} onClick={sendTransferTx}>
+          <Button
+            variant="primaryGradient"
+            startIcon={<AiOutlineSend />}
+            disabled={isTransferDisabled}
+            onClick={sendTransferTx}
+          >
             Send
           </Button>
         </div>

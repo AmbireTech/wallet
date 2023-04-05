@@ -104,31 +104,6 @@ const PermissionsModal = ({
   }
   const openThankYouPage = () => window.open('https://www.ambire.com/thankyou', '_blank')
 
-  const buttons = isJsonBackupDownloaded ? (
-    <>
-      <Button clear small disabled={isAccountNotConfirmed} onClick={handleDoneOrIgnoreBtnsClicked}>
-        Ignore
-      </Button>
-      <Button
-        small
-        primaryGradient
-        disabled={buttonDisabled}
-        onClick={handleDoneOrIgnoreBtnsClicked}
-      >
-        Done
-      </Button>
-    </>
-  ) : (
-    <>
-      <Button clear small disabled onClick={handleDoneOrIgnoreBtnsClicked}>
-        Ignore
-      </Button>
-      <Button small primaryGradient disabled onClick={handleDoneOrIgnoreBtnsClicked}>
-        Done
-      </Button>
-    </>
-  )
-
   const downloadFile = ({ data, fileName, fileType }) => {
     const blob = new Blob([data], { type: fileType })
 
@@ -177,7 +152,26 @@ const PermissionsModal = ({
       className={styles.wrapper}
       contentClassName={styles.content}
       title="We need a few things 🙏"
-      buttons={buttons}
+      buttons={
+        <>
+          <Button
+            variant="secondary"
+            size="sm"
+            disabled={isAccountNotConfirmed || !isJsonBackupDownloaded}
+            onClick={handleDoneOrIgnoreBtnsClicked}
+          >
+            Ignore
+          </Button>
+          <Button
+            size="sm"
+            variant="primaryGradient"
+            disabled={buttonDisabled || !isJsonBackupDownloaded}
+            onClick={handleDoneOrIgnoreBtnsClicked}
+          >
+            Done
+          </Button>
+        </>
+      }
       isCloseBtnShown={isCloseBtnShown}
       onClose={handleOnClose}
     >

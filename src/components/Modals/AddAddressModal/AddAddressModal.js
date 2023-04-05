@@ -21,7 +21,7 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     [inputs]
   )
   const getUDomain = async (value) => {
-    return await resolveUDomain(value, null, selectedNetwork.unstoppableDomainsChain)
+    return resolveUDomain(value, null, selectedNetwork.unstoppableDomainsChain)
   }
 
   const onInput = () => {
@@ -85,10 +85,10 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
       title={title}
       buttons={
         <>
-          <Button clear small onClick={hideModal}>
+          <Button variant="secondary" size="sm" onClick={hideModal}>
             Cancel
           </Button>
-          <Button primaryGradient small disabled={isDisabled} onClick={onConfirm}>
+          <Button variant="primaryGradient" size="sm" disabled={isDisabled} onClick={onConfirm}>
             Confirm
           </Button>
         </>

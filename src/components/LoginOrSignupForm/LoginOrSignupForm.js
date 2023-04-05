@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
-import { Checkbox } from 'components/common'
+import { Checkbox, Button } from 'components/common'
 import styles from './LoginOrSignupForm.module.scss'
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
@@ -107,21 +107,15 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
         !isSignup ? <input type="password" style={{ display: 'none' }} /> : null
       }
       {additionalInputs}
-      <input
+      <Button
+        className={styles.button}
+        variant="primaryGradient"
         type="submit"
-        disabled={inProgress}
-        value={
-          // (Fixed in Buttons PR, no need to refactor)
-          // eslint-disable-next-line no-nested-ternary
-          isSignup
-            ? inProgress
-              ? 'Signing up...'
-              : 'Sign Up'
-            : inProgress
-            ? 'Logging in...'
-            : 'Log In'
-        }
-      />
+        loading={inProgress}
+        loadingText={isSignup ? 'Signing up...' : 'Logging in...'}
+      >
+        {isSignup ? 'Sign Up' : 'Log In'}
+      </Button>
     </form>
   )
 }

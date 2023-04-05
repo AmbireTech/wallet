@@ -176,18 +176,16 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
         <div className={cn(styles.actions, 'mt-4')}>
           <ToolTip label={network.id !== 'ethereum' ? 'Switch to Ethereum network to claim' : ''}>
             <Button
-              className={styles.claimRewardsWithBurn}
-              secondaryGradient
-              full
+              className={styles.fullWidthButton}
+              variant="secondaryGradient"
               onClick={openUnbondModal}
               disabled={!!(claimDisabledReason || disabledReason)}
             >
               Claim with burn
             </Button>
             <Button
-              className={styles.claimRewardsXWallet}
-              terniaryGradient
-              full
+              className={styles.fullWidthButton}
+              variant="terniaryGradient"
               onClick={claimEarlyRewards}
               disabled={!!(claimDisabledReason || disabledReason)}
             >
@@ -265,7 +263,12 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
                 )} days`
               }
             >
-              <Button primaryGradient full onClick={claimVesting} disabled={!!disabledReason}>
+              <Button
+                variant="primaryGradient"
+                className={styles.fullWidthButton}
+                onClick={claimVesting}
+                disabled={!!disabledReason}
+              >
                 Claim
               </Button>
             </ToolTip>

@@ -116,7 +116,7 @@ export default function GnosisSafeApps({ network, selectedAcc, gnosisConnect, gn
     <div id="plugin-gnosis-container">
       <ul id="dapps-container" className={selectedApp ? 'small-thumbs' : ''}>
         <li className="add-plugin">
-          <Button mini icon={<MdOutlineAdd />} onClick={showInputModal}>
+          <Button size="xsm" startIcon={<MdOutlineAdd />} onClick={showInputModal}>
             Add plugin
           </Button>
         </li>
@@ -132,9 +132,9 @@ export default function GnosisSafeApps({ network, selectedAcc, gnosisConnect, gn
             {dapp.customId && (
               <Button
                 className="remove-btn"
-                mini
-                red
-                icon={<MdRemove />}
+                size="xsm"
+                variant="danger"
+                startIcon={<MdRemove />}
                 onClick={() => removeCustomPlugin(dapp.customId)}
               />
             )}

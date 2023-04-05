@@ -39,19 +39,13 @@ const AddressBook = ({
   const isAddAddressFormValid =
     address.length && name.length && /^0x[a-fA-F0-9]{40}$/.test(uDAddress || ensAddress || address)
   const onAddAddress = useCallback(() => {
-    let addedAddressType = 'pub'
-
-    if (uDAddress) {
-      addedAddressType = 'ud'
-    } else if (ensAddress) {
-      addedAddressType = 'ens'
-    }
-
     setOpenMenu(false)
     setOpenAddAddress(false)
-    addAddress(name, address, {
-      type: addedAddressType
-    })
+    addAddress(
+      name,
+      address,
+      uDAddress ? { type: 'ud' } : ensAddress ? { type: 'ens' } : { type: 'pub' }
+    )
   }, [addAddress, name, address, uDAddress, ensAddress])
 
   const onDropDownChange = useCallback((state) => {
@@ -79,10 +73,10 @@ const AddressBook = ({
 
     const validateForm = async () => {
       const UDAddress = await resolveUDomain(address, null, selectedNetwork.unstoppableDomainsChain)
-      const resolvedEnsAddress = await resolveENSDomain(address)
+      const ensAddress = await resolveENSDomain(address)
 
       if (UDAddress) setUDAddress(UDAddress)
-      else if (resolvedEnsAddress) setEnsAddress(resolvedEnsAddress)
+      else if (ensAddress) setEnsAddress(ensAddress)
       else {
         setUDAddress('')
         setEnsAddress('')
@@ -92,11 +86,7 @@ const AddressBook = ({
     }
 
     timer.current = setTimeout(async () => {
-      try {
-        validateForm()
-      } catch (e) {
-        console.log(e)
-      }
+      return validateForm().catch(console.error)
     }, 500)
   }, [address, selectedNetwork.unstoppableDomainsChain])
 
@@ -120,13 +110,13 @@ const AddressBook = ({
           <FaAddressCard /> Address Book
         </div>
         {!openAddAddress ? (
-          <button type="button" className={styles.button} onClick={() => setOpenAddAddress(true)}>
+          <div className={styles.button} onClick={() => setOpenAddAddress(true)}>
             <MdOutlineAdd />
-          </button>
+          </div>
         ) : (
-          <button type="button" className={styles.button} onClick={() => setOpenAddAddress(false)}>
+          <div className={styles.button} onClick={() => setOpenAddAddress(false)}>
             <MdClose />
-          </button>
+          </div>
         )}
       </div>
       {openAddAddress ? (
@@ -145,8 +135,14 @@ const AddressBook = ({
               onInput={(value) => setAddress(value)}
             />
           </div>
-          <Button clear small disabled={!isAddAddressFormValid} onClick={onAddAddress}>
-            <MdOutlineAdd /> Add Address
+          <Button
+            variant="secondary"
+            size="sm"
+            startIcon={<MdOutlineAdd />}
+            disabled={!isAddAddressFormValid}
+            onClick={onAddAddress}
+          >
+            Add Address
           </Button>
         </div>
       ) : null}
@@ -154,8 +150,7 @@ const AddressBook = ({
         <div className={styles.content}>
           <p className={styles.emptyText}>Your Address Book is empty.</p>
         </div>
-      ) : null}
-      {!openAddAddress && addresses.length ? (
+      ) : (
         <div className={styles.content}>
           <Addresses
             addresses={addresses}
@@ -164,7 +159,7 @@ const AddressBook = ({
             addressClassName={styles.address}
           />
         </div>
-      ) : null}
+      )}
     </DropDown>
   )
 }

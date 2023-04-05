@@ -302,7 +302,7 @@ const Send = ({
       }
 
       timer.current = setTimeout(async () => {
-        return await validateForm().catch(console.error)
+        return validateForm().catch(console.error)
       }, 300)
     }
     return () => clearTimeout(timer.current)
@@ -437,7 +437,7 @@ const Send = ({
         )}
       </div>
       <Button
-        primaryGradient
+        variant="primaryGradient"
         disabled={disabled}
         onClick={sendTx}
         className={styles.transferButton}

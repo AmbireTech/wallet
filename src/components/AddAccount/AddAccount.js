@@ -344,7 +344,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         })
       )
 
-      return await Promise.all(
+      return Promise.all(
         Object.entries(allUniqueOwned).map(([entryId, signer]) => getAccountByAddr(entryId, signer))
       )
     },
@@ -648,9 +648,9 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
                   disabled={resendTimeLeft === 0}
                 >
                   <Button
-                    border
-                    mini
-                    icon={<AiOutlineReload />}
+                    className={styles.resendBtn}
+                    size="xsm"
+                    startIcon={<AiOutlineReload />}
                     disabled={resendTimeLeft !== 0}
                     onClick={sendConfirmationEmail}
                   >

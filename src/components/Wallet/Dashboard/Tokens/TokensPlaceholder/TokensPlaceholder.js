@@ -26,16 +26,16 @@ const TokensPlaceholder = ({ onClickAddToken, onClickShowToken, footer }) => {
         <div className={styles.placeholderOverlay}>
           <h2>Welcome! You don't have any funds on this account.</h2>
           <NavLink to="/wallet/deposit">
-            <Button small icon={<DepositIcon />}>
+            <Button size="sm" startIcon={<DepositIcon />}>
               Deposit
             </Button>
           </NavLink>
           <div className={styles.addToken}>
             <p>You have a token that's not displayed?</p>
             <Button
-              mini
-              clear
-              icon={<AddIcon />}
+              size="xsm"
+              variant="secondary"
+              startIcon={<AddIcon />}
               onClick={onClickAddToken}
               className={styles.addTokenButton}
             >

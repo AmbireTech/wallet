@@ -13,12 +13,9 @@ const RemoveSignerModal = ({ onClick }) => {
       title="Remove Signer"
       buttons={
         <>
-          <Button border onClick={hideModal}>
-            Cancel
-          </Button>
+          <Button onClick={hideModal}>Cancel</Button>
           <Button
-            border
-            className={styles.removeButton}
+            variant="danger"
             onClick={() => {
               hideModal()
               onClick()

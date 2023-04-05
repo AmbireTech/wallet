@@ -194,10 +194,10 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
       }
       buttons={
         <>
-          <Button small clear onClick={() => hideModal()}>
+          <Button size="sm" variant="secondary" onClick={() => hideModal()}>
             Close
           </Button>
-          <Button small primaryGradient disabled={disabled} onClick={addDapp}>
+          <Button size="sm" variant="primaryGradient" disabled={disabled} onClick={addDapp}>
             Add
           </Button>
         </>
@@ -236,70 +236,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
           inputContainerClass={styles.textInputContainer}
         />
       </div>
-
-      <div>
-        <div className={styles.iconInput}>
-          <TextInput
-            small
-            label="Icon URL"
-            value={iconUrl}
-            onInput={(value) => {
-              setIconUrl(value)
-              setIconUrlInfo('')
-            }}
-            className={styles.dappInput}
-            inputContainerClass={styles.textInputContainer}
-          />
-          <div className={styles.iconWrapper}>
-            {iconUrl && !iconUrlInfo ? (
-              <img
-                width={46}
-                height={46}
-                src={iconUrl || DAPPS_ICON}
-                alt={`${name || 'no'} logo`}
-                onError={() => {
-                  setIconUrlInfo(
-                    'Invalid icon URL, please update it or default dApp icon will be displayed'
-                  )
-                }}
-              />
-            ) : iconUrlInfo ? (
-              <MdErrorOutline size={40} />
-            ) : (
-              <MdImage size={40} />
-            )}
-          </div>
-        </div>
-        <div className={styles.inputErr}>{inputValidation?.errors?.iconUrl || iconUrlInfo}</div>
-      </div>
-
-      <div>
-        <div className={styles.connectionRadios}>
-          <div>Connection Type</div>
-          <Radios radios={radios} value={connectionType} onChange={onRadioChange} row />
-        </div>
-        <div className={styles.inputErr}>{inputValidation?.errors?.connectionType}</div>
-      </div>
-
-      <div className={styles.networks}>
-        <div>Supported networks ({networks.length} selected)</div>
-        <div className={styles.networksContainer}>
-          {NETWORKS.map((n) => {
-            return (
-              <ToolTip label={n.name} key={n.id}>
-                <span
-                  className={cn(styles.networkTag, { [styles.selected]: networks.includes(n.id) })}
-                  style={{ backgroundImage: `url(${n.icon})` }}
-                  onClick={() => onNetworkClick(n.id)}
-                />
-              </ToolTip>
-            )
-          })}
-        </div>
-        <div className={styles.inputErr}>{networksInfo || inputValidation?.errors?.networks}</div>
-      </div>
     </Modal>
   )
 }
-
 export default AddCustomDappModal

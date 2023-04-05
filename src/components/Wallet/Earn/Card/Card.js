@@ -160,7 +160,9 @@ const Card = ({
               <div className="separator" />
               <Button
                 disabled={buttonDisabled}
-                icon={segment === segments[0].value ? <BsArrowDownSquare /> : <BsArrowUpSquare />}
+                startIcon={
+                  segment === segments[0].value ? <BsArrowDownSquare /> : <BsArrowUpSquare />
+                }
                 onClick={() => onValidate(segment, token, amount, isMaxAmount())}
               >
                 {segment}
@@ -169,7 +171,7 @@ const Card = ({
           )}
           <div className="separator" />
           {!!moreDetails && (
-            <Button clear icon={<MdOutlineInfo />} onClick={() => showMoreDetails()}>
+            <Button variant="secondary" startIcon={<MdOutlineInfo />} onClick={showMoreDetails}>
               See more details
             </Button>
           )}

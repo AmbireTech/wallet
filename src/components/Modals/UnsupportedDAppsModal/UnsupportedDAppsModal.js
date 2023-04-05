@@ -28,10 +28,15 @@ const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList, onCo
       title="Unsupported dApps"
       buttons={
         <>
-          <Button small clear onClick={handleCancel}>
+          <Button size="sm" variant="secondary" onClick={handleCancel}>
             Cancel
           </Button>
-          <Button small primaryGradient disabled={!advancedMode} onClick={handleContinue}>
+          <Button
+            size="sm"
+            variant="primaryGradient"
+            disabled={!advancedMode}
+            onClick={handleContinue}
+          >
             Continue
           </Button>
         </>

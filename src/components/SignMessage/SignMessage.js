@@ -239,7 +239,7 @@ export default function SignMessage({
               <Button
                 className={styles.button}
                 type="button"
-                danger
+                variant="danger"
                 onClick={() => resolve({ message: 'signature denied' })}
               >
                 Reject
@@ -247,11 +247,12 @@ export default function SignMessage({
               {isDeployed !== null && isDeployed && hasPrivileges && (
                 <Button
                   type="submit"
-                  primaryGradient
-                  disabled={isLoading}
+                  variant="primaryGradient"
                   className={styles.button}
+                  loading={isLoading}
+                  loadingText="Signing..."
                 >
-                  {isLoading ? 'Signing...' : 'Sign'}
+                  Sign
                 </Button>
               )}
             </div>

@@ -8,7 +8,7 @@ const EarnDetailsModal = ({ title = 'Details', description = '' }) => {
     <Modal
       title={title}
       buttons={
-        <Button clear small onClick={hideModal}>
+        <Button variant="secondary" size="sm" onClick={hideModal}>
           Close
         </Button>
       }

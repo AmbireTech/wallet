@@ -156,12 +156,12 @@ const Quotes = ({
       </div>
 
       <div className={cn(styles.buttons, styles.singleButton)}>
-        <Button border disabled={loading} onClick={onCancel} className={styles.button}>
+        <Button disabled={loading} onClick={onCancel} className={styles.button}>
           {routes.length ? 'Cancel' : 'Go Back'}
         </Button>
         {routes.length ? (
           <Button
-            primaryGradient
+            variant="primaryGradient"
             disabled={!selectedRoute || loading}
             onClick={onConfirm}
             className={styles.button}
