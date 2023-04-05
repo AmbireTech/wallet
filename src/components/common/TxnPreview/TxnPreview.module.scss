@@ -16,10 +16,6 @@ $extended-summary-height: 2.25rem;
     user-select: none;
     transition: .3s ease-out;
 
-    &:hover {
-        opacity: .8;
-    }
-
     .heading {
         display: flex;
         flex-direction: row;
