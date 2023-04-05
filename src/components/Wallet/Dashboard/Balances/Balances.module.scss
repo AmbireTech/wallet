@@ -1,84 +1,89 @@
 @import 'variables.scss';
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  .greenHighlight {
+    color: $c-turquoise;
+  }
+
+  .purpleHighlight {
+    color: $c-heliotrope;
+  }
+
+  .otherBalances {
     display: flex;
     flex-direction: column;
-    height: 100%;
-    overflow: hidden;
+    overflow-y: auto;
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      black var(--top-mask-size, 0),
+      black calc(100% - var(--bottom-mask-size, 0)),
+      transparent 100%
+    );
 
-    .greenHighlight {
-        color: $c-turquoise;
+    &.bottomOverflow {
+      --bottom-mask-size: 3.75rem;
     }
 
-    .purpleHighlight {
-        color: $c-heliotrope;
+    .icon {
+      border-radius: 100%;
+      width: 1.875rem;
+      height: 1.875rem;
     }
 
-    .otherBalances {
+    .loadingOtherBalancesWrapper {
+      overflow: hidden;
+    }
+
+    .noOtherBalancesWrapper {
+      display: flex;
+      flex: 1;
+      align-items: center;
+
+      .noOtherBalances {
         display: flex;
-        flex-direction: column;
-        overflow-y: auto;
-        mask-image: linear-gradient(to bottom, transparent 0, black var(--top-mask-size, 0), black calc(100% - var(--bottom-mask-size, 0)), transparent 100%);
+        gap: 0.625rem;
+        max-width: 15.625rem;
 
-        &.bottomOverflow {
-            --bottom-mask-size: 3.75rem;
+        label {
+          flex: 1;
+          font-size: 0.875rem;
         }
 
-        .icon {
-            border-radius: 100%;
-            width: 1.875rem;
-            height: 1.875rem;
+        svg {
+          margin-top: 0.3125rem;
+          width: 1.5rem;
+          height: 1.5rem;
         }
-
-        .loadingOtherBalancesWrapper {
-            overflow: hidden;
-        }
-
-        .noOtherBalancesWrapper {
-            display: flex;
-            flex: 1;
-            align-items: center;
-
-            .noOtherBalances {
-              display: flex;
-              gap: .625rem;
-              max-width: 15.625rem;
-        
-              label {
-                flex: 1;
-                font-size: .875rem;
-              }
-        
-              svg {
-                margin-top: .3125rem;
-                width: 1.5rem;
-                height: 1.5rem;
-              }
-            }
-      
-          }
+      }
     }
+  }
 }
 
 @include xl-breakpoint {
-    .wrapper {
-        .otherBalances {
-            .icon {
-                width: 2rem;
-                height: 2rem;
-            }
-        }
+  .wrapper {
+    .otherBalances {
+      .icon {
+        width: 2rem;
+        height: 2rem;
+      }
     }
+  }
 }
 
 @include lg-breakpoint {
-    .wrapper {
-        padding: .625rem 1.25rem;
-        background: $c-ebony-clay;
-        border: 1px solid $c-fiord;
-        border-radius: $border-radius;
-        .otherBalances {
-            gap: .5625rem;
-        }
+  .wrapper {
+    padding: 0.625rem 1.25rem;
+    background: $c-ebony-clay;
+    border: 1px solid $c-fiord;
+    border-radius: $border-radius;
+    .otherBalances {
+      gap: 0.5625rem;
     }
+  }
 }

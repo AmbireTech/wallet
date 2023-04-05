@@ -1,81 +1,81 @@
 @import 'variables.scss';
 
 .addressesButton {
-    max-width: 25rem;
-    width: 100%;
-    margin: 0 auto;
+  max-width: 25rem;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .wrapper {
-    gap: 3.5625rem;
-    padding: 2.5rem;
-    padding-top: .9375rem;
+  gap: 3.5625rem;
+  padding: 2.5rem;
+  padding-top: 0.9375rem;
+  flex: 1;
+
+  .addressList {
+    overflow-y: auto;
     flex: 1;
+  }
 
-    .addressList {
-        overflow-y: auto;
-        flex: 1;
+  .title {
+    font-size: 1.5625rem;
+    font-weight: 400;
+  }
+
+  .separator {
+    flex: 1 0 auto;
+  }
+
+  .item {
+    height: 4.0625rem;
+    padding-left: 1.25rem !important;
+
+    &:nth-child(odd) {
+      background-color: rgba(0, 0, 0, 0.025);
     }
 
-    .title {
-        font-size: 1.5625rem;
-        font-weight: 400;
+    &:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.1);
     }
 
-    .separator {
-        flex: 1 0 auto;
+    .details {
+      text-align: left;
+      overflow-x: auto;
+
+      .address {
+        word-break: break-all;
+        text-align: left;
+      }
     }
 
-    .item {
-        height: 4.0625rem;
-        padding-left: 1.25rem !important;
-
-        &:nth-child(odd) {
-            background-color: rgba(0, 0, 0, 0.025);
-        }
-
-        &:nth-child(even) {
-            background-color: rgba(0, 0, 0, 0.1);
-        }
-
-        .details {
-            text-align: left;
-            overflow-x: auto;
-
-            .address {
-                word-break: break-all;
-                text-align: left;
-            }
-        }
-
-        .button {
-            flex: 0 0 auto;
-            width: 3.75rem;
-        }
-
-        &:hover {
-            background-color: rgba(0, 0, 0, 0.2);
-        }
+    .button {
+      flex: 0 0 auto;
+      width: 3.75rem;
     }
+
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  }
 }
 
 // Mobile
 @include lg-breakpoint {
-    .wrapper {
-        padding: 1.25rem;
-        padding-top: 1.5rem;
+  .wrapper {
+    padding: 1.25rem;
+    padding-top: 1.5rem;
 
-        .title {
-            text-align: center;
-            width: auto;
-            margin: 0 auto;
-        }
-        .item {
-            padding-left: .9375rem !important;
-
-            .details {
-                padding-right: .3125rem;
-            }
-        }
+    .title {
+      text-align: center;
+      width: auto;
+      margin: 0 auto;
     }
+    .item {
+      padding-left: 0.9375rem !important;
+
+      .details {
+        padding-right: 0.3125rem;
+      }
+    }
+  }
 }

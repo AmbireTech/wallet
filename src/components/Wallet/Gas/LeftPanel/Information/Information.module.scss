@@ -3,11 +3,11 @@
 .wrapper {
   p {
     margin: 0;
-    margin-bottom: .9375rem;
+    margin-bottom: 0.9375rem;
     font-weight: 300;
-    opacity: .7;
+    opacity: 0.7;
   }
-  
+
   .saveAlert {
     margin-bottom: 3.75rem;
   }
@@ -16,9 +16,9 @@
 @include lg-breakpoint {
   .wrapper {
     p {
-      margin-bottom: .625rem;
+      margin-bottom: 0.625rem;
     }
-    
+
     .saveAlert {
       margin-bottom: 1.875rem;
     }
@@ -30,7 +30,7 @@
     text-align: center;
 
     p {
-      font-size: .875rem;
+      font-size: 0.875rem;
     }
   }
 }

@@ -1,60 +1,61 @@
 @import 'variables.scss';
 
 .wrapper {
-    display: flex;
-    flex-direction: row;
-    gap: 1.0625rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1.0625rem;
 
-    p {
-        margin: 0;
+  p {
+    margin: 0;
+  }
+
+  .panel {
+    flex: 0 1 50%;
+    padding: 1.875rem 2.5rem;
+    gap: 2.5rem;
+
+    &Title {
+      font-weight: 400;
+      font-size: 1.5625rem;
     }
 
-    .panel {
-        flex: 0 1 50%;
-        padding: 1.875rem 2.5rem;
-        gap: 2.5rem;
+    .export {
+      .button {
+        margin-bottom: 1.25rem;
+        height: 3.75rem;
+        width: 100%;
+        background: transparent linear-gradient(90deg, $ambire-dark-blue 0%, $ambire-dark-blue 100%)
+          0% 0%;
+        border: none;
+        color: $c-titan-white;
 
-        &Title {
-            font-weight: 400;
-            font-size: 1.5625rem;
+        svg {
+          color: $c-titan-white !important;
         }
-
-        .export {
-            .button {
-                margin-bottom: 1.25rem;
-                height: 3.75rem;
-                width: 100%;
-                background: transparent linear-gradient(90deg, $ambire-dark-blue 0%, $ambire-dark-blue 100%) 0% 0%;
-                border: none;
-                color: $c-titan-white;
-    
-                svg {
-                    color: $c-titan-white !important;
-                }
-            }
-        }
-    
-        .import {
-            .button { 
-                margin-bottom: 1.25rem;
-                height: 3.75rem;
-                width: 100%;
-                background: transparent linear-gradient(90deg, $c-turquoise 0%, #007D8A 100%) 0% 0%;
-                border: none;
-                color: $c-titan-white;
-    
-                svg {
-                    color: $c-titan-white !important;
-                }
-            }
-        }
+      }
     }
+
+    .import {
+      .button {
+        margin-bottom: 1.25rem;
+        height: 3.75rem;
+        width: 100%;
+        background: transparent linear-gradient(90deg, $c-turquoise 0%, #007d8a 100%) 0% 0%;
+        border: none;
+        color: $c-titan-white;
+
+        svg {
+          color: $c-titan-white !important;
+        }
+      }
+    }
+  }
 }
 
 // Mobile
 @include lg-breakpoint {
-    .wrapper {
-        flex-direction: column;
-        gap: 1rem;
-    }
+  .wrapper {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }

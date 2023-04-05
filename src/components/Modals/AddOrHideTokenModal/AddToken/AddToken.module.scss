@@ -7,7 +7,7 @@
     label {
       margin-left: 1.25rem;
       font-weight: 400;
-      font-size: .875rem;
+      font-size: 0.875rem;
     }
   }
   .addButton {
@@ -22,19 +22,19 @@
       color: $c-turquoise;
     }
     .symbol {
-      opacity: .8;
+      opacity: 0.8;
     }
   }
 
   .extraTokensList {
     display: flex;
     flex-direction: column;
-    gap: .625rem;
+    gap: 0.625rem;
 
     .token {
       margin-bottom: 0;
       background-color: $c-mirage;
-      padding: .625rem;
+      padding: 0.625rem;
       border-radius: $border-radius;
       flex-direction: row;
       width: 100%;

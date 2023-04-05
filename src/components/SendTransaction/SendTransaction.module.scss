@@ -1,4 +1,4 @@
-@import "variables.scss";
+@import 'variables.scss';
 
 .wrapper {
   position: fixed;
@@ -21,7 +21,7 @@
     padding-bottom: 2.875rem;
     max-width: 110rem;
     padding: 2.3125rem 2.5rem;
-    
+
     .containerBody {
       overflow: hidden;
       flex: 1;
@@ -31,15 +31,16 @@
       .panel {
         flex: 1;
         padding: 1.875rem 2.5rem;
-  
+
         &:first-child {
           flex: 2;
         }
-    
-        & > div { // Panel .content div
+
+        & > div {
+          // Panel .content div
           justify-content: space-between;
         }
-  
+
         .panelTitle {
           margin: 0;
           margin-bottom: 1.6875rem;
@@ -49,12 +50,11 @@
         }
       }
     }
-
   }
 }
 // Here we are not using a breakpoint from variables.scss, but SendTransaction
 // covers the whole screen, so it shouldn't be a problem.
-@media screen and (max-width: 1600px) { 
+@media screen and (max-width: 1600px) {
   .wrapper {
     .container {
       .containerBody {
@@ -62,7 +62,7 @@
           &:first-child {
             flex: 1.5;
           }
-  
+
           .panelTitle {
             font-size: 1.4375rem;
           }
@@ -76,12 +76,12 @@
   .wrapper {
     .container {
       padding: 2.5rem 1.25rem;
-      padding-top: .3125rem; // Fix for the Back Icon being cut
+      padding-top: 0.3125rem; // Fix for the Back Icon being cut
       max-width: 56.25rem;
       margin: 0 auto;
       margin-top: 1.875rem;
       overflow-y: auto;
-      
+
       .containerBody {
         overflow: unset;
         flex-direction: column;
@@ -91,13 +91,12 @@
         .panel {
           overflow-y: unset;
           padding: 1.25rem;
-  
+
           .panelTitle {
             font-size: 1.25rem;
           }
         }
       }
-
     }
   }
 }
@@ -105,14 +104,14 @@
 @include sm-breakpoint {
   .wrapper {
     .container {
-      padding: 1.875rem .9375rem;
-      padding-top: .3125rem;
-      margin-top: .9375rem;
+      padding: 1.875rem 0.9375rem;
+      padding-top: 0.3125rem;
+      margin-top: 0.9375rem;
 
       .containerBody {
         gap: 1.0625rem;
         .panel {
-          padding: .9375rem;
+          padding: 0.9375rem;
         }
       }
     }

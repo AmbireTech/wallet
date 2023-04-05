@@ -1,9 +1,9 @@
 @import 'variables';
 
 $body-size: 1.875rem;
-$top-item-mobile-up-distance: .3438rem;
-$bottom-item-mobile-up-distance: .8125rem;
-$item-mobile-distance: .625rem;
+$top-item-mobile-up-distance: 0.3438rem;
+$bottom-item-mobile-up-distance: 0.8125rem;
+$item-mobile-distance: 0.625rem;
 
 .wrapper {
   padding-top: 1.8125rem; // The height of the checkbox + .3125rem gap
@@ -12,15 +12,15 @@ $item-mobile-distance: .625rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: .5rem;
-    margin-bottom: .8125rem;
+    gap: 0.5rem;
+    margin-bottom: 0.8125rem;
 
     .stepItem {
       position: absolute;
       bottom: calc(#{$body-size} + #{$top-item-mobile-up-distance});
       display: flex;
       align-items: center;
-      gap: .625rem;
+      gap: 0.625rem;
 
       .stepItemIcon {
         width: 1.5rem;
@@ -31,7 +31,7 @@ $item-mobile-distance: .625rem;
       .stepItemName {
         margin: 0;
         font-weight: 400;
-        font-size: .875rem;
+        font-size: 0.875rem;
       }
     }
 
@@ -80,7 +80,7 @@ $item-mobile-distance: .625rem;
         border-radius: 50%;
         border: 2px solid $c-mirage;
         // We add transform to both icons in order to center them
-        transform: translateX(.1563rem);
+        transform: translateX(0.1563rem);
 
         &:last-child {
           transform: translateX(-0.1563rem);
@@ -100,7 +100,7 @@ $item-mobile-distance: .625rem;
       margin-bottom: 1.25rem;
 
       .stepItem {
-        top: .3125rem;
+        top: 0.3125rem;
         left: calc(#{$body-size} + #{$item-mobile-distance});
         transform: unset;
         flex-wrap: wrap;
@@ -113,7 +113,7 @@ $item-mobile-distance: .625rem;
         }
 
         .stepItemName {
-          font-size: .8125rem;
+          font-size: 0.8125rem;
         }
       }
 
@@ -124,8 +124,8 @@ $item-mobile-distance: .625rem;
 
         .fromAmount,
         .toAmount {
-          top: .3125rem;
-          font-size: .8125rem;
+          top: 0.3125rem;
+          font-size: 0.8125rem;
           left: unset;
           right: calc(#{$body-size} + #{$item-mobile-distance});
         }

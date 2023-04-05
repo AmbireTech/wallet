@@ -6,7 +6,7 @@
   .content {
     display: flex;
     flex-direction: column;
-    gap: .3125rem;
+    gap: 0.3125rem;
     text-align: left;
     font-size: 1rem;
     color: $c-titan-white;
@@ -15,9 +15,9 @@
 
     .feesInfo {
       margin: 0;
-      margin-bottom: .75rem;
+      margin-bottom: 0.75rem;
     }
- 
+
     .error {
       color: $danger-color;
     }
@@ -28,10 +28,9 @@
   .wrapper {
     .content {
       .feesInfo {
-        font-size: .875rem;
+        font-size: 0.875rem;
         text-align: center;
       }
-    }   
+    }
   }
 }
-

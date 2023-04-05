@@ -39,18 +39,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: .3s ease-out all;
+    transition: 0.3s ease-out all;
     cursor: pointer;
 
     svg {
       color: $c-scampi;
-      transition: .3s ease-out all;
+      transition: 0.3s ease-out all;
       width: 100%;
 
-      &.trezor, &.ledger {
+      &.trezor,
+      &.ledger {
         max-width: 10.75rem;
       }
-      
+
       &.metamask {
         max-width: 4.375rem;
       }
@@ -73,13 +74,13 @@
         }
 
         &.metamask {
-          color: #EF801B;
-  
+          color: #ef801b;
+
           :global(#decoration) {
             color: $c-white;
           }
         }
-  
+
         &.gridplus {
           color: $c-white;
 
@@ -113,7 +114,6 @@
   .errorMessage {
     color: $danger-color;
     margin: 0 0 1.25rem;
-
   }
 
   .button {

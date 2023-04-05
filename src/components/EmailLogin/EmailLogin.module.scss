@@ -1,236 +1,239 @@
 @import 'variables.scss';
 
 .loginSignupWrapper {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 3.75rem;
-    min-height: 100%;
-    padding: 2.5rem 0;
-    overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 3.75rem;
+  min-height: 100%;
+  padding: 2.5rem 0;
+  overflow: hidden;
 
-    &.dark {
-        background: url('/resources/login-bg.png');
-        background-size: cover;
-        background-position: top center;
-        background-repeat: no-repeat;
-
-        input {
-            &:focus {
-                border-bottom-color: $c-white;
-            }
-        }
-    }
-
-    button:not([type=submit]), input {
-        font-size: 1rem;
-        border: 0;
-        background: none; /* #282c34; */
-        padding: 1rem;
-        box-sizing: border-box;
-        font-family: 'Poppins', sans-serif;
-        transition: all 0.1s ease-in-out;
-    }
-
-    button {
-        background-color: white;
-    }
-
-    button[type=submit] {
-        margin-bottom: 30px;
-    }
-
-    input:focus {
-        outline: 0;
-    }
-
-    button:not([type=submit]) {
-        opacity: 0.8;
-    }
-
-    button:not([type=submit]):not([disabled]):hover {
-        opacity: 1;
-    }
-
-    input:disabled, button:disabled {
-        opacity: 0.5 !important;
-        cursor: default;
-    }
+  &.dark {
+    background: url('/resources/login-bg.png');
+    background-size: cover;
+    background-position: top center;
+    background-repeat: no-repeat;
 
     input {
-        color: theme(text-secondary);
-        margin: 2rem 0;
-        border-bottom: 2px solid theme(border-input);
-        width: 100%;
-        font-size: 1rem;
-
-        &:focus {
-            border-bottom-color: #6000ff;        
-        }
+      &:focus {
+        border-bottom-color: $c-white;
+      }
     }
+  }
 
-    .logo {
-        width: 100%;
-        max-width: 15.75rem;
-        margin: 0 auto;
-        height: 6.875rem;
+  button:not([type='submit']),
+  input {
+    font-size: 1rem;
+    border: 0;
+    background: none; /* #282c34; */
+    padding: 1rem;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.1s ease-in-out;
+  }
+
+  button {
+    background-color: white;
+  }
+
+  button[type='submit'] {
+    margin-bottom: 30px;
+  }
+
+  input:focus {
+    outline: 0;
+  }
+
+  button:not([type='submit']) {
+    opacity: 0.8;
+  }
+
+  button:not([type='submit']):not([disabled]):hover {
+    opacity: 1;
+  }
+
+  input:disabled,
+  button:disabled {
+    opacity: 0.5 !important;
+    cursor: default;
+  }
+
+  input {
+    color: theme(text-secondary);
+    margin: 2rem 0;
+    border-bottom: 2px solid theme(border-input);
+    width: 100%;
+    font-size: 1rem;
+
+    &:focus {
+      border-bottom-color: #6000ff;
     }
+  }
 
-    .pluginInfo {
-        display: flex;
-        flex-direction: column;
-        gap: .5rem;
-        align-items: center;
-        font-size: 1.125rem;
+  .logo {
+    width: 100%;
+    max-width: 15.75rem;
+    margin: 0 auto;
+    height: 6.875rem;
+  }
 
-        .name {
-            font-size: 1.7em;
-        }
-    } 
+  .pluginInfo {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    align-items: center;
+    font-size: 1.125rem;
 
-    .signersToChoose {
-        margin: 0 auto;
-        display: block;
-        line-height: 2rem;
-        font-size: 1.5rem;
-        color: #ccc;
-        list-style: none;
-        font-family: 'Ubuntu Mono';
-        width: 31.25rem;
-        cursor: pointer;
-
-        li:hover {
-            background-color: rgba(0, 0, 0, 0.3);
-            color: $c-white;
-        }
+    .name {
+      font-size: 1.7em;
     }
+  }
 
-    .loginEmail form > *, .loginEmail button {
-        /* TODO */
-        display: block;
+  .signersToChoose {
+    margin: 0 auto;
+    display: block;
+    line-height: 2rem;
+    font-size: 1.5rem;
+    color: #ccc;
+    list-style: none;
+    font-family: 'Ubuntu Mono';
+    width: 31.25rem;
+    cursor: pointer;
+
+    li:hover {
+      background-color: rgba(0, 0, 0, 0.3);
+      color: $c-white;
     }
+  }
+
+  .loginEmail form > *,
+  .loginEmail button {
+    /* TODO */
+    display: block;
+  }
 }
 
 .emailLoginSection {
-    a {
-        display: block;
-        margin: 1.3125rem auto;
-        text-transform: uppercase;
-        font-weight: 600;
-        font-size: 1.25rem;
-        text-align: center;
+  a {
+    display: block;
+    margin: 1.3125rem auto;
+    text-transform: uppercase;
+    font-weight: 600;
+    font-size: 1.25rem;
+    text-align: center;
+  }
+
+  .backButton {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 1rem;
+    font-weight: 400;
+    position: absolute;
+    bottom: 1.25rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: theme(text-primary);
+    opacity: 0.8;
+    transition: 0.3s ease-in-out;
+
+    .backIcon {
+      width: 1.25rem;
+      height: 0.5rem;
     }
 
-    .backButton {
-        display: flex;
-        align-items: center;
-        gap: .625rem;
-        font-size: 1rem;
-        font-weight: 400;
-        position: absolute;
-        bottom: 1.25rem;
-        left: 50%;
-        transform: translateX(-50%);
-        color: theme(text-primary);
-        opacity: .8;
-        transition: .3s ease-in-out;
-
-        .backIcon {
-            width: 1.25rem;
-            height: .5rem;
-        }
-
-        img {
-            margin-right: .625rem;
-        }
-
-        &:hover {
-            opacity: 1;
-        }
+    img {
+      margin-right: 0.625rem;
     }
 
-    .loginEmail {
-        max-width: 25rem;
-        margin: 0 auto;
-
-        .error {
-            position: absolute;
-            left: 50%;
-            transform: translateX(-50%);
-            top: 1.25rem;
-            font-size: 1.125rem;
-            font-weight: 300;
-            background-color: rgba(#fd1a64, 0.8);
-            text-align: center;
-            color: $c-white;
-            padding: .9375rem 1.875rem;
-            border-radius: $border-radius;
-        }
+    &:hover {
+      opacity: 1;
     }
+  }
+
+  .loginEmail {
+    max-width: 25rem;
+    margin: 0 auto;
+
+    .error {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 1.25rem;
+      font-size: 1.125rem;
+      font-weight: 300;
+      background-color: rgba(#fd1a64, 0.8);
+      text-align: center;
+      color: $c-white;
+      padding: 0.9375rem 1.875rem;
+      border-radius: $border-radius;
+    }
+  }
 }
 
 .emailConf {
-    background-color: theme(background-primary);
-    border: 1px solid theme(border-terniary);
-    border-radius: $border-radius;
-    padding: 1.875rem 3.75rem;
-    padding-top: .75rem;
-    text-align: center;
-    color: theme(text-primary);
-    width: 100%;
-    max-width: 28.75rem;
-    margin: 0 auto;
+  background-color: theme(background-primary);
+  border: 1px solid theme(border-terniary);
+  border-radius: $border-radius;
+  padding: 1.875rem 3.75rem;
+  padding-top: 0.75rem;
+  text-align: center;
+  color: theme(text-primary);
+  width: 100%;
+  max-width: 28.75rem;
+  margin: 0 auto;
 }
 
 .emailConf h3 {
-    font-size: 1.5rem;
-    text-align: center;
-    font-weight: 400;
-    margin-top: 0;
-    margin-bottom: 1.25rem;
+  font-size: 1.5rem;
+  text-align: center;
+  font-weight: 400;
+  margin-top: 0;
+  margin-bottom: 1.25rem;
 }
 
 .emailConf p {
-    font-size: 1rem;
-    font-weight: 300;
-    line-height: 1.5625rem;
-    margin-bottom: 0;
-    min-width: 22.5rem;
+  font-size: 1rem;
+  font-weight: 300;
+  line-height: 1.5625rem;
+  margin-bottom: 0;
+  min-width: 22.5rem;
 
-    span.email {
-        color: $c-heliotrope;
-    }
+  span.email {
+    color: $c-heliotrope;
+  }
 }
 
 .magicLink {
-    font-weight: 400;
-    color: theme(text-primary);
-    opacity: .8;
-    text-align: center;
+  font-weight: 400;
+  color: theme(text-primary);
+  opacity: 0.8;
+  text-align: center;
 }
 
 .emailAnimation {
-    width: 8.75rem;
-    height: 8.75rem;
-    margin: 0 auto;
+  width: 8.75rem;
+  height: 8.75rem;
+  margin: 0 auto;
 }
 
 // Mobile
 @include lg-breakpoint {
-    .loginSignupWrapper {
-        gap: 2.5rem;
-        padding: 0 1rem;
+  .loginSignupWrapper {
+    gap: 2.5rem;
+    padding: 0 1rem;
 
-        .logo {
-            width: 75%;
-        }
+    .logo {
+      width: 75%;
     }
-    .emailConf {
-        padding: 1.25rem;
-        padding-top: .625rem;
+  }
+  .emailConf {
+    padding: 1.25rem;
+    padding-top: 0.625rem;
 
-        p {
-            min-width: unset;
-        }
+    p {
+      min-width: unset;
     }
+  }
 }

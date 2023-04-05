@@ -8,7 +8,7 @@ import { arrayify, isHexString, toUtf8Bytes } from 'ethers/lib/utils'
 import { useCallback, useMemo, useState } from 'react'
 
 import { verifyMessage } from '@ambire/signature-validator'
-import { getWallet } from "lib/getWallet"
+import { getWallet } from 'lib/getWallet'
 
 import { getNetworkByChainId } from 'ambire-common/src/services/getNetwork'
 import { getProvider } from 'ambire-common/src/services/provider'
@@ -53,7 +53,6 @@ export type UseSignMessageReturnType = {
     icons: string[]
   }
 }
-
 
 function getMessageAsBytes(msg: string) {
   // Transforming human message / hex string to bytes
@@ -209,18 +208,16 @@ const useSignMessage = ({
 
         await verifySignature(msgToSign, sig, requestedNetwork?.id)
 
-        addSignedMessage(
-          {
-            accountId: account.id,
-            networkId: requestedChainId,
-            date: new Date().getTime(),
-            typed: isTypedData,
-            signer: account.signer,
-            message: msgToSign.txn,
-            signature: sig,
-            dApp
-          }
-        )
+        addSignedMessage({
+          accountId: account.id,
+          networkId: requestedChainId,
+          date: new Date().getTime(),
+          typed: isTypedData,
+          signer: account.signer,
+          message: msgToSign.txn,
+          signature: sig,
+          dApp
+        })
 
         // keeping resolve at the very end, because it can trigger components unmounting, and code after resolve may or may not run
         resolve({ success: true, result: sig })
@@ -243,7 +240,7 @@ const useSignMessage = ({
       verifySignature,
       dApp,
       requestedChainId,
-      addSignedMessage,
+      addSignedMessage
     ]
   )
   // Passing hardware device is required only for the mobile app
@@ -256,13 +253,11 @@ const useSignMessage = ({
       setLoading(true)
 
       try {
-        const wallet = getWallet(
-          {
-            signer: account.signer,
-            signerExtra: account.signerExtra,
-            chainId: 1 // does not matter
-          }
-        )
+        const wallet = getWallet({
+          signer: account.signer,
+          signerExtra: account.signerExtra,
+          chainId: 1 // does not matter
+        })
 
         if (!wallet) {
           return
@@ -286,16 +281,15 @@ const useSignMessage = ({
         await verifySignature(msgToSign, sig, requestedNetwork?.id)
 
         addSignedMessage({
-            accountId: account.id,
-            networkId: requestedChainId,
-            date: new Date().getTime(),
-            typed: isTypedData,
-            signer: account.signer,
-            message: msgToSign.txn,
-            signature: sig,
-            dApp
-          }
-        )
+          accountId: account.id,
+          networkId: requestedChainId,
+          date: new Date().getTime(),
+          typed: isTypedData,
+          signer: account.signer,
+          message: msgToSign.txn,
+          signature: sig,
+          dApp
+        })
 
         // keeping resolve at the very end, because it can trigger components unmounting, and code after resolve may or may not run
         resolve({ success: true, result: sig })

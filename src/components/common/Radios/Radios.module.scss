@@ -1,90 +1,90 @@
 @import 'variables.scss';
 
 .radiosContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9375rem;
+
+  &.row {
+    flex-direction: row;
+  }
+
+  .radioContainer {
     display: flex;
-    flex-direction: column;
-    gap: .9375rem;
+    gap: 1.25rem;
+    align-items: center;
+    text-align: left;
+    width: 100%;
 
-    &.row {
-        flex-direction: row;
+    .radio {
+      min-width: 1.5rem;
+      position: relative;
+      height: 1.5rem;
+      width: 1.5rem;
+      border-radius: 100%;
+      border: 3px solid $c-scampi;
+      overflow: hidden;
+      transition: 0.3s ease-in-out all;
+
+      &Inner {
+        display: none;
+        position: absolute;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        top: 50%;
+        width: 0.875rem;
+        height: 0.875rem;
+        border-radius: 100%;
+        background-color: transparent;
+        transition: 0.3s ease-in-out all;
+      }
     }
 
-    .radioContainer {
-        display: flex;
-        gap: 1.25rem;
-        align-items: center;
-        text-align: left;
-        width: 100%;
-
-        .radio {
-            min-width: 1.5rem;
-            position: relative;
-            height: 1.5rem;
-            width: 1.5rem;
-            border-radius: 100%;
-            border: 3px solid $c-scampi;
-            overflow: hidden;
-            transition: .3s ease-in-out all;
-
-            &Inner {
-                display: none;
-                position: absolute;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                top: 50%;
-                width: .875rem;
-                height: .875rem;
-                border-radius: 100%;
-                background-color: transparent;
-                transition: .3s ease-in-out all;
-            }
-        }
-
-        .label {
-            flex: 1;
-            margin: 0;
-            font-size: .875rem;
-            font-weight: 300;
-        }
-
-        &.disabled {
-            opacity: 0.5;
-        }
-
-        &.active {
-            pointer-events: none;
-
-            .radio {
-                border: 3px solid $c-turquoise;
-                &Inner {
-                    display: block;
-                    background-color: $c-turquoise;
-                }
-            }
-        }
-
-        &:not(.disabled):hover {
-            cursor: pointer;
-
-            .radio {
-                border: 3px solid $c-turquoise;
-                &Inner {
-                    display: block;
-                    background-color: $c-turquoise;
-                }
-            }
-
-            label {
-                cursor: pointer;
-            }
-        }
+    .label {
+      flex: 1;
+      margin: 0;
+      font-size: 0.875rem;
+      font-weight: 300;
     }
+
+    &.disabled {
+      opacity: 0.5;
+    }
+
+    &.active {
+      pointer-events: none;
+
+      .radio {
+        border: 3px solid $c-turquoise;
+        &Inner {
+          display: block;
+          background-color: $c-turquoise;
+        }
+      }
+    }
+
+    &:not(.disabled):hover {
+      cursor: pointer;
+
+      .radio {
+        border: 3px solid $c-turquoise;
+        &Inner {
+          display: block;
+          background-color: $c-turquoise;
+        }
+      }
+
+      label {
+        cursor: pointer;
+      }
+    }
+  }
 }
 
 @include sm-breakpoint {
-    .radiosContainer {
-        .radioContainer {
-            gap: .5rem;
-        }
+  .radiosContainer {
+    .radioContainer {
+      gap: 0.5rem;
     }
+  }
 }

@@ -6,7 +6,7 @@
   gap: 1.25rem;
   padding: 1.25rem;
   background: $c-ebony-clay;
-  border: .0625rem solid $c-fiord;
+  border: 0.0625rem solid $c-fiord;
   border-radius: $border-radius;
 
   .message {
@@ -22,9 +22,9 @@
       color: $c-turquoise;
       text-decoration: underline;
       padding: 0;
-  
+
       &.buttonMargin {
-        margin-top: .5rem;
+        margin-top: 0.5rem;
         align-self: center;
       }
     }

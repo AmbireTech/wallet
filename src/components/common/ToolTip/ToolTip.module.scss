@@ -1,50 +1,51 @@
 @import 'variables.scss';
-$arrow-size: .9375rem;
+$arrow-size: 0.9375rem;
 
 .tooltip {
-    display: contents;
+  display: contents;
 
+  .tooltipLabel {
+    z-index: 50;
+    position: fixed;
+    display: flex;
+    gap: 0.625rem;
+    max-width: 18.75rem;
+    padding: 0.9375rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: theme(background-terniary); // temporary use of background color as text color
+    background-color: theme(text-primary); // Temporary use of text color as background color
+    box-shadow: $box-shadow;
+    border-radius: $border-radius;
+    white-space: normal;
+    opacity: 0;
+    overflow: visible;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+
+    .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .label {
+      margin: 0;
+      flex: 1;
+      font-size: 0.875rem;
+    }
+  }
+
+  &:hover,
+  &:active,
+  &:focus {
     .tooltipLabel {
-        z-index: 50;
-        position: fixed;
-        display: flex;
-        gap: .625rem;
-        max-width: 18.75rem;
-        padding: .9375rem;
-        font-size: .9375rem;
-        font-weight: 500;
-        color: theme(background-terniary); // temporary use of background color as text color
-        background-color: theme(text-primary); // Temporary use of text color as background color
-        box-shadow: $box-shadow;
-        border-radius: $border-radius;
-        white-space: normal;
-        opacity: 0;
-        overflow: visible;
-        transition: opacity 0.3s ease-in-out;
-        pointer-events: none;
-
-        .icon {
-            width: 1.5rem;
-            height: 1.5rem;
-        }
-
-        .label {
-            margin: 0;
-            flex: 1;
-            font-size: .875rem;
-        }
+      opacity: 1;
     }
+  }
 
-    &:hover, &:active, &:focus {
-        .tooltipLabel {
-            opacity: 1;
-        }
+  @include lg-breakpoint {
+    .tooltipLabel {
+      transition-delay: 400ms;
     }
-
-    @include lg-breakpoint {
-        .tooltipLabel {
-            transition-delay: 400ms;
-        }
-    }
-
+  }
 }

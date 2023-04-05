@@ -3,127 +3,127 @@
 $input-height: 3.75rem;
 
 .textInput {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+
+  .label {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .container {
     position: relative;
-    display: flex;
-    flex-direction: column;
-    gap: .625rem;
+    border-radius: $border-radius;
+    overflow: hidden;
 
-    .label {
-        margin: 0;
-        font-weight: 500;
+    &.hasIcon {
+      .textInputContainerIcon {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        display: flex;
+        background-color: theme(background-primary);
+        align-items: center;
+        justify-content: center;
+        width: 3.75rem;
+        font-size: 1.5rem;
+        color: theme(text-primary);
+        border-bottom: 2px solid transparent;
+        transition: all 0.1s ease-in-out;
+
+        svg {
+          width: 1.5rem;
+          height: 1.5rem;
+        }
+      }
+
+      input {
+        padding-left: 3rem;
+
+        &:focus ~ .textInputContainerIcon {
+          border-bottom-color: theme(border-input);
+        }
+      }
     }
 
-    .container {
-        position: relative;
-        border-radius: $border-radius;
-        overflow: hidden;
+    .button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      width: 3.5em;
+      @include flex-center-center;
+      color: theme(text-primary);
+      cursor: pointer;
+      user-select: none;
+      transition: $basic-transition;
+      border-bottom: 2px solid transparent;
 
-        &.hasIcon {
-            .textInputContainerIcon {
-                position: absolute;
-                top: 0;
-                left: 0;
-                height: 100%;
-                display: flex;
-                background-color: theme(background-primary);
-                align-items: center;
-                justify-content: center;
-                width: 3.75rem;
-                font-size: 1.5rem;
-                color: theme(text-primary);
-                border-bottom: 2px solid transparent;
-                transition: all 0.1s ease-in-out;
+      svg {
+        width: 1.25rem;
+        height: 1.25rem;
+      }
 
-                svg {
-                    width: 1.5rem;
-                    height: 1.5rem;
-                }
-            }
-
-            input {
-                padding-left: 3rem;
-
-                &:focus ~ .textInputContainerIcon {
-                    border-bottom-color: theme(border-input);
-                }
-            }
-        }
-        
-        .button {
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 3.5em;
-            @include flex-center-center;
-            color: theme(text-primary);
-            cursor: pointer;
-            user-select: none;
-            transition: $basic-transition;
-            border-bottom: 2px solid transparent;
-
-            svg {
-                width: 1.25rem;
-                height: 1.25rem;
-            }
-
-            &:hover {
-                background-color: rgba(0, 0, 0, 0.1);
-            }
-        }
-
-        input {
-            height: $input-height;
-            width: 100%;
-            color: theme(text-secondary);
-            font-family: 'Poppins', sans-serif;
-            font-size: 1rem;
-            padding: 1.125em;
-            padding-left: 1.25em;
-            opacity: 1;
-            border: none;
-            text-overflow: ellipsis;
-            outline: none;
-            background-color: theme(background-primary);
-            transition: all 0.1s ease-in-out;
-            border-bottom: 2px solid transparent;
-
-            &:focus {
-                border-bottom-color: theme(border-input);
-            }
-
-            &:focus ~ .button {
-                border-bottom-color: theme(border-input);
-            }
-        }
+      &:hover {
+        background-color: rgba(0, 0, 0, 0.1);
+      }
     }
 
-    .info {
-        font-size: .9375rem;
-        padding: 0 0.4em;
-        opacity: 0.5;
+    input {
+      height: $input-height;
+      width: 100%;
+      color: theme(text-secondary);
+      font-family: 'Poppins', sans-serif;
+      font-size: 1rem;
+      padding: 1.125em;
+      padding-left: 1.25em;
+      opacity: 1;
+      border: none;
+      text-overflow: ellipsis;
+      outline: none;
+      background-color: theme(background-primary);
+      transition: all 0.1s ease-in-out;
+      border-bottom: 2px solid transparent;
+
+      &:focus {
+        border-bottom-color: theme(border-input);
+      }
+
+      &:focus ~ .button {
+        border-bottom-color: theme(border-input);
+      }
+    }
+  }
+
+  .info {
+    font-size: 0.9375rem;
+    padding: 0 0.4em;
+    opacity: 0.5;
+  }
+
+  &.copy {
+    .icon {
+      cursor: pointer;
     }
 
-    &.copy {
-        .icon {
-            cursor: pointer;
-        }
+    input {
+      cursor: text;
+      padding-right: 2.5em;
+      font-family: 'Ubuntu Mono';
+      font-size: 1.5rem;
 
-        input {
-            cursor: text;
-            padding-right: 2.5em;
-            font-family: 'Ubuntu Mono';
-            font-size: 1.5rem;
-
-            &:disabled {
-                opacity: 1 !important;
-            }
-        }
+      &:disabled {
+        opacity: 1 !important;
+      }
     }
+  }
 
-    &.small {
-        input {
-            height: 3.125rem;
-        }
+  &.small {
+    input {
+      height: 3.125rem;
     }
+  }
 }

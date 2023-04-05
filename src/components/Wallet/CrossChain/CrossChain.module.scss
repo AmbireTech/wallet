@@ -1,39 +1,39 @@
 @import 'variables.scss';
 
 .wrapper {
-    display: flex;
-    flex-direction: row;
-    gap: 1.0625rem;
-    min-height: 100%;
+  display: flex;
+  flex-direction: row;
+  gap: 1.0625rem;
+  min-height: 100%;
 
-    .panel {
-        flex: 1;
-        padding: 2.5rem;
-        padding-top: 2.25rem;
+  .panel {
+    flex: 1;
+    padding: 2.5rem;
+    padding-top: 2.25rem;
 
-        & > div {
-            padding-top: 1.25rem;
-        }
+    & > div {
+      padding-top: 1.25rem;
     }
+  }
 }
 
 // Small screen
 @include lg-breakpoint {
-    .wrapper {
-        min-height: auto;
-        flex-direction: column;
+  .wrapper {
+    min-height: auto;
+    flex-direction: column;
 
-        .panel {
-            padding: 1.875rem;
-        }
+    .panel {
+      padding: 1.875rem;
     }
+  }
 }
 
 // Mobile screen
 @include sm-breakpoint {
-    .wrapper {
-        .panel {
-            padding: 1.25rem;
-        }
+  .wrapper {
+    .panel {
+      padding: 1.25rem;
     }
+  }
 }

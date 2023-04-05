@@ -1,39 +1,39 @@
 @import 'variables';
 
 .wrapper {
-	gap: 0;
+  gap: 0;
 
-	.content {
-		position: static;
+  .content {
+    position: static;
 
-		.confettiAnimation {
-			position: absolute;
-			top: 0;
-			left: 50%;
-			transform: translate(-50%, -25%);
-			width: 50rem;
-		}
+    .confettiAnimation {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translate(-50%, -25%);
+      width: 50rem;
+    }
 
-		.image {
-			display: block;
-			margin: 0 auto;
-		}
+    .image {
+      display: block;
+      margin: 0 auto;
+    }
 
-		.title {
-			font-size: 1.5625rem;
-			font-weight: 400;
-			margin-bottom: 1.25rem;
-		}
+    .title {
+      font-size: 1.5625rem;
+      font-weight: 400;
+      margin-bottom: 1.25rem;
+    }
 
-		.text {
-			font-size: 0.875rem;
-			margin-bottom: 1.25rem;
-		}
+    .text {
+      font-size: 0.875rem;
+      margin-bottom: 1.25rem;
+    }
 
-		.link {
-			display: block;
-			margin-bottom: 3.75rem;
-			color: $c-heliotrope;
-		}
-	}
+    .link {
+      display: block;
+      margin-bottom: 3.75rem;
+      color: $c-heliotrope;
+    }
+  }
 }
