@@ -13,15 +13,17 @@
     margin: 0;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     flex: 1;
 
-    .link {
+    .button {
       cursor: pointer;
       display: block;
       color: $c-turquoise;
       text-decoration: underline;
+      padding: 0;
   
-      &.linkMargin {
+      &.buttonMargin {
         margin-top: .5rem;
       }
     }

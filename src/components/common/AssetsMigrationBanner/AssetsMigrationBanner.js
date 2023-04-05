@@ -102,7 +102,7 @@ const AssetsMigrationBanner = ({
           account. We recommend doing this in order to maximize your $WALLET rewards.
           <button
             type="button"
-            className={cn(styles.link, { [styles.linkMargin]: linkMargin })}
+            className={cn(styles.button, { [styles.buttonMargin]: linkMargin })}
             onClick={() => {
               showModal(
                 <AssetsMigrationModal
