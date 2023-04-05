@@ -102,8 +102,10 @@ library SignatureValidator {
 		// {address}{mode}; the spoof mode is used when simulating calls
 		} else if (mode == SignatureMode.Spoof && allowSpoofing) {
 			// This is safe cause it's specifically intended for spoofing sigs in simulation conditions, where tx.origin can be controlled
+			// We did not choose 0x00..00 because in future network upgrades tx.origin may be nerfed or there may be edge cases in which
+			// it is zero, such as native account abstraction
 			// slither-disable-next-line tx-origin
-			require(tx.origin == address(1), "SV_SPOOF_ORIGIN");
+			require(tx.origin == address(1) || tx.origin == address(6969), "SV_SPOOF_ORIGIN");
 			require(sig.length == 33, "SV_SPOOF_LEN");
 			sig.trimToSize(32);
 			return abi.decode(sig, (address));
