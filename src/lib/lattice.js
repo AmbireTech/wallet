@@ -22,7 +22,7 @@ const latticeInit = (commKey) => {
 }
 
 const latticeConnect = async (client, deviceId) => {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     client.connect(deviceId, (err, isPaired) => {
       if (err) {
         reject(`Lattice connect: ${err} Or check if the DeviceID is correct.`)
@@ -38,7 +38,7 @@ const latticeConnect = async (client, deviceId) => {
 }
 
 const latticePair = async (client, secret) => {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     client.pair(secret, (err, hasActiveWallet) => {
       if (err) {
         reject(`Lattice connect: ${err}`)
@@ -54,7 +54,7 @@ const latticePair = async (client, secret) => {
 }
 
 const latticeGetAddresses = async (client) => {
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     client.getAddresses(getAddressesReqOpts, (err, res) => {
       if (err) {
         reject(`Lattice get addresses: ${err}`)
@@ -83,7 +83,7 @@ const latticeSignMessage = async (client, hash) => {
     data: dataMsg
   }
 
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     client.sign(signOptsMsg, (err, signedTx) => {
       if (err) {
         reject(err)
@@ -113,7 +113,7 @@ const latticeSignMessage712 = async (client, message) => {
     }
   }
 
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     client.sign(reqData, (err, signedTx) => {
       if (err) {
         reject(err)
@@ -161,7 +161,7 @@ const latticeSignTransaction = async (client, txn, chainId) => {
     data: txData
   }
 
-  return await new Promise((resolve, reject) => {
+  return new Promise((resolve, reject) => {
     client.sign(signOpts, (err, signedTx) => {
       if (err) {
         reject(err)

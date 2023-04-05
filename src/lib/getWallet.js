@@ -174,7 +174,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
   if (signerExtra && signerExtra.type === 'Lattice') {
     return {
       signMessage: async (hash) => {
-        return await wrapLatticeError(
+        return wrapLatticeError(
           async (hash) => {
             const { commKey, deviceId } = signerExtra
             const client = latticeInit(commKey)
@@ -197,7 +197,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         )
       },
       signTransaction: async (params) => {
-        return await wrapLatticeError(
+        return wrapLatticeError(
           async (params) => {
             const { commKey, deviceId } = signerExtra
             const client = latticeInit(commKey)
@@ -224,7 +224,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         )
       },
       sendTransaction: async (transaction) => {
-        return await wrapLatticeError(
+        return wrapLatticeError(
           async (transaction) => {
             const network = networks.find((n) => n.chainId === transaction.chainId)
             if (!network) throw Error(`no network found for chainId : ${transaction.chainId}`)
@@ -258,7 +258,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         )
       },
       isConnected: async (matchAddress) => {
-        return await wrapLatticeError(
+        return wrapLatticeError(
           async (matchAddress) => {
             let addresses = null
 
@@ -286,7 +286,7 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
         )
       },
       _signTypedData: async (domain, types, value) => {
-        return await wrapLatticeError(
+        return wrapLatticeError(
           async (domain, types, value) => {
             const payload = _TypedDataEncoder.getPayload(domain, types, value)
             const { commKey, deviceId } = signerExtra

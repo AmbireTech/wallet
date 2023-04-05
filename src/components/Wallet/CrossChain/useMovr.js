@@ -15,15 +15,15 @@ async function fetchSocket(path, body, type = 'get') {
 
 const useMovr = () => {
   const fetchChains = useCallback(async () => {
-    return await fetchSocket('/supported/chains')
+    return fetchSocket('/supported/chains')
   }, [])
 
   const fetchFromTokens = useCallback(async (from, to) => {
-    return await fetchSocket(`/token-lists/from-token-list?fromChainId=${from}&toChainId=${to}`)
+    return fetchSocket(`/token-lists/from-token-list?fromChainId=${from}&toChainId=${to}`)
   }, [])
 
   const fetchToTokens = useCallback(async (from, to) => {
-    return await fetchSocket(`/token-lists/to-token-list?fromChainId=${from}&toChainId=${to}`)
+    return fetchSocket(`/token-lists/to-token-list?fromChainId=${from}&toChainId=${to}`)
   }, [])
 
   const fetchQuotes = useCallback(
@@ -37,7 +37,7 @@ const useMovr = () => {
       excludeBridges,
       sort = 'output'
     ) => {
-      return await fetchSocket(
+      return fetchSocket(
         `/quote?fromChainId=${fromChainId}&fromTokenAddress=${fromAsset}&toChainId=${toChainId}&toTokenAddress=${toAsset}&fromAmount=${amount}${excludeBridges.map(
           (b) => `&excludeBridges=${b}`
         )}&sort=${sort}&userAddress=${identity}&recipient=${identity}&singleTxOnly=true&isContractCall=true&bridgeWithGas=false`
@@ -53,7 +53,7 @@ const useMovr = () => {
 
   const approvalBuildTx = useCallback(
     async (chainID, owner, allowanceTarget, tokenAddress, amount) => {
-      return await fetchSocket(
+      return fetchSocket(
         `/approval/build-tx?chainID=${chainID}&owner=${owner}&allowanceTarget=${allowanceTarget}&tokenAddress=${tokenAddress}&amount=${amount}`
       )
     },
@@ -61,11 +61,11 @@ const useMovr = () => {
   )
 
   const sendBuildTx = useCallback(async (route, refuel) => {
-    return await fetchSocket('/build-tx', { route, refuel }, 'post')
+    return fetchSocket('/build-tx', { route, refuel }, 'post')
   }, [])
 
   const checkTxStatus = useCallback(async (transactionHash, fromChainId, toChainId) => {
-    return await fetchSocket(
+    return fetchSocket(
       `/bridge-status?transactionHash=${transactionHash}&fromChainId=${fromChainId}&toChainId=${toChainId}`
     )
   }, [])

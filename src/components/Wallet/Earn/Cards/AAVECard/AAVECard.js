@@ -228,7 +228,7 @@ const AAVECard = ({ networkId, tokens: tokensData, account, addRequest }) => {
   }, [networkDetails.id, defaultTokens, tokens, loadTokensAPR, addToast])
 
   useEffect(() => {
-    const invokeLoadPool = async () => await loadPool()
+    const invokeLoadPool = async () => loadPool()
     invokeLoadPool()
 
     return () => {
