@@ -1,5 +1,4 @@
 import { BsXLg } from 'react-icons/bs'
-import { MdWarning } from 'react-icons/md'
 import { useEffect, useMemo, useState, useRef } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
@@ -15,6 +14,8 @@ import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 import RecipientInput from './RecipientInput/RecipientInput'
 import { useRelayerData } from 'hooks'
+
+import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
 
 import styles from './Send.module.scss'
 
@@ -261,7 +262,7 @@ const Send = ({
             {title}
             <div className={styles.content}>
                 <Select searchable defaultValue={asset} items={sortedAssetsItems} onChange={({ value }) => setAsset(value)}/>
-                { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><MdWarning /> {feeBaseTokenWarning}</p> : <></>}
+                { feeBaseTokenWarning ? <p className={styles.gasTankConvertMsg}><AlertIcon /> {feeBaseTokenWarning}</p> : <></>}
                 <NumberInput
                     label={amountLabel}
                     value={amount}
@@ -277,7 +278,7 @@ const Send = ({
                 </div>)}
                 {gasTankDetails ? (
                     <p className={styles.gasTankMsg}>
-                        <MdWarning />
+                        <AlertIcon />
                         {gasTankDetails?.gasTankMsg}
                     </p>
                 ) : (<RecipientInput
