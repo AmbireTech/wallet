@@ -44,7 +44,13 @@ export default function DropDown({
       ref={ref}
       data-testid={testId}
     >
-      <button type="button" className={styles.content} onClick={() => setMenuOpen((prev) => !prev)}>
+      <div
+        role="menuitem"
+        tabIndex={0}
+        className={styles.content}
+        onClick={() => setMenuOpen((prev) => !prev)}
+        onKeyDown={() => setMenuOpen((prev) => !prev)}
+      >
         {icon ? <div className={styles.icon} style={{ backgroundImage: `url(${icon})` }} /> : null}
         <div className={cn(styles.title, titleClassName)}>{title}</div>
         {badge ? <div className={styles.badge}>{badge > 9 ? '9+' : badge}</div> : null}
@@ -57,7 +63,7 @@ export default function DropDown({
         </Icon>
 
         {isLoading && <LoadingBorders />}
-      </button>
+      </div>
       <CSSTransition
         unmountOnExit
         in={isMenuOpen}
@@ -65,14 +71,16 @@ export default function DropDown({
         classNames="fade"
         nodeRef={transitionRef}
       >
-        <button
-          type="button"
+        <div
           className={cn(styles.menu, menuClassName)}
           ref={transitionRef}
           onClick={closeOnClick ? () => setMenuOpen(false) : null}
+          onKeyDown={closeOnClick ? () => setMenuOpen(false) : null}
+          role="menuitem"
+          tabIndex={0}
         >
           {children}
-        </button>
+        </div>
       </CSSTransition>
     </div>
   )

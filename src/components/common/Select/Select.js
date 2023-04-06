@@ -44,7 +44,7 @@ const Select = ({
   })
 
   const filteredItems = search.length
-    ? items.filter(({ itemLabel }) => itemLabel.toLowerCase().includes(search.toLowerCase()))
+    ? items.filter(({ label: itemLabel }) => itemLabel.toLowerCase().includes(search.toLowerCase()))
     : items
 
   const selectItem = useCallback(
@@ -85,10 +85,12 @@ const Select = ({
       {label ? <p className={styles.label}>{label}</p> : null}
       {selectedItem ? (
         <div className={styles.selectContainer}>
-          <button
-            type="button"
+          <div
             className={`${styles.selectInput} ${selectInputClassName}`}
             onClick={() => setOpen(!isOpen)}
+            onKeyDown={() => setOpen(!isOpen)}
+            role="menuitem"
+            tabIndex={0}
           >
             <Image src={selectedItem.icon} alt="" className={cn(styles.icon, iconClassName)} />
             <div className={`${styles.label} ${labelClassName}`}>
@@ -99,7 +101,7 @@ const Select = ({
             <Icon size="sm" className={cn(styles.handle, { [styles.open]: isOpen })}>
               <ChevronDownIcon />
             </Icon>
-          </button>
+          </div>
           <CSSTransition
             unmountOnExit
             in={isOpen}
