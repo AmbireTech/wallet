@@ -119,10 +119,20 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
       if (account) connect({ uri: initialWcURI })
       else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
     }
-    const query = new URLSearchParams(window.location.href.split('?').slice(1).join('?'))
-    const wcUri = query.get('uri')
-    if (wcUri) connect({ uri: wcUri })
 
+    if (typeof window === 'undefined' || !window.location.href.includes('/?uri=')) return
+    
+    const uriRaw = window.location.href.split('/?uri=')[1]
+
+    const wcUri = uriRaw.split('#')[0]
+
+    if (!wcUri) return
+    if (!wcUri.includes('key=') && !wcUri.includes('symKey=')) return addToast('Invalid WalletConnect uri', { error: true })
+
+    if (wcUri) connect({ uri: wcUri })
+  }, [account, initialWcURI, connect, addToast])
+
+  useEffect(() => {
     // hax TODO: ask why? seems working without
     // window.wcConnect = uri => connect({ uri })
 
@@ -131,6 +141,8 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     const tryReadClipboard = async () => {
       if (!account) return
       if (isFirefox()) return
+      if (document.visibilityState !== 'visible') return
+
       try {
         const clipboard = await navigator.clipboard.readText()
         if (clipboard.match(/wc:[a-f0-9-]+@[12]\?/)) {
@@ -142,12 +154,12 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     }
 
     tryReadClipboard()
-    window.addEventListener('focus', tryReadClipboard)
+    document.addEventListener('visibilitychange', tryReadClipboard)
 
     return () => {
-      window.removeEventListener('focus', tryReadClipboard)
+      document.removeEventListener('visibilitychange', tryReadClipboard)
     }
-  }, [connect, account, addToast, initialWcURI])
+  }, [connect, account, addToast])
 
   return {
     connections: connections,

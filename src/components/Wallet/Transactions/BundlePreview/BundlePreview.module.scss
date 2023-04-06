@@ -1,76 +1,18 @@
 @import 'variables.scss';
 
-.bundle {
+.wrapper {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 25px;
+    gap: .625rem;
+    padding: 1.5625rem;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
-    border-radius: 12px;
-    margin-bottom: 25px;
-
-    .actions {
-        display: flex;
-        justify-content: flex-end;
-        gap: 15px;
-
-        button {
-            color: $c-titan-white;
-            border: 0;
-            padding: 15px 30px;
-
-            &.cancel {
-                color: $danger-color;
-                border: 2px solid $danger-color;
-            }
-
-            &.speedUp {
-                color: $c-turquoise;
-                border: 2px solid $c-turquoise;
-            }
-        }
-    }
+    border-radius: $border-radius;
+    margin-bottom: 1.25rem;
 }
 
-.bundlePreview {
-    .details {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 50px;
-        padding: 0 10px;
-        margin: 0;
-        margin-top: 20px;
-        list-style-type: none;
-
-        li {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-            overflow: hidden;
-
-            label {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 17px;
-                font-weight: bold;
-            }
-
-            p {
-                margin: 0;
-                font-size: 16px;
-                font-weight: 500;
-                opacity: 0.7;
-                white-space: nowrap;
-                overflow: hidden;
-                text-overflow: ellipsis;
-
-                a.explorerUrl {
-                    color: $c-heliotrope;
-                    text-decoration: underline;
-                }
-            }
-        }
+@include sm-breakpoint {
+    .wrapper {
+        padding: 1rem;
     }
 }

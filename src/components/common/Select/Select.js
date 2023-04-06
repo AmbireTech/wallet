@@ -3,13 +3,13 @@ import styles from './Select.module.scss';
 import { useCallback, useEffect, useRef, useState } from "react";
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
-import { Image, TextInput } from 'components/common';
+import { Icon, Image, TextInput } from 'components/common';
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md';
 import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
 
 import cn from 'classnames'
 
-const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
+const Select = ({ children, native, monospace, searchable, disabled, label, defaultValue, items, onChange, className, iconClassName, labelClassName, optionClassName, selectInputClassName, draggable, dragStart, dragEnter, dragTarget, drop, draggableHeader, displayDraggableHeader }) => {
     const ref = useRef();
     const hiddenTextInput = useRef();
     const transitionRef = useRef();
@@ -70,9 +70,9 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                 <div className={`${styles.label} ${labelClassName}`}>{selectedItem.label || selectedItem.value}</div>
                                 {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
                                 {/* <div className="separator"></div> */}
-                                <div className={cn(styles.handle, {[styles.open]: isOpen})}>
+                                <Icon size="sm" className={cn(styles.handle, {[styles.open]: isOpen})}>
                                     <ChevronDownIcon />
-                                </div>
+                                </Icon>
                             </div>
                             {
                                 <CSSTransition unmountOnExit in={isOpen} timeout={200} classNames="fade" nodeRef={transitionRef}>
@@ -97,7 +97,7 @@ const Select = ({ children, native, monospace, searchable, disabled, label, defa
                                         {
                                             filteredItems.map((item, i) => (
                                                 <div
-                                                    className={`${styles.option} ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? styles.active : ''} ${item.disabled ? styles.disabled : ''}`}
+                                                    className={`${styles.option} ${(item.value === selectedItem.value) && (item.label === selectedItem.label) ? styles.active : ''} ${item.disabled ? styles.disabled : ''} ${displayDraggableHeader ? styles.draggableOption : ''} ${optionClassName || ''}`}
                                                     key={item.value + item.label}
                                                     onClick={() => !item.disabled && selectItem(item)}
                                                     draggable={draggable}

@@ -31,7 +31,9 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
   })
 
   const connect = useCallback(connectorOpts => {
-    verbose > 1 && console.log("GS: creating connector")
+    if (verbose > 0) {
+      console.log("GS: creating connector")
+    }
 
     try {
       connector.current = new GnosisConnector(
@@ -292,6 +294,9 @@ export default function useGnosisSafe({selectedAccount, network, verbose = 0, us
           console.error('gnosis safe connector not set')
         } else {
           console.log('gnosis reply', replyData)
+          if (replyData?.error) {
+            addToast(replyData.error, { error: true })
+          }
           connector.current.send(replyData, req.forwardId, replyData.error)
         }
       }

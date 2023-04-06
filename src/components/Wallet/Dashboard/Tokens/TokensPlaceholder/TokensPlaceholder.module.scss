@@ -2,18 +2,18 @@
 
 
 .blur {
-    filter: blur(15px);
+    filter: blur(.9375rem);
 }
 
 .placeholderOverlay {
-    font-size: 18px;
+    font-size: 1.125rem;
     color: $c-titan-white;
     z-index: 4;
     @include absolute-full-size;
     @include flex-center-center;
     flex-direction: column;
     text-align: center;
-    gap: 20px;
+    gap: 1.25rem;
 
     svg {
         g {
@@ -22,9 +22,9 @@
     }
     
     h2 {
-        font-size: 16px;
+        font-size: 1rem;
         margin: 0;
-        margin-bottom: 10px;
+        margin-bottom: .625rem;
         font-weight: 400;
     }
 }
@@ -32,19 +32,19 @@
 .addToken {
     @include flex-center-center;
     flex-direction: column;
-    gap: 10px;
+    gap: .625rem;
 
     &Button {
         font-weight: 400;
     }
 
     svg {
-        width: 18px;
-        height: 18px;
+        width: 1.125rem;
+        height: 1.125rem;
     }
 
     p {
-        font-size: 14px;
+        font-size: .875rem;
 
         &.clickable {
             cursor: pointer;
@@ -53,9 +53,9 @@
 }
 
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .placeholderOverlay {
         width: 100%;
-        padding: 10px;
+        padding: .625rem;
     }
 }

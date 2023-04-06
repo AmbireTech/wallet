@@ -20,6 +20,7 @@ import NumberInput from './NumberInput/NumberInput';
 import PasswordInput from './PasswordInput/PasswordInput';
 import Toggle from './Toggle/Toggle';
 import ToolTip from './ToolTip/ToolTip';
+import TxnPreview from './TxnPreview/TxnPreview';
 import NoFundsPlaceholder from './NoFundsPlaceholder/NoFundsPlaceholder';
 import CountdownTimer from './CountdownTimer/CountdownTimer';
 import ErrorBoundary from './ErrorBoundary/ErrorBoundary';
@@ -30,7 +31,9 @@ import DAppIncompatibilityWarningMsg from './DAppIncompatibilityWarningMsg/DAppI
 import Pagination from './Pagination/Pagination';
 import Panel from './Panel/Panel';
 import Image from './Image/Image';
+import Icon from './Icon/Icon';
 import RemoteLottie from './RemoteLottie/RemoteLottie'
+import ResponsiveAddress from './ResponsiveAddress/ResponsiveAddress'
 import Info from './Info/Info';
 import Note from './Note/Note';
 
@@ -57,6 +60,7 @@ export {
     PasswordInput,
     Toggle,
     ToolTip,
+    TxnPreview,
     NoFundsPlaceholder,
     CountdownTimer,
     ErrorBoundary,
@@ -67,7 +71,9 @@ export {
     Pagination,
     Panel,
     Image,
+    Icon,
     RemoteLottie,
+    ResponsiveAddress,
     Info,
     Note,
 };

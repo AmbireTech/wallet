@@ -26,7 +26,7 @@ import LatticeModal from 'components/Modals/LatticeModal/LatticeModal'
 import Lottie from 'lottie-react'
 import AnimationData from './assets/confirm-email.json'
 
-import { useThemeContext } from 'components/ThemeProvider/ThemeProvider'
+import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 
 import styles from './AddAccount.module.scss'
 // Icons
@@ -272,14 +272,26 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       throw new Error('No accounts connected')
     }
 
-    // Depending on the MM version, the addresses are returned by a different caveat identifier.
-    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
-    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
-    const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
+    try {
+      // Depending on the MM version, the addresses are returned by a different caveat identifier.
+      // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
+      // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
+      const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
+  
+      if (addresses.length === 1) return onEOASelected(addresses[0], {type: 'Web3'})
+      
+      setChooseSigners({ addresses, signerName: 'Web3' })  
+    } catch {
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" })
 
-    if (addresses.length === 1) return onEOASelected(addresses[0], {type: 'Web3'})
+      if (!accounts.length || accounts.length === 0) {
+        addToast('No accounts connected', { error: true })
 
-    setChooseSigners({ addresses, signerName: 'Web3' })
+        return
+      }
+     
+      onEOASelected(accounts[0], {type: 'Web3'})
+    }
   }
 
   const getAccountByAddr = useCallback(async (idAddr, signerAddr) => {
@@ -488,7 +500,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       <MetamaskIcon className={styles.metamask} width={25} /> Web3 Wallet
     </button>
     <button onClick={() => wrapErr(open)}>
-      <VscJson size={25} />
+      <VscJson className={styles.jsonIcon} />
       Import from JSON
     </button>
     <input {...getInputProps()} />

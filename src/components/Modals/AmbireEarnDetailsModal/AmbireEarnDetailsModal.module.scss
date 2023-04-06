@@ -1,0 +1,38 @@
+@import 'variables.scss';
+
+.wrapper {
+    height: 100%;
+
+    .content {
+        display: flex;
+        flex-direction: column;
+
+        .table {
+            .row {
+                display: flex;
+                justify-content: space-between;
+                padding: 1.25rem;
+                background-color: rgba(255, 255, 255, 0.04);
+    
+                div {
+                    flex: 0 1 50% !important;
+                }
+
+                &:first-child {
+                    border-radius: $border-radius $border-radius 0 0;
+                }
+                &:last-child {
+                    border-radius: 0 0 $border-radius $border-radius;
+                }
+            }
+
+            .row:nth-child(even) {
+                background-color: rgba(255, 255, 255, 0.01);
+            }
+    
+            .loading-wrapper {
+                min-height: 35rem;
+            }
+        }
+    }
+}

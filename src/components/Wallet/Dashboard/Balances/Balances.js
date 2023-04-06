@@ -1,6 +1,6 @@
 import styles from './Balances.module.scss'
 
-import { Loading } from 'components/common'
+import { Icon, Loading } from 'components/common'
 import { useRelayerData } from 'hooks'
 import { ReactComponent as GasTankIcon } from 'resources/icons/gas-tank.svg'
 import { useHistory } from 'react-router-dom'
@@ -69,7 +69,9 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
                                         value={hidePrivateValue(total.truncated)}
                                         decimalValue={hidePrivateValue(total.decimals)}
                                         icon={
-                                            <div className={styles.icon} style={{backgroundImage: `url(${networkDetails(network).icon})`}}></div>
+                                            <Icon size="sm" className={styles.icon} noBackground>
+                                                <img src={networkDetails(network).icon} alt="" />
+                                            </Icon>
                                         }
                                     />
                                 ))
@@ -81,7 +83,9 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
                                     value={hidePrivateValue(gasTankDetails.total.truncated)}
                                     decimalValue={hidePrivateValue(gasTankDetails.total.decimals)}
                                     icon={
-                                        <div className={styles.iconSvg}><GasTankIcon /></div>
+                                        <Icon size="sm" className={styles.icon} noBackground>
+                                            <GasTankIcon />
+                                        </Icon>
                                     }
                                 />
                             }
@@ -101,6 +105,7 @@ const Balances = ({ portfolio, selectedNetwork, setNetwork, hidePrivateValue, re
 const areEqual = (prevProps, nextProps) => {
     return prevProps.selectedNetwork.id === nextProps.selectedNetwork.id &&
         prevProps.selectedAccount === nextProps.selectedAccount &&
+        prevProps.hidePrivateValue === nextProps.hidePrivateValue &&
         prevProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0) ===
         nextProps.portfolio.otherBalances.reduce((acc, curr) => acc + Number(curr.total.full), 0)
         &&
