@@ -137,10 +137,21 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     }
 
     if (typeof window === 'undefined' || !window.location.href.includes('?uri=')) return
-    
-    const wcUri = decodeWalletConnectUri(window.location.href)
 
-    if (wcUri) connect({ uri: wcUri })
+    try {
+      const wcUri = decodeWalletConnectUri(window.location.href)
+
+      if (!wcUri.includes('key') && !wcUri.includes('symKey')) throw new Error('Wallet Connect URI is missing key')
+      
+      connect({ uri: wcUri })
+    } catch (e) {
+      if (e.message) {
+        addToast(e.message, { error: true })
+        return
+      }
+      addToast('Invalid WalletConnect uri', { error: true })
+    }
+
   }, [account, initialWcURI, connect, addToast])
 
   useEffect(() => {
