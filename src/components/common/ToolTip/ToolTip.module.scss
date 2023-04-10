@@ -7,12 +7,14 @@ $arrow-size: .9375rem;
     .tooltipLabel {
         z-index: 50;
         position: fixed;
+        display: flex;
+        gap: .625rem;
         max-width: 18.75rem;
-        padding: .9375rem 1.25rem;
+        padding: .9375rem;
         font-size: .9375rem;
         font-weight: 500;
-        color: theme(text-primary);
-        background-color: theme(background-primary);
+        color: theme(background-terniary); // temporary use of background color as text color
+        background-color: theme(text-primary); // Temporary use of text color as background color
         box-shadow: $box-shadow;
         border-radius: $border-radius;
         white-space: normal;
@@ -21,30 +23,15 @@ $arrow-size: .9375rem;
         transition: opacity 0.3s ease-in-out;
         pointer-events: none;
 
-        .arrow {
-            position: absolute;
-            width: 0;
-            &.top {
-                top: -$arrow-size + 1; // +1, because of the border-radius of its parent. Otherwise there's a little space between the arrow and the label.
-                border-bottom: $arrow-size solid theme(border-primary);
-            }
+        .icon {
+            width: 1.5rem;
+            height: 1.5rem;
+        }
 
-            &.bottom {
-                bottom: -$arrow-size;
-                border-top: $arrow-size solid theme(border-primary);
-            }
-
-            &.right {
-                right: $arrow-size / 2;
-                border-left: $arrow-size solid transparent;
-                border-right: 0 solid transparent;
-            }
-
-            &.left {
-                left: $arrow-size / 2;
-                border-left: 0 solid transparent;
-                border-right: $arrow-size solid transparent;
-            }
+        .label {
+            margin: 0;
+            flex: 1;
+            font-size: .875rem;
         }
     }
 

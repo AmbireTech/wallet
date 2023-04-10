@@ -82,8 +82,8 @@ const Signer = ({
       </div>
       <div className={styles.buttons}>
         {isQuickAcc && (otpEnabled !== null) && (otpEnabled ?
-            <Button className={styles.button} red onClick={handleDisableOtp}>Disable 2FA</Button> :
-            <Button className={styles.button} primaryGradient onClick={handleEnableOtp}>Enable 2FA</Button>
+            <Button className={styles.button} variant="danger" onClick={handleDisableOtp}>Disable 2FA</Button> :
+            <Button className={styles.button} variant="primaryGradient" onClick={handleEnableOtp}>Enable 2FA</Button>
         )}
         {isQuickAcc && <Button
           disabled={!canChangePassword}

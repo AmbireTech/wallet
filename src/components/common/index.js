@@ -33,6 +33,7 @@ import Panel from './Panel/Panel';
 import Image from './Image/Image';
 import Icon from './Icon/Icon';
 import RemoteLottie from './RemoteLottie/RemoteLottie'
+import ResponsiveAddress from './ResponsiveAddress/ResponsiveAddress'
 import Info from './Info/Info';
 import Note from './Note/Note';
 
@@ -72,6 +73,7 @@ export {
     Image,
     Icon,
     RemoteLottie,
+    ResponsiveAddress,
     Info,
     Note,
 };

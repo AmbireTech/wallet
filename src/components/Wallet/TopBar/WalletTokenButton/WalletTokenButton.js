@@ -77,6 +77,12 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     const showCongratsRewardsModal = useDynamicModal(CongratsRewardsModal, { pendingTokensTotal })
 
     useEffect(() => {
+      // Temporarily disable Congrats Modal, as there are 2 issues, but we want to deploy the current release.
+      // Here are the issues we are facing:
+      // - in the case we are switching the account, `currentClaimStatus` has the prev account's data
+      // - we should change the logic and show the modal only if the balance > $1000
+      return false
+
       const shouldShowCongratsModal = checkShouldShowCongratsModal(currentClaimStatus, pendingTokensTotal)
 
       if (!shouldShowCongratsModal) return
@@ -95,12 +101,11 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     return (
         !relayerURL ?
             <ToolTip label="WALLET rewards are not available without a connection to the relayer">
-                <Button small border disabled>Rewards</Button>
+                <Button size="sm" disabled>Rewards</Button>
             </ToolTip>
             :
             <Button
-                small
-                border
+                size="sm"
                 onClick={showWalletTokenModal}
                 className={styles.button}
             >

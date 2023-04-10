@@ -192,8 +192,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
             contentClassName={styles.content}
             title="Reset Password" 
             buttons={<>
-                <Button small clear onClick={() => hideModal()}>Cancel</Button>
-                <Button small primaryGradient disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
+                <Button size="sm" variant="secondary" onClick={() => hideModal()}>Cancel</Button>
+                <Button size="sm" variant="primaryGradient" disabled={disabled} onClick={() => type === 'change' ? changePassword(): resetPassword()}>Confirm</Button>
             </>}
         >
             {

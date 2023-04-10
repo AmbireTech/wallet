@@ -15,11 +15,11 @@ export default function GnosisSafeAppIframe({
     gnosisDisconnect,
     className
 }) {
-
     const { chainId } = network || {}
     const { url } = selectedApp || {}
     const [loading, setLoading] = useState(true)
     const [hash, setHash] = useState('')
+    const [overlayVisible, setOverlayVisible] = useState(false)
     const iframeRef = useRef(null);
 
 
@@ -45,6 +45,18 @@ export default function GnosisSafeAppIframe({
 
     }, [selectedApp, network, selectedAcc, iframeRef, gnosisConnect, gnosisDisconnect])
 
+    useEffect(() => {
+        document.addEventListener('show-overlay', (e) => {
+            setOverlayVisible(e.detail)
+        })
+
+        return () => {
+            document.removeEventListener('show-overlay', (e) => {
+                setOverlayVisible(e.detail)
+            })
+        }
+    }, [])
+
     return (
         <div id="plugin-gnosis-container" className={className}>
             {
@@ -69,5 +81,6 @@ export default function GnosisSafeAppIframe({
                     allow='clipboard-read; clipboard-write'
                 />
             }
+            {overlayVisible && <div className="iframe-overlay" />}
         </div>)
 }

@@ -251,15 +251,15 @@ const AssetsMigrationSelector = ({
     if (hidden) return
     setModalButtons(
       <>
-        <Button clear small onClick={hideModal}>
+        <Button variant="secondary" size="sm" onClick={hideModal}>
           Close
         </Button>
         {selectableTokensUserInputs.filter((a) => a.selected).length > 0 && canCoverGasFees(selectedGasSpeed) ? (
-          <Button small primaryGradient onClick={() => confirmTokenSelection()}>
+          <Button size="sm" variant="primaryGradient" onClick={() => confirmTokenSelection()}>
             Move {selectableTokensUserInputs.filter((a) => a.selected).length} assets
           </Button>
         ) : (
-          <Button small primaryGradient disabled>
+          <Button size="sm" variant="primaryGradient" disabled>
             Move assets
           </Button>
         )}
