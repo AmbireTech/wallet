@@ -6,7 +6,7 @@ import { ethers } from 'ethers'
  * More info: https://eips.ethereum.org/EIPS/eip-6492
  *
  * @param {string} signature - origin ERC-1271 signature
- * @param {object} account - account bytecode
+ * @param {object} account
  * @returns {string} - EIP6492 signature
  */
 export const wrapSignature = (signature, account) => {
