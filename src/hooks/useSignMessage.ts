@@ -19,7 +19,7 @@ import { fetchPost } from 'lib/fetch'
 import { UseStorageProps } from 'ambire-common/src/hooks/useStorage'
 import { useToasts } from 'hooks/toasts'
 import { UseAccountsReturnType } from 'ambire-common/src/hooks/useAccounts'
-import { produceSignature } from 'lib/EIP6492Signature'
+import { wrapSignature } from 'lib/EIP6492Signature'
 
 export type UseSignMessageProps = {
   account: UseAccountsReturnType['account']
@@ -208,7 +208,7 @@ const useSignMessage = ({
               signature
             ))
 
-        if (!isDeployed) sig = produceSignature(sig,  account.bytecode)
+        if (!isDeployed) sig = wrapSignature(sig, account)
 
         await verifySignature(msgToSign, sig, requestedNetwork?.id)
 
@@ -286,7 +286,7 @@ const useSignMessage = ({
             )
           : signMessage(wallet, account.id, account.signer, getMessageAsBytes(msgToSign.txn)))
 
-        if (!isDeployed) sig = produceSignature(sig,  account.bytecode)
+        if (!isDeployed) sig = wrapSignature(sig, account)
 
         await verifySignature(msgToSign, sig, requestedNetwork?.id)
 
