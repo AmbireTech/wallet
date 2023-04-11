@@ -28,6 +28,7 @@ import RecipientInput from './RecipientInput/RecipientInput'
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
 
 import styles from './Send.module.scss'
+import { MdInfo } from 'react-icons/md'
 
 const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
