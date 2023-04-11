@@ -4,6 +4,22 @@ import useWalletConnectV2 from 'hooks/walletConnect/walletConnectV2'
 import useWalletConnectLegacy from 'hooks/walletConnect/walletConnectLegacy'
 import { isFirefox } from 'lib/isFirefox'
 
+const decodeWalletConnectUri = (uri) => {
+  const decodedURI = decodeURIComponent(uri)
+
+  let onlyURI = decodedURI.split('?uri=')[1].split('#')[0]
+  
+  if (onlyURI.includes('@1')) {
+    const bridgeEncoded = onlyURI.substring(onlyURI.indexOf("?bridge=") + 1, onlyURI.lastIndexOf("&"))
+    
+    const bridge = decodeURIComponent(bridgeEncoded)
+    
+    onlyURI = onlyURI.replace(bridgeEncoded, bridge)
+  }
+    
+  return onlyURI
+}
+
 export default function useWalletConnect({ account, chainId, initialWcURI, allNetworks, setNetwork, useStorage, setRequests }) {
 
   const { addToast } = useToasts()
@@ -120,16 +136,22 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
       else addToast('WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.', { timeout: 15000 })
     }
 
-    if (typeof window === 'undefined' || !window.location.href.includes('/?uri=')) return
-    
-    const uriRaw = window.location.href.split('/?uri=')[1]
+    if (typeof window === 'undefined' || !window.location.href.includes('?uri=')) return
 
-    const wcUri = uriRaw.split('#')[0]
+    try {
+      const wcUri = decodeWalletConnectUri(window.location.href)
 
-    if (!wcUri) return
-    if (!wcUri.includes('key=') && !wcUri.includes('symKey=')) return addToast('Invalid WalletConnect uri', { error: true })
+      if (!wcUri.includes('key') && !wcUri.includes('symKey')) throw new Error('Wallet Connect URI is missing key')
+      
+      connect({ uri: wcUri })
+    } catch (e) {
+      if (e.message) {
+        addToast(e.message, { error: true })
+        return
+      }
+      addToast('Invalid WalletConnect uri', { error: true })
+    }
 
-    if (wcUri) connect({ uri: wcUri })
   }, [account, initialWcURI, connect, addToast])
 
   useEffect(() => {
