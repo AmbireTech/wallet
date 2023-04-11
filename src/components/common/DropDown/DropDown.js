@@ -30,11 +30,16 @@ export default function DropDown({
   const transitionRef = useRef()
   const [isMenuOpen, setMenuOpen] = useState(false)
 
-  useEffect(() => setMenuOpen(open), [open])
-  useEffect(() => onChange && onChange(isMenuOpen), [onChange, isMenuOpen])
-  useEffect(() => !isMenuOpen && onClose && onClose(), [isMenuOpen, onClose])
-  useEffect(() => isMenuOpen && onOpen && onOpen(), [isMenuOpen, onOpen])
-  useOnClickOutside(ref, () => setMenuOpen(false))
+    useEffect(() => setMenuOpen(open), [open]);
+    useEffect(() => onChange && onChange(isMenuOpen), [onChange, isMenuOpen]);
+    useEffect(() => !isMenuOpen && onClose && onClose(), [isMenuOpen, onClose]);
+    useEffect(() => {
+        if(isMenuOpen) {
+            document.dispatchEvent(new CustomEvent("show-overlay", { detail: true}))
+            onOpen && onOpen()
+        }
+    }, [isMenuOpen, onOpen])
+    useOnClickOutside(ref, () => setMenuOpen(false));
 
   return (
     <div
