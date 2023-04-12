@@ -529,7 +529,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             <h3>
               Email confirmation required
             </h3>
-            <p>
+            <p className={styles.emailConfText}>
               We sent an email to
               {' '}
               <span className={styles.email}>
