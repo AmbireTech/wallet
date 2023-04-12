@@ -48,9 +48,9 @@ export function mapTxnErrMsg(msg) {
   if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Swap will suffer slippage higher than your requirements'
   if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'Your signer address is not authorized.'
   if (contractErrors.find(contractMsg => msg.includes(contractMsg))) return 'This dApp does not support smart wallets.'
-  if (msg === 'NOT_TIME') return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period."
+  if (msg === 'NOT_TIME') return 'Your 72 hour recovery waiting period still hasn\'t ended. You will be able to use your account after this lock period.'
   if (msg === 'WRONG_ACC_OR_NO_PRIV') return 'Unable to sign with this email/password account. Please contact support.'  
-  if (msg === 'INVALID_SIGNATURE') return 'Invalid signature. This may happen if you used password/derivation path on your hardware wallet.'
+  if (msg === 'INVALID_SIGNATURE') return 'Invalid quick account signature, please contact support'
   if (msg === 'INSUFFICIENT_PRIVILEGE') return 'Wrong signature. This may happen if you used password/derivation path on your hardware wallet.'
 
   return msg
