@@ -161,6 +161,10 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                       onClick={() => onCategorySelect(c)}>{CATEGORY_LABEL[c.name] || c.name}</span>
                   })}
                 </div>
+                <div className={styles.customDappIconWrapper}>
+                  <img className={styles.customDappIcon} src={DAPPS_ICON} alt='add custom dapps icon' />
+                </div>
+                <Button size="xsm" onClick={openCustomDappModal}>Add custom dApp</Button>
               </div>
 
               <div className={styles.catalogItems}>

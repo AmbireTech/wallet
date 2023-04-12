@@ -101,14 +101,16 @@ const WalletTokenButton = ({ rewardsData, accountId, network, hidePrivateValue, 
     return (
         !relayerURL ?
             <ToolTip label="WALLET rewards are not available without a connection to the relayer">
-                <Button small border disabled>Rewards</Button>
+                <Button size="sm" disabled>Rewards</Button>
             </ToolTip>
             :
             <Button
-                small
-                border
+                size="sm"
                 onClick={showWalletTokenModal}
                 className={styles.button}
+                disabled={(currentClaimStatus.loading && !currentClaimStatus.lastUpdated) 
+                  || (rewardsIsLoading && !rewardsLastUpdated)
+                  || !(rewardsData?.rewards?.accountAddr?.toLowerCase() === accountId.toLowerCase())}
             >
                 { renderRewardsButtonText() }  
             </Button>
