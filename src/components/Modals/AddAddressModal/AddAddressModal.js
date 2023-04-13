@@ -81,7 +81,7 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
                 <Button primaryGradient small type='submit' form="addAddressForm" disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
             </>}
         >
-            <form onSubmit={handleSubmit} id="addAddressForm">
+            <form className={styles.formContent} onSubmit={handleSubmit} id="addAddressForm">
                 {
                     inputsFields.map(({ id, label, placeholder, ref, type }) => (
                         <div className={styles.inputWrapper} key={id + label}>
