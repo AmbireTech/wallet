@@ -117,7 +117,7 @@ const AddToken = ({ network, account, portfolio }) => {
           </div>
         </Token> : null
       }
-      <Button primaryGradient className={styles.addButton} disabled={disabled} onClick={addToken}>Add Token</Button>
+      <Button variant="primaryGradient" className={styles.addButton} disabled={disabled} onClick={addToken}>Add Token</Button>
       <div className={styles.extraTokensList}>
         {
           extraTokens.map(({ address, name, symbol, tokenImageUrl, network }) => (
@@ -131,7 +131,7 @@ const AddToken = ({ network, account, portfolio }) => {
               className={styles.token}
             >
               <div className={styles.actions}>
-                <Button mini clear onClick={() => removeToken(address)}>
+                <Button size="xsm" variant="secondary" onClick={() => removeToken(address)}>
                   <MdOutlineRemove />
                 </Button>
               </div>

@@ -174,7 +174,7 @@ const Accounts = ({ accounts, selectedAddress, onSelectAcc, onRemoveAccount, hid
           </div>
           <div className={styles.addAccount}>
             <NavLink to="/add-account">
-              <Button small primaryGradient>Add Account</Button>
+              <Button size="sm" variant="primaryGradient">Add Account</Button>
             </NavLink>
           </div>
         </DropDown>

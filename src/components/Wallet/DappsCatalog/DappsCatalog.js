@@ -81,12 +81,14 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   }, [toggleFavorite])
 
   const openDapp = useCallback(async (item) => {
+    gnosisDisconnect() // disconnect the previous dapp
+    loadCurrentDappData(null) // reset current dapp data
     if ((item.connectionType === 'gnosis' && (!item.custom)) || item.forceInternal || await canOpenInIframe(fetch, item.url)) {
       loadCurrentDappData(item)
     } else {
       window.open(item.url, '_blank')
     }
-  }, [loadCurrentDappData])
+  }, [loadCurrentDappData, gnosisDisconnect])
 
   const onRemoveCustomClick = useCallback((e, item) => {
     e.stopPropagation()
@@ -174,7 +176,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                 <div className={styles.customDappIconWrapper}>
                   <img className={styles.customDappIcon} src={DAPPS_ICON} alt='add custom dapps icon' />
                 </div>
-                <Button border mini onClick={openCustomDappModal}>Add custom dApp</Button>
+                <Button size="xsm" onClick={openCustomDappModal}>Add custom dApp</Button>
               </div>
               {
                 sortFiltered(filteredCatalog).map(item => {

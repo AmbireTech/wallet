@@ -94,11 +94,11 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
     const openThankYouPage = () => window.open("https://www.ambire.com/thankyou", "_blank")
 
     const buttons = isJsonBackupDownloaded ? (<>
-        <Button clear small disabled={isAccountNotConfirmed} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
-        <Button small primaryGradient disabled={buttonDisabled} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
+        <Button size="sm" variant="secondary" disabled={isAccountNotConfirmed} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
+        <Button size="sm" variant="primaryGradient" disabled={buttonDisabled} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
     </>) : (<>
-        <Button clear small disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
-        <Button small primaryGradient disabled={true} onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
+        <Button size="sm" variant="secondary" disabled onClick={handleDoneOrIgnoreBtnsClicked}>Ignore</Button>
+        <Button size="sm" variant="primaryGradient" disabled onClick={handleDoneOrIgnoreBtnsClicked}>Done</Button>
     </>)
 
     const downloadFile = ({ data, fileName, fileType }) => {
@@ -170,7 +170,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                         { 
                             !isEmailConfirmed && !isEmailResent ? 
                                 <ToolTip label={`Will be available in ${resendTimeLeft / 1000} seconds`} disabled={resendTimeLeft === 0}>
-                                    <Button mini clear icon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
+                                    <Button size="xsm" variant="secondary" startIcon={<AiOutlineReload/>} disabled={resendTimeLeft !== 0} onClick={sendConfirmationEmail}>Resend</Button>
                                 </ToolTip>
                                 :
                                 null
@@ -217,7 +217,7 @@ const PermissionsModal = ({ relayerIdentityURL, account, onAddAccount, isCloseBt
                 <div className={styles.status}>
                     {isJsonBackupDownloaded ? 
                         (<span className={styles.checkIcon}><MdOutlineCheck/></span>) : 
-                        (<Button onClick={handleExportClicked} icon={<BiExport/>}>Export</Button>)
+                        (<Button onClick={handleExportClicked} startIcon={<BiExport/>}>Export</Button>)
                     }
                 </div>
             </div>}

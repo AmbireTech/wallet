@@ -1,7 +1,7 @@
 import styles from './LoginOrSignupForm.module.scss'
 import { useState, useRef } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
-import { Checkbox } from "components/common"
+import { Button, Checkbox } from "components/common"
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
     const passConfirmInput = useRef(null)
@@ -78,9 +78,9 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           !isSignup ? (<input type="password" style={{ display: "none" }}></input>): (<></>)
         }
         {additionalInputs}
-        <input type="submit" disabled={inProgress} value={isSignup ?
-          (inProgress ? "Signing up..." : "Sign Up")
-          : (inProgress ? "Logging in..." : "Log In")}></input>
+        <Button className={styles.button} variant="primaryGradient" type="submit" loading={inProgress} loadingText={isSignup ? 'Signing up...' : 'Logging in...'}>
+          {isSignup ? "Sign Up" : "Log In"}
+        </Button>
       </form>
     )
 }

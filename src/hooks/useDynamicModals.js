@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef } from "react"
-import { ModalContext } from "components/ModalProvider/ModalProvider"
+import { ModalContext } from "context/ModalProvider/ModalProvider"
 
 const useDynamicModal = (component, props, watchProps = {}, opts) => {
     const { showDynamicModal, updateModal } = useContext(ModalContext)

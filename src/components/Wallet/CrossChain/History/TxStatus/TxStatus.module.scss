@@ -4,19 +4,19 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  gap: 15px;
+  gap: .9375rem;
   flex-wrap: wrap-reverse;
 
   .explorerLink {
     display: flex;
     align-items: center;
-    gap: 5px;
-    font-size: 12px;
+    gap: .3125rem;
+    font-size: .75rem;
     color: $c-scampi;
 
     svg {
-      width: 20px;
-      height: 20px;
+      width: 1.25rem;
+      height: 1.25rem;
     }
   }
 
@@ -25,9 +25,9 @@
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: .625rem;
     margin: 0;
-    font-size: 12px;
+    font-size: .75rem;
 
     &.error {
       color: $warning-color;
@@ -45,8 +45,8 @@
       width: auto;
 
       svg {
-        height: 16px;
-        width: 16px;
+        height: 1rem;
+        width: 1rem;
       }
     }
 
@@ -55,8 +55,8 @@
     }
 
     svg {
-      width: 20px;
-      height: 20px;
+      width: 1.25rem;
+      height: 1.25rem;
     }
   }
 }

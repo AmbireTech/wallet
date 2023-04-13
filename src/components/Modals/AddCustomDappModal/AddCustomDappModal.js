@@ -151,15 +151,15 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
                     <a className={styles.infoBtn} href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
                         target="_blank"
                         rel="noreferrer noopener">
-                        <MdBuildCircle size={32} />
+                        <MdBuildCircle className={styles.icon} />
                     </a>
                 </ToolTip>
                 <div>Add custom dApp</div>
             </div>
             }
             buttons={<>
-                <Button small clear onClick={() => hideModal()}>Close</Button>
-                <Button small primaryGradient disabled={disabled} onClick={addDapp}>Add</Button>
+                <Button size="sm" variant="secondary" onClick={() => hideModal()}>Close</Button>
+                <Button size="sm" variant="primaryGradient" disabled={disabled} onClick={addDapp}>Add</Button>
             </>}
         >
             <div>

@@ -5,6 +5,7 @@ import { Borders as LoadingBorders } from 'components/common'
 import { CSSTransition } from 'react-transition-group';
 import useOnClickOutside from 'hooks/onClickOutside';
 import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
+import { Icon } from 'components/common'
 
 export default function DropDown({ children, id, icon, className, menuClassName, handleClassName, titleClassName, title, badge, open, closeOnClick, onChange, onOpen, onClose, style, isLoading, testId }) {
     const ref = useRef();
@@ -14,7 +15,12 @@ export default function DropDown({ children, id, icon, className, menuClassName,
     useEffect(() => setMenuOpen(open), [open]);
     useEffect(() => onChange && onChange(isMenuOpen), [onChange, isMenuOpen]);
     useEffect(() => !isMenuOpen && onClose && onClose(), [isMenuOpen, onClose]);
-    useEffect(() => isMenuOpen && onOpen && onOpen(), [isMenuOpen, onOpen])
+    useEffect(() => {
+        if(isMenuOpen) {
+            document.dispatchEvent(new CustomEvent("show-overlay", { detail: true}))
+            onOpen && onOpen()
+        }
+    }, [isMenuOpen, onOpen])
     useOnClickOutside(ref, () => setMenuOpen(false));
 
     return (
@@ -36,9 +42,9 @@ export default function DropDown({ children, id, icon, className, menuClassName,
                         null
                 }
                 {/* <div className={styles.separator}></div> */}
-                <div className={cn(styles.handle, handleClassName, {[styles.open]: isMenuOpen})}>
+                <Icon size="sm" className={cn(styles.handle, handleClassName, {[styles.open]: isMenuOpen})}>
                     <ChevronDownIcon />
-                </div>
+                </Icon>
 
                 { isLoading && <LoadingBorders /> }
             </div>

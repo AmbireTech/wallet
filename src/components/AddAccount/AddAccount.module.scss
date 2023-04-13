@@ -4,9 +4,9 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 50px;
+    gap: 3.125rem;
     min-height: 100%;
-    padding: 40px 0;
+    padding: 2.5rem 0;
     overflow: hidden;
 
     &.dark {
@@ -15,51 +15,46 @@
         background-position: top center;
         background-repeat: no-repeat;
 
-        input {
-            &:not([type=submit]):focus {
-                border-bottom-color: $c-white;
-            }
+        input:focus {
+            border-bottom-color: $c-white;
         }
     }
 
     h3 {
-        font-size: 25px;
+        font-size: 1.5625rem;
         text-align: left;
         font-weight: 400;
-        margin-bottom: 43px;
+        margin-bottom: 2.6875rem;
     }
 
-    button, input {
-        font-size: 16px;
-        border: 0px;
+    button:not([type=submit]), input {
+        font-size: 1rem;
+        border: 0;
         background: none; /* #282c34; */
-        padding: 1em;
+        padding: 1rem;
         box-sizing: border-box;
         font-family: 'Poppins', sans-serif;
         transition: all 0.1s ease-in-out;
+    }
+
+    .resendBtn {
+        max-width: 250px;
+        margin: 0 auto;
     }
 
     button {
         background-color: white;
     }
 
-    button, input[type=submit] {
-        cursor: pointer;
-    }
-
-    button:not([disabled]):active, input[type=submit]:not([disabled]):active {
-        transform: scale(0.95);
-    }
-
     input:focus {
-        outline: 0px;
+        outline: 0;
     }
 
-    button {
+    button:not([type=submit]) {
         opacity: 0.8;
     }
 
-    button:not([disabled]):hover {
+    button:not([type=submit]):not([disabled]):hover {
         opacity: 1;
     }
 
@@ -68,44 +63,31 @@
         cursor: default;
     }
 
-    input[type=submit] {
-        height: 60px;
-        width: 100%;
-        border: none;
-        background: theme(gradient-primary);
-        border-radius: 12px;
-        color: $c-titan-white;
-        font-size: 20px;
-        font-weight: 500;
-        padding: 0;
-        margin-bottom: 30px;
-    }
-
     input {
         color: $c-scampi;
-        margin: 2em 0px;
+        margin: 2rem 0;
         border-bottom: 2px solid theme(border-input);
         width: 100%;
-        font-size: 16px;
+        font-size: 1rem;
 
-        &:not([type=submit]):focus {
+        &:focus {
             border-bottom-color: $c-electric-violet;
         }
     }
 
     .logo {
         width: 100%;
-        max-width: 252px;
-        margin: 0px auto;
-        height: 110px;
+        max-width: 15.75rem;
+        margin: 0 auto;
+        height: 6.875rem;
     }
 
     .pluginInfo {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: .5rem;
         align-items: center;
-        font-size: 1.2em;
+        font-size: 1.2rem;
 
         .name {
             font-size: 1.7em;
@@ -113,14 +95,14 @@
     } 
 
     .signersToChoose {
-        margin: 0px auto;
+        margin: 0 auto;
         display: block;
         line-height: 2em;
-        font-size: 1.5em;
+        font-size: 1.5rem;
         color: #ccc;
         list-style: none;
         font-family: 'Ubuntu Mono';
-        width: 500px;
+        width: 31.25rem;
         cursor: pointer;
 
         li:hover {
@@ -143,21 +125,17 @@
         display: flex;
         flex-direction: row;
         width: 100%;
-        max-width: 800px;
+        max-width: 50rem;
         /* TODO some sort of vertical alignment */
         margin: 0em auto 0em;
 
-        input[type=submit]:hover {
-            opacity: 1.0;
-        }
-
         .loginSeparator {
-            width: 1px;
+            width: .0625rem;
             // background-color: theme(background-fournary);
             background-color: $c-scampi;
-            margin: 0 96px;
-            margin-top: 35px;
-            margin-bottom: 30px;
+            margin: 0 6rem;
+            margin-top: 2.1875rem;
+            margin-bottom: 1.875rem;
         }
 
         .loginOthers {
@@ -169,24 +147,39 @@
                 width: 100%;
                 background: theme(background-primary);
                 border: 1px solid $c-scampi;
-                border-radius: 12px;
+                border-radius: $border-radius;
                 color: theme(text-secondary);
-                height: 60px;
+                height: 3.75rem;
                 text-align: center;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap: 7px;
-                margin-bottom: 20px;
+                gap: .4375rem;
+                margin-bottom: 1.25rem;
                 transition: .3s ease-out all;
 
                 svg {
                     color: theme(text-secondary);
                     transition: .3s ease-out all;
+
+                    &.email {
+                        width: 2.3125rem;
+                        height: 1.5625rem;
+                    }
+
+                    &.jsonIcon {
+                        width: 1.5rem;
+                        height: 1.5rem;
+                    }
+
+                    &.metamask {
+                        width: 1.5625rem;
+                        height: 1.5625rem;
+                    }
                 }
 
                 &:hover {
-                    top: -4px;
+                    top: -0.25rem;
                     color: theme(text-primary);
 
                     svg {
@@ -217,21 +210,21 @@
             }
 
             .icon {
-                margin-right: 10px;
-                width: 25px;
-                height: 25px;
+                margin-right: .625rem;
+                width: 1.5625rem;
+                height: 1.5625rem;
                 background-repeat: no-repeat;
                 background-size: contain;
             }
 
             .accountLoader {
-                width: 50px;
+                width: 3.125rem;
                 display: block;
                 margin: 4em auto;
             }
 
             .error {
-                max-width: 300px;
+                max-width: 18.75rem;
                 font-size: 1em;
                 font-weight: 300;
                 position: relative;
@@ -242,30 +235,30 @@
     .emailConf {
         background-color: $c-mirage;
         border: 1px solid $c-scampi;
-        border-radius: 12px;
-        padding: 30px 60px;
-        padding-top: 12px;
+        border-radius: $border-radius;
+        padding: 1.875rem 3.75rem;
+        padding-top: .75rem;
         text-align: center;
         color: $c-titan-white;
         width: 100%;
-        max-width: 460px;
+        max-width: 28.75rem;
         margin: 0 auto;
     }
     
     .emailConf h3 {
-        font-size: 24px;
+        font-size: 1.5rem;
         text-align: center;
         font-weight: 400;
         margin-top: 0;
-        margin-bottom: 20px;
+        margin-bottom: 1.25rem;
     }
     
     .emailConf p {
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: 300;
-        line-height: 25px;
+        line-height: 1.5625rem;
         margin-bottom: 0;
-        min-width: 360px;
+        min-width: 22.5rem;
     
         span.email {
             color: $c-heliotrope;
@@ -276,7 +269,7 @@
         .btnWrapper {
             display: flex;
             justify-content: space-around;
-            padding: 15px 0;
+            padding: .9375rem 0;
 
             button {
                 width: 100%;
@@ -292,8 +285,8 @@
     }
     
     .emailAnimation {
-        width: 140px;
-        height: 140px;
+        width: 8.75rem;
+        height: 8.75rem;
         margin: 0 auto;
     }
 
@@ -301,20 +294,20 @@
         cursor: pointer;
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 16px;
+        gap: .625rem;
+        font-size: 1rem;
         font-weight: 400;
         position: absolute;
-        bottom: 20px;
+        bottom: 1.25rem;
         left: 50%;
         transform: translateX(-50%);
         color: $c-titan-white;
         opacity: .8;
         transition: .3s ease-in-out;
-        margin-bottom: 50px;
+        margin-bottom: 3.125rem;
 
         img {
-            margin-right: 10px;
+            margin-right: .625rem;
         }
 
         &:hover {
@@ -324,7 +317,7 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .loginSignupWrapper {
         gap: 0;
         padding: 0 1em;
@@ -339,18 +332,18 @@
 
         .addAccount {
             flex-direction: column;
-            gap: 2em;
+            gap: 2rem;
 
             .loginSeparator {
                 margin: 0;
                 width: 100%;
-                height: 2px;
+                height: .125rem;
             }
         }
 
         .emailConf {
-            padding: 20px;
-            padding-top: 10px;
+            padding: 1.25rem;
+            padding-top: .625rem;
     
             p {
                 min-width: unset;
@@ -360,5 +353,11 @@
         .backButton {
             margin-bottom: 0;
         }
+    }
+}
+
+@include sm-breakpoint {
+    .loginSignupWrapper {
+        padding-top: 1.25rem;
     }
 }

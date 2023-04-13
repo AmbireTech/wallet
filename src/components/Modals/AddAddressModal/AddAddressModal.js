@@ -68,7 +68,7 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
         onClose && onClose(values)
         hideModal()
     }
-
+    
     return (
         <Modal
             size="sm"
@@ -76,8 +76,8 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
             contentClassName={styles.content}
             title={title} 
             buttons={<>
-                <Button clear small onClick={hideModal}>Cancel</Button>
-                <Button primaryGradient small disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+                <Button variant="secondary" size="sm" onClick={hideModal}>Cancel</Button>
+                <Button variant="primaryGradient" size="sm" disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
             </>}
         >
             {
