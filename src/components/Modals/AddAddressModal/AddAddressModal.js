@@ -70,6 +70,7 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
     }
     const handleSubmit = () => onConfirm()
 
+    
     return (
         <Modal
             size="sm"
@@ -77,8 +78,8 @@ const AddAddressModal = ({ title, inputs, selectedNetwork, onClose }) => {
             contentClassName={styles.content}
             title={title} 
             buttons={<>
-                <Button clear small onClick={hideModal}>Cancel</Button>
-                <Button primaryGradient small type='submit' form="addAddressForm" disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+                <Button variant="secondary" size="sm" onClick={hideModal}>Cancel</Button>
+                <Button type='submit' form="addAddressForm" variant="primaryGradient" size="sm" disabled={isDisabled}>Confirm</Button>
             </>}
         >
             <form className={styles.formContent} onSubmit={handleSubmit} id="addAddressForm">

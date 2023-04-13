@@ -16,13 +16,13 @@
         background-repeat: no-repeat;
 
         input {
-            &:not([type=submit]):focus {
+            &:focus {
                 border-bottom-color: $c-white;
             }
         }
     }
 
-    button, input {
+    button:not([type=submit]), input {
         font-size: 1rem;
         border: 0;
         background: none; /* #282c34; */
@@ -36,42 +36,25 @@
         background-color: white;
     }
 
-    button, input[type=submit] {
-        cursor: pointer;
-    }
-
-    button:not([disabled]):active, input[type=submit]:not([disabled]):active {
-        transform: scale(0.95);
+    button[type=submit] {
+        margin-bottom: 30px;
     }
 
     input:focus {
         outline: 0;
     }
 
-    button {
+    button:not([type=submit]) {
         opacity: 0.8;
     }
 
-    button:not([disabled]):hover {
+    button:not([type=submit]):not([disabled]):hover {
         opacity: 1;
     }
 
     input:disabled, button:disabled {
         opacity: 0.5 !important;
         cursor: default;
-    }
-
-    input[type=submit] {
-        height: 3.75rem;
-        width: 100%;
-        border: none;
-        background: theme(gradient-primary);
-        border-radius: $border-radius;
-        color: $c-white;
-        font-size: 1.25rem;
-        font-weight: 500;
-        padding: 0;
-        margin-bottom: 1.875rem;
     }
 
     input {
@@ -81,7 +64,7 @@
         width: 100%;
         font-size: 1rem;
 
-        &:not([type=submit]):focus {
+        &:focus {
             border-bottom-color: #6000ff;        
         }
     }

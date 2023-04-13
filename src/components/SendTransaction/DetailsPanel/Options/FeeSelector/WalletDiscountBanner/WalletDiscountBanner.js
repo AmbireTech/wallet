@@ -65,7 +65,7 @@ const WalletDiscountBanner = ({
           <MdInfoOutline />
         </a>
       </div>
-      {!!action && <Button onClick={action} mini className={styles.button}>
+      {!!action && <Button onClick={action} size="xsm" className={styles.button}>
         {actionTxt}
       </Button>}
       {showSwap && <div className={styles.swapInfo}>

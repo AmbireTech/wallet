@@ -122,7 +122,6 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
 
       <div className={cn(styles.buttons, styles.singleButton)}>
         <Button
-          border
           disabled={loading}
           onClick={onCancel}
           className={styles.button}
@@ -131,7 +130,7 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
         </Button>
         {routes.length ? (
           <Button
-            primaryGradient
+            variant="primaryGradient"
             disabled={!selectedRoute || loading}
             onClick={onConfirm}
             className={styles.button}
