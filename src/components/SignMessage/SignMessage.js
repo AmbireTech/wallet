@@ -175,7 +175,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
         <div className={styles.actions}>
           <form onSubmit={handleSubmit}>
-            {account.signer.quickAccManager && isDeployed && (
+            {account.signer.quickAccManager && (isDeployed !== null) && (
               <>
                 <TextInput
                   password
@@ -220,18 +220,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
               </div>
             )}
 
-            {isDeployed === false && (
-              <div>
-                <h3 className='error'>You can't sign this message yet.</h3>
-                <h3 className='error'>
-                  You need to complete your first transaction on{" "}
-                  {requestedNetwork.name} network in order to be able to sign
-                  messages.
-                </h3>
-              </div>
-            )}
-
-            {hasPrivileges === false && (
+            {isDeployed && hasPrivileges === false && (
               <div>
                 <h3 className='error'>
                   The currently used signer is not authorized to control this account and therefore you cannot sign messages.
@@ -248,7 +237,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
               >
                 Reject
               </Button>
-              {isDeployed !== null && isDeployed && hasPrivileges && (
+              {((isDeployed && hasPrivileges) || (isDeployed === false)) && (
                 <Button type='submit' variant="primaryGradient" className={styles.button} loading={isLoading} loadingText="Signing...">
                   Sign
                 </Button>
