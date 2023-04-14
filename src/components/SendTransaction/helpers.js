@@ -46,7 +46,7 @@ export function mapTxnErrMsg(msg) {
   if (!msg) return
   if (msg.includes('Router: EXPIRED')) return 'Swap expired'
   if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Swap will suffer slippage higher than your requirements'
-  if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'Your signer address is not authorized.'
+  if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'Your signer address is not authorized. If you added this signer key after the account was created, make sure you also add it on the currently selected network.'
   if (contractErrors.find(contractMsg => msg.includes(contractMsg))) return 'This dApp does not support smart wallets.'
   return msg
 }
