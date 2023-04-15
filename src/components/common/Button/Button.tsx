@@ -20,8 +20,7 @@ const Button: FC<ButtonProps> = ({
 	title,
 	type,
 	form,
-	loadingText,
-	testId
+	loadingText
 }) => {
 	return (
 		<button
@@ -41,7 +40,6 @@ const Button: FC<ButtonProps> = ({
 			// used with <form>
 			type={type}
 			form={form}
-			data-testid={testId}
 		>
 			{(!loading && startIcon) && startIcon}
 			{!loading ? (
