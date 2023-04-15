@@ -122,11 +122,7 @@ function AppInner() {
   // Internal requests: eg from the Transfer page, Security page, etc. - requests originating in the wallet UI itself
   // unlike WalletConnect or SafeSDK requests, those do not need to be persisted
   const addRequest = async req => {
-    return setRequests(reqs =>
-	    reqs.find(({ id }) => id === req.id)
-	    ? reqs
-	    : [...reqs, req]
-    )
+    return setRequests(reqs => [...reqs, req])
   }
 
   // Merge all requests
