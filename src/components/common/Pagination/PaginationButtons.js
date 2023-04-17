@@ -10,9 +10,9 @@ const PaginationButtons = ({ page, items, itemsPerPage, onPrev, onNext }) => {
 
   return <div className={styles.wrapper}>
     Page
-    <Button clear mini disabled={page === 0} onClick={onPrev}><HiOutlineChevronLeft/></Button>
+    <Button variant="secondary" size="xsm" disabled={page === 0} onClick={onPrev}><HiOutlineChevronLeft/></Button>
     <span>{page + 1} / {maxPage}</span>
-    <Button clear mini disabled={(page + 1) === maxPage} onClick={onNext}><HiOutlineChevronRight/></Button>
+    <Button variant="secondary" size="xsm" disabled={(page + 1) === maxPage} onClick={onNext}><HiOutlineChevronRight/></Button>
   </div>
 }
 

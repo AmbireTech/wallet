@@ -50,8 +50,8 @@ const Replace = ({
             </div>
             <div className={styles.buttons}>
               <Button
-                clear
-                icon={<MdOutlineClose />}
+                variant="secondary"
+                startIcon={<MdOutlineClose />}
                 type="button"
                 className={styles.button}
                 onClick={rejectTxn}

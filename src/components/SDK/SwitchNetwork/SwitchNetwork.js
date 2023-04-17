@@ -28,17 +28,17 @@ const SwitchNetwork = () => {
       </div>
       {supported ? (
         <div className={styles.buttons}>
-          <Button small danger className={styles.button}>
+          <Button size="sm" variant="danger" className={styles.button}>
             Reject
           </Button>
-          <Button small primaryGradient className={styles.button} onClick={() => setSupported((prev) => !prev)}>
+          <Button size="sm" variant="primaryGradient" className={styles.button} onClick={() => setSupported((prev) => !prev)}>
             Switch Network
           </Button>
         </div>
       ) : (
         <Button
-          danger
-          small
+          variant="danger"
+          size="sm"
           className={cn(styles.button, styles.singleButton)}
           onClick={() => setSupported((prev) => !prev)}
         >

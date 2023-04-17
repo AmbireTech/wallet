@@ -158,8 +158,8 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
             </div>
             }
             buttons={<>
-                <Button small clear onClick={() => hideModal()}>Close</Button>
-                <Button small primaryGradient disabled={disabled} onClick={addDapp}>Add</Button>
+                <Button size="sm" variant="secondary" onClick={() => hideModal()}>Close</Button>
+                <Button size="sm" variant="primaryGradient" disabled={disabled} onClick={addDapp}>Add</Button>
             </>}
         >
             <div>

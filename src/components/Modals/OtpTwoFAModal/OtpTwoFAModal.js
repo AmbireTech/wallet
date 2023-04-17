@@ -1,4 +1,4 @@
-import { Modal, Button, TextInput, Loading, ToolTip } from 'components/common'
+import { Modal, Button, TextInput, ToolTip } from 'components/common'
 import { authenticator } from '@otplib/preset-default'
 import QRCode from 'qrcode'
 import cn from 'classnames'
@@ -136,9 +136,9 @@ const OtpTwoFAModal = ({ relayerURL, selectedAcc, setCacheBreak }) => {
 
     return (
         <Modal
+            buttons={<Button form="enable2faForm" variant="primaryGradient" type="submit" disabled={isTimeIsUp} loading={isLoading} className={styles.button}>Enable 2FA</Button>}
             className={styles.wrapper}
             contentClassName={styles.content}
-            buttons={!isLoading ? (<Button small form="enable2faForm" primaryGradient type="submit" disabled={isTimeIsUp} className={styles.button}>Enable 2FA</Button>) : (<Button small disabled className={styles.button}><Loading /></Button>)}
             title="Two Factor Authentication" 
         >
             {isTimeIsUp && <div className={styles.timerResetMsg}>Please reopen the modal to reset the session.</div>}

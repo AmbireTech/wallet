@@ -30,8 +30,8 @@ const InputModal = ({ title, inputs, onClose }) => {
             contentClassName={styles.content}
             title={title} 
             buttons={<>
-                <Button clear small onClick={hideModal}>Cancel</Button>
-                <Button small primaryGradient disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
+                <Button size="sm" variant="secondary" onClick={hideModal}>Cancel</Button>
+                <Button size="sm" variant="primaryGradient" disabled={isDisabled} onClick={onConfirm}>Confirm</Button>
             </>}
         >
             {

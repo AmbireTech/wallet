@@ -107,7 +107,7 @@ const SelectFeeType = ({
                 <div>Custom Fee too low. You can try to "sign and send" the transaction but most probably it will fail.</div>
                 <div>Min estimated fee: &nbsp;
                   {<Button
-                    textOnly
+                    variant="text"
                     onClick={() => setCustomFee(baseMinFee)}
                   >
                     {baseMinFee} {symbol}
@@ -123,7 +123,7 @@ const SelectFeeType = ({
                 <div>Custom Fee is higher than the APE speed. You will pay more than probably needed. Make sure you know what are you doing!</div>
                 <div>Recommended max fee: &nbsp;
                   {<Button
-                    textOnly
+                    variant="text"
                     onClick={() => setCustomFee(baseMaxFee)}
                   >
                     {baseMaxFee} {symbol}
