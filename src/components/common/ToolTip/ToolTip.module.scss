@@ -8,7 +8,8 @@ $arrow-size: .9375rem;
         z-index: 50;
         position: fixed;
         display: flex;
-        gap: .625rem;
+        align-items: center;
+        gap: .5rem;
         max-width: 18.75rem;
         padding: .9375rem;
         font-size: .9375rem;
@@ -24,6 +25,7 @@ $arrow-size: .9375rem;
         pointer-events: none;
 
         .icon {
+            min-width: 1.5rem;
             width: 1.5rem;
             height: 1.5rem;
         }
