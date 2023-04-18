@@ -4,9 +4,9 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 60px;
+    gap: 3.75rem;
     min-height: 100%;
-    padding: 40px 0;
+    padding: 2.5rem 0;
     overflow: hidden;
 
     &.dark {
@@ -16,17 +16,17 @@
         background-repeat: no-repeat;
 
         input {
-            &:not([type=submit]):focus {
+            &:focus {
                 border-bottom-color: $c-white;
             }
         }
     }
 
-    button, input {
-        font-size: 16px;
-        border: 0px;
+    button:not([type=submit]), input {
+        font-size: 1rem;
+        border: 0;
         background: none; /* #282c34; */
-        padding: 16px;
+        padding: 1rem;
         box-sizing: border-box;
         font-family: 'Poppins', sans-serif;
         transition: all 0.1s ease-in-out;
@@ -36,23 +36,19 @@
         background-color: white;
     }
 
-    button, input[type=submit] {
-        cursor: pointer;
-    }
-
-    button:not([disabled]):active, input[type=submit]:not([disabled]):active {
-        transform: scale(0.95);
+    button[type=submit] {
+        margin-bottom: 30px;
     }
 
     input:focus {
-        outline: 0px;
+        outline: 0;
     }
 
-    button {
+    button:not([type=submit]) {
         opacity: 0.8;
     }
 
-    button:not([disabled]):hover {
+    button:not([type=submit]):not([disabled]):hover {
         opacity: 1;
     }
 
@@ -61,44 +57,31 @@
         cursor: default;
     }
 
-    input[type=submit] {
-        height: 60px;
-        width: 100%;
-        border: none;
-        background: theme(gradient-primary);
-        border-radius: 12px;
-        color: $c-white;
-        font-size: 20px;
-        font-weight: 500;
-        padding: 0;
-        margin-bottom: 30px;
-    }
-
     input {
         color: theme(text-secondary);
-        margin: 32px 0px;
+        margin: 2rem 0;
         border-bottom: 2px solid theme(border-input);
         width: 100%;
-        font-size: 16px;
+        font-size: 1rem;
 
-        &:not([type=submit]):focus {
+        &:focus {
             border-bottom-color: #6000ff;        
         }
     }
 
     .logo {
         width: 100%;
-        max-width: 252px;
-        margin: 0px auto;
-        height: 110px;
+        max-width: 15.75rem;
+        margin: 0 auto;
+        height: 6.875rem;
     }
 
     .pluginInfo {
         display: flex;
         flex-direction: column;
-        gap: 8px;
+        gap: .5rem;
         align-items: center;
-        font-size: 18px;
+        font-size: 1.125rem;
 
         .name {
             font-size: 1.7em;
@@ -106,14 +89,14 @@
     } 
 
     .signersToChoose {
-        margin: 0px auto;
+        margin: 0 auto;
         display: block;
-        line-height: 32px;
-        font-size: 24px;
+        line-height: 2rem;
+        font-size: 1.5rem;
         color: #ccc;
         list-style: none;
         font-family: 'Ubuntu Mono';
-        width: 500px;
+        width: 31.25rem;
         cursor: pointer;
 
         li:hover {
@@ -131,29 +114,34 @@
 .emailLoginSection {
     a {
         display: block;
-        margin: 21px auto;
+        margin: 1.3125rem auto;
         text-transform: uppercase;
         font-weight: 600;
-        font-size: 20px;
+        font-size: 1.25rem;
         text-align: center;
     }
 
     .backButton {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 16px;
+        gap: .625rem;
+        font-size: 1rem;
         font-weight: 400;
         position: absolute;
-        bottom: 20px;
+        bottom: 1.25rem;
         left: 50%;
         transform: translateX(-50%);
         color: theme(text-primary);
         opacity: .8;
         transition: .3s ease-in-out;
 
+        .backIcon {
+            width: 1.25rem;
+            height: .5rem;
+        }
+
         img {
-            margin-right: 10px;
+            margin-right: .625rem;
         }
 
         &:hover {
@@ -162,21 +150,21 @@
     }
 
     .loginEmail {
-        max-width: 400px;
+        max-width: 25rem;
         margin: 0 auto;
 
         .error {
             position: absolute;
             left: 50%;
             transform: translateX(-50%);
-            top: 20px;
-            font-size: 18px;
+            top: 1.25rem;
+            font-size: 1.125rem;
             font-weight: 300;
             background-color: rgba(#fd1a64, 0.8);
             text-align: center;
             color: $c-white;
-            padding: 15px 30px;
-            border-radius: 12px;
+            padding: .9375rem 1.875rem;
+            border-radius: $border-radius;
         }
     }
 }
@@ -184,30 +172,30 @@
 .emailConf {
     background-color: theme(background-primary);
     border: 1px solid theme(border-terniary);
-    border-radius: 12px;
-    padding: 30px 60px;
-    padding-top: 12px;
+    border-radius: $border-radius;
+    padding: 1.875rem 3.75rem;
+    padding-top: .75rem;
     text-align: center;
     color: theme(text-primary);
     width: 100%;
-    max-width: 460px;
+    max-width: 28.75rem;
     margin: 0 auto;
 }
 
 .emailConf h3 {
-    font-size: 24px;
+    font-size: 1.5rem;
     text-align: center;
     font-weight: 400;
     margin-top: 0;
-    margin-bottom: 20px;
+    margin-bottom: 1.25rem;
 }
 
 .emailConf p {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 300;
-    line-height: 25px;
+    line-height: 1.5625rem;
     margin-bottom: 0;
-    min-width: 360px;
+    min-width: 22.5rem;
 
     span.email {
         color: $c-heliotrope;
@@ -222,24 +210,24 @@
 }
 
 .emailAnimation {
-    width: 140px;
-    height: 140px;
+    width: 8.75rem;
+    height: 8.75rem;
     margin: 0 auto;
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .loginSignupWrapper {
-        gap: 40px;
-        padding: 0 16px;
+        gap: 2.5rem;
+        padding: 0 1rem;
 
         .logo {
             width: 75%;
         }
     }
     .emailConf {
-        padding: 20px;
-        padding-top: 10px;
+        padding: 1.25rem;
+        padding-top: .625rem;
 
         p {
             min-width: unset;

@@ -1,0 +1,98 @@
+@import 'variables';
+
+.gasTankMsg {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background-color: mix($c-ebony-clay, $warning-color, 90%);
+  color: $warning-color;
+  padding: 0.9375rem;
+  font-size: 0.875rem;
+  border-radius: 0.75rem;
+}
+
+.wrapper {
+  display: grid;
+  grid-template-areas:
+    'input book'
+    'message message';
+  grid-template-columns: 2fr 4rem;
+  grid-template-rows: 1fr 1fr;
+	gap: .625rem 0;
+
+  .inputWrapper {
+    background-color: $c-mirage;
+    grid-area: input;
+    display: flex;
+    align-items: center;
+    height: 3.75rem;
+    padding: 1rem;
+    gap: 0.625rem;
+    border-radius: 0.75rem 0 0 0.75rem;
+    overflow: hidden;
+
+    .input {
+      border: none;
+      color: $c-scampi;
+      font-family: inherit;
+
+      width: 100%;
+      background-color: transparent;
+      font-size: 1rem;
+
+      &:focus {
+        outline: none;
+      }
+    }
+
+    .inputLogo {
+      width: 1.5rem;
+      height: 1.5rem;
+			transition: .3s ease-in-out opacity;
+
+      &:not(.active) {
+        opacity: 0.3;
+      }
+    }
+  }
+  .doubleCheckMessage {
+    grid-area: message;
+    font-size: 0.875rem;
+    margin: 0;
+    margin-left: 0.625rem;
+    opacity: 0.8;
+  }
+  .addressBook {
+    grid-area: book;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .wrapper {
+    grid-template-columns: 2fr 12rem;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .wrapper {
+    grid-template-areas:
+      'input'
+      'message'
+      'book';
+    grid-template-columns: 1fr;
+    grid-template-rows: 3.75rem auto auto;
+
+		.inputWrapper {
+			padding-right: 1.25rem;
+			margin-bottom: 1rem;
+			border-radius: 0.75rem;
+
+			.input {
+				font-size: 0.875rem;
+			}
+		}
+		.addressBook {
+			border-radius: .75rem!important;
+		}
+  }
+}

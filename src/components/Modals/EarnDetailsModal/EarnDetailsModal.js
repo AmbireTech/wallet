@@ -5,7 +5,7 @@ const EarnDetailsModal = ({ title = 'Details', description = '' }) => {
     const { hideModal } = useModals()
    
     return (
-        <Modal title={title} buttons={<Button clear small onClick={hideModal}>Close</Button>}>
+        <Modal title={title} buttons={<Button variant="secondary" size="sm" onClick={hideModal}>Close</Button>}>
             <p>{description}</p>
         </Modal>
     )

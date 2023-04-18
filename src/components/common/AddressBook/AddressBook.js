@@ -41,6 +41,7 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
         }
     }, [])
 
+    const handleSubmit = () => onAddAddress()
     useEffect(() => !isOpen && onClose ? onClose() : null, [isOpen, onClose])
 
     useEffect(() => {
@@ -76,7 +77,15 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
     }, [address, selectedNetwork.unstoppableDomainsChain])
 
     return (
-        <DropDown title={<><AddressBookIcon />Address Book</>} className={cn(styles.addressBook, className || '')} menuClassName={styles.menu} handleClassName={styles.handle} open={isOpen} onChange={onDropDownChange}>
+        <DropDown 
+            title={<><AddressBookIcon className={styles.addressBookIcon} /><span className={styles.addressBookTitle}>Address Book</span></>} 
+            titleClassName={styles.dropdownTitle} 
+            className={cn(styles.addressBook, className)} 
+            menuClassName={styles.menu} 
+            handleClassName={styles.handle} 
+            open={isOpen} 
+            onChange={onDropDownChange}
+        >
             <div className={styles.heading}>
                 <div className={styles.title}>
                     <FaAddressCard /> Address Book
@@ -95,13 +104,15 @@ const AddressBook = ({ addresses, addAddress, removeAddress, newAddress, onClose
             {
                 openAddAddress ?
                     <div className={cn(styles.addAddress, styles.content)}>
-                        <div className={styles.fields}>
-                            <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)} />
-                            <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)} />
-                        </div>
-                        <Button clear small disabled={!isAddAddressFormValid} onClick={onAddAddress}>
-                            <MdOutlineAdd /> Add Address
-                        </Button>
+                        <form onSubmit={handleSubmit}>
+                            <div className={styles.fields}>
+                                <TextInput autoComplete="nope" placeholder="Name" value={name} onInput={value => setName(value)} />
+                                <TextInput autoComplete="nope" placeholder="Address" value={address} onInput={value => setAddress(value)} />
+                            </div>
+                            <Button type='submit' variant="secondary" size="sm" startIcon={<MdOutlineAdd />} disabled={!isAddAddressFormValid}>
+                                Add Address
+                            </Button>
+                        </form>
                     </div>
                     :
                     !addresses.length ?

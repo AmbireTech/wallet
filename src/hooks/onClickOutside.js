@@ -7,6 +7,7 @@ export default function useOnClickOutside(ref, handler) {
                 if (!ref.current || ref.current.contains(event.target)) {
                     return;
                 }
+                document.dispatchEvent(new CustomEvent("show-overlay", { detail: false}))
                 handler(event);
             };
             document.addEventListener("mousedown", listener);

@@ -19,19 +19,19 @@
                 display: flex;
                 align-items: center;
                 gap: 0.5em;
-                font-size: 18px;
+                font-size: 1.125rem;
                 font-weight: 500;
 
                 .icon {
                     @include flex-center-center;
-                    height: 28px;
-                    width: 28px;
+                    height: 1.75rem;
+                    width: 1.75rem;
                     border-radius: 100%;
                     background-size: contain;
                     background-color: rgba(0, 0, 0, 0.2);
 
                     svg {
-                        height: 14px;
+                        height: .875rem;
                         opacity: 0.3;
                     }
                 }

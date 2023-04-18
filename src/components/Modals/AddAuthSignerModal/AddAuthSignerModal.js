@@ -134,18 +134,30 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
       throw new Error('No accounts connected')
     }
 
-    // Depending on the MM version, the addresses are returned by a different caveat identifier.
-    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
-    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
-    const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
+    try {
+      // Depending on the MM version, the addresses are returned by a different caveat identifier.
+      // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
+      // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
+      const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
+  
+      if (addresses.length === 1)
+        return onSignerAddressClicked({
+          address: addresses[0],
+          index: 0,
+        })
+  
+      setChooseSigners({ addresses, signerName: 'Web3' })
+    } catch {
+      const addresses = await ethereum.request({ method: "eth_requestAccounts" })
 
-    if (addresses.length === 1)
-      return onSignerAddressClicked({
-        address: addresses[0],
-        index: 0,
-      })
+      if (!addresses.length || addresses.length === 0) {
+        addToast('No accounts connected', { error: true })
 
-    setChooseSigners({ addresses, signerName: 'Web3' })
+        return
+      }
+     
+      setChooseSigners({ addresses, signerName: 'Web3'})
+    }
   }
 
   const setLatticeAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
@@ -239,23 +251,23 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
 
   // Here we are choosing the Signer firstly
   const stepOne = () => <>
-    <div className={cn(styles.subtitle, styles.chooseSignerSubtitle)}>Choose Signer</div>
+    <h2 className={cn(styles.subtitle, styles.chooseSignerSubtitle)}>Choose Signer</h2>
     <div className={styles.signers}>
       <div className={styles.signer} onClick={() => wrapErr(connectTrezorAndGetAccounts)}>
-        <TrezorIcon width={172} />
+        <TrezorIcon className={styles.trezor} />
       </div>
       <div className={styles.signer} onClick={() => wrapErr(connectLedgerAndGetAccounts)}>
-        <LedgerIcon width={172} />
+        <LedgerIcon className={styles.ledger} />
       </div>
       <div className={styles.signer} onClick={() => wrapErr(connectGridPlusAndGetAccounts)}>
-        <GridPlusIcon width={127} className={styles.gridplus}/>
+        <GridPlusIcon className={styles.gridplus} />
       </div>
       <div className={styles.signer} onClick={() => wrapErr(connectWeb3AndGetAccounts)}>
-        <MetaMaskIcon width={70} className={styles.metamask} />
+        <MetaMaskIcon className={styles.metamask} />
       </div>
     </div>
 
-    <div className={styles.subtitle}>- or -</div>
+    <p className={styles.subtitle}>- or -</p>
 
     <div className={styles.manualSigner}>
       <TextInput
@@ -274,7 +286,7 @@ const AddAuthSignerModal = ({ onAddBtnClicked, selectedAcc, selectedNetwork }) =
           className={styles.button}
           disabled={disabled}
           onClick={() => onAddBtnClicked(signerAddress)}
-          primaryGradient
+          variant="primaryGradient"
       >
         Add
       </Button>

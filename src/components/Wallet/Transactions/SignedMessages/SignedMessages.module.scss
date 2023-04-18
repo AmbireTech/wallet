@@ -3,20 +3,25 @@
 .wrapper {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding: 24px;
+    gap: .625rem;
+    padding: 1.5rem;
     background: $c-ebony-clay;
     border: 1px solid $c-fiord;
-    border-radius: 12px;
+    border-radius: $border-radius;
+
+    .emptyLabel {
+        margin: 0;
+        font-size: .875rem;
+    }
 
     .header {
         display: flex;
         justify-content: space-between;
-        padding: 8px 16px;
+        padding: .5rem 1rem;
         color: $c-scampi;
 
         h3 {
-            font-size: 16px;
+            font-size: 1rem;
             font-weight: 400;
             margin: 0;
             flex: 1;
@@ -27,15 +32,15 @@
         }
 
         .placeholder {
-            width: 36px;
-            height: 1px;
+            width: 2.25rem;
+            height: .0625rem;
         }
     }
 }
 
-@media screen and (max-width: 800px) {
+@include sm-breakpoint {
     .wrapper {
-        padding: 10px;
+        padding: .625rem;
         
         .header {
             display: none;

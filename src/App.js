@@ -10,8 +10,6 @@ import {
   Prompt
 } from 'react-router-dom'
 import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
-import ToastProvider from './components/ToastProvider/ToastProvider'
-import ModalProvider from './components/ModalProvider/ModalProvider'
 import useAccounts from './hooks/accounts'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useWalletConnect from './hooks/useWalletConnect'
@@ -30,7 +28,10 @@ import { useOneTimeQueryParam } from './hooks/oneTimeQueryParam'
 import useRewards from 'ambire-common/src/hooks/useRewards'
 import allNetworks from './consts/networks'
 import { Loading } from 'components/common'
-import ConstantsProvider from 'components/ConstantsProvider/ConstantsProvider'
+import ConstantsProvider from 'context/ConstantsProvider/ConstantsProvider'
+import ToastProvider from 'context/ToastProvider/ToastProvider'
+import ModalProvider from 'context/ModalProvider/ModalProvider'
+import ThemeProvider from 'context/ThemeProvider/ThemeProvider'
 import useDapps from 'ambire-common/src/hooks/useDapps'
 import { getManifestFromDappUrl } from 'ambire-common/src/services/dappCatalog'
 import { fetch } from 'lib/fetch'
@@ -43,7 +44,6 @@ import SignMessage from './components/SignMessage/SignMessage'
 import { initRpcProviders } from 'ambire-common/src/services/provider'
 
 import { rpcProviders } from 'config/providers'
-import ThemeProvider from 'components/ThemeProvider/ThemeProvider'
 
 const MATCH = { url: "/wallet" };
 
@@ -106,16 +106,16 @@ function AppInner() {
   useEffect(() => {
     const storageRequests = [...gnosisRequests, ...wcRequests]
     if (storageRequests.length) {
-      const newRequests = storageRequests.filter(r => !allRequests.find(x => x.id === r.id) || r).sort((a, b) => a.dateAdded - b.dateAdded)
-
+      const newRequests = storageRequests.sort((a, b) => a.dateAdded - b.dateAdded)
       setRequests(reqs => [...reqs, ...newRequests])
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-  
+
   const requests = useMemo(
     () => allRequests
-      .filter(({ account }) => accounts.find(({ id }) => id === account)),
+      .filter(({ account }) => accounts.find(({ id }) => id === account))
+      .filter((r, pos, all) => all.findIndex(x => x.id === r.id) === pos),
     [accounts, allRequests]
   )
 
@@ -130,7 +130,6 @@ function AppInner() {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
     setRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
-
   }
 
   const privateMode = usePrivateMode(useLocalStorage)

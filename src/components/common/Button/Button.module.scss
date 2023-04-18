@@ -1,139 +1,136 @@
 @import 'variables.scss';
 
-.wrapper {
-    height: 60px;
-    border-radius: 12px;
-    @include flex-center-center;
-    gap: 10px;
-    padding: 0 20px;
-    border: none;
-    font-family: 'Poppins', sans-serif;
-    font-size: 20px;
-    font-weight: 500;
+// We use mixins to reduce the repetition of code
+@mixin BorderButton($primary-color) {
     background-color: transparent;
-    color: $c-turquoise;
-    border: 2px solid $c-turquoise;
+    color: $primary-color;
+    border: 2px solid $primary-color;
+}
+
+@mixin FilledButton($primary-color) {
+    background: $primary-color;
+    color: theme(text-primary);
+}
+
+.wrapper {
+    @include flex-center-center;
+    gap: 0.5em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
+    height: 3.75rem;
+    padding: 0 1em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 500;
+    border-radius: $border-radius;
+    border: none;
     outline: none;
-    transition: 0.1s ease-in-out;
+    transition: 0.3s ease-in-out;
+    transition-property: color, opacity, text-decoration;
+    cursor: pointer;
 
-    .iconButton {
-        @include flex-center-center;
-        color: $c-turquoise !important;
+    svg {
+        width: 1.3em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
+        height: 1.3em;// We use em to make the button responsive for different button sizes(xsm, sm, normal)
+        color: inherit;
     }
-
-    &.small {
-        height: 50px;
-        font-size: 17px;
+    
+    // Colors
+    &.primary { // DEFAULT
+        @include BorderButton(theme(highlight-secondary));
     }
-
-    &.full {
-        width: 100%;
-    }
-
-    &.mini {
-        gap: 5px;
-        height: 40px;
-        padding: 0 10px;
-        font-size: 14px;
+    
+    &.secondary {
+        @include FilledButton(rgba(0, 0, 0, 0.15));
     }
 
     &.danger {
-        border: none;
-        color: $c-titan-white;
-        background: $danger-color;
-
-        .iconButton {
-            color: inherit!important;
-        }
+        @include BorderButton($danger-color);
     }
-
-    &.clear {
-        border: none;
-        color: $c-titan-white;
-        background-color: rgba(0, 0, 0, 0.1);
-
-        .iconButton {
-            color: inherit!important;
-        }
-
-        &:not([disabled]):hover {
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-    }
-
+    
+    // Gradients
     &.primaryGradient {
-        border: none;
-        background: theme(gradient-primary);
-        color: $c-titan-white;
-
-        .iconButton {
-            color: inherit!important;
-        }
+        @include FilledButton(theme(gradient-primary));
     }
 
     &.secondaryGradient {
-        border: none;
-        background: theme(gradient-secondary);
-        color: $c-titan-white;
-
-        .iconButton {
-            color: inherit!important;
-        }
+        @include FilledButton(theme(gradient-secondary));
     }
 
     &.terniaryGradient {
-        border: none;
-        background: theme(gradient-terniary);
-        color: $c-titan-white;
-
-        .iconButton {
-            color: inherit!important;
-        }
+        @include FilledButton(theme(gradient-terniary));
     }
 
-    &.secondary {
-        border: none;
-        color: $c-titan-white;
-        background-color: $c-heliotrope;
-
-        .iconButton {
-            color: inherit!important;
-        }
-    }
-
-    &.textOnly {
-        padding: 0;
-        margin: 0;
-        height: auto;
-        background: 0;
-        border: none;
+    // Text only
+    &.text {
         color: theme(text-primary);
-        font-size: 1em;
-        display: inline-flex;
-    }
-
-    &.border {
-        color: theme(highlight-secondary);
+        display: inline;
         background-color: transparent;
-        border: 2px solid theme(highlight-secondary);
+        border: none;
+        font-size: 1rem;
+        font-weight: 400;
+        padding: 0;
+        height: auto;
 
-        .iconButton {
-            color: theme(highlight-secondary) !important;
+        &:hover:not(.disabled) {
+            text-decoration: underline;
         }
     }
 
-    &:disabled, &.disabled{
-        opacity: 0.4 !important;
+    // Sizes
+    &.sm {
+        font-size: 1.0625rem;
+        height: 3.125rem;
     }
 
-    &:not([disabled]):not(.disabled) {
-        &:hover {
-            cursor: pointer;
-            opacity: 0.8;
+    &.xsm {
+        height: 2.5rem;
+        font-size: .875rem;
+        padding: 0 0.8em;
+    }
+
+    // Other states
+    &.loading {
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+        
+            to {
+                transform: rotate(360deg);
+            }
         }
 
-        &:active {
-            opacity: 0.6;
+        .loadingInner {
+            display: flex;
+            justify-content: center;
+            gap: 1em;
+            align-items: center;
+
+            .loadingText {
+                margin: 0;
+            }
+
+            svg {
+                animation: spin 1.5s infinite ease-in-out;
+            }
         }
+    }
+
+    &:hover:not(.disabled) {
+        opacity: .6;
+    }
+
+    &:active:not(.disabled) {
+        opacity: 1;
+    }
+
+    &.disabled {
+        opacity: .2;
+        cursor: not-allowed;
+    }
+}
+
+@include lg-breakpoint {
+    .wrapper {
+        font-size: 1rem;
     }
 }

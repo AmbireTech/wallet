@@ -77,14 +77,14 @@ const AssetsMigration = ({
       setShowCloseConfirmation(true)
       setModalButtons([
         <Button
-          clear
+          variant="secondary"
           onClick={() => setShowCloseConfirmation(false)}
           key="0"
           className={styles.button}
         >
           Back
         </Button>,
-        <Button danger onClick={() => hideModal()} key="1" className={styles.button}>
+        <Button variant="danger" onClick={() => hideModal()} key="1" className={styles.button}>
           Close
         </Button>,
       ])

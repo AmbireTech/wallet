@@ -37,11 +37,11 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
 
     const resizeBalance = useCallback(() => {
         const balanceFontSizes = {
-            3: '2em',
-            5: '1.5em',
-            7: '1.3em',
-            9: '1.2em',
-            11: '1em',
+            3: '2.2rem',
+            5: '1.8rem',
+            7: '1.6rem',
+            9: '1.4rem',
+            11: '1.2rem',
         }
 
         const charLength = portfolio.balance.total.truncated.length
@@ -68,7 +68,7 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
       <div className={styles.ambireLogo}>
         <div className={styles.logo} />
         <div className={styles.icon} />
-        <Button clear icon={<MdClose size={23} />} mini
+        <Button variant="secondary" size="xsm" startIcon={<MdClose size={23} />}
           onClick={toggleSideBarOpen}
         ></Button>
       </div>

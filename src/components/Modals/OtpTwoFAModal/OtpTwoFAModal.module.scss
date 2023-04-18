@@ -4,24 +4,24 @@
     .content {
         .timer {
             justify-content: center;
-            margin-bottom: 20px;
+            margin-bottom: 1.25rem;
         }
         .timerResetMsg {
             text-align: center;
-            font-size: 16px;
-            margin-bottom: 20px;
+            font-size: 1rem;
+            margin-bottom: 1.25rem;
             color: $danger-color;
         }
     
         form {
             display: flex;
             flex-direction: column;
-            gap: 30px;
+            gap: 1.875rem;
             
             h4 {
                 margin: 0;
-                margin-bottom: 15px;
-                font-size: 16px;
+                margin-bottom: .9375rem;
+                font-size: 1rem;
                 font-weight: 400;
             }
             
@@ -29,13 +29,13 @@
                 .imgWrapper {
                     display: flex;
                     justify-content: center;
-                    margin-bottom: 10px;
+                    margin-bottom: .625rem;
                     
                     img {
-                        padding: 8px;
+                        padding: .5rem;
                         background-color: $c-white;
-                        width: 156px;
-                        border-radius: 12px;
+                        width: 9.75rem;
+                        border-radius: $border-radius;
                     }
                 }
                 .downloadQrCodeButton {
@@ -56,7 +56,7 @@
                         display: inline;
                         cursor: pointer;
                         color: rgba($c-titan-white, .8);
-                        font-size: 14px;
+                        font-size: .875rem;
             
                         button, a {
                             width: auto;
@@ -79,7 +79,7 @@
                     display: flex;
                     justify-content: space-between;
                     align-items: center;
-                    gap: 10px;
+                    gap: .625rem;
         
                     & > button, div {
                         flex: 0 1 50%!important;
@@ -95,20 +95,20 @@
     }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
     .wrapper {
         max-height: 90vh;
         
         .content {
             form {
-                gap: 20px;
+                gap: 1.25rem;
 
                 .qrCode {
                     .imgWrapper {
-                        margin-bottom: 10px;
+                        margin-bottom: .625rem;
 
                         img {
-                            width: 140px;
+                            width: 8.75rem;
                         }
                     }
                 }

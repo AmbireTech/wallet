@@ -22,10 +22,10 @@
 		}
 	}
 
-	@media screen and (max-width: 1024px) {
-		border-left-color: transparent;
-		border-top-color: $color;
-	}
+  @include md-breakpoint {
+    border-left-color: transparent;
+    border-top-color: $color;
+  }
 }
 
 .wrapper {
@@ -36,7 +36,7 @@
 		overflow: hidden;
 		position: relative;
 		z-index: 2;
-		border-radius: 12px;
+		border-radius: $border-radius;
 		transition: .1s ease-out transform;
 	}
 
@@ -48,12 +48,12 @@
 		z-index: 1;
 		bottom: 0;
 		width: 99%;
-		height: 40px;
+		height: 2.5rem;
 		transform: translateX(-50%);
 		background: rgba($c-mirage, 0.8);
 		mix-blend-mode: multiply;
-		border-radius: 10px;
-		filter: blur(5px);
+		border-radius: .625rem;
+		filter: blur(.3125rem);
 		transition: .3s ease-out opacity;
 	}
 
@@ -74,15 +74,15 @@
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		width: 50px;
-		height: 50px;
-		border-radius: 12px;
+		width: 3.125rem;
+		height: 3.125rem;
+		border-radius: $border-radius;
 		background-color: $c-mirage;
 		cursor: pointer;
 
 		svg {
-			width: 24px;
-			height: 24px;
+			width: 1.5rem;
+			height: 1.5rem;
 		}
 
 		&::after {
@@ -101,11 +101,11 @@
 		display: flex;
 		align-items: center;
 		flex-wrap: wrap;
-		gap: 20px;
-		padding: 13px 20px;
-		padding-left: 13px;
+		gap: 1.25rem;
+		padding: .8125rem 1.25rem;
+		padding-left: .8125rem;
 		color: $c-martinique-light;
-		border-left: 7px solid;
+		border-left: .4375rem solid;
 
 		&.success {
 			@include GetBannerStyle($success-background-color, $success-color);
@@ -129,20 +129,20 @@
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			width: 34px;
-			height: 34px;
-			border-radius: 12px;
+			width: 2.125rem;
+			height: 2.125rem;
+			border-radius: $border-radius;
 		}
 
 		.iconAndBody {
 			display: flex;
 			align-items: center;
-			gap: 15px;
+			gap: .9375rem;
 			flex: 1;
 
 			.iconWrapper {
-				font-size: 20px;
-				border-width: 1px;
+				font-size: 1.25rem;
+				border-width: .0625rem;
 				border-style: solid;
 			}
 
@@ -151,12 +151,12 @@
 
 				.title {
 					margin: 0;
-					font-size: 20px;
+					font-size: 1.25rem;
 				}
 
 				.text {
 					margin: 0;
-					font-size: 16px;
+					font-size: 1rem;
 					text-align: left;
 				}
 			}
@@ -167,33 +167,33 @@
 		cursor: pointer;
 
 		.minimizeIcon {
-			width: 12px;
-			height: 9px;
+			width: .75rem;
+			height: .5625rem;
 		}
 	}
 }
 
 
 
-@media screen and (max-width: 1024px) {
+@include md-breakpoint {
 	.wrapper {
 		.banner {
 			flex-direction: column;
 			align-items: flex-start;
-			padding: 20px;
+			padding: 1.25rem;
 			border-left: none;
-			border-top: 7px solid;
+			border-top: .4375rem solid;
 
 			.iconAndBody {
 				align-self: flex-start;
 
 				.body {
 					.title {
-						font-size: 18px;
-						margin-bottom: 10px;
+						font-size: 1.125rem;
+						margin-bottom: .625rem;
 					}
 					.text {
-						font-size: 14px;
+						font-size: .875rem;
 					}
 				}
 			}
@@ -201,13 +201,13 @@
 
 		.minimizeIconWrapper {
 			position: absolute;
-			bottom: 20px;
-			right: 20px;
+			bottom: 1.25rem;
+			right: 1.25rem;
 		}
 	}
 }
 
-@media screen and (max-width: 500px) {
+@include xs-breakpoint {
 	.wrapper {
 		text-align: center;
 
