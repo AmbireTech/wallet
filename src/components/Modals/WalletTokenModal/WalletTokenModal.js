@@ -1,11 +1,13 @@
+import { useState } from 'react'
+import cn from 'classnames'
+import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
+
+import { formatFloatTokenAmount } from 'lib/formatters'
 
 import { Button, Modal, ToolTip, RemoteLottie } from 'components/common'
-import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
 import MultiplierBadges from './MultiplierBadges/MultiplierBadges'
-import { useState } from 'react'
 import UnbondModal from './UnbondModal/UnbondModal'
-import { formatFloatTokenAmount } from 'lib/formatters'
-import cn from 'classnames'
+
 import styles from './WalletTokenModal.module.scss'
 
 const MIN_ELIGIBLE_USD = 1000
@@ -13,7 +15,6 @@ const MIN_CLAIMABLE_WALLET = 1000
 const MIN_CLAIMABLE_ADX_USD = 1000
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
-
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
   const { stakedAmount } = useStakedWalletToken({ accountId })
 
@@ -182,20 +183,19 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
           </div>
         </div>
       )}
-
-      {!!stakedAmount && (
-        <div className={styles.item}>
-          <div className={styles.details}>
-            <label>Staked WALLET</label>
-            <div className={styles.balance}>
-              <div className={styles.amount}>
-                <span>{formatAmount(stakedAmount)}</span>
-              </div>
-              <div className={cn(styles.amount, styles.apy)}>{xWALLETAPYPercentage} <span>APY</span></div>
+      {!!stakedAmount && <div className={styles.item}>
+        <div className={styles.details}>
+          <label>Staked WALLET</label>
+          <div className={styles.balance}>
+            <div className={styles.amount}>
+              <span>
+                {formatAmount(stakedAmount)}
+              </span>
             </div>
+            <div className={cn(styles.amount, styles.apy)}>{xWALLETAPYPercentage} <span>APY</span></div>
           </div>
         </div>
-      )}
+      </div>}
     </Modal>
   )
 }

@@ -160,6 +160,11 @@
                 font-weight: 500;
                 text-align: right;
 
+                .loader {
+                    width: 1.5rem;
+                    height: 1.5rem;
+                }
+                
                 .amount {
                     display: flex;
                     gap: .4375rem;
