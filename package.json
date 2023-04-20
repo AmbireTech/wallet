@@ -26,7 +26,7 @@
     "@web3-react/types": "^6.0.7",
     "@yfi/sdk": "^1.0.11",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#c5e6bc4a01b6b84ffb41ac6e84f0219c358b39f5",
-    "ambire-common": "github:AmbireTech/ambire-common#fix/wallet-token-modal-staked-amount",
+    "ambire-common": "github:AmbireTech/ambire-common#v0.22.11",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "chart.js": "^3.9.1",
