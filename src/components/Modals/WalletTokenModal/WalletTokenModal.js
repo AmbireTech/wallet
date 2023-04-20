@@ -4,7 +4,7 @@ import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
 
 import { formatFloatTokenAmount } from 'lib/formatters'
 
-import { Button, Modal, ToolTip, RemoteLottie } from 'components/common'
+import { Button, Modal, ToolTip, RemoteLottie, Loading } from 'components/common'
 import MultiplierBadges from './MultiplierBadges/MultiplierBadges'
 import UnbondModal from './UnbondModal/UnbondModal'
 
@@ -16,7 +16,7 @@ const MIN_CLAIMABLE_ADX_USD = 1000
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
-  const { stakedAmount } = useStakedWalletToken({ accountId })
+  const { stakedAmount, isLoading } = useStakedWalletToken({ accountId })
 
   const hideUnbondModal = () => setIsUnbondModalVisible(false)
 
@@ -183,19 +183,20 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
           </div>
         </div>
       )}
-      {!!stakedAmount && <div className={styles.item}>
+      <div className={styles.item}>
         <div className={styles.details}>
           <label>Staked WALLET</label>
           <div className={styles.balance}>
-            <div className={styles.amount}>
+            {!isLoading && <div className={styles.amount}>
               <span>
                 {formatAmount(stakedAmount)}
               </span>
-            </div>
+            </div>}
+            {isLoading && <Loading className={styles.loader} size={24} />}
             <div className={cn(styles.amount, styles.apy)}>{xWALLETAPYPercentage} <span>APY</span></div>
           </div>
         </div>
-      </div>}
+      </div>
     </Modal>
   )
 }
