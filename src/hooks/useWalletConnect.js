@@ -8,20 +8,30 @@ const decodeWalletConnectUri = (uri) => {
   const decodedURI = decodeURIComponent(uri)
 
   let onlyURI = decodedURI.split('?uri=')[1].split('#')[0]
-  
+
   if (onlyURI.includes('@1')) {
-    const bridgeEncoded = onlyURI.substring(onlyURI.indexOf("?bridge=") + 1, onlyURI.lastIndexOf("&"))
-    
+    const bridgeEncoded = onlyURI.substring(
+      onlyURI.indexOf('?bridge=') + 1,
+      onlyURI.lastIndexOf('&')
+    )
+
     const bridge = decodeURIComponent(bridgeEncoded)
-    
+
     onlyURI = onlyURI.replace(bridgeEncoded, bridge)
   }
-    
+
   return onlyURI
 }
 
-export default function useWalletConnect({ account, chainId, initialWcURI, allNetworks, setNetwork, useStorage, setRequests }) {
-
+export default function useWalletConnect({
+  account,
+  chainId,
+  initialWcURI,
+  allNetworks,
+  setNetwork,
+  useStorage,
+  setRequests
+}) {
   const { addToast } = useToasts()
 
   const clipboardError = (e) => console.log('non-fatal clipboard/walletconnect err:', e.message)
@@ -158,8 +168,9 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
     try {
       const wcUri = decodeWalletConnectUri(window.location.href)
 
-      if (!wcUri.includes('key') && !wcUri.includes('symKey')) throw new Error('Wallet Connect URI is missing key')
-      
+      if (!wcUri.includes('key') && !wcUri.includes('symKey'))
+        throw new Error('Wallet Connect URI is missing key')
+
       connect({ uri: wcUri })
     } catch (e) {
       if (e.message) {
@@ -168,7 +179,6 @@ export default function useWalletConnect({ account, chainId, initialWcURI, allNe
       }
       addToast('Invalid WalletConnect uri', { error: true })
     }
-
   }, [account, initialWcURI, connect, addToast])
 
   useEffect(() => {

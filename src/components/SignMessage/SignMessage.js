@@ -178,7 +178,7 @@ export default function SignMessage({
 
         <div className={styles.actions}>
           <form onSubmit={handleSubmit}>
-            {account.signer.quickAccManager && (isDeployed !== null) && (
+            {account.signer.quickAccManager && isDeployed !== null && (
               <>
                 <TextInput
                   password
@@ -234,8 +234,14 @@ export default function SignMessage({
               >
                 Reject
               </Button>
-              {((isDeployed && hasPrivileges) || (isDeployed === false)) && (
-                <Button type='submit' variant="primaryGradient" className={styles.button} loading={isLoading} loadingText="Signing...">
+              {((isDeployed && hasPrivileges) || isDeployed === false) && (
+                <Button
+                  type="submit"
+                  variant="primaryGradient"
+                  className={styles.button}
+                  loading={isLoading}
+                  loadingText="Signing..."
+                >
                   Sign
                 </Button>
               )}

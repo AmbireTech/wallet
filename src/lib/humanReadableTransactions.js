@@ -174,9 +174,9 @@ export function setKnownAddressNames(uDomains) {
 }
 
 export function setKnownAddresses(addrs) {
-    const latestKnownAddresses = {}
-    addrs.forEach(({ address, name }) => latestKnownAddresses[address.toLowerCase()] = name)
-    knownAliases = latestKnownAddresses
+  const latestKnownAddresses = {}
+  addrs.forEach(({ address, name }) => (latestKnownAddresses[address.toLowerCase()] = name))
+  knownAliases = latestKnownAddresses
 }
 
 export function setKnownTokens(tokens) {
