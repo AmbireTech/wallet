@@ -210,28 +210,28 @@
         }
       }
 
-    .emailConf {
+      .emailConf {
         background-color: $c-mirage;
         border: 1px solid $c-scampi;
         border-radius: $border-radius;
         padding: 1.875rem 3.75rem;
-        padding-top: .75rem;
+        padding-top: 0.75rem;
         text-align: center;
         color: $c-titan-white;
         width: 100%;
         max-width: 28.75rem;
         margin: 0 auto;
-    }
-    
-    .emailConf h3 {
+      }
+
+      .emailConf h3 {
         font-size: 1.5rem;
         text-align: center;
         font-weight: 400;
         margin-top: 0;
         margin-bottom: 1.25rem;
-    }
-    
-    .emailConf .emailConfText {
+      }
+
+      .emailConf .emailConfText {
         font-size: 1rem;
         font-weight: 300;
         position: relative;

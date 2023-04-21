@@ -4,31 +4,31 @@ $arrow-size: 0.9375rem;
 .tooltip {
   display: contents;
 
-    .tooltipLabel {
-        z-index: 50;
-        position: fixed;
-        display: flex;
-        align-items: center;
-        gap: .5rem;
-        max-width: 18.75rem;
-        padding: .9375rem;
-        font-size: .9375rem;
-        font-weight: 500;
-        color: theme(background-terniary); // temporary use of background color as text color
-        background-color: theme(text-primary); // Temporary use of text color as background color
-        box-shadow: $box-shadow;
-        border-radius: $border-radius;
-        white-space: normal;
-        opacity: 0;
-        overflow: visible;
-        transition: opacity 0.3s ease-in-out;
-        pointer-events: none;
+  .tooltipLabel {
+    z-index: 50;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 18.75rem;
+    padding: 0.9375rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: theme(background-terniary); // temporary use of background color as text color
+    background-color: theme(text-primary); // Temporary use of text color as background color
+    box-shadow: $box-shadow;
+    border-radius: $border-radius;
+    white-space: normal;
+    opacity: 0;
+    overflow: visible;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
 
-        .icon {
-            min-width: 1.5rem;
-            width: 1.5rem;
-            height: 1.5rem;
-        }
+    .icon {
+      min-width: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
 
     .icon {
       width: 1.5rem;
