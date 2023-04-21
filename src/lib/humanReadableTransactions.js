@@ -4,7 +4,7 @@ import networks from 'consts/networks'
 import humanizers from './humanizers'
 
 // address (lowercase) => name
-const knownAliases = {}
+let knownAliases = {}
 // address (lowercase) => [symbol, decimals]
 const knownTokens = {}
 // address (lowercase) => name
@@ -174,7 +174,9 @@ export function setKnownAddressNames(uDomains) {
 }
 
 export function setKnownAddresses(addrs) {
-  addrs.forEach(({ address, name }) => (knownAliases[address.toLowerCase()] = name))
+    const latestKnownAddresses = {}
+    addrs.forEach(({ address, name }) => latestKnownAddresses[address.toLowerCase()] = name)
+    knownAliases = latestKnownAddresses
 }
 
 export function setKnownTokens(tokens) {

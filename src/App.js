@@ -120,17 +120,16 @@ function AppInner() {
   useEffect(() => {
     const storageRequests = [...gnosisRequests, ...wcRequests]
     if (storageRequests.length) {
-      const newRequests = storageRequests
-        .filter((r) => !allRequests.find((x) => x.id === r.id) || r)
-        .sort((a, b) => a.dateAdded - b.dateAdded)
-
-      setRequests((reqs) => [...reqs, ...newRequests])
+      const newRequests = storageRequests.sort((a, b) => a.dateAdded - b.dateAdded)
+      setRequests(reqs => [...reqs, ...newRequests])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const requests = useMemo(
-    () => allRequests.filter(({ account }) => accounts.find(({ id }) => id === account)),
+    () => allRequests
+      .filter(({ account }) => accounts.find(({ id }) => id === account))
+      .filter((r, pos, all) => all.findIndex(x => x.id === r.id) === pos),
     [accounts, allRequests]
   )
 
@@ -144,7 +143,7 @@ function AppInner() {
   const resolveMany = (ids, resolution) => {
     wcResolveMany(ids, resolution)
     gnosisResolveMany(ids, resolution)
-    setRequests((reqs) => reqs.filter((x) => !ids.includes(x.id)))
+    setRequests(reqs => reqs.filter(x => !ids.includes(x.id)))
   }
 
   const privateMode = usePrivateMode(useLocalStorage)

@@ -19,6 +19,7 @@ import { fetchPost } from 'lib/fetch'
 import { UseStorageProps } from 'ambire-common/src/hooks/useStorage'
 import { useToasts } from 'hooks/toasts'
 import { UseAccountsReturnType } from 'ambire-common/src/hooks/useAccounts'
+import { wrapSignature } from 'lib/EIP6492Signature'
 
 export type UseSignMessageProps = {
   account: UseAccountsReturnType['account']
@@ -188,7 +189,7 @@ const useSignMessage = ({
           JSON.parse(account.primaryKeyBackup),
           credentials.password
         )
-        const sig = await (isTypedData
+        let sig = await (isTypedData
           ? signMessage712(
               wallet,
               account.id,
@@ -205,6 +206,8 @@ const useSignMessage = ({
               getMessageAsBytes(msgToSign.txn),
               signature
             ))
+
+        if (!isDeployed) sig = wrapSignature(sig, account)
 
         await verifySignature(msgToSign, sig, requestedNetwork?.id)
 
@@ -240,7 +243,8 @@ const useSignMessage = ({
       verifySignature,
       dApp,
       requestedChainId,
-      addSignedMessage
+      addSignedMessage,
+      isDeployed
     ]
   )
   // Passing hardware device is required only for the mobile app
@@ -267,7 +271,7 @@ const useSignMessage = ({
         // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
         // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
 
-        const sig = await (isTypedData
+        let sig = await (isTypedData
           ? signMessage712(
               wallet,
               account.id,
@@ -277,6 +281,8 @@ const useSignMessage = ({
               dataV4.message
             )
           : signMessage(wallet, account.id, account.signer, getMessageAsBytes(msgToSign.txn)))
+
+        if (!isDeployed) sig = wrapSignature(sig, account)
 
         await verifySignature(msgToSign, sig, requestedNetwork?.id)
 
@@ -310,7 +316,8 @@ const useSignMessage = ({
       verifySignature,
       addSignedMessage,
       dApp,
-      requestedChainId
+      requestedChainId,
+      isDeployed
     ]
   )
 

@@ -390,16 +390,26 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       throw new Error('No accounts connected')
     }
 
-    // Depending on the MM version, the addresses are returned by a different caveat identifier.
-    // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
-    // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
-    const addresses = accountsPermission.caveats.find(
-      (caveat) => caveat.type === 'restrictReturnedAccounts' || caveat.name === 'exposedAccounts'
-    ).value
+    try {
+      // Depending on the MM version, the addresses are returned by a different caveat identifier.
+      // For instance, in MM 9.8.4 we can find the addresses by `caveat.name === 'exposedAccounts'`,
+      // while in the newer MM versions by `caveat.type ==='restrictReturnedAccounts'`.
+      const addresses = accountsPermission.caveats.find(caveat => caveat.type ==='restrictReturnedAccounts' || caveat.name === 'exposedAccounts').value
+  
+      if (addresses.length === 1) return onEOASelected(addresses[0], {type: 'Web3'})
+      
+      setChooseSigners({ addresses, signerName: 'Web3' })  
+    } catch {
+      const accounts = await ethereum.request({ method: "eth_requestAccounts" })
 
-    if (addresses.length === 1) return onEOASelected(addresses[0], { type: 'Web3' })
+      if (!accounts.length || accounts.length === 0) {
+        addToast('No accounts connected', { error: true })
 
-    setChooseSigners({ addresses, signerName: 'Web3' })
+        return
+      }
+     
+      onEOASelected(accounts[0], {type: 'Web3'})
+    }
   }
 
   const getGridPlusAddresses = ({ addresses, deviceId, commKey, isPaired }) => {
@@ -620,17 +630,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         <>
           <div className={styles.logo} />
           <div className={`${styles.emailConf}`}>
-            <Lottie
-              className={styles.emailAnimation}
-              animationData={AnimationData}
-              background="transparent"
-              speed="1"
-              loop
-              autoplay
-            />
-            <h3>Email confirmation required</h3>
-            <p>
-              We sent an email to{' '}
+            <Lottie className={styles.emailAnimation} animationData={AnimationData} background="transparent" speed="1" loop autoplay />
+            <h3>
+              Email confirmation required
+            </h3>
+            <p className={styles.emailConfText}>
+              We sent an email to
+              {' '}
               <span className={styles.email}>
                 {isCreateRespCompleted && isCreateRespCompleted[0].email}
               </span>
