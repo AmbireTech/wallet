@@ -1,96 +1,97 @@
 @import 'variables.scss';
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem !important;
+
+  .provider {
     display: flex;
-    flex-direction: column;
-    gap: 1.25rem!important;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 1rem 2.1875rem 1rem 3.3125rem;
+    height: 10rem;
+    border-radius: $border-radius;
+    background-color: $c-ebony-clay;
+    border: 1px solid transparent;
+    box-shadow: $box-shadow;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    gap: 3.5625rem !important;
 
-    .provider {
-        display: flex;
-        justify-content: flex-start;
-        align-items: flex-start;
-        padding: 1rem 2.1875rem 1rem 3.3125rem;
-        height: 10rem;
-        border-radius: $border-radius;
-        background-color: $c-ebony-clay;
-        border: 1px solid transparent;
-        box-shadow: $box-shadow;
-        cursor: pointer;
-        transition: all 0.3s ease-out;
-        gap: 3.5625rem!important;
+    .logo {
+      display: block;
+      max-width: 30%;
+      min-width: 10rem;
+      align-self: center;
 
-        .logo {
-            display: block;
-            max-width: 30%;
-            min-width: 10rem;
-            align-self: center;
-
-            img, svg {
-                width: 100%;
-            }
-        }
-
-        .details {
-            flex: 1;
-            text-align: left;
-
-            .type {
-                margin-bottom: .5rem;
-                font-size: .75rem;
-            }
-            .fees,
-            .limits,
-            .currencies {
-                color: $c-blue-bell;
-                font-size: .75rem;
-            }
-        }
-
-        &:not(.disabled):hover {
-            background: $c-ebony-clay-light;
-            border: 1px solid $c-fiord;
-
-            .logo {
-                opacity: 1;
-            }
-        }
-
-        &.disabled {
-            opacity: 0.3;
-            pointer-events: none;
-            cursor: default;
-        }
+      img,
+      svg {
+        width: 100%;
+      }
     }
 
-    .info {
-        label {
-            font-size: .75rem;
-            opacity: 0.8;
-        }
+    .details {
+      flex: 1;
+      text-align: left;
+
+      .type {
+        margin-bottom: 0.5rem;
+        font-size: 0.75rem;
+      }
+      .fees,
+      .limits,
+      .currencies {
+        color: $c-blue-bell;
+        font-size: 0.75rem;
+      }
     }
+
+    &:not(.disabled):hover {
+      background: $c-ebony-clay-light;
+      border: 1px solid $c-fiord;
+
+      .logo {
+        opacity: 1;
+      }
+    }
+
+    &.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+
+  .info {
+    label {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+  }
 }
 
 // Mobile
 @include lg-breakpoint {
-    .wrapper {
-        .provider {
-            flex-direction: column;
-            gap: 1.25rem!important;
-            padding: 1.875rem;
-            height: auto;
-            align-items: center;
+  .wrapper {
+    .provider {
+      flex-direction: column;
+      gap: 1.25rem !important;
+      padding: 1.875rem;
+      height: auto;
+      align-items: center;
 
-            .logo {
-                max-width: 80%;
-            }
+      .logo {
+        max-width: 80%;
+      }
 
-            .details {
-                text-align: center;
+      .details {
+        text-align: center;
 
-                .type {
-                    margin-bottom: 0.25em;
-                }
-            }
+        .type {
+          margin-bottom: 0.25em;
         }
+      }
     }
+  }
 }

@@ -1,5 +1,5 @@
-import { Panel } from "components/common"
-import SwapInner from "./SwapInner/SwapInner"
+import { Panel } from 'components/common'
+import SwapInner from './SwapInner/SwapInner'
 
 const Swap = ({
   network,
@@ -8,7 +8,7 @@ const Swap = ({
   selectedAccount,
   quotesConfirmed,
   setQuotesConfirmed,
-  panelClassName,
+  panelClassName
 }) => (
   <Panel className={panelClassName} title="Cross-Chain transfers/swaps">
     <SwapInner

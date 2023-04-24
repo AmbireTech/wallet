@@ -1,82 +1,91 @@
 @import 'variables.scss';
 
 .dropdown {
-    position: relative;
-    height: 3.125rem;
-    background-color: $c-ebony-clay;
-    user-select: none;
-    border: 1px solid $c-fiord;
+  position: relative;
+  height: 3.125rem;
+  background-color: $c-ebony-clay;
+  user-select: none;
+  border: 1px solid $c-fiord;
+  border-radius: $border-radius;
+  cursor: pointer;
+
+  &:hover,
+  &:active {
+    background-color: $c-mirage;
+  }
+
+  button {
+    text-align: left;
+  }
+
+  .content {
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.75em;
+    padding: 0 0.625rem;
+
+    .icon {
+      height: 2rem;
+      width: 2rem;
+      background-size: cover;
+      border-radius: $border-radius;
+      // flex: 1;
+    }
+
+    .title {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.875rem;
+      flex: 1;
+    }
+
+    .badge {
+      height: 1.25rem;
+      width: 1.25rem;
+      @include flex-center-center;
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: black;
+      background-color: $c-turquoise;
+      border-radius: 100%;
+    }
+
+    .separator {
+      flex-grow: 1;
+    }
+
+    .handle {
+      cursor: pointer;
+      transition: all 0.1s ease-in-out;
+      margin-left: auto;
+
+      svg {
+        width: 0.5rem;
+      }
+
+      &.open {
+        transform: scaleY(-1);
+      }
+    }
+  }
+
+  .menu {
+    padding: 0;
+    z-index: 97;
+    min-width: 100%;
+    position: absolute;
+    top: 3.75rem;
     border-radius: $border-radius;
-    cursor: pointer;
-
-    &:hover, &:active {
-        background-color: $c-mirage;
-    }
-
-    .content {
-        height: 100%;
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-        gap: 0.75em;
-        padding: 0 .625rem;
-
-        .icon {
-            height: 2rem;
-            width: 2rem;
-            background-size: cover;
-            border-radius: $border-radius;
-        }
-
-        .title {
-            display: flex;
-            align-items: center;
-            gap: .625rem;
-            font-size: .875rem;
-        }
-
-        .badge {
-            height: 1.25rem;
-            width: 1.25rem;
-            @include flex-center-center;
-            font-size: .75rem;
-            font-weight: bold;
-            color: black;
-            background-color: $c-turquoise;
-            border-radius: 100%;
-        }
-
-        .separator {
-            flex-grow: 1;
-        }
-
-        .handle {
-            cursor: pointer;
-            transition: all 0.1s ease-in-out;
-            margin-left: auto;
-
-            svg {
-                width: .5rem;
-            }
-
-            &.open {
-                transform: scaleY(-1);
-            }
-        }
-    }
-
-    .menu {
-        z-index: 97;
-        min-width: 100%;
-        position: absolute;
-        top: 3.75rem;
-        border-radius: $border-radius;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        background-color: $c-ebony-clay;
-        box-shadow: 0px 4px 10px #00000073;
-        border: 1px solid $c-fiord;
-        overflow: hidden;
-    }
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    background-color: $c-ebony-clay;
+    box-shadow: 0px 4px 10px #00000073;
+    border: 1px solid $c-fiord;
+    overflow: hidden;
+  }
 }

@@ -4,14 +4,14 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  gap: .9375rem;
+  gap: 0.9375rem;
   flex-wrap: wrap-reverse;
 
   .explorerLink {
     display: flex;
     align-items: center;
-    gap: .3125rem;
-    font-size: .75rem;
+    gap: 0.3125rem;
+    font-size: 0.75rem;
     color: $c-scampi;
 
     svg {
@@ -25,9 +25,9 @@
     flex-direction: row;
     align-items: center;
     flex-wrap: wrap;
-    gap: .625rem;
+    gap: 0.625rem;
     margin: 0;
-    font-size: .75rem;
+    font-size: 0.75rem;
 
     &.error {
       color: $warning-color;

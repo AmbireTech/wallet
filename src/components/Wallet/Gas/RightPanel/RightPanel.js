@@ -2,28 +2,27 @@ import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 
 import { useRelayerData } from 'hooks'
 
+import { Panel } from 'components/common'
 import History from './History/History'
 import TopUp from './TopUp/TopUp'
 
-import { Panel } from 'components/common'
-
-const RightPanel = ({ network, relayerURL, portfolio, account,  panelClassName }) => {
+const RightPanel = ({ network, relayerURL, portfolio, account, panelClassName }) => {
   const { gasTankFilledTxns, feeAssetsRes, availableFeeAssets } = useGasTankData({
     relayerURL,
     selectedAcc: account,
     network,
     portfolio,
-    useRelayerData,
+    useRelayerData
   })
 
   return (
     <Panel className={panelClassName}>
-      <TopUp
-        portfolio={portfolio}
+      <TopUp portfolio={portfolio} network={network} availableFeeAssets={availableFeeAssets} />
+      <History
         network={network}
-        availableFeeAssets={availableFeeAssets}
+        gasTankFilledTxns={gasTankFilledTxns}
+        feeAssetsRes={feeAssetsRes}
       />
-      <History network={network} gasTankFilledTxns={gasTankFilledTxns} feeAssetsRes={feeAssetsRes} />
     </Panel>
   )
 }

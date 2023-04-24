@@ -1,4 +1,4 @@
-@import "../../../variables";
+@import '../../../variables';
 
 #plugin-gnosis-container {
   position: relative;
@@ -32,7 +32,7 @@
     margin: 0 -1rem 0 -1rem;
 
     li {
-      margin: .5rem 1rem;
+      margin: 0.5rem 1rem;
       flex: 1 0 7.5rem;
       list-style: none;
       background: $c-ebony-clay;
@@ -44,7 +44,7 @@
         background: lighten($c-ebony-clay, 5%);
       }
 
-      &.selected { 
+      &.selected {
         background: lighten($c-ebony-clay, 50%);
       }
 
@@ -57,7 +57,7 @@
       }
 
       div.logo-container {
-        margin: .75rem auto .5rem auto;
+        margin: 0.75rem auto 0.5rem auto;
         width: 3rem;
         height: 3rem;
         background-size: contain;
@@ -75,7 +75,7 @@
         overflow: hidden;
         text-align: center;
         // text-overflow-ellipsis: "...";
-        text-overflow: ellipsis "...";
+        text-overflow: ellipsis'...';
         font-size: 0.9em;
         line-height: 1.4em;
         color: $text-container-color;
@@ -83,11 +83,11 @@
     }
 
     &.small-thumbs {
-      margin: 0 -0.1875rem .375rem -0.1875rem;
+      margin: 0 -0.1875rem 0.375rem -0.1875rem;
 
       li {
-        margin: .1875rem .1875rem;
-        padding: .375rem;
+        margin: 0.1875rem 0.1875rem;
+        padding: 0.375rem;
         position: relative;
 
         .remove-btn {
@@ -97,24 +97,23 @@
         }
 
         div.logo-container {
-          margin: .25rem auto .25rem auto;
+          margin: 0.25rem auto 0.25rem auto;
           width: 1.5rem;
           height: 1.5rem;
-          border-radius: .25rem;
+          border-radius: 0.25rem;
         }
-  
+
         div.dapp-name {
           text-align: center;
           font-size: 0.8em;
-          padding-bottom: .375rem;
+          padding-bottom: 0.375rem;
         }
-  
+
         div.dapp-desc {
           min-width: 0;
           display: none;
         }
       }
-
     }
   }
 }

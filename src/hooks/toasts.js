@@ -1,8 +1,8 @@
-import { useContext } from 'react';
-import { ToastContext } from 'context/ToastProvider/ToastProvider';
+import { useContext } from 'react'
+import { ToastContext } from 'context/ToastProvider/ToastProvider'
 
 const useToasts = () => {
-    return useContext(ToastContext);
-};
+  return useContext(ToastContext)
+}
 
-export { useToasts };
+export { useToasts }

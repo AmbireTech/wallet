@@ -22,12 +22,12 @@
         position: relative;
         width: 1.25rem;
         height: 1.25rem;
-        margin: 0 .625rem;
+        margin: 0 0.625rem;
       }
 
       &::before {
         position: absolute;
-        top: .625rem;
+        top: 0.625rem;
         left: 1.25rem;
         width: 2.5rem;
         height: 2.5rem;
@@ -87,15 +87,15 @@
       }
 
       .selectInput {
-        padding: 0 .625rem;
-        font-size: .875rem;
+        padding: 0 0.625rem;
+        font-size: 0.875rem;
 
         .selectIcon {
-          margin-left: .625rem;
+          margin-left: 0.625rem;
         }
 
         &::before {
-          left: .625rem;
+          left: 0.625rem;
         }
       }
     }

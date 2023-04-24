@@ -13,24 +13,28 @@ const MigratableAssets = ({
   consolidatedSelectableTokens,
   inputRefs,
   updateSelectableTokenUserInputs,
-  onAssetAmountChange,
+  onAssetAmountChange
 }) => {
   const [failedImg, setFailedImg] = useState([])
   // Include/Exclude token in migration
   const toggleTokenSelection = useCallback(
     (address, minHumanAmount = null) => {
       // focusing input fields on selection
-      const index = selectableTokens.sort((a, b) => (a.name < b.name ? -1 : 1)).findIndex((t) => t.address === address)
+      const index = selectableTokens
+        .sort((a, b) => (a.name < b.name ? -1 : 1))
+        .findIndex((t) => t.address === address)
       inputRefs.current[index]?.focus()
 
       updateSelectableTokenUserInputs(address, (old) => {
-        let updated = {
+        const updated = {
           ...old,
-          selected: !old.selected,
+          selected: !old.selected
         }
         if (minHumanAmount) {
           // let newHumanAmount = humanAmount.replace(/\.?0+$/g, '')
-          const currentHumanAmount = selectableTokensUserInputs.find((t) => t.address === address)?.humanAmount
+          const currentHumanAmount = selectableTokensUserInputs.find(
+            (t) => t.address === address
+          )?.humanAmount
           if (minHumanAmount > currentHumanAmount) {
             const decimals = selectableTokens.find((t) => t.address === address)?.decimals
 

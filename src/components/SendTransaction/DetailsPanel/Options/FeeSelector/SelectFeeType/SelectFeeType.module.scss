@@ -1,4 +1,4 @@
-@import "variables";
+@import 'variables';
 
 .wrapper {
   display: flex;
@@ -12,10 +12,10 @@
     align-items: center;
     font-weight: 300;
     opacity: 0.8;
-    font-size: .875rem;
-    gap: .625rem;
+    font-size: 0.875rem;
+    gap: 0.625rem;
 
-    margin-bottom: .5rem;
+    margin-bottom: 0.5rem;
 
     &:hover {
       opacity: 1;
@@ -31,16 +31,16 @@
       font-size: 1rem;
       font-weight: 300;
       margin: 0;
-      margin-bottom: .625rem;
+      margin-bottom: 0.625rem;
     }
 
     .inputMb {
-      margin-bottom: .625rem;
+      margin-bottom: 0.625rem;
     }
 
     .priceWarning {
       color: $warning-color;
-      font-size: .875rem;
+      font-size: 0.875rem;
     }
   }
 }

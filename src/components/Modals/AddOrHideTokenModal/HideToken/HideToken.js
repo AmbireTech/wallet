@@ -1,21 +1,12 @@
 import { useMemo, useState } from 'react'
-import {
-  MdVisibilityOff as VisibleIcon,
-  MdRemoveRedEye as HiddenIcon
-} from 'react-icons/md'
+import { MdVisibilityOff as VisibleIcon, MdRemoveRedEye as HiddenIcon } from 'react-icons/md'
 
 import Token from 'components/Modals/AddOrHideTokenModal/Token/Token'
 
-import styles from './HideToken.module.scss'
 import { TextInput } from 'components/common'
+import styles from './HideToken.module.scss'
 
-const HideToken = ({
-  network,
-  account,
-  portfolio,
-  userSorting, 
-  sortType
-}) => {
+const HideToken = ({ network, account, portfolio, userSorting, sortType }) => {
   const { hiddenTokens, onAddHiddenToken, onRemoveHiddenToken, tokens } = portfolio
   const [search, setSearch] = useState('')
 
@@ -24,24 +15,31 @@ const HideToken = ({
 
   const sortedTokens = useMemo(() => {
     const tempTokens = tokens.concat(hiddenTokens).sort((a, b) => {
-      if (sortType === 'custom' && userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length) {
-        const sorted = userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) - userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
+      if (
+        sortType === 'custom' &&
+        userSorting.tokens?.items?.[`${account}-${network.chainId}`]?.length
+      ) {
+        const sorted =
+          userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(a.address) -
+          userSorting.tokens.items[`${account}-${network.chainId}`].indexOf(b.address)
         return sorted
-      } else {
-        const decreasing = b.balanceUSD - a.balanceUSD
-        if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
-        return decreasing
       }
+      const decreasing = b.balanceUSD - a.balanceUSD
+      if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+      return decreasing
     })
 
-    return [...new Map(tempTokens.map(token => [token.address, token])).values()]
+    return [...new Map(tempTokens.map((token) => [token.address, token])).values()]
   }, [tokens, hiddenTokens, userSorting, sortType, account, network.chainId])
 
   const filteredTokens = sortedTokens.filter((token) => {
     const searchValue = search ? search.toLowerCase() : ''
 
-    if (('address' in token) && ('symbol' in token)) {
-      return token.address.toLowerCase().includes(searchValue) || token.symbol.toLowerCase().includes(searchValue)
+    if ('address' in token && 'symbol' in token) {
+      return (
+        token.address.toLowerCase().includes(searchValue) ||
+        token.symbol.toLowerCase().includes(searchValue)
+      )
     }
 
     return false
@@ -53,12 +51,12 @@ const HideToken = ({
         small
         label="Token Address or Symbol"
         placeholder="Input token address or symbol"
-        onInput={value => setSearch(value)}
+        onInput={(value) => setSearch(value)}
         className={styles.addressInput}
       />
       <div className={styles.tokens}>
         {filteredTokens.map((token) => {
-          const {tokenImageUrl, network, symbol, address, isHidden} = token
+          const { tokenImageUrl, network, symbol, address, isHidden } = token
           return (
             <Token
               key={address}
@@ -68,10 +66,19 @@ const HideToken = ({
               network={network.toUpperCase()}
               className={styles.token}
             >
-              {!isHidden ? 
-                <HiddenIcon className={styles.icon} color="#27e8a7" onClick={() => hideToken(token)} /> :
-                <VisibleIcon className={styles.icon} color="#F21A61" onClick={() => unhideToken(token)} />
-              }
+              {!isHidden ? (
+                <HiddenIcon
+                  className={styles.icon}
+                  color="#27e8a7"
+                  onClick={() => hideToken(token)}
+                />
+              ) : (
+                <VisibleIcon
+                  className={styles.icon}
+                  color="#F21A61"
+                  onClick={() => unhideToken(token)}
+                />
+              )}
             </Token>
           )
         })}

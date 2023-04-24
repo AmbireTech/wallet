@@ -3,12 +3,12 @@
 .wrapper {
   max-width: 31.25rem;
   width: 100%;
-  height: 37.5rem!important;
-  
+  height: 37.5rem !important;
+
   .content {
     display: flex;
     flex-direction: column;
-    gap: .3125rem;
+    gap: 0.3125rem;
 
     svg {
       cursor: pointer;

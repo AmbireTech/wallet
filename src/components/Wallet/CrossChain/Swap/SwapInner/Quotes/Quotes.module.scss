@@ -1,54 +1,54 @@
 @import 'variables.scss';
 
 .wrapper {
-    height: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 1.4375rem;
+
+  .buttons {
     display: flex;
-    flex-direction: column;
     justify-content: space-between;
-    gap: 1.4375rem;
+    gap: 2.125rem;
 
-    .buttons {
-        display: flex;
-        justify-content: space-between;
-        gap: 2.125rem;
-
-        &.singleButton {
-            justify-content: center;
-        }
-
-        .button {
-            flex: 1;
-            max-width: 25rem;
-        }
+    &.singleButton {
+      justify-content: center;
     }
+
+    .button {
+      flex: 1;
+      max-width: 25rem;
+    }
+  }
 }
 
 // Mobile
 @include lg-breakpoint {
-    .wrapper {
-        .summary {
-            flex-direction: column;
-            gap: 1.875rem;
+  .wrapper {
+    .summary {
+      flex-direction: column;
+      gap: 1.875rem;
 
-            svg {
-                transform: rotate(90deg);
-            }
-        }
+      svg {
+        transform: rotate(90deg);
+      }
     }
+  }
 }
 
-@include sm-breakpoint{
-    .wrapper {
-        .buttons {
-            flex-direction: column-reverse;
-            gap: .9375rem;
+@include sm-breakpoint {
+  .wrapper {
+    .buttons {
+      flex-direction: column-reverse;
+      gap: 0.9375rem;
 
-            .button {
-                height: 3.125rem;
-                max-width: unset;
-                font-size: 1rem;
-                flex: unset;
-            }
-        }
+      .button {
+        height: 3.125rem;
+        max-width: unset;
+        font-size: 1rem;
+        flex: unset;
+      }
     }
+  }
 }

@@ -3,18 +3,18 @@
 .wrapper {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  grid-gap: .625rem;
+  grid-gap: 0.625rem;
   width: 100%;
   margin-bottom: 1.875rem;
 
   .feeSquare {
     flex: 1;
-    padding: .75rem .9375rem;
+    padding: 0.75rem 0.9375rem;
     border-radius: $border-radius;
     background-color: theme(background-primary);
     border: 1px solid transparent;
     text-align: center;
-    transition: .3s ease-in-out all;
+    transition: 0.3s ease-in-out all;
     // If not set, .feeSquare items min width is set to the width of its content.
     // In other words, the different fees values ($0,01 and 0.000421434) may result in a different square widths.
     // This can result in layouts appearing uneven.
@@ -27,14 +27,14 @@
     }
 
     .speed {
-      margin-bottom: .4375rem;
+      margin-bottom: 0.4375rem;
       font-size: 1rem;
       font-weight: 400;
       text-transform: capitalize;
     }
 
     .feeEstimation {
-      font-size: .875rem;
+      font-size: 0.875rem;
       font-weight: 300;
       opacity: 0.8;
 
@@ -44,9 +44,9 @@
       white-space: nowrap;
       margin: 0 auto;
       text-overflow: ellipsis;
-      
+
       &.symbol {
-        opacity: .6;
+        opacity: 0.6;
       }
     }
 
@@ -56,7 +56,7 @@
 
     &:not(.disabled):hover {
       cursor: pointer;
-      opacity: .4;
+      opacity: 0.4;
     }
 
     &.selected {
@@ -66,8 +66,8 @@
 
     .discountBadge {
       position: absolute;
-      top: .25rem;
-      right: .25rem;
+      top: 0.25rem;
+      right: 0.25rem;
       color: theme(highlight-secondary);
     }
   }
@@ -75,15 +75,15 @@
 
 @include lg-breakpoint {
   .wrapper {
-    grid-gap: .3125rem;
-    
+    grid-gap: 0.3125rem;
+
     .feeSquare {
       .speed {
-        font-size: .875rem;
+        font-size: 0.875rem;
       }
 
       .feeEstimation {
-        font-size: .75rem;
+        font-size: 0.75rem;
       }
     }
   }
@@ -91,20 +91,19 @@
 
 @include sm-breakpoint {
   .wrapper {
-    grid-gap: .3125rem;
+    grid-gap: 0.3125rem;
     .feeSquare {
-      padding: .375rem;
+      padding: 0.375rem;
 
       .speed {
-        font-size: .75rem;
+        font-size: 0.75rem;
       }
 
       .feeEstimation {
-        font-size: .6875rem;
+        font-size: 0.6875rem;
         max-width: 3.125rem;
         max-height: 1.875rem;
       }
     }
   }
 }
-

@@ -2,15 +2,23 @@ import cn from 'classnames'
 
 import { formatAmount } from 'components/Wallet/CrossChain/CrossChain'
 
+import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
 import Footer from './Footer/Footer'
 import Separator from './Separator/Separator'
-
-import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
 
 import styles from './Route.module.scss'
 
 const Route = ({
-  data: { bridgeStep, middlewareStep, middlewareFee, bridgeFee, maxServiceTime, serviceTime, fromAsset, toAsset },
+  data: {
+    bridgeStep,
+    middlewareStep,
+    middlewareFee,
+    bridgeFee,
+    maxServiceTime,
+    serviceTime,
+    fromAsset,
+    toAsset
+  }
 }) => (
   <div className={styles.wrapper}>
     <div className={styles.body}>

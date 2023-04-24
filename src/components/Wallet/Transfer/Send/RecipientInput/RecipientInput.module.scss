@@ -18,7 +18,7 @@
     'message message';
   grid-template-columns: 2fr 4rem;
   grid-template-rows: 1fr 1fr;
-	gap: .625rem 0;
+  gap: 0.625rem 0;
 
   .inputWrapper {
     background-color: $c-mirage;
@@ -48,7 +48,7 @@
     .inputLogo {
       width: 1.5rem;
       height: 1.5rem;
-			transition: .3s ease-in-out opacity;
+      transition: 0.3s ease-in-out opacity;
 
       &:not(.active) {
         opacity: 0.3;
@@ -82,17 +82,17 @@
     grid-template-columns: 1fr;
     grid-template-rows: 3.75rem auto auto;
 
-		.inputWrapper {
-			padding-right: 1.25rem;
-			margin-bottom: 1rem;
-			border-radius: 0.75rem;
+    .inputWrapper {
+      padding-right: 1.25rem;
+      margin-bottom: 1rem;
+      border-radius: 0.75rem;
 
-			.input {
-				font-size: 0.875rem;
-			}
-		}
-		.addressBook {
-			border-radius: .75rem!important;
-		}
+      .input {
+        font-size: 0.875rem;
+      }
+    }
+    .addressBook {
+      border-radius: 0.75rem !important;
+    }
   }
 }

@@ -1,13 +1,13 @@
 .wrapper {
-	display: flex;
-	align-items: center;
+  display: flex;
+  align-items: center;
   margin: 0;
-	width: 100%;
+  width: 100%;
 
-	.firstPart {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		flex-shrink: 1;
-	}
+  .firstPart {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 1;
+  }
 }

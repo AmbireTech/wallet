@@ -1,194 +1,200 @@
 @import 'variables.scss';
 
 .select {
-    position: relative;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4375em;
+  user-select: none;
+  font-weight: bold;
+  cursor: pointer;
+  min-width: 13.125rem;
+
+  &InputContainer {
+    border-radius: 0;
+  }
+
+  &.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .label {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: 0 0 auto;
     display: flex;
-    flex-direction: column;
-    gap: .4375em;
-    user-select: none;
-    font-weight: bold;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius;
+    background-color: theme(background-icon);
+    background-size: contain;
+    background-position: center center;
+    background-repeat: no-repeat;
+    overflow: hidden;
+
+    img {
+      height: 100%;
+    }
+  }
+
+  .label {
+    white-space: pre;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-weight: 400;
+    flex-grow: 1;
+  }
+
+  .selectContainer {
+    position: relative;
     cursor: pointer;
-    min-width: 13.125rem;
 
-    &InputContainer {
-        border-radius: 0;
+    .selectInput {
+      width: 100%;
+      text-align: left;
+      position: relative;
+      height: 3.75rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75em;
+      padding: 0 1.25em;
+      font-size: 1rem;
+      font-weight: bold;
+      background-color: theme(background-primary);
+      border-radius: $border-radius;
+
+      .separator {
+        flex-grow: 1;
+      }
+
+      .handle {
+        cursor: pointer;
+        transition: all 0.1s ease-in-out;
+
+        svg {
+          width: 0.5rem;
+        }
+        &.open {
+          transform: scaleY(-1);
+        }
+      }
     }
 
-    &.disabled {
-        pointer-events: none;
-        opacity: 0.5;
-    }
+    .selectMenu {
+      z-index: 97;
+      position: absolute;
+      top: 3.75rem;
+      left: 0;
+      min-height: 3.125rem;
+      max-height: 15.625rem;
+      width: 100%;
+      border-radius: $border-radius;
+      background-color: theme(background-primary);
+      box-shadow: 0 0.25rem 0.625rem #00000073;
+      border: 1px solid theme(border-secondary);
+      overflow: hidden;
+      overflow-y: auto;
+      scrollbar-width: thin;
 
-    label {
-        font-weight: 500;
-    }
+      .selectSearchInput {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 49;
 
-    .icon {
-        width: 1.5rem;
-        height: 1.5rem;
-        flex: 0 0 auto;
+        div {
+          border-radius: 0;
+        }
+
+        input {
+          height: 3.125rem !important;
+          font-size: 0.9375rem;
+          padding-left: 1.25em;
+          box-shadow: none !important;
+        }
+      }
+
+      .option {
+        width: 100%;
+        text-align: left;
+        height: 3.125rem;
         display: flex;
         align-items: center;
-        justify-content: center;
-        border-radius: $border-radius;
-        background-color: theme(background-icon);
-        background-size: contain;
-        background-position: center center;
-        background-repeat: no-repeat;
-        overflow: hidden;
-
-        img {
-            height: 100%;
-        }
-    }
-
-    .label {
-        white-space: pre;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        font-weight: 400;
-        flex-grow: 1;
-    }
-
-    .selectContainer {
-        position: relative;
+        justify-content: flex-start;
+        gap: 0.75rem;
+        padding-left: 1.25rem;
+        font-size: 1rem;
+        font-weight: 500;
+        opacity: 0.8;
         cursor: pointer;
 
-        .selectInput {
-            position: relative;
-            height: 3.75rem;
-            display: flex;
-            align-items: center;
-            gap: .75em;
-            padding: 0 1.25em;
-            font-size: 1rem;
-            font-weight: bold;
-            background-color: theme(background-primary);
-            border-radius: $border-radius;
-
-            .separator {
-                flex-grow: 1;
-            }
-
-            .handle {
-                cursor: pointer;
-                transition: all 0.1s ease-in-out;
-
-                svg {
-                    width: .5rem;
-                }
-                &.open {
-                    transform: scaleY(-1);
-                }
-            }
+        &.draggableOption {
+          padding-left: 0.625rem;
+          padding-right: 0.9375rem;
         }
 
-        .selectMenu {
-            z-index: 97;
+        .dragHandle {
+          min-width: 0.875rem;
+        }
+        &[draggable='true'] .dragHandle {
+          cursor: grab;
+          cursor: -moz-grab;
+          cursor: -webkit-grab;
+        }
+
+        &[draggable='true']:active .dragHandle {
+          cursor: grabbing;
+          cursor: -moz-grabbing;
+          cursor: -webkit-grabbing;
+        }
+
+        &:hover {
+          background-color: theme(background-terniary);
+        }
+
+        &.active {
+          font-weight: bold;
+          opacity: 1;
+          padding-right: 1.875rem;
+
+          &::after {
+            content: '';
             position: absolute;
-            top: 3.75rem;
-            left: 0;
-            min-height: 3.125rem;
-            max-height: 15.625rem;
-            width: 100%;
-            border-radius: $border-radius;
-            background-color: theme(background-primary);
-            box-shadow: 0 .25rem .625rem #00000073;
-            border: 1px solid theme(border-secondary);
-            overflow: hidden;
-            overflow-y: auto;
-            scrollbar-width: thin;
-
-            .selectSearchInput {
-                width: 100%;
-                position: sticky;
-                top: 0;
-                z-index: 49;
-
-                div {
-                    border-radius: 0;
-                }
-
-                input {
-                    height: 3.125rem !important;
-                    font-size: .9375rem;
-                    padding-left: 1.25em;
-                    box-shadow: none !important;
-                }
-            }
-
-            .option {
-                height: 3.125rem;
-                display: flex;
-                align-items: center;
-                justify-content: flex-start;
-                gap: .75rem;
-                padding-left: 1.25rem;
-                font-size: 1rem;
-                font-weight: 500;
-                opacity: 0.8;
-                cursor: pointer;
-
-                &.draggableOption {
-                    padding-left: .625rem;
-                    padding-right: .9375rem;
-                }
-
-                .dragHandle {
-                    min-width: .875rem;
-                }
-                &[draggable="true"] .dragHandle {
-                    cursor: grab;
-                    cursor: -moz-grab;
-                    cursor: -webkit-grab;
-                }
-                
-                &[draggable="true"]:active .dragHandle {
-                    cursor: grabbing;
-                    cursor: -moz-grabbing;
-                    cursor: -webkit-grabbing;
-                }
-                
-                &:hover {
-                    background-color: theme(background-terniary);
-                }
-                
-                &.active {
-                    font-weight: bold;
-                    opacity: 1;
-                    padding-right: 1.875rem;
-                    
-                    &::after {
-                        content: "";
-                        position: absolute;
-                        right: .9375rem;
-                        height: .5rem;
-                        width: .5rem;
-                        background-color: theme(highlight-secondary);
-                        border-radius: 100%;
-                    }
-                }
-                
-                &.disabled {
-                    opacity: 0.6;
-                    cursor: no-drop;
-                }
-            }
+            right: 0.9375rem;
+            height: 0.5rem;
+            width: 0.5rem;
+            background-color: theme(highlight-secondary);
+            border-radius: 100%;
+          }
         }
-    }
 
-    &.searchable {
-        .selectContainer {
-            .selectMenu {
-                max-height: 18.75rem;
-            }
+        &.disabled {
+          opacity: 0.6;
+          cursor: no-drop;
         }
+      }
     }
+  }
 
-    &.monospace {
-        .value, .option {
-            font-family: 'Ubuntu Mono';
-            font-size: 1.0625rem;
-        }
+  &.searchable {
+    .selectContainer {
+      .selectMenu {
+        max-height: 18.75rem;
+      }
     }
+  }
+
+  &.monospace {
+    .value,
+    .option {
+      font-family: 'Ubuntu Mono';
+      font-size: 1.0625rem;
+    }
+  }
 }

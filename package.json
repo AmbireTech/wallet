@@ -66,30 +66,13 @@
     "build": "node --max_old_space_size=4096 ./scripts/build-no-chunks.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "lint": "eslint src --ext .js,.jsx"
+    "lint": "eslint src --ext .js,.jsx",
+    "prettify": "prettier --write 'src/**/*.{js,jsx,ts,tsx,json,css,scss,md}'",
+    "lint:fix": "eslint src/ --ext .js,.jsx --fix"
   },
   "engines": {
     "node": "^16.0.0",
     "npm": "^8.0.0"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ],
-    "rules": {
-      "no-extra-semi": "off",
-      "camelcase": "off",
-      "indent": [
-        "off",
-        2
-      ],
-      "quotes": [
-        "off",
-        "single"
-      ],
-      "import/no-relative-parent-imports": "error"
-    }
   },
   "browserslist": {
     "production": [
@@ -113,6 +96,17 @@
     "@web3-react/types": "^6.0.7",
     "cypress": "^12.6.0",
     "cypress-localstorage-commands": "^2.2.2",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb": "^19.0.4",
+    "eslint-config-airbnb-typescript": "^17.0.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-import-resolver-typescript": "^3.5.1",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jsx-a11y": "^6.6.1",
+    "eslint-plugin-only-warn": "^1.1.0",
+    "eslint-plugin-prettier": "^4.2.1",
+    "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "imapflow": "^1.0.121",
     "jest-canvas-mock": "^2.4.0",
     "progress-bar-webpack-plugin": "^2.1.0",

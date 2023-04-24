@@ -1,50 +1,50 @@
 @import 'variables.scss';
 
 .wrapper {
-    .titleIcon {
-        width: 2rem;
-        height: 2rem;
-    }
-    .item {
-        height: 3.125rem;
-        padding-left: 1rem;
-        padding-right: 1.375rem;
-        background-color: $c-mirage;
-        
-        a {
-            display: flex;
-            align-items: center;
-            gap: .625rem;
-            font-size: 1.125rem;
-            line-height: 1.6875rem;
-            color: $c-titan-white;
-            white-space: nowrap;
-            font-weight: 400;
+  .titleIcon {
+    width: 2rem;
+    height: 2rem;
+  }
+  .item {
+    height: 3.125rem;
+    padding-left: 1rem;
+    padding-right: 1.375rem;
+    background-color: $c-mirage;
 
-            .itemIcon {
-                width: 1.875rem;
-                height: 1.875rem;
-            }
-        }
+    a {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 1.125rem;
+      line-height: 1.6875rem;
+      color: $c-titan-white;
+      white-space: nowrap;
+      font-weight: 400;
 
-        &:hover {
-            background-color: $c-ebony-clay;
-            cursor: pointer;
-        }
+      .itemIcon {
+        width: 1.875rem;
+        height: 1.875rem;
+      }
     }
 
-    &:not(.viewed) {
-        .title {
-            &::after {
-                content: "";
-                position: absolute;
-                top: -0.25rem;
-                right: -0.75rem;
-                height: .5rem;
-                width: .5rem;
-                border-radius: 100%;
-                background-color: $c-turquoise;
-            }
-        }
+    &:hover {
+      background-color: $c-ebony-clay;
+      cursor: pointer;
     }
+  }
+
+  &:not(.viewed) {
+    .title {
+      &::after {
+        content: '';
+        position: absolute;
+        top: -0.25rem;
+        right: -0.75rem;
+        height: 0.5rem;
+        width: 0.5rem;
+        border-radius: 100%;
+        background-color: $c-turquoise;
+      }
+    }
+  }
 }

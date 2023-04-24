@@ -7,7 +7,7 @@
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: .5rem;
+  gap: 0.5rem;
 
   &.extraMargin {
     margin-left: 5.9375rem;
@@ -15,17 +15,17 @@
 
   .ovals {
     display: flex;
-    gap: .625rem;
+    gap: 0.625rem;
     align-items: center;
 
     .oval {
       display: block;
       border: 1px solid $warning-color;
       color: $warning-color;
-      border-radius: .9375rem;
-      font-size: .75rem;
+      border-radius: 0.9375rem;
+      font-size: 0.75rem;
       font-weight: 300;
-      padding: .3125rem .75rem;
+      padding: 0.3125rem 0.75rem;
       margin: 0;
     }
   }

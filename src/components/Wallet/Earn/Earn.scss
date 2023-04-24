@@ -1,28 +1,28 @@
 @import 'variables.scss';
 
 #earn {
-    display: flex;
-    flex-direction: row;
-    gap: 1.875rem;
+  display: flex;
+  flex-direction: row;
+  gap: 1.875rem;
 
-    .cards {
-        display: flex;
-        gap: 1.875rem;
-        width: 100%;
-        flex-wrap: wrap;
-        align-items: stretch;
-    }
+  .cards {
+    display: flex;
+    gap: 1.875rem;
+    width: 100%;
+    flex-wrap: wrap;
+    align-items: stretch;
+  }
 }
 
 // Mobile
 @include lg-breakpoint {
-    #earn {
-        padding-bottom: 2.5rem;
-        .cards {
-            width: 100%;
-            flex-direction: column;
-            align-items: center;
-            gap: 1em;
-        }
+  #earn {
+    padding-bottom: 2.5rem;
+    .cards {
+      width: 100%;
+      flex-direction: column;
+      align-items: center;
+      gap: 1em;
     }
+  }
 }

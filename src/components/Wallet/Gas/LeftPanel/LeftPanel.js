@@ -2,8 +2,15 @@ import { Panel } from 'components/common'
 import Heading from './Heading/Heading'
 import Information from './Information/Information'
 
-const LeftPanel = ({ network, relayerURL, portfolio, account, gasTankState, setGasTankState, panelClassName }) => {
-
+const LeftPanel = ({
+  network,
+  relayerURL,
+  portfolio,
+  account,
+  gasTankState,
+  setGasTankState,
+  panelClassName
+}) => {
   return (
     <Panel className={panelClassName} title="Gas Tank">
       <Heading

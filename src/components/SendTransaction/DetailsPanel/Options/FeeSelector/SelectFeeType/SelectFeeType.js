@@ -1,15 +1,12 @@
 import { useState } from 'react'
 import cn from 'classnames'
 
-import { formatFloatTokenAmount } from "lib/formatters"
+import { formatFloatTokenAmount } from 'lib/formatters'
 
-import {
-  getFeesData
-} from 'components/SendTransaction/helpers'
+import { getFeesData } from 'components/SendTransaction/helpers'
 import { Button, TextInput } from 'components/common'
-import FeeAmountSelectors from './FeeAmountSelectors/FeeAmountSelectors'
-
 import { ReactComponent as EditIcon } from 'resources/icons/edit.svg'
+import FeeAmountSelectors from './FeeAmountSelectors/FeeAmountSelectors'
 
 import styles from './SelectFeeType.module.scss'
 
@@ -34,20 +31,27 @@ const SelectFeeType = ({
 }) => {
   const [editCustomFee, setEditCustomFee] = useState(false)
 
-  const setCustomFee = value => setEstimation(prevEstimation => ({
-    ...prevEstimation,
-    customFee: value
-  }))
+  const setCustomFee = (value) =>
+    setEstimation((prevEstimation) => ({
+      ...prevEstimation,
+      customFee: value
+    }))
 
-  const {
-    feeInFeeToken: minFee,
-    feeInUSD: minFeeUSD,
-  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'slow', isGasTankEnabled, network)
+  const { feeInFeeToken: minFee, feeInUSD: minFeeUSD } = getFeesData(
+    { ...estimation.selectedFeeToken },
+    { ...estimation, customFee: null },
+    'slow',
+    isGasTankEnabled,
+    network
+  )
 
-  const {
-    feeInFeeToken: maxFee,
-    feeInUSD: maxFeeUSD,
-  } = getFeesData({ ...estimation.selectedFeeToken }, { ...estimation, customFee: null }, 'ape', isGasTankEnabled, network)
+  const { feeInFeeToken: maxFee, feeInUSD: maxFeeUSD } = getFeesData(
+    { ...estimation.selectedFeeToken },
+    { ...estimation, customFee: null },
+    'ape',
+    isGasTankEnabled,
+    network
+  )
 
   const discountMin = getDiscountApplied(minFee, discount)
   const discountMax = getDiscountApplied(maxFee, discount)
@@ -61,13 +65,15 @@ const SelectFeeType = ({
   const baseMinFeeUSD = minFeeUSD + discountBaseMinInUSD
   const baseMaxFeeUSD = (maxFeeUSD + discountBaseMaxInUSD) * OVERPRICED_MULTIPLIER
 
-  const isUnderpriced = !!estimation.customFee
-    && !isNaN(parseFloat(estimation.customFee))
-    && (baseFeeInFeeToken < baseMinFee)
+  const isUnderpriced =
+    !!estimation.customFee &&
+    !isNaN(parseFloat(estimation.customFee)) &&
+    baseFeeInFeeToken < baseMinFee
 
-  const isOverpriced = !!estimation.customFee
-    && !isNaN(parseFloat(estimation.customFee))
-    && (baseFeeInFeeToken > baseMaxFee)
+  const isOverpriced =
+    !!estimation.customFee &&
+    !isNaN(parseFloat(estimation.customFee)) &&
+    baseFeeInFeeToken > baseMaxFee
 
   return (
     <div className={styles.wrapper}>
@@ -87,55 +93,56 @@ const SelectFeeType = ({
         decimals={decimals}
         nativeRate={nativeRate}
       />
-      {
-        !editCustomFee ?
-          <div className={styles.editCustomFee} onClick={() => setEditCustomFee(true)}>
-            <EditIcon />
-            Edit fee
-          </div>
-          :
-          <div className={styles.customFeeSelector}>
-            <h2 className={styles.title}>Custom Fee ({symbol})</h2>
-            <TextInput
-              placeholder='Enter amount'
-              className={cn({[styles.inputMb]: isOverpriced || isUnderpriced})}
-              onChange={value => setCustomFee(value)}
-              value={estimation.customFee}
-            />
-            {isUnderpriced &&
-              <div className={styles.priceWarning}>
-                <div>Custom Fee too low. You can try to "sign and send" the transaction but most probably it will fail.</div>
-                <div>Min estimated fee: &nbsp;
-                  {<Button
-                    variant="text"
-                    onClick={() => setCustomFee(baseMinFee)}
-                  >
-                    {baseMinFee} {symbol}
-                  </Button>}
-                  {!isNaN(baseMinFeeUSD) &&
-                    <span>&nbsp; (~${formatFloatTokenAmount(baseMinFeeUSD, true, 4)}) </span>
-                  }
-                </div>
+      {!editCustomFee ? (
+        <div className={styles.editCustomFee} onClick={() => setEditCustomFee(true)}>
+          <EditIcon />
+          Edit fee
+        </div>
+      ) : (
+        <div className={styles.customFeeSelector}>
+          <h2 className={styles.title}>Custom Fee ({symbol})</h2>
+          <TextInput
+            placeholder="Enter amount"
+            className={cn({ [styles.inputMb]: isOverpriced || isUnderpriced })}
+            onChange={(value) => setCustomFee(value)}
+            value={estimation.customFee}
+          />
+          {isUnderpriced && (
+            <div className={styles.priceWarning}>
+              <div>
+                Custom Fee too low. You can try to "sign and send" the transaction but most probably
+                it will fail.
               </div>
-            }
-            {isOverpriced &&
-              <div className={styles.priceWarning}>
-                <div>Custom Fee is higher than the APE speed. You will pay more than probably needed. Make sure you know what are you doing!</div>
-                <div>Recommended max fee: &nbsp;
-                  {<Button
-                    variant="text"
-                    onClick={() => setCustomFee(baseMaxFee)}
-                  >
-                    {baseMaxFee} {symbol}
-                  </Button>}
-                  {!isNaN(baseMaxFeeUSD) &&
-                    <span>&nbsp; (~${formatFloatTokenAmount(baseMaxFeeUSD, true, 4)}) </span>
-                  }
-                </div>
+              <div>
+                Min estimated fee: &nbsp;
+                <Button variant="text" onClick={() => setCustomFee(baseMinFee)}>
+                  {baseMinFee} {symbol}
+                </Button>
+                {!isNaN(baseMinFeeUSD) && (
+                  <span>&nbsp; (~${formatFloatTokenAmount(baseMinFeeUSD, true, 4)}) </span>
+                )}
               </div>
-            }
-          </div>
-      }
+            </div>
+          )}
+          {isOverpriced && (
+            <div className={styles.priceWarning}>
+              <div>
+                Custom Fee is higher than the APE speed. You will pay more than probably needed.
+                Make sure you know what are you doing!
+              </div>
+              <div>
+                Recommended max fee: &nbsp;
+                <Button variant="text" onClick={() => setCustomFee(baseMaxFee)}>
+                  {baseMaxFee} {symbol}
+                </Button>
+                {!isNaN(baseMaxFeeUSD) && (
+                  <span>&nbsp; (~${formatFloatTokenAmount(baseMaxFeeUSD, true, 4)}) </span>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
     </div>
   )
 }

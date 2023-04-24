@@ -2,24 +2,24 @@
 
 .select {
   .optionClassName {
-    font-size: .875rem!important;
-    gap: .375rem!important;
+    font-size: 0.875rem !important;
+    gap: 0.375rem !important;
   }
-  
+
   .selectInput {
-    height: 3.125rem!important;
-    padding: 0 .625rem!important;
-    background-color: $c-ebony-clay!important;
+    height: 3.125rem !important;
+    padding: 0 0.625rem !important;
+    background-color: $c-ebony-clay !important;
   }
-  
+
   .iconClassName {
-    width: 2rem!important;
-    height: 2rem!important;
-    background-color: $c-mirage!important;
+    width: 2rem !important;
+    height: 2rem !important;
+    background-color: $c-mirage !important;
   }
-  
+
   .labelClassName {
-    font-size: .875rem;
+    font-size: 0.875rem;
     font-weight: 300;
   }
 }

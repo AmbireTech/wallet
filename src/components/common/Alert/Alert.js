@@ -1,10 +1,10 @@
 import cn from 'classnames'
 
+import { ReactComponent as DegenTipIcon } from 'resources/icons/degen-tip.svg'
 import { ReactComponent as InformationIcon } from './images/information.svg'
 import { ReactComponent as SuccessIcon } from './images/success.svg'
 import { ReactComponent as WarningIcon } from './images/warning.svg'
 import { ReactComponent as DangerIcon } from './images/danger.svg'
-import { ReactComponent as DegenTipIcon } from 'resources/icons/degen-tip.svg'
 
 import styles from './Alert.module.scss'
 
@@ -22,7 +22,11 @@ const Alert = ({ title, text, type, size, iconNextToTitle, className }) => {
   return (
     <div className={cn(styles.wrapper, className)}>
       <div className={styles.alertWrapper}>
-        <div className={cn(styles.alert, styles[type || "info"], styles[size || "normal"], {[styles.alertIconNextToTitle] : iconNextToTitle})}>
+        <div
+          className={cn(styles.alert, styles[type || 'info'], styles[size || 'normal'], {
+            [styles.alertIconNextToTitle]: iconNextToTitle
+          })}
+        >
           {iconNextToTitle ? null : icon}
           <div className={styles.body}>
             <div className={styles.titleWrapper}>

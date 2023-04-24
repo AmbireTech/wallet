@@ -1,52 +1,50 @@
 @import 'variables.scss';
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .title {
+    color: $c-scampi;
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    padding: 0 0 1.5625rem;
+  }
+
+  .content {
     display: flex;
     flex-direction: column;
-    height: 100%;
+    align-items: stretch;
+    justify-content: center;
+    gap: 2.5rem;
 
-    .title {
-        color: $c-scampi;
-        font-size: 1.125rem;
-        font-weight: 500;
-        text-align: center;
-        padding: 0 0 1.5625rem;
-
+    .formItem {
+      .formItemText {
+        display: block;
+        margin: 0;
+        margin-bottom: 0.625rem;
+      }
     }
+  }
 
-    .content {
-        display: flex;
-        flex-direction: column;
-        align-items: stretch;
-        justify-content: center;
-        gap: 2.5rem;
+  .loadingText {
+    text-align: center;
+    color: $c-heliotrope;
+    font-size: 1.25rem;
+  }
 
-        .formItem {
-            label {
-                display: block;
-                margin-bottom: .625rem;
-            }
-        }
+  .info {
+    margin-top: auto;
+    margin-bottom: 1.9375rem;
+  }
 
+  .buttons {
+    margin-bottom: 1.25rem;
+
+    button {
+      width: 100%;
     }
-
-    .loadingText {
-        text-align: center;
-        color: $c-heliotrope;
-        font-size: 1.25rem;
-    }
-
-    .info {
-        margin-top: auto;
-        margin-bottom: 1.9375rem;
-    }
-
-    .buttons {
-        margin-bottom: 1.25rem;
-
-        button {
-            width: 100%;
-        }
-    }
-
+  }
 }
