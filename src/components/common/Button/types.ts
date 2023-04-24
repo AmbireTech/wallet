@@ -14,4 +14,5 @@ export type ButtonProps = {
   loadingText?: string;
   type?: 'button' | 'submit' | 'reset';
   form?: string;
+  testId?: string
 }
