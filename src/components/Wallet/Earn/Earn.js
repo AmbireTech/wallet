@@ -7,8 +7,8 @@ import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 
 const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest }) => {
   return (
-    <div id="earn">
-      <OfflineWrapper>
+    <OfflineWrapper>
+      <div id="earn">
         {portfolio.isCurrNetworkBalanceLoading ? (
           <Loading />
         ) : (
@@ -35,8 +35,8 @@ const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest
             />
           </div>
         )}
-      </OfflineWrapper>
-    </div>
+      </div>
+    </OfflineWrapper>
   )
 }
 
