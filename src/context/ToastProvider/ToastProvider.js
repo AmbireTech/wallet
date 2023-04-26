@@ -123,7 +123,7 @@ const ToastProvider = ({ children }) => {
                 >
                   <div className="inner" onClick={() => onToastClick(id, onClick, url, route)}>
                     {badge ? <div className="badge">{badge}</div> : null}
-                    {content}
+                    { isOffline ? 'You\'re currently offline, unable to update information' : content }
                   </div>
                   {sticky ? (
                     <div className="close" onClick={() => removeToast(id)}>
