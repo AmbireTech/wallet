@@ -1,4 +1,4 @@
-@import "variables.scss";
+@import 'variables.scss';
 
 .alert {
   margin: 1.25rem 0;
@@ -10,7 +10,7 @@
 
   span {
     font-size: 1rem;
-    margin-bottom: .625rem;
+    margin-bottom: 0.625rem;
     font-weight: 300;
   }
 
@@ -29,7 +29,7 @@
     text-align: center;
     gap: 1.25rem;
     margin-bottom: 1.25rem;
-    
+
     span {
       margin-bottom: 0;
     }

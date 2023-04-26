@@ -18,24 +18,24 @@
     min-height: 20rem;
     width: 100%;
     cursor: pointer;
-    transition: .3s ease-in-out all;
+    transition: 0.3s ease-in-out all;
     user-select: none;
-  
+
     &Body {
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: .3s ease-in-out all;
+      transition: 0.3s ease-in-out all;
       color: $c-scampi;
 
       svg {
         width: 2rem;
         height: 2rem;
       }
-      
+
       label {
         cursor: pointer;
-        margin-top: .625rem;
+        margin-top: 0.625rem;
         font-size: 1.25rem;
       }
     }

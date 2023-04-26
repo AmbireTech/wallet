@@ -9,23 +9,23 @@ import styles from './ThemeProvider.module.scss'
 const ThemeContext = createContext(null)
 
 const ThemeProvider = ({ children }) => {
-	const [theme, setTheme] = useState('dark')
+  const [theme, setTheme] = useState('dark')
 
-	useLayoutEffect(() => {
-		document.documentElement.className = styles[theme || 'dark']
-	}, [theme])
+  useLayoutEffect(() => {
+    document.documentElement.className = styles[theme || 'dark']
+  }, [theme])
 
-	return (
-		<ThemeContext.Provider value={{ theme, setTheme }}>
-			{children}
-			{/* For testing purposes, you can use the following code to test the SDK */}
-			{/* {theme === 'light' ? (
+  return (
+    <ThemeContext.Provider value={{ theme, setTheme }}>
+      {children}
+      {/* For testing purposes, you can use the following code to test the SDK */}
+      {/* {theme === 'light' ? (
 				<SDK>
 					<SwitchNetwork />
 				</SDK>
 			) : (children)} */}
-		</ThemeContext.Provider>
-	)
+    </ThemeContext.Provider>
+  )
 }
 
 export const useThemeContext = () => useContext(ThemeContext)

@@ -14,18 +14,18 @@ import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBa
 import GuardarianDepositProviderModal from './GuardarianDepositProviderModal/GuardarianDepositProviderModal'
 
 export {
-    PermissionsModal,
-    InputModal,
-    SelectSignerAccountModal,
-    ResetPasswordModal,
-    WalletTokenModal,
-    LatticeModal,
-    UnsupportedDAppsModal,
-    AmbireEarnDetailsModal,
-    EarnDetailsModal,
-    AddAddressModal,
-    CongratsRewardsModal,
-    GasTankBalanceByTokensModal,
-    AddCustomDappModal,
-    GuardarianDepositProviderModal
+  PermissionsModal,
+  InputModal,
+  SelectSignerAccountModal,
+  ResetPasswordModal,
+  WalletTokenModal,
+  LatticeModal,
+  UnsupportedDAppsModal,
+  AmbireEarnDetailsModal,
+  EarnDetailsModal,
+  AddAddressModal,
+  CongratsRewardsModal,
+  GasTankBalanceByTokensModal,
+  AddCustomDappModal,
+  GuardarianDepositProviderModal
 }

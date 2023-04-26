@@ -5,7 +5,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: .625rem 1.875rem;
+  gap: 0.625rem 1.875rem;
 
   .account {
     display: flex;
@@ -30,9 +30,9 @@
     display: flex;
     justify-self: flex-end;
     align-items: center;
-    gap: .625rem;
+    gap: 0.625rem;
     color: theme(text-secondary);
-    font-size: .875rem;
+    font-size: 0.875rem;
     margin: 0;
 
     .icon {
@@ -44,17 +44,16 @@
   }
 }
 
-
 @include lg-breakpoint {
   .wrapper {
     flex-direction: column;
-    gap: .625rem;
+    gap: 0.625rem;
 
     .account {
       flex-direction: column;
 
       .address {
-        font-size: .8125rem;
+        font-size: 0.8125rem;
         text-align: center;
       }
     }

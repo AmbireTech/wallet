@@ -8,19 +8,15 @@ import Details from './Details/Details'
 
 import styles from './BundlePreview.module.scss'
 
-const TO_GAS_TANK = `to Gas Tank`
+const TO_GAS_TANK = 'to Gas Tank'
 
 const BundlePreview = ({ bundle, mined = false, feeAssets }) => {
   const {
-    constants: { tokenList, humanizerInfo },
-  } = useConstants();
+    constants: { tokenList, humanizerInfo }
+  } = useConstants()
   if (!Array.isArray(bundle.txns))
-    return (
-      <h3 className={styles.error}>
-        Bundle has no transactions (should never happen)
-      </h3>
-    );
-  const lastTxn = bundle.txns[bundle.txns.length - 1];
+    return <h3 className={styles.error}>Bundle has no transactions (should never happen)</h3>
+  const lastTxn = bundle.txns[bundle.txns.length - 1]
   // terribly hacky; @TODO fix
   // all of the values are prob checksummed so we may not need toLowerCase
   const lastTxnSummary = getTransactionSummary(
@@ -29,12 +25,9 @@ const BundlePreview = ({ bundle, mined = false, feeAssets }) => {
     lastTxn,
     bundle.network,
     bundle.identity
-  );
-  const hasFeeMatch =
-    bundle.txns.length > 1 &&
-    lastTxnSummary.match(new RegExp(TO_GAS_TANK, "i"));
-  const txns = hasFeeMatch && !bundle.gasTankFee ? bundle.txns.slice(0, -1) : bundle.txns;
-
+  )
+  const hasFeeMatch = bundle.txns.length > 1 && lastTxnSummary.match(new RegExp(TO_GAS_TANK, 'i'))
+  const txns = hasFeeMatch && !bundle.gasTankFee ? bundle.txns.slice(0, -1) : bundle.txns
 
   return (
     <div className={styles.wrapper} key={bundle._id}>
@@ -57,7 +50,7 @@ const BundlePreview = ({ bundle, mined = false, feeAssets }) => {
         hasFeeMatch={hasFeeMatch}
       />
     </div>
-  );
+  )
 }
 
-export default React.memo(BundlePreview);
+export default React.memo(BundlePreview)

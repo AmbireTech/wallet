@@ -1,96 +1,96 @@
 @import 'variables.scss';
 
 #wallet {
-    display: flex;
-    height: 100%;
+  display: flex;
+  height: 100%;
 }
 
 #wallet-container {
-    display: flex;
-    flex: 1;
-    flex-direction: column;
-    align-items: center;
-    overflow: hidden;
-    overflow-y: auto;
-    transition: all 0.3s ease-in-out;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: center;
+  overflow: hidden;
+  overflow-y: auto;
+  transition: all 0.3s ease-in-out;
 
-    &.dapp-mode {
-        #wallet-container-inner {
-            padding: 1.25rem .625rem .625rem;
-        }
-    }
-
+  &.dapp-mode {
     #wallet-container-inner {
-        flex: 1;
-        width: 100%;
-        overflow-y: auto;
-        padding: 0 $layout-spacing;
-        padding-bottom: 2.5rem;
+      padding: 1.25rem 0.625rem 0.625rem;
     }
+  }
 
-    .placeholder-overlay {
-        z-index: 47;
-        position: absolute;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        display: flex;
-        flex-direction: column;
-        gap: 1.25rem;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.375rem;
-        font-weight: bold;
-        text-align: center;
-        color: $c-titan-white;
-        text-shadow: 0 0 .625rem rgba(0, 0, 0, 0.2);
-    }
+  #wallet-container-inner {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    padding: 0 $layout-spacing;
+    padding-bottom: 2.5rem;
+  }
 
-    .private-content {
-        filter: blur(1.25rem);
-    }
+  .placeholder-overlay {
+    z-index: 47;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.375rem;
+    font-weight: bold;
+    text-align: center;
+    color: $c-titan-white;
+    text-shadow: 0 0 0.625rem rgba(0, 0, 0, 0.2);
+  }
+
+  .private-content {
+    filter: blur(1.25rem);
+  }
 }
 
 @include xxl-breakpoint {
-    #wallet-container {
-        #wallet-container-inner {
-            padding: 0 $layout-spacing / 2.5;
-            padding-bottom: 1.875rem;
-        }
+  #wallet-container {
+    #wallet-container-inner {
+      padding: 0 $layout-spacing / 2.5;
+      padding-bottom: 1.875rem;
     }
+  }
 }
 
 @include xl-breakpoint {
-    #wallet-container {
-        #wallet-container-inner {
-            padding: 0 2rem;
-            padding-bottom: 1.875rem;
-        }
+  #wallet-container {
+    #wallet-container-inner {
+      padding: 0 2rem;
+      padding-bottom: 1.875rem;
     }
+  }
 }
 
 // Mobile
 @include lg-breakpoint {
-    #wallet-container {
-        overflow-y: auto;
-        padding-bottom: $sidebar-mobile-height !important;
+  #wallet-container {
+    overflow-y: auto;
+    padding-bottom: $sidebar-mobile-height !important;
 
-        &.dapp-mode {
-            padding-bottom: 0 !important;
-        }
-
-        #wallet-container-inner {
-            padding: 2.5rem .625rem 1.25rem;
-        }
+    &.dapp-mode {
+      padding-bottom: 0 !important;
     }
+
+    #wallet-container-inner {
+      padding: 2.5rem 0.625rem 1.25rem;
+    }
+  }
 }
 
 // Wide screen
 @media screen and (min-width: 1920px) {
-    #wallet-container & :not(.dapp-mode) {
-        #wallet-container-inner {
-            max-width: 93.75rem;
-        }
+  #wallet-container & :not(.dapp-mode) {
+    #wallet-container-inner {
+      max-width: 93.75rem;
     }
+  }
 }

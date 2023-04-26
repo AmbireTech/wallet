@@ -1,13 +1,14 @@
 import networks from 'ambire-common/src/constants/networks'
 
-const isRelayerless = process.env.REACT_APP_RELAYRLESS === 'true' || !process.env.REACT_APP_RELAYER_URL
+const isRelayerless =
+  process.env.REACT_APP_RELAYRLESS === 'true' || !process.env.REACT_APP_RELAYER_URL
 
 /**
  * Maps each network (by its `id`) to a web-specific icon.
  * Note: In case of adding a new network, don't forget to map it's icon here 🤞
  * @enum {string}
  */
- export const networkIconsById = {
+export const networkIconsById = {
   ethereum: '/resources/networks/redesign/ethereum.svg',
   'ethereum-pow': '/resources/networks/redesign/ethereum.svg',
   polygon: '/resources/networks/redesign/polygon.svg',
@@ -29,5 +30,5 @@ const isRelayerless = process.env.REACT_APP_RELAYRLESS === 'true' || !process.en
   sepolia: '/resources/networks/redesign/sepolia.svg'
 }
 export default networks
-	.map(network => ({ ...network, icon: networkIconsById[network.id]}))
-	.filter(network => isRelayerless || !network.relayerlessOnly)
+  .map((network) => ({ ...network, icon: networkIconsById[network.id] }))
+  .filter((network) => isRelayerless || !network.relayerlessOnly)

@@ -6,33 +6,33 @@ $xlBreakpoint: 1479px;
 $xxlBreakpoint: 1720px;
 
 @mixin xs-breakpoint {
-	@media only screen and (max-width: $xsBreakpoint) {
-		@content;
-	}
+  @media only screen and (max-width: $xsBreakpoint) {
+    @content;
+  }
 }
 
 @mixin sm-breakpoint {
-	@media only screen and (max-width: $smBreakpoint) {
-		@content;
-	}
+  @media only screen and (max-width: $smBreakpoint) {
+    @content;
+  }
 }
 
 @mixin md-breakpoint {
-	@media only screen and (max-width: $mdBreakpoint) {
-		@content;
-	}
+  @media only screen and (max-width: $mdBreakpoint) {
+    @content;
+  }
 }
 
 @mixin lg-breakpoint {
-	@media only screen and (max-width: $lgBreakpoint) {
-		@content;
-	}
+  @media only screen and (max-width: $lgBreakpoint) {
+    @content;
+  }
 }
 
 @mixin xl-breakpoint {
-	@media only screen and (max-width: $xlBreakpoint) {
-		@content;
-	}
+  @media only screen and (max-width: $xlBreakpoint) {
+    @content;
+  }
 }
 
 @mixin xxl-breakpoint {
@@ -42,7 +42,7 @@ $xxlBreakpoint: 1720px;
 }
 
 @mixin rem-scaling {
-	@media screen and (min-width: 1920px) {
+  @media screen and (min-width: 1920px) {
     font-size: 16px;
   }
   @media screen and (min-width: 3000px) {

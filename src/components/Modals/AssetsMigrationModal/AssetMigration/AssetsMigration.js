@@ -19,7 +19,7 @@ const AssetsMigration = ({
   portfolio,
   setModalButtons,
   setModalSteps,
-  setBeforeCloseModalHandler,
+  setBeforeCloseModalHandler
 }) => {
   const [selectedTokensWithAllowance, setSelectedTokensWithAllowance] = useState([])
   const [nativeTokenData, setNativeTokenData] = useState(null)
@@ -34,10 +34,10 @@ const AssetsMigration = ({
 
   const [gasSpeed, setGasSpeed] = useState(null)
 
-  //to get signer
+  // to get signer
   const currentAccount = accounts.find((a) => a.id === selectedAccount)
 
-  //clear error and reset tokens
+  // clear error and reset tokens
   useEffect(() => {
     if (step === 0) {
       setError(null)
@@ -53,7 +53,7 @@ const AssetsMigration = ({
     if (isSelectionConfirmed) {
       setIsSelectionConfirmed(false)
 
-      //the non permittable, promise wait all
+      // the non permittable, promise wait all
       setNativeTokenData(selectedTokensWithAllowance.find((t) => t.native))
       setHasERC20Tokens(!!selectedTokensWithAllowance.find((t) => !t.native))
     }
@@ -68,7 +68,7 @@ const AssetsMigration = ({
 
     setModalSteps({
       steps: stepperSteps.map((s) => ({ name: s })),
-      stepIndex,
+      stepIndex
     })
   }, [nativeTokenData, setModalSteps, step, stepperSteps])
 
@@ -86,7 +86,7 @@ const AssetsMigration = ({
         </Button>,
         <Button variant="danger" onClick={() => hideModal()} key="1" className={styles.button}>
           Close
-        </Button>,
+        </Button>
       ])
     }
 
@@ -101,7 +101,8 @@ const AssetsMigration = ({
       <div>
         {showCloseConfirmation && (
           <div className="notification-hollow warning mt-4">
-            By closing this window, your progress will be lost. Are you sure you want to close this window?
+            By closing this window, your progress will be lost. Are you sure you want to close this
+            window?
           </div>
         )}
         {step === 0 && (

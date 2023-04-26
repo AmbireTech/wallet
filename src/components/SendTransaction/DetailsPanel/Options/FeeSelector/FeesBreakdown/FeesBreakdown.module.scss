@@ -1,9 +1,9 @@
-@import "variables";
+@import 'variables';
 
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: .625rem;
+  gap: 0.625rem;
 }
 
 .fee {
@@ -34,6 +34,6 @@
   .fee {
     flex-direction: column;
     text-align: center;
-    gap: .9375rem;
+    gap: 0.9375rem;
   }
 }
