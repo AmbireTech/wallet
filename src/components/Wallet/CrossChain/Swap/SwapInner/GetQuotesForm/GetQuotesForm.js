@@ -5,9 +5,8 @@ import cn from 'classnames'
 
 import { useToasts } from 'hooks/toasts'
 import { NumberInput, Button, Select } from 'components/common'
-import FormSection from './FormSection/FormSection'
-
 import { ReactComponent as SwapIcon } from 'resources/icons/cross-chain.svg'
+import FormSection from './FormSection/FormSection'
 
 import styles from './GetQuotesForm.module.scss'
 
@@ -25,32 +24,44 @@ const GetQuotesForm = ({
   toTokens,
   fromTokens,
   setFromTokens,
-  setToTokens,
+  setToTokens
 }) => {
   const { addToast } = useToasts()
 
-  const formDisabled = !(fromTokens.selected && toTokens.selected && fromChain && toChains.selected && amount > 0)
+  const formDisabled = !(
+    fromTokens.selected &&
+    toTokens.selected &&
+    fromChain &&
+    toChains.selected &&
+    amount > 0
+  )
   const getTokenFromPortofolio = useCallback(
     (tokenAddress) =>
       portfolio.tokens
         .map((token) => ({
           ...token,
-          address: Number(token.address) === 0 ? `0x${'e'.repeat(40)}` : token.address,
+          address: Number(token.address) === 0 ? `0x${'e'.repeat(40)}` : token.address
         }))
         .find(({ address }) => address === tokenAddress),
     [portfolio.tokens]
   )
 
-  const getQuotes = useCallback(async () => {    
+  const getQuotes = useCallback(async () => {
     setLoadingQuotes(true)
     try {
       const portfolioToken = getTokenFromPortofolio(fromTokens.selected)
       if (!portfolioToken) return
       const { decimals } = portfolioToken
       const flatAmount = parseUnits(amount, decimals).toString()
-      const quotes = await fetchQuotes(selectedAccount, fromTokens.selected, fromChain, toTokens.selected, toChains.selected, flatAmount, [
-        'stargate'
-      ])
+      const quotes = await fetchQuotes(
+        selectedAccount,
+        fromTokens.selected,
+        fromChain,
+        toTokens.selected,
+        toChains.selected,
+        flatAmount,
+        ['stargate']
+      )
       setQuotes(quotes)
     } catch (e) {
       console.error(e)
@@ -58,7 +69,19 @@ const GetQuotesForm = ({
     }
 
     setLoadingQuotes(false)
-  }, [addToast, amount, fetchQuotes, fromChain, getTokenFromPortofolio, selectedAccount, setLoadingQuotes, setQuotes, toChains.selected, fromTokens.selected, toTokens.selected])
+  }, [
+    addToast,
+    amount,
+    fetchQuotes,
+    fromChain,
+    getTokenFromPortofolio,
+    selectedAccount,
+    setLoadingQuotes,
+    setQuotes,
+    toChains.selected,
+    fromTokens.selected,
+    toTokens.selected
+  ])
 
   const maxAmount = useMemo(() => {
     try {
@@ -74,13 +97,20 @@ const GetQuotesForm = ({
 
   return (
     <div className={styles.wrapper}>
-      <div className={cn(styles.body, {[styles.loading]: fromTokens.loading || toTokens.loading})}>
-        <FormSection className={styles.fromSection} inputsClassName={styles.inputs} label="From" isLoading={fromTokens.loading}>
+      <div
+        className={cn(styles.body, { [styles.loading]: fromTokens.loading || toTokens.loading })}
+      >
+        <FormSection
+          className={styles.fromSection}
+          inputsClassName={styles.inputs}
+          label="From"
+          isLoading={fromTokens.loading}
+        >
           <Select
             searchable
             defaultValue={fromTokens.selected}
             items={fromTokens.items}
-            onChange={({ value }) => setFromTokens((prev) => ({...prev, selected: value}))}
+            onChange={({ value }) => setFromTokens((prev) => ({ ...prev, selected: value }))}
             iconClassName={styles.selectIcon}
             selectInputClassName={styles.selectInput}
           />
@@ -103,7 +133,7 @@ const GetQuotesForm = ({
             searchable
             defaultValue={toChains.selected}
             items={toChains.items}
-            onChange={({ value }) => setToChains((prev) => ({...prev, selected: value}))}
+            onChange={({ value }) => setToChains((prev) => ({ ...prev, selected: value }))}
             iconClassName={styles.selectIcon}
             selectInputClassName={styles.selectInput}
           />
@@ -111,13 +141,18 @@ const GetQuotesForm = ({
             searchable
             defaultValue={toTokens.selected}
             items={toTokens.items}
-            onChange={({ value }) => setToTokens((prev) => ({...prev, selected: value}))}
+            onChange={({ value }) => setToTokens((prev) => ({ ...prev, selected: value }))}
             iconClassName={styles.selectIcon}
             selectInputClassName={styles.selectInput}
           />
         </FormSection>
       </div>
-      <Button variant="primaryGradient" className={styles.button} disabled={formDisabled} onClick={getQuotes}>
+      <Button
+        variant="primaryGradient"
+        className={styles.button}
+        disabled={formDisabled}
+        onClick={getQuotes}
+      >
         Get Quotes
       </Button>
     </div>

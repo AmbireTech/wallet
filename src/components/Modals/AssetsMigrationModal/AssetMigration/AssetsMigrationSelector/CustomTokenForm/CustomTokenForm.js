@@ -17,7 +17,7 @@ const CustomTokenForm = ({
   setSelectableTokens,
   identityAccount,
   setTokenAllowances,
-  setSelectableTokensUserInputs,
+  setSelectableTokensUserInputs
 }) => {
   const [isAddCustomTokenFormShown, setIsAddCustomTokenFormShown] = useState(false)
   const [isCustomTokenPending, setIsCustomTokenPending] = useState(false)
@@ -34,7 +34,9 @@ const CustomTokenForm = ({
       return
     }
 
-    if (selectableTokens.find((t) => t.address.toLowerCase() === customTokenAddress.toLowerCase())) {
+    if (
+      selectableTokens.find((t) => t.address.toLowerCase() === customTokenAddress.toLowerCase())
+    ) {
       setCustomTokenAddress('')
       setIsAddCustomTokenFormShown(false)
       return
@@ -44,16 +46,16 @@ const CustomTokenForm = ({
 
     const symbolPromise = tokenContract
       .symbol()
-      .catch(() => setCustomTokenError('Could not get symbol of token ' + customTokenAddress))
+      .catch(() => setCustomTokenError(`Could not get symbol of token ${customTokenAddress}`))
     const decimalsPromise = tokenContract
       .decimals()
-      .catch(() => setCustomTokenError('Could not get decimals of token ' + customTokenAddress))
+      .catch(() => setCustomTokenError(`Could not get decimals of token ${customTokenAddress}`))
     const allowancePromise = tokenContract
       .allowance(signerAccount, identityAccount)
-      .catch(() => setCustomTokenError('Could not get allowance for token ' + customTokenAddress))
+      .catch(() => setCustomTokenError(`Could not get allowance for token ${customTokenAddress}`))
     const availableSignerBalancePromise = tokenContract
       .balanceOf(signerAccount)
-      .catch(() => setCustomTokenError('Could not get balance for token ' + customTokenAddress))
+      .catch(() => setCustomTokenError(`Could not get balance for token ${customTokenAddress}`))
 
     setIsCustomTokenPending(true)
     setCustomTokenError(null)
@@ -79,8 +81,8 @@ const CustomTokenForm = ({
                 rate: 0,
                 native: false,
                 availableBalance: signerBalance.toString(),
-                balanceUSD: 0,
-              },
+                balanceUSD: 0
+              }
             ]
           })
 
@@ -91,9 +93,11 @@ const CustomTokenForm = ({
                 address: customTokenAddress,
                 selectedAmount: 0,
                 amount: signerBalance.toString(),
-                humanAmount: new BigNumber(signerBalance.toString()).div(10 ** decimals.toString()).toFixed(),
-                selected: signerBalance.gt(0),
-              },
+                humanAmount: new BigNumber(signerBalance.toString())
+                  .div(10 ** decimals.toString())
+                  .toFixed(),
+                selected: signerBalance.gt(0)
+              }
             ]
           })
 
@@ -102,8 +106,8 @@ const CustomTokenForm = ({
               ...old,
               {
                 address: customTokenAddress,
-                allowance: 0,
-              },
+                allowance: 0
+              }
             ]
           })
         }
@@ -121,7 +125,7 @@ const CustomTokenForm = ({
     selectableTokens,
     setSelectableTokens,
     setSelectableTokensUserInputs,
-    setTokenAllowances,
+    setTokenAllowances
   ])
 
   useEffect(() => {
@@ -145,7 +149,7 @@ const CustomTokenForm = ({
               <div>
                 <TextInput
                   className={styles.input}
-                  placeholder={'Enter custom token address'}
+                  placeholder="Enter custom token address"
                   value={customTokenAddress}
                   onChange={(val) => {
                     setCustomTokenAddress(val)
@@ -167,7 +171,12 @@ const CustomTokenForm = ({
                 >
                   Cancel
                 </Button>
-                <Button size="sm" variant="primaryGradient" onClick={() => addCustomToken()} className={styles.button}>
+                <Button
+                  size="sm"
+                  variant="primaryGradient"
+                  onClick={() => addCustomToken()}
+                  className={styles.button}
+                >
                   Add
                 </Button>
               </div>

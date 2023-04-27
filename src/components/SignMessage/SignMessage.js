@@ -1,21 +1,35 @@
-import { useState, useEffect, useRef } from "react"
-import * as blockies from "blockies-ts"
-import { toUtf8String, isHexString } from "ethers/lib/utils"
-import supportedDApps from "ambire-common/src/constants/supportedDApps"
-import cn from "classnames"
+import { useState, useEffect, useRef } from 'react'
+import * as blockies from 'blockies-ts'
+import { toUtf8String, isHexString } from 'ethers/lib/utils'
+import supportedDApps from 'ambire-common/src/constants/supportedDApps'
+import cn from 'classnames'
 
-import { useSignMessage } from "hooks"
-import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
-import AccountAndNetwork from "components/common/AccountAndNetwork/AccountAndNetwork"
+import { useSignMessage } from 'hooks'
+import {
+  Button,
+  Loading,
+  TextInput,
+  ToolTip,
+  DAppIncompatibilityWarningMsg,
+  Panel
+} from 'components/common'
+import AccountAndNetwork from 'components/common/AccountAndNetwork/AccountAndNetwork'
 
-import { MdBrokenImage, MdInfoOutline } from "react-icons/md"
+import { MdBrokenImage, MdInfoOutline } from 'react-icons/md'
 
-import styles from "./SignMessage.module.scss"
+import styles from './SignMessage.module.scss'
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests, useStorage }) {
-  const defaultState = () => ({ codeRequired: false, passphrase: "" })
+export default function SignMessage({
+  everythingToSign,
+  resolve,
+  account,
+  relayerURL,
+  totalRequests,
+  useStorage
+}) {
+  const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const [signingState, setSigningState] = useState(defaultState())
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
@@ -24,13 +38,11 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     const confCode = await new Promise((resolve) => {
       setPromiseResolve(() => resolve)
     })
-    if (!confCode) throw new Error("You must enter a confirmation code")
+    if (!confCode) throw new Error('You must enter a confirmation code')
     await approveQuickAcc({
       password: signingState.passphrase,
       code: confCode
     })
-
-    return
   }
 
   const {
@@ -52,10 +64,11 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     relayerURL,
     resolve,
     onConfirmationCodeRequired,
-    useStorage,
+    useStorage
   })
 
-  const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
+  const isDAppSupported =
+    dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
 
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()
@@ -67,13 +80,8 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
   if (!requestedNetwork) {
     return (
       <div className={styles.wrapper}>
-        <h3 className='error'>
-        Unexistent network for chainId : {requestedChainId}
-        </h3>
-        <Button
-          className={styles.reject}
-          onClick={() => resolve({ message: "signature denied" })}
-        >
+        <h3 className="error">Unexistent network for chainId : {requestedChainId}</h3>
+        <Button className={styles.reject} onClick={() => resolve({ message: 'signature denied' })}>
           Reject
         </Button>
       </div>
@@ -83,11 +91,8 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
   if (typeDataErr)
     return (
       <div className={styles.wrapper}>
-        <h3 className='error'>Invalid signing request: {typeDataErr}</h3>
-        <Button
-          className={styles.reject}
-          onClick={() => resolve({ message: "signature denied" })}
-        >
+        <h3 className="error">Invalid signing request: {typeDataErr}</h3>
+        <Button className={styles.reject} onClick={() => resolve({ message: 'signature denied' })}>
           Reject
         </Button>
       </div>
@@ -106,7 +111,11 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
   return (
     <div className={styles.wrapper}>
-      <Panel title="Signing with account" titleClassName={styles.panelTitle} className={styles.panel}>
+      <Panel
+        title="Signing with account"
+        titleClassName={styles.panelTitle}
+        className={styles.panel}
+      >
         <AccountAndNetwork
           address={account.id}
           networkName={requestedNetwork.name}
@@ -122,12 +131,11 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             <ToolTip
               label={`${
                 isTypedData
-                  ? "An EIP-712 typed data signature has been requested"
-                  : "An ethSign ethereum signature type has been requested"
+                  ? 'An EIP-712 typed data signature has been requested'
+                  : 'An ethSign ethereum signature type has been requested'
               }`}
             >
-              <MdInfoOutline />{" "}
-              <span>{isTypedData ? "EIP-712 type" : "standard type"}</span>
+              <MdInfoOutline /> <span>{isTypedData ? 'EIP-712 type' : 'standard type'}</span>
             </ToolTip>
           </span>
         </div>
@@ -135,12 +143,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
         <div className={styles.requestMessage}>
           <div className={styles.dappMessage}>
             {dApp ? (
-              <a
-                className={styles.dapp}
-                href={dApp.url}
-                target='_blank'
-                rel='noreferrer'
-              >
+              <a className={styles.dapp} href={dApp.url} target="_blank" rel="noreferrer">
                 <div
                   className={styles.icon}
                   style={{ backgroundImage: `url(${dApp.icons ? dApp.icons[0] : 'none'})` }}
@@ -150,64 +153,57 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
                 {dApp.name}
               </a>
             ) : (
-              "A dApp "
+              'A dApp '
             )}
             is requesting your signature.
           </div>
-          {(totalRequests > 1) ? <span>
-            You have {totalRequests - 1} more pending requests.
-          </span> : null}
+          {totalRequests > 1 ? (
+            <span>You have {totalRequests - 1} more pending requests.</span>
+          ) : null}
           {!isDAppSupported && <DAppIncompatibilityWarningMsg />}
         </div>
 
         <textarea
           className={styles.signMessage}
-          type='text'
+          type="text"
           value={
             dataV4
-              ? JSON.stringify(dataV4, "\n", " ")
-              : msgToSign.txn !== "0x"
+              ? JSON.stringify(dataV4, '\n', ' ')
+              : msgToSign.txn !== '0x'
               ? getMessageAsText(msgToSign.txn)
-              : "(Empty message)"
+              : '(Empty message)'
           }
-          readOnly={true}
+          readOnly
         />
 
         <div className={styles.actions}>
           <form onSubmit={handleSubmit}>
-            {account.signer.quickAccManager && (isDeployed !== null) && (
+            {account.signer.quickAccManager && isDeployed !== null && (
               <>
                 <TextInput
                   password
                   required
                   minLength={3}
-                  placeholder='Account password'
+                  placeholder="Account password"
                   value={signingState.passphrase}
-                  onChange={(value) =>
-                    setSigningState({ ...signingState, passphrase: value })
-                  }
-                ></TextInput>
-                <input type='submit' hidden />
+                  onChange={(value) => setSigningState({ ...signingState, passphrase: value })}
+                />
+                <input type="submit" hidden />
               </>
             )}
 
             {confirmationType && (
               <>
-                {confirmationType === "email" && (
+                {confirmationType === 'email' && (
                   <span>
-                    A confirmation code has been sent to your email, it is valid
-                    for 3 minutes.
+                    A confirmation code has been sent to your email, it is valid for 3 minutes.
                   </span>
                 )}
-                {confirmationType === "otp" && (
-                  <span>Please enter your OTP code</span>
-                )}
+                {confirmationType === 'otp' && <span>Please enter your OTP code</span>}
                 <TextInput
                   ref={inputSecretRef}
                   placeholder={
-                    confirmationType === "otp"
-                      ? "Authenticator OTP code"
-                      : "Confirmation code"
+                    confirmationType === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'
                   }
                   onInput={(value) => handleInputConfCode(value)}
                 />
@@ -222,8 +218,9 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
 
             {isDeployed && hasPrivileges === false && (
               <div>
-                <h3 className='error'>
-                  The currently used signer is not authorized to control this account and therefore you cannot sign messages.
+                <h3 className="error">
+                  The currently used signer is not authorized to control this account and therefore
+                  you cannot sign messages.
                 </h3>
               </div>
             )}
@@ -231,14 +228,20 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             <div className={styles.buttons}>
               <Button
                 className={styles.button}
-                type='button'
+                type="button"
                 variant="danger"
-                onClick={() => resolve({ message: "signature denied" })}
+                onClick={() => resolve({ message: 'signature denied' })}
               >
                 Reject
               </Button>
-              {((isDeployed && hasPrivileges) || (isDeployed === false)) && (
-                <Button type='submit' variant="primaryGradient" className={styles.button} loading={isLoading} loadingText="Signing...">
+              {((isDeployed && hasPrivileges) || isDeployed === false) && (
+                <Button
+                  type="submit"
+                  variant="primaryGradient"
+                  className={styles.button}
+                  loading={isLoading}
+                  loadingText="Signing..."
+                >
                   Sign
                 </Button>
               )}
@@ -258,5 +261,5 @@ function getMessageAsText(msg) {
       return msg
     }
   }
-  return msg?.toString ? msg.toString() : msg + "" //what if dapp sends it as object? force string to avoid app crashing
+  return msg?.toString ? msg.toString() : `${msg}` // what if dapp sends it as object? force string to avoid app crashing
 }

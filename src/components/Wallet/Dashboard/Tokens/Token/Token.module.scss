@@ -30,7 +30,7 @@
       flex: 1.5;
       font-weight: 500;
       color: $c-titan-white;
-      
+
       .iconWrapper {
         border-radius: $border-radius;
         background-color: rgba($c-titan-white, 0.04);
@@ -39,8 +39,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        
-        img, .iconFailed {
+
+        img,
+        .iconFailed {
           width: 1.5rem;
           height: 1.5rem;
           border-radius: $border-radius;
@@ -50,7 +51,7 @@
           border-radius: 0;
         }
       }
-  
+
       .balanceAndSymbol {
         .symbol {
           margin: 0;
@@ -89,12 +90,11 @@
     }
   }
 
-
   .actions {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: .625rem;
+    gap: 0.625rem;
     flex: 1;
 
     .action {
@@ -103,15 +103,15 @@
       justify-content: center;
       height: 3.125rem;
       padding: 0 1.25rem;
-      gap: .3125rem;
+      gap: 0.3125rem;
       background-color: rgba($c-titan-white, 0.04);
       border-radius: $border-radius;
       cursor: pointer;
-      transition: .3s ease-out opacity;
+      transition: 0.3s ease-out opacity;
       opacity: 1;
-      
+
       &:hover {
-        opacity: .6;
+        opacity: 0.6;
       }
 
       svg {
@@ -120,7 +120,7 @@
       }
 
       p {
-        font-size: .875rem;
+        font-size: 0.875rem;
       }
     }
   }
@@ -129,7 +129,7 @@
 // Mobile
 @include sm-breakpoint {
   .wrapper {
-    padding: 1.25rem .9375rem;
+    padding: 1.25rem 0.9375rem;
     border: 1px solid $c-martinique;
 
     .body {
@@ -144,7 +144,7 @@
       .baseInfo {
         display: flex;
         flex: 1;
-        gap: .625rem;
+        gap: 0.625rem;
 
         .balanceAndSymbol {
           flex: 1;
@@ -165,7 +165,7 @@
         flex: unset;
         flex-direction: column-reverse;
         align-items: flex-end;
-        
+
         .value {
           font-size: 1.2rem;
         }
@@ -179,7 +179,7 @@
     .actions {
       gap: 1.25rem;
       width: 100%;
-      
+
       .action {
         width: 100%;
         height: 3.125rem;

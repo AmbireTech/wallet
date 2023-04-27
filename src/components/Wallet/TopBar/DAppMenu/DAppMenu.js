@@ -15,11 +15,13 @@ const DAppMenu = ({ toggleSideBarOpen, currentDappData, loadCurrentDappData }) =
       <BurgerIcon onClick={toggleSideBarOpen} className={cn(styles.icon, styles.menuIcon)} />
     </ToolTip>
     <div className={styles.dappData}>
-      <ToolTip label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}>
+      <ToolTip
+        label={`Connected with ${currentDappData?.connectionType} -  see/find out more on our blog`}
+      >
         {/* TODO: update the blogpost link */}
         <a
           className="info-btn"
-          href={'https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e'}
+          href="https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e"
           target="_blank"
           rel="noreferrer noopener"
         >
@@ -27,12 +29,23 @@ const DAppMenu = ({ toggleSideBarOpen, currentDappData, loadCurrentDappData }) =
         </a>
       </ToolTip>
       <ToolTip label={`Connected to ${currentDappData?.name} with Ambire Wallet`}>
-        <a href={currentDappData?.providedBy?.url || currentDappData?.url} target="_blank" rel="noreferrer noopener">
-          <img className={styles.dappLogo} src={currentDappData?.iconUrl || DAPPS_ICON} alt={currentDappData?.name} />
+        <a
+          href={currentDappData?.providedBy?.url || currentDappData?.url}
+          target="_blank"
+          rel="noreferrer noopener"
+        >
+          <img
+            className={styles.dappLogo}
+            src={currentDappData?.iconUrl || DAPPS_ICON}
+            alt={currentDappData?.name}
+          />
         </a>
       </ToolTip>
       <ToolTip label={`Exit from ${currentDappData?.name}`}>
-        <ExitIcon className={cn(styles.icon, styles.exitIcon)} onClick={() => loadCurrentDappData(null)} />
+        <ExitIcon
+          className={cn(styles.icon, styles.exitIcon)}
+          onClick={() => loadCurrentDappData(null)}
+        />
       </ToolTip>
     </div>
   </div>

@@ -7,7 +7,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: .625rem;
+    gap: 0.625rem;
     margin-bottom: 2.6875rem;
 
     .title {
@@ -21,18 +21,18 @@
     .network {
       display: flex;
       align-items: center;
-      gap: .625rem;
-      
+      gap: 0.625rem;
+
       p {
         margin: 0;
-        font-size: .875rem;
-        opacity: .9;
+        font-size: 0.875rem;
+        opacity: 0.9;
 
         &.name {
           text-transform: capitalize;
         }
       }
-      
+
       .networkIcon {
         flex: 0 0 auto;
         @include flex-center-center;
@@ -40,7 +40,7 @@
         width: 2rem;
         border-radius: $border-radius;
         background-color: $c-mirage;
-    
+
         img {
           height: 1.5rem;
           width: 1.5rem;
@@ -58,13 +58,13 @@
     max-height: 13.125rem;
     margin-bottom: 1.25rem;
     padding-right: 1.25rem;
-    gap: .625rem;
+    gap: 0.625rem;
   }
 
   .warning {
     display: flex;
     align-items: center;
-    gap: .625rem;
+    gap: 0.625rem;
     margin-bottom: 1.875rem;
 
     .warningIcon {
@@ -75,7 +75,7 @@
 
     .warningText {
       flex: 1;
-      font-size: .875rem;
+      font-size: 0.875rem;
       margin: 0;
       color: $warning-color;
 
@@ -97,7 +97,7 @@
   .wrapper {
     .list {
       max-height: 26.875rem;
-      padding-right: .75rem;
+      padding-right: 0.75rem;
     }
 
     .depositBtn {
@@ -111,19 +111,19 @@
   .wrapper {
     .titleWrapper {
       flex-direction: column;
-      
+
       .title {
         font-size: 1.2rem;
       }
     }
     .warning {
       margin-bottom: 1.25rem;
-      
+
       .warningText {
-        font-size: .75rem;
+        font-size: 0.75rem;
 
         span {
-          font-size: .875rem;
+          font-size: 0.875rem;
         }
       }
     }

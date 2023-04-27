@@ -1,7 +1,7 @@
 @import 'variables.scss';
 $WCBlue: #0078db;
-$faveColor: #FFFF00;
-$gap: .75rem;
+$faveColor: #ffff00;
+$gap: 0.75rem;
 
 .wrapper {
   height: 100%;
@@ -24,11 +24,11 @@ $gap: .75rem;
     border-radius: $border-radius;
 
     input {
-      background-color: $c-mirage!important;
+      background-color: $c-mirage !important;
     }
-    
+
     ::placeholder {
-      color: $c-titan-white!important;
+      color: $c-titan-white !important;
     }
   }
 
@@ -48,7 +48,7 @@ $gap: .75rem;
 
       .category {
         cursor: pointer;
-        padding: .7188rem .875rem;
+        padding: 0.7188rem 0.875rem;
         border-radius: $border-radius;
         border: 2px solid mix($c-titan-white, $c-mirage);
         color: mix($c-titan-white, $c-mirage);
@@ -79,7 +79,6 @@ $gap: .75rem;
         }
       }
     }
-
   }
 
   .dappIframe {
@@ -97,14 +96,14 @@ $gap: .75rem;
       flex-direction: column;
       justify-content: space-between;
       gap: $gap;
-      padding: ($gap + .875rem) .625rem 1.6875rem 1.5625rem;
+      padding: ($gap + 0.875rem) 0.625rem 1.6875rem 1.5625rem;
       background-color: $c-ebony-clay;
       border-radius: $border-radius;
       border: 1px solid transparent;
       transition: 100ms;
       position: relative;
       overflow: hidden;
-      transition: .1s ease-out border;
+      transition: 0.1s ease-out border;
 
       &.addCustomDapp {
         cursor: default;
@@ -112,27 +111,32 @@ $gap: .75rem;
 
       .tools {
         position: absolute;
-        right: .625rem;
-        top: .625rem;
+        right: 0.625rem;
+        top: 0.625rem;
         display: flex;
         flex-direction: row;
-        gap: .25rem;
+        gap: 0.25rem;
         align-items: center;
 
-        .favorite, .customDapp, .removeDapp, .hotDapp, .infoBtn {
-          .icon, &.icon {
+        .favorite,
+        .customDapp,
+        .removeDapp,
+        .hotDapp,
+        .infoBtn {
+          .icon,
+          &.icon {
             font-size: 1.25rem;
             height: 1.25rem;
             cursor: pointer;
-          }      
-          height: .875rem;
+          }
+          height: 0.875rem;
           width: auto;
           color: mix($c-titan-white, $c-mirage, 20%);
-  
+
           &.selected {
             color: $faveColor;
           }
-  
+
           &:hover {
             color: $faveColor;
           }
@@ -143,10 +147,10 @@ $gap: .75rem;
           width: 1.125rem;
         }
 
-        .removeDapp {          
+        .removeDapp {
           &:hover {
             color: $danger-color;
-          }         
+          }
         }
         .infoBtn {
           color: $ambire-purple;
@@ -154,9 +158,9 @@ $gap: .75rem;
           &:hover {
             color: $ambire-purple;
             opacity: 1;
-          }         
+          }
         }
-      }      
+      }
 
       &.notSupported {
         cursor: not-allowed;
@@ -198,13 +202,13 @@ $gap: .75rem;
 
           img {
             background-color: $c-mirage;
-            padding: .5rem;
+            padding: 0.5rem;
             width: 3.5rem;
             height: 3.5rem;
             border-radius: $border-radius;
           }
         }
-      } 
+      }
 
       .logoSplit {
         display: flex;
@@ -240,9 +244,9 @@ $gap: .75rem;
 
       .description {
         margin-top: $gap;
-        font-size: .875rem;
+        font-size: 0.875rem;
         color: $c-titan-white;
-        opacity: .5;
+        opacity: 0.5;
         margin-top: 1.25rem;
       }
 
@@ -255,31 +259,30 @@ $gap: .75rem;
         display: flex;
         justify-content: right;
         flex-direction: row-reverse;
-        gap: .5rem;
+        gap: 0.5rem;
 
         &.networkTagRow {
-          gap: .25rem;
+          gap: 0.25rem;
           justify-content: left;
         }
 
         &.tagTypes {
           flex-grow: 1;
-          margin-left: .625rem; //fixes hover issue with network tags
+          margin-left: 0.625rem; //fixes hover issue with network tags
         }
 
         &.unsupported {
           justify-content: left;
           margin: 0;
-          margin-top: .5rem;
+          margin-top: 0.5rem;
         }
 
         .tooltipNetworks {
-
           .tooltipNetwork {
             display: flex;
-            gap: .5rem;
+            gap: 0.5rem;
             align-items: center;
-            margin: .25rem 0;
+            margin: 0.25rem 0;
 
             .tooltipNetworkIcon {
               border: 0;
@@ -291,26 +294,25 @@ $gap: .75rem;
               border-radius: 2rem;
             }
           }
-
         }
 
         .tag {
           // background-color: mix($c-heliotrope, $c-mirage, 30%);
           border: 1px solid $c-heliotrope;
           color: mix($c-heliotrope, $c-titan-white, 70%);
-          padding: .2188rem 1.3438rem;
-          font-size: .75rem;
+          padding: 0.2188rem 1.3438rem;
+          font-size: 0.75rem;
           border-radius: 2rem;
           text-transform: capitalize;
 
           &.typeTagwalletconnect {
             // background-color: mix($WCBlue, $c-mirage, 30%);
-            border: .0625rem solid $WCBlue;
+            border: 0.0625rem solid $WCBlue;
             color: mix($WCBlue, $c-titan-white, 70%);
           }
 
           &.typeTaghot {
-            border: .0625rem solid $ambire-dark-blue;
+            border: 0.0625rem solid $ambire-dark-blue;
             color: mix($ambire-dark-blue, $c-titan-white, 70%);
           }
 
@@ -333,11 +335,11 @@ $gap: .75rem;
           &.networkTagMore {
             background: transparent;
             border: 0;
-            margin-left: .25rem;
+            margin-left: 0.25rem;
             margin-right: 0;
             font-weight: bold;
             font-size: 1rem;
-            margin-left: .625rem;
+            margin-left: 0.625rem;
             color: $text-container-color;
           }
         }
@@ -364,9 +366,9 @@ $gap: .75rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: .5rem;
-    margin-top: .625rem;
-    padding: .75rem;
+    gap: 0.5rem;
+    margin-top: 0.625rem;
+    padding: 0.75rem;
     background-color: $c-mirage;
     border-radius: $border-radius;
     color: rgba($c-titan-white, 0.8);
@@ -375,7 +377,7 @@ $gap: .75rem;
 
 @include lg-breakpoint {
   .wrapper {
-    .filterSection { 
+    .filterSection {
       margin: 0 auto;
       margin-bottom: 1.875rem;
       width: 100%;
@@ -416,7 +418,7 @@ $gap: .75rem;
     }
     .catalogItems {
       grid-template-columns: repeat(1, 1fr [col-start]);
-      
+
       .catalogItem {
         max-width: 31.25rem;
       }

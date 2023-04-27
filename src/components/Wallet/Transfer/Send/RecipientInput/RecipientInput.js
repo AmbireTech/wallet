@@ -30,16 +30,26 @@ const RecipientInput = ({
           data-testid="recipient"
           className={styles.input}
         />
-				<ToolTip label={!uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'}>
-					<img
-						src={UDLogoImage}
-						alt="udaddress-logo"
-						className={cn(styles.inputLogo, {
-							[styles.active]: uDAddress
-						})}
-					/>
-				</ToolTip>
-        <ToolTip label={!ensAddress ? 'You can use Ethereum Name ServiceⓇ' : 'Valid Ethereum Name ServicesⓇ domain'}>
+        <ToolTip
+          label={
+            !uDAddress ? 'You can use Unstoppable domainsⓇ' : 'Valid Unstoppable domainsⓇ domain'
+          }
+        >
+          <img
+            src={UDLogoImage}
+            alt="udaddress-logo"
+            className={cn(styles.inputLogo, {
+              [styles.active]: uDAddress
+            })}
+          />
+        </ToolTip>
+        <ToolTip
+          label={
+            !ensAddress
+              ? 'You can use Ethereum Name ServiceⓇ'
+              : 'Valid Ethereum Name ServicesⓇ domain'
+          }
+        >
           <img
             src={ENSLogoImage}
             alt="ens-logo"
@@ -49,7 +59,9 @@ const RecipientInput = ({
           />
         </ToolTip>
       </div>
-      <p className={styles.doubleCheckMessage}>Please double-check the recipient address, blockchain transactions are not reversible.</p>
+      <p className={styles.doubleCheckMessage}>
+        Please double-check the recipient address, blockchain transactions are not reversible.
+      </p>
       <AddressBook
         addresses={addresses.filter((x) => x.address !== selectedAcc)}
         addAddress={addAddress}
@@ -60,7 +72,8 @@ const RecipientInput = ({
         selectedNetwork={selectedNetwork}
         className={styles.addressBook}
       />
-    </div>)
+    </div>
+  )
 }
 
 export default RecipientInput

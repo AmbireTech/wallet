@@ -6,15 +6,11 @@ import { MdInfo, MdOutlineClose, MdWarning } from 'react-icons/md'
 
 import styles from './Replace.module.scss'
 
-const Replace = ({
-  isInt,
-  mustReplaceNonce,
-  canProceed,
-  rejectTxn
-}) => {
+const Replace = ({ isInt, mustReplaceNonce, canProceed, rejectTxn }) => {
   // NOTE there's a case in which both "This transaction will replace the current pending transaction" and the checkbox will render - when we're doing a modify
   // If we are replacing a txn, look at whether canProceed is true
-  return isInt(mustReplaceNonce) && (
+  return (
+    isInt(mustReplaceNonce) && (
       <>
         {
           // We always warn the user if they're trying to replace a particular transaction
@@ -22,14 +18,11 @@ const Replace = ({
           (canProceed || canProceed === null) && (
             <div className={cn(styles.replaceInfo, styles.warning)}>
               <MdWarning />
-              <span>
-                This transaction bundle will replace the one that's
-                currently pending.
-              </span>
+              <span>This transaction bundle will replace the one that's currently pending.</span>
             </div>
           )
         }
-  
+
         {
           // canProceed equals null means we don't have data yet
           canProceed === null && (
@@ -38,15 +31,12 @@ const Replace = ({
             </div>
           )
         }
-  
+
         {canProceed === false && (
           <div className={styles.wrapper}>
             <div className={cn(styles.replaceInfo, styles.info)}>
               <MdInfo />
-              <span>
-                The transaction you're trying to replace has already been
-                confirmed
-              </span>
+              <span>The transaction you're trying to replace has already been confirmed</span>
             </div>
             <div className={styles.buttons}>
               <Button
@@ -62,6 +52,7 @@ const Replace = ({
           </div>
         )}
       </>
+    )
   )
 }
 

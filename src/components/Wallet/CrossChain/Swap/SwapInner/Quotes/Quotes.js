@@ -11,13 +11,21 @@ import Routes from './Routes/Routes'
 
 import styles from './Quotes.module.scss'
 
-const formatAmount = (amount, asset) => amount / Math.pow(10, asset.decimals)
+const formatAmount = (amount, asset) => amount / 10 ** asset.decimals
 const formatFeeAmount = (fee, route) => {
   return formatAmount(fee.amount, fee.asset)
 }
 const getNetwork = (id) => networks.find(({ chainId }) => chainId === id)
 
-const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotesConfirmed, onCancel, amount }) => {
+const Quotes = ({
+  addRequest,
+  selectedAccount,
+  fromTokensItems,
+  quotes,
+  onQuotesConfirmed,
+  onCancel,
+  amount
+}) => {
   const { addToast } = useToasts()
   const { approvalBuildTx, sendBuildTx } = useMovr()
 
@@ -29,27 +37,35 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
   const [loading, setLoading] = useState(false)
 
   const refuel = quotes.refuel
-  const routes = useMemo(() => quotes.routes.map((route) => {
-    const { userTxs } = route
+  const routes = useMemo(
+    () =>
+      quotes.routes.map((route) => {
+        const { userTxs } = route
 
-    const bridgeRoute = userTxs.find((tx) => tx.steps.find((s) => s.type === 'bridge'))
-    const bridgeStep = bridgeRoute.steps?.find((s) => s.type === 'bridge')
+        const bridgeRoute = userTxs.find((tx) => tx.steps.find((s) => s.type === 'bridge'))
+        const bridgeStep = bridgeRoute.steps?.find((s) => s.type === 'bridge')
 
-    const middlewareRoute = userTxs.find((tx) => tx.steps.find((s) => s.type === 'middleware'))
-    const middlewareStep = middlewareRoute?.steps?.find((s) => s.type === 'middleware')
+        const middlewareRoute = userTxs.find((tx) => tx.steps.find((s) => s.type === 'middleware'))
+        const middlewareStep = middlewareRoute?.steps?.find((s) => s.type === 'middleware')
 
-    return {
-      ...route,
-      bridgeStep,
-      middlewareStep,
-      userTxType: bridgeRoute.userTxType,
-      txType: bridgeRoute.txType,
-      middlewareFee: middlewareStep?.protocolFees ? formatFeeAmount(middlewareStep?.protocolFees, route) : 0,
-      bridgeFee: bridgeStep?.protocolFees ? formatFeeAmount(bridgeStep?.protocolFees, route) : 0,
-      fromAsset,
-      toAsset
-    }
-  }), [fromAsset, quotes.routes, toAsset])
+        return {
+          ...route,
+          bridgeStep,
+          middlewareStep,
+          userTxType: bridgeRoute.userTxType,
+          txType: bridgeRoute.txType,
+          middlewareFee: middlewareStep?.protocolFees
+            ? formatFeeAmount(middlewareStep?.protocolFees, route)
+            : 0,
+          bridgeFee: bridgeStep?.protocolFees
+            ? formatFeeAmount(bridgeStep?.protocolFees, route)
+            : 0,
+          fromAsset,
+          toAsset
+        }
+      }),
+    [fromAsset, quotes.routes, toAsset]
+  )
 
   const sendTx = (id, chainId, to, data, value = '0x00') => {
     addRequest({
@@ -61,8 +77,8 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
       txn: {
         to,
         data,
-        value,
-      },
+        value
+      }
     })
   }
 
@@ -87,21 +103,34 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
       )
 
       approvalTxn.map((tx) =>
-        sendTx(`transfer_approval_crosschain_${Date.now()}`, route.bridgeStep.fromChainId, tx.to, tx.data)
+        sendTx(
+          `transfer_approval_crosschain_${Date.now()}`,
+          route.bridgeStep.fromChainId,
+          tx.to,
+          tx.data
+        )
       )
 
       const tx = await sendBuildTx(route, refuel)
-      sendTx(`transfer_send_crosschain_${Date.now()}`, route.bridgeStep.fromChainId, tx.txTarget, tx.txData, tx.value)
+      sendTx(
+        `transfer_send_crosschain_${Date.now()}`,
+        route.bridgeStep.fromChainId,
+        tx.txTarget,
+        tx.txData,
+        tx.value
+      )
 
-      const serviceTimeMinutes = new Date((route?.serviceTime || 0) + (route?.serviceTime || 0)).getMinutes()
+      const serviceTimeMinutes = new Date(
+        (route?.serviceTime || 0) + (route?.serviceTime || 0)
+      ).getMinutes()
       onQuotesConfirmed({
         txData: tx.txData,
         serviceTimeMinutes,
         to: {
           chainId: toAsset.chainId,
           asset: toAsset,
-          amount: route.toAmount,
-        },
+          amount: route.toAmount
+        }
       })
       setLoading(false)
       onCancel()
@@ -115,17 +144,19 @@ const Quotes = ({ addRequest, selectedAccount, fromTokensItems, quotes, onQuotes
   return (
     <div className={styles.wrapper}>
       <div>
-        <Header fromNetwork={fromNetwork} fromAsset={fromAsset} toNetwork={toNetwork} toAsset={toAsset} amount={amount} />
+        <Header
+          fromNetwork={fromNetwork}
+          fromAsset={fromAsset}
+          toNetwork={toNetwork}
+          toAsset={toAsset}
+          amount={amount}
+        />
 
         {loading ? <Loading /> : <Routes routes={routes} setSelectedRoute={setSelectedRoute} />}
       </div>
 
       <div className={cn(styles.buttons, styles.singleButton)}>
-        <Button
-          disabled={loading}
-          onClick={onCancel}
-          className={styles.button}
-        >
+        <Button disabled={loading} onClick={onCancel} className={styles.button}>
           {routes.length ? 'Cancel' : 'Go Back'}
         </Button>
         {routes.length ? (

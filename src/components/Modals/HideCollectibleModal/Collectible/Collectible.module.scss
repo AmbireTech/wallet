@@ -5,41 +5,41 @@
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: .9375rem;
+  gap: 0.9375rem;
   height: 3.125rem;
-  padding: .5rem 1.25rem;
+  padding: 0.5rem 1.25rem;
   margin-bottom: 0;
   border-radius: $border-radius;
   background-color: $c-mirage;
 
   .info {
+    display: flex;
+    align-items: center;
+
+    .iconWrapper {
+      width: 2.125rem;
+      height: 2.125rem;
+      background-color: rgba($c-titan-white, 0.04);
+      border-radius: $border-radius;
       display: flex;
       align-items: center;
-      
-      .iconWrapper {
-          width: 2.125rem;
-          height: 2.125rem;
-          background-color: rgba($c-titan-white, 0.04);
-          border-radius: $border-radius;
-          display: flex;
-          align-items: center;
-          justify-content: center;
-          margin-right: .625rem;
+      justify-content: center;
+      margin-right: 0.625rem;
+    }
+    .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+      border-radius: $border-radius;
+    }
+
+    .name {
+      font-size: 0.875rem;
+      font-weight: 400;
+      margin: 0;
+
+      span {
+        color: $c-scampi;
       }
-      .icon {
-          width: 1.5rem;
-          height: 1.5rem;
-          border-radius: $border-radius;
-      }
-  
-      .name {
-          font-size: .875rem;
-          font-weight: 400;
-          margin: 0;
-  
-          span {
-          color: $c-scampi;
-          }
-      }
+    }
   }
 }

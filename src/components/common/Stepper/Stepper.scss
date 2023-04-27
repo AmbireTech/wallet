@@ -25,7 +25,11 @@
         // the progress bar should also ends in the middle of the step.
         // The other half of the progress bar will have the inactive color.
         .stepBar {
-          background: linear-gradient(90deg, $c-turquoise 50%, mix($c-turquoise, $c-mirage, 50%) 50%);
+          background: linear-gradient(
+            90deg,
+            $c-turquoise 50%,
+            mix($c-turquoise, $c-mirage, 50%) 50%
+          );
         }
       }
     }
@@ -40,8 +44,8 @@
     }
     .stepStatus {
       display: block;
-      width: .625rem;
-      height: .625rem;
+      width: 0.625rem;
+      height: 0.625rem;
       text-align: center;
       border-radius: 3.125rem;
       z-index: 2;
@@ -55,10 +59,10 @@
       }
 
       .stepBarPrev {
-        background: $c-turquoise
+        background: $c-turquoise;
       }
       .stepBarNext {
-        background: $c-turquoise
+        background: $c-turquoise;
       }
     }
 
@@ -92,25 +96,25 @@
 
     .stepBar {
       position: absolute;
-      height: .125rem;
+      height: 0.125rem;
       z-index: 1;
-      top: .25rem;
+      top: 0.25rem;
 
       &.stepBarPrev {
         width: 100%;
-        left:0;
+        left: 0;
       }
 
       &.stepBarNext {
         width: 100%;
-        right:0;
+        right: 0;
       }
     }
 
     .stepName {
-      padding-top: .25rem;
+      padding-top: 0.25rem;
       font-weight: normal;
-      font-size: .75rem;
+      font-size: 0.75rem;
     }
   }
 }

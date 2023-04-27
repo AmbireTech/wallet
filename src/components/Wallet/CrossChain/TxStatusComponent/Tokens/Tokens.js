@@ -6,7 +6,14 @@ import { ToolTip } from 'components/common'
 
 import styles from './Tokens.module.scss'
 
-const Tokens = ({ fromTokenAmount, fromTokenIcon, fromTokenName, toTokenAmount, toTokenIcon, toTokenName }) => (
+const Tokens = ({
+  fromTokenAmount,
+  fromTokenIcon,
+  fromTokenName,
+  toTokenAmount,
+  toTokenIcon,
+  toTokenName
+}) => (
   <div className={styles.wrapper}>
     {/* From Token */}
     <div className={styles.token}>

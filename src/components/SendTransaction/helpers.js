@@ -2,7 +2,8 @@ import { Bundle } from 'adex-protocol-eth/js'
 import { toBundleTxn } from 'ambire-common/src/services/requestToBundleTxn'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Interface } from 'ethers/lib/utils'
-const ERC20 = new Interface(require("adex-protocol-eth/abi/ERC20"))
+
+const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 // It costs around 19k to send a token, if that token was interacted with before in the same transaction,
 // because of SLOAD costs - they depend on whether a slot has been read
 // however, it costs 30k if the token has not been interacted with
@@ -11,10 +12,11 @@ const ADDED_GAS_TOKEN = 30000
 const ADDED_GAS_NATIVE = 12000
 
 export function isTokenEligible(token, speed, estimation, isGasTankEnabled, network) {
-  if (estimation?.relayerless && token?.address === '0x0000000000000000000000000000000000000000') return true
+  if (estimation?.relayerless && token?.address === '0x0000000000000000000000000000000000000000')
+    return true
   if (!token) return false
   const { feeInFeeToken } = getFeesData(token, estimation, speed, isGasTankEnabled, network)
-  const balanceInFeeToken = (parseInt(token.balance) / Math.pow(10, token.decimals))
+  const balanceInFeeToken = parseInt(token.balance) / 10 ** token.decimals
   return balanceInFeeToken > feeInFeeToken
 }
 
@@ -31,7 +33,7 @@ export function getFeePaymentConsequences(token, estimation, isGasTankEnabled) {
   // Relayer mode
   const addedGas = getAddedGas(token)
   // If Gas Tank enabled
-  if (!!isGasTankEnabled) return { addedGas: 0, multiplier: 1 }
+  if (isGasTankEnabled) return { addedGas: 0, multiplier: 1 }
 
   return {
     // otherwise we get very long floating point numbers with trailing .999999
@@ -40,23 +42,48 @@ export function getFeePaymentConsequences(token, estimation, isGasTankEnabled) {
   }
 }
 
-const contractErrors = ['caller is a contract', 'caller is another contract', 'contract not allowed', 'contract not supported', 'No contractz allowed', 'o contracts', /*no */'contracts allowed', /* c or C*/'ontract is not allowed', 'aller must be user', 'aller must be a user', 'ontract call not allowed']
+const contractErrors = [
+  'caller is a contract',
+  'caller is another contract',
+  'contract not allowed',
+  'contract not supported',
+  'No contractz allowed',
+  'o contracts',
+  /* no */ 'contracts allowed',
+  /* c or C */ 'ontract is not allowed',
+  'aller must be user',
+  'aller must be a user',
+  'ontract call not allowed'
+]
 
 export function mapTxnErrMsg(msg) {
   if (!msg) return
   if (msg.includes('Router: EXPIRED')) return 'Swap expired'
-  if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Swap will suffer slippage higher than your requirements'
-  if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'Your signer address is not authorized. If you added this signer key after the account was created, make sure you also add it on the currently selected network.'
-  if (contractErrors.find(contractMsg => msg.includes(contractMsg))) return 'This dApp does not support smart wallets.'
+  if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT'))
+    return 'Swap will suffer slippage higher than your requirements'
+  if (msg.includes('INSUFFICIENT_PRIVILEGE'))
+    return 'Your signer address is not authorized. If you added this signer key after the account was created, make sure you also add it on the currently selected network.'
+  if (contractErrors.find((contractMsg) => msg.includes(contractMsg)))
+    return 'This dApp does not support smart wallets.'
+  if (msg === 'NOT_TIME')
+    return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period."
+  if (msg === 'WRONG_ACC_OR_NO_PRIV')
+    return 'Unable to sign with this email/password account. Please contact support.'
+  if (msg === 'INVALID_SIGNATURE') return 'Invalid quick account signature, please contact support'
+  if (msg === 'INSUFFICIENT_PRIVILEGE')
+    return 'Wrong signature. This may happen if you used password/derivation path on your hardware wallet.'
+
   return msg
 }
 
 export function getErrHint(msg) {
   if (!msg) return
   if (msg.includes('Router: EXPIRED')) return 'Try performing the swap again'
-  if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT')) return 'Try performing the swap again or increase your slippage requirements'
-  if (msg.includes('INSUFFICIENT_PRIVILEGE')) return 'If you set a new signer for this account, try re-adding the account.'
-  if (contractErrors.find(contractMsg => msg.includes(contractMsg))) {
+  if (msg.includes('Router: INSUFFICIENT_OUTPUT_AMOUNT'))
+    return 'Try performing the swap again or increase your slippage requirements'
+  if (msg.includes('INSUFFICIENT_PRIVILEGE'))
+    return 'If you set a new signer for this account, try re-adding the account.'
+  if (contractErrors.find((contractMsg) => msg.includes(contractMsg))) {
     return 'WARNING! We detected that this dApp intentionally blocks smart contract calls. This is a highly disruptive practice, as it breaks support for all smart wallets (Ambire, Gnosis Safe and others). We recommend you report this to the dApp ASAP and ask them to fix it.'
     // return 'This dApp does not support smart wallets or purposefully excludes them. Contact the dApp developers to tell them to implement smart wallets by not blocking contract interactions and/or implementing EIP1271.'
   }
@@ -64,18 +91,18 @@ export function getErrHint(msg) {
 }
 
 export function checkIfDAppIncompatible(msg) {
-  return contractErrors.find(contractMsg => msg.includes(contractMsg))
+  return contractErrors.find((contractMsg) => msg.includes(contractMsg))
 }
 
 export function toHexAmount(amnt, decimals) {
-  return '0x' + Math.round(amnt * Math.pow(10, decimals)).toString(16)
+  return `0x${Math.round(amnt * 10 ** decimals).toString(16)}`
 }
 
 export function getDiscountApplied(amnt, discount = 0) {
   if (!discount) return 0
   if (!amnt) return 0
   if (discount === 1) return amnt
-  return amnt / (1 - discount) * discount
+  return (amnt / (1 - discount)) * discount
 }
 
 // Returns feeToken data with all multipliers applied
@@ -85,17 +112,22 @@ export function getFeesData(feeToken, estimation, speed, isGasTankEnabled, netwo
   const discountMultiplier = 1 - (feeToken?.discount || 0)
   const totalMultiplier = multiplier * discountMultiplier
   const nativeRate = feeToken?.nativeRate || 1
-  const isCrossChainNativeSelected = isGasTankEnabled && feeToken.address === '0x0000000000000000000000000000000000000000' && (network.id !== feeToken.network)
+  const isCrossChainNativeSelected =
+    isGasTankEnabled &&
+    feeToken.address === '0x0000000000000000000000000000000000000000' &&
+    network.id !== feeToken.network
   const feeInNative = estimation.customFee
-    ? ((estimation.customFee * discountMultiplier) / nativeRate)
-    : !isCrossChainNativeSelected ? 
-        estimation.feeInNative[speed] * totalMultiplier : 
-        (((estimation.feeInNative[speed] * totalMultiplier) / nativeRate) * estimation.nativeAssetPriceInUSD) / feeToken.price
-  const feeInUSD = !isNaN(estimation.nativeAssetPriceInUSD) ? 
-    !isCrossChainNativeSelected ? 
-      feeInNative * estimation.nativeAssetPriceInUSD : 
-      feeInNative * feeToken.price : 
-    undefined
+    ? (estimation.customFee * discountMultiplier) / nativeRate
+    : !isCrossChainNativeSelected
+    ? estimation.feeInNative[speed] * totalMultiplier
+    : (((estimation.feeInNative[speed] * totalMultiplier) / nativeRate) *
+        estimation.nativeAssetPriceInUSD) /
+      feeToken.price
+  const feeInUSD = !isNaN(estimation.nativeAssetPriceInUSD)
+    ? !isCrossChainNativeSelected
+      ? feeInNative * estimation.nativeAssetPriceInUSD
+      : feeInNative * feeToken.price
+    : undefined
   const feeInFeeToken = feeInNative * nativeRate
 
   return {
@@ -103,25 +135,39 @@ export function getFeesData(feeToken, estimation, speed, isGasTankEnabled, netwo
     feeInUSD,
     feeInFeeToken,
     addedGas, // use it bundle data
-    savedGas,
+    savedGas
   }
 }
 
-export const getDefaultFeeToken = (remainingFeeTokenBalances, network, feeSpeed, estimation, currentAccGasTankState) => {
+export const getDefaultFeeToken = (
+  remainingFeeTokenBalances,
+  network,
+  feeSpeed,
+  estimation,
+  currentAccGasTankState
+) => {
   const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
 
-  if(!remainingFeeTokenBalances?.length) {
-    return { symbol: network.nativeAssetSymbol, decimals: 18, address: '0x0000000000000000000000000000000000000000' }
+  if (!remainingFeeTokenBalances?.length) {
+    return {
+      symbol: network.nativeAssetSymbol,
+      decimals: 18,
+      address: '0x0000000000000000000000000000000000000000'
+    }
   }
 
-  return remainingFeeTokenBalances
-  .sort((a, b) =>
-    (WALLET_TOKEN_SYMBOLS.indexOf(b?.symbol) - WALLET_TOKEN_SYMBOLS.indexOf(a?.symbol))
-    || ((b?.discount || 0) - (a?.discount || 0))
-    || a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
+  return (
+    remainingFeeTokenBalances
+      .sort(
+        (a, b) =>
+          WALLET_TOKEN_SYMBOLS.indexOf(b?.symbol) - WALLET_TOKEN_SYMBOLS.indexOf(a?.symbol) ||
+          (b?.discount || 0) - (a?.discount || 0) ||
+          a?.symbol.toUpperCase().localeCompare(b?.symbol.toUpperCase())
+      )
+      .find((token) =>
+        isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState, network)
+      ) || remainingFeeTokenBalances[0]
   )
-  .find(token => isTokenEligible(token, feeSpeed, estimation, currentAccGasTankState, network))
-  || remainingFeeTokenBalances[0]
 }
 
 export function makeBundle(account, networkId, requests) {
@@ -132,18 +178,20 @@ export function makeBundle(account, networkId, requests) {
     txns: requests.map(({ txn }) => toBundleTxn(Array.isArray(txn) ? txn[0] : txn, account.id)),
     signer: account.signer
   })
-  bundle.extraGas = requests.map(x => x.extraGas || 0).reduce((a, b) => a + b, 0)
-  bundle.requestIds = requests.map(x => x.id)
+  bundle.extraGas = requests.map((x) => x.extraGas || 0).reduce((a, b) => a + b, 0)
+  bundle.requestIds = requests.map((x) => x.id)
 
   // Attach bundle's meta
-  if (requests.some(item => item.meta)) {
+  if (requests.some((item) => item.meta)) {
     bundle.meta = {}
 
-    if (requests.some(item => item.meta?.addressLabel)) {
-      bundle.meta.addressLabel = requests.map(x => !!x.meta?.addressLabel ? x.meta.addressLabel : { addressLabel: '', address: ''})
+    if (requests.some((item) => item.meta?.addressLabel)) {
+      bundle.meta.addressLabel = requests.map((x) =>
+        x.meta?.addressLabel ? x.meta.addressLabel : { addressLabel: '', address: '' }
+      )
     }
 
-    const xWalletReq = requests.find(x => x.meta?.xWallet)
+    const xWalletReq = requests.find((x) => x.meta?.xWallet)
     if (xWalletReq) {
       bundle.meta.xWallet = xWalletReq.meta.xWallet
     }
@@ -154,18 +202,17 @@ export function makeBundle(account, networkId, requests) {
 
 export function addMockedTxnToBundle(bundle) {
   const tempBundle = new Bundle({ ...bundle })
-  const mockedValue = '0.' + '89'.repeat(9)
-  const mockTxn = 
-    [
-      '0xCAE1F94F6fCF3777A73aBC6850BaE16d0DBBCc3c',
-      "0x0",
-      ERC20.encodeFunctionData("transfer", [
-        accountPresets.feeCollector,
-        toHexAmount(mockedValue, 18),
-      ])
-    ]
-  
+  const mockedValue = `0.${'89'.repeat(9)}`
+  const mockTxn = [
+    '0xCAE1F94F6fCF3777A73aBC6850BaE16d0DBBCc3c',
+    '0x0',
+    ERC20.encodeFunctionData('transfer', [
+      accountPresets.feeCollector,
+      toHexAmount(mockedValue, 18)
+    ])
+  ]
+
   tempBundle.txns = [...tempBundle.txns, mockTxn]
-    
+
   return tempBundle
 }

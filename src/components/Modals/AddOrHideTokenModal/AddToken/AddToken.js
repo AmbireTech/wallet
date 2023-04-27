@@ -29,37 +29,37 @@ const AddToken = ({ network, account, portfolio }) => {
 
   const disabled = !tokenDetails || !(tokenDetails.symbol && tokenDetails.decimals)
 
-  const onInput = async address => {
-      setTokenDetails(null)
+  const onInput = async (address) => {
+    setTokenDetails(null)
 
-      if (!isValidAddress(address)) return 
-      setLoading(true)
-      setShowError(false)
+    if (!isValidAddress(address)) return
+    setLoading(true)
+    setShowError(false)
 
-      try {
-        const provider = getProvider(network.id)
-        const tokenContract = new Contract(address, ERC20Interface, provider)
-        
-        const [balanceOf, name, symbol, decimals] = await Promise.all([
-          tokenContract.balanceOf(account),
-          tokenContract.name(),
-          tokenContract.symbol(),
-          tokenContract.decimals()
-        ])
+    try {
+      const provider = getProvider(network.id)
+      const tokenContract = new Contract(address, ERC20Interface, provider)
 
-        const balance = formatUnits(balanceOf, decimals)
-        setTokenDetails({
-          account,
-          address: address.toLowerCase(),
-          network: network.id,
-          balance,
-          balanceRaw: balanceOf.toString(),
-          tokenImageUrl: getTokenIcon(network.id, address),
-          name,
-          symbol,
-          decimals
-        })
-    } catch(e) {
+      const [balanceOf, name, symbol, decimals] = await Promise.all([
+        tokenContract.balanceOf(account),
+        tokenContract.name(),
+        tokenContract.symbol(),
+        tokenContract.decimals()
+      ])
+
+      const balance = formatUnits(balanceOf, decimals)
+      setTokenDetails({
+        account,
+        address: address.toLowerCase(),
+        network: network.id,
+        balance,
+        balanceRaw: balanceOf.toString(),
+        tokenImageUrl: getTokenIcon(network.id, address),
+        name,
+        symbol,
+        decimals
+      })
+    } catch (e) {
       console.error(e)
       addToast('Failed to load token info', { error: true })
       setShowError(true)
@@ -73,16 +73,17 @@ const AddToken = ({ network, account, portfolio }) => {
     hideModal()
   }
 
-  const removeToken = address => {
+  const removeToken = (address) => {
     onRemoveExtraToken(address)
     hideModal()
   }
 
-  const tokenStandard = network.id === 'binance-smart-chain' ? 'a BEP20' : (
-      network.id === 'ethereum'
-          ? 'an ERC20'
-          : 'a valid'
-  )
+  const tokenStandard =
+    network.id === 'binance-smart-chain'
+      ? 'a BEP20'
+      : network.id === 'ethereum'
+      ? 'an ERC20'
+      : 'a valid'
 
   return (
     <div className={styles.wrapper}>
@@ -90,54 +91,55 @@ const AddToken = ({ network, account, portfolio }) => {
         small
         label="Token Address"
         placeholder="0x..."
-        onInput={value => onInput(value)}
+        onInput={(value) => onInput(value)}
         className={styles.addressInput}
       />
-      {
-        showError ? <div className={styles.validationError}>
-          The address you entered does not appear to correspond to {tokenStandard} token on { network.name }.
-        </div> : null
-      }
-      {
-        loading ? <Loading/> : (!showError && tokenDetails) ? <Token
+      {showError ? (
+        <div className={styles.validationError}>
+          The address you entered does not appear to correspond to {tokenStandard} token on{' '}
+          {network.name}.
+        </div>
+      ) : null}
+      {loading ? (
+        <Loading />
+      ) : !showError && tokenDetails ? (
+        <Token
           icon={tokenDetails.tokenImageUrl}
           name={tokenDetails.name}
           network={tokenDetails.network.toUpperCase()}
         >
           <div className={styles.balanceWrapper}>
-            Balance:
-            {' '}
-            <span className={styles.balance}>
-              { tokenDetails.balance }
-            </span>
-            {' '}
-            <span className={styles.symbol}>
-              { tokenDetails.symbol }
-            </span>
+            Balance: <span className={styles.balance}>{tokenDetails.balance}</span>{' '}
+            <span className={styles.symbol}>{tokenDetails.symbol}</span>
           </div>
-        </Token> : null
-      }
-      <Button variant="primaryGradient" className={styles.addButton} disabled={disabled} onClick={addToken}>Add Token</Button>
+        </Token>
+      ) : null}
+      <Button
+        variant="primaryGradient"
+        className={styles.addButton}
+        disabled={disabled}
+        onClick={addToken}
+      >
+        Add Token
+      </Button>
       <div className={styles.extraTokensList}>
-        {
-          extraTokens.map(({ address, name, symbol, tokenImageUrl, network }) => (
-            <Token
-              key={address}
-              address={address}
-              icon={tokenImageUrl}
-              name={name}
-              network={network.toUpperCase()}
-              symbol={symbol}
-              className={styles.token}
-            >
-              <div className={styles.actions}>
-                <Button size="xsm" variant="secondary" onClick={() => removeToken(address)}>
-                  <MdOutlineRemove />
-                </Button>
-              </div>
-            </Token>
-          ))
-        }
+        {extraTokens.map(({ address, name, symbol, tokenImageUrl, network }) => (
+          <Token
+            key={address}
+            address={address}
+            icon={tokenImageUrl}
+            name={name}
+            network={network.toUpperCase()}
+            symbol={symbol}
+            className={styles.token}
+          >
+            <div className={styles.actions}>
+              <Button size="xsm" variant="secondary" onClick={() => removeToken(address)}>
+                <MdOutlineRemove />
+              </Button>
+            </div>
+          </Token>
+        ))}
       </div>
     </div>
   )

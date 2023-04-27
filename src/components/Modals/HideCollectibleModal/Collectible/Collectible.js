@@ -6,11 +6,9 @@ const Collectible = ({ button, handleUri, asset }) => (
       <div className={styles.iconWrapper}>
         <img src={handleUri(asset.data.image)} alt="" className={styles.icon} />
       </div>
-      <h3 className={styles.name}>
-        { asset.data.name }
-      </h3>
+      <h3 className={styles.name}>{asset.data.name}</h3>
     </div>
-    { button }
+    {button}
   </div>
 )
 

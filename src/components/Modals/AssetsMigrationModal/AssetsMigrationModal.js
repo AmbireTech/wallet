@@ -6,15 +6,27 @@ import AssetsMigration from './AssetMigration/AssetsMigration'
 
 import styles from './AssetMigrationModal.module.scss'
 
-const AssetsMigrationModal = ({ addRequest, selectedAccount, selectedNetwork, accounts, relayerURL, portfolio }) => {
+const AssetsMigrationModal = ({
+  addRequest,
+  selectedAccount,
+  selectedNetwork,
+  accounts,
+  relayerURL,
+  portfolio
+}) => {
   const { hideModal, setBeforeCloseModalHandler } = useModals()
 
   const [modalButtons, setModalButtons] = useState(null)
-  const [modalSteps, setModalSteps] = useState({ steps: [], stepIndex: 0})
+  const [modalSteps, setModalSteps] = useState({ steps: [], stepIndex: 0 })
 
   return (
-    <Modal className={styles.wrapper} buttonsClassName={styles.buttons} title="Migrate Assets" buttons={modalButtons}>
-      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false}/>
+    <Modal
+      className={styles.wrapper}
+      buttonsClassName={styles.buttons}
+      title="Migrate Assets"
+      buttons={modalButtons}
+    >
+      <Stepper steps={modalSteps.steps} currentStep={modalSteps.stepIndex} noLabels={false} />
       <AssetsMigration
         addRequest={addRequest}
         selectedAccount={selectedAccount}

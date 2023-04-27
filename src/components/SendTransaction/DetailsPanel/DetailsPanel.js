@@ -1,10 +1,10 @@
-import { useState } from "react";
-import cn from "classnames";
+import { useState } from 'react'
+import cn from 'classnames'
 
-import { Checkbox, Panel } from "components/common";
-import Options from "./Options/Options";
-import Replace from "./Replace/Replace";
-import ActionsWrapper from "./ActionsWrapper/ActionsWrapper";
+import { Checkbox, Panel } from 'components/common'
+import Options from './Options/Options'
+import Replace from './Replace/Replace'
+import ActionsWrapper from './ActionsWrapper/ActionsWrapper'
 
 import styles from './DetailsPanel.module.scss'
 
@@ -31,23 +31,22 @@ const DetailsPanel = ({
   panelClassName,
   panelTitleClassName
 }) => {
-  const [replaceTx, setReplaceTx] = useState(!!replaceByDefault);
+  const [replaceTx, setReplaceTx] = useState(!!replaceByDefault)
 
   // The final bundle is used when signing + sending it
   // the bundle before that is used for estimating
 
   const rejectTxn = () => {
-    onDismiss();
-    bundle.requestIds &&
-      resolveMany(bundle.requestIds, { message: REJECT_MSG });
-  };
+    onDismiss()
+    bundle.requestIds && resolveMany(bundle.requestIds, { message: REJECT_MSG })
+  }
 
   // `mustReplaceNonce` is set on speedup/cancel, to prevent the user from broadcasting the txn if the same nonce has been mined
   const canProceed = isInt(mustReplaceNonce)
     ? isInt(estimation?.nextNonce?.nextNonMinedNonce)
       ? mustReplaceNonce >= estimation?.nextNonce?.nextNonMinedNonce
       : null // null = waiting to get nonce data from relayer
-    : true;
+    : true
 
   return (
     <Panel className={cn(panelClassName)}>
@@ -111,7 +110,7 @@ const DetailsPanel = ({
         canProceed={canProceed}
       />
     </Panel>
-  );
-};
+  )
+}
 
-export default DetailsPanel;
+export default DetailsPanel

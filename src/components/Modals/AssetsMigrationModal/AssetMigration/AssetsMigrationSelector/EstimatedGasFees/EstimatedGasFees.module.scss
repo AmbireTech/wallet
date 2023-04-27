@@ -12,13 +12,13 @@
   .fees {
     display: flex;
     flex-wrap: wrap;
-    gap: .625rem;
+    gap: 0.625rem;
     margin-bottom: 1.25rem;
 
     .fee {
       flex: 1;
       text-align: center;
-      padding: .9375rem;
+      padding: 0.9375rem;
       background: $c-mirage;
       border: 1px solid $c-mirage;
       border-radius: $border-radius;
@@ -43,10 +43,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: .9375rem 1.25rem;
+    padding: 0.9375rem 1.25rem;
     background-color: $c-mirage;
     border-radius: $border-radius;
-    opacity: .8;
+    opacity: 0.8;
 
     p {
       margin: 0;
@@ -54,7 +54,7 @@
 
     .detailsLabel {
       .actions {
-        padding-left: .5rem;
+        padding-left: 0.5rem;
         color: $c-manatee;
       }
     }
@@ -68,9 +68,9 @@
 @include lg-breakpoint {
   .wrapper {
     .fees {
-      gap: .625rem;
-      margin-bottom: .625rem;
-      
+      gap: 0.625rem;
+      margin-bottom: 0.625rem;
+
       .fee {
         min-width: 6.25rem;
       }
@@ -79,7 +79,7 @@
     .details {
       flex-direction: column;
       justify-content: center;
-      gap: .9375rem;
+      gap: 0.9375rem;
     }
   }
 }

@@ -15,9 +15,9 @@ const GasDetails = ({ gasData }) => {
     <div className={styles.wrapper}>
       <p className={styles.date}>
         Last updated:{' '}
-        {new Date(gasData.gasPrice.updated).toDateString() +
-          ' ' +
-          new Date(gasData.gasPrice.updated).toTimeString().substr(0, 8)}
+        {`${new Date(gasData.gasPrice.updated).toDateString()} ${new Date(gasData.gasPrice.updated)
+          .toTimeString()
+          .substr(0, 8)}`}
       </p>
       <div className={styles.speedRow}>
         {GAS_SPEEDS.map((speed, index) => (
