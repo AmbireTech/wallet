@@ -3,7 +3,7 @@ import useGasTank from 'ambire-common/src/hooks/useGasTank'
 import './App.scss'
 
 import { HashRouter as Router, Switch, Route, Redirect, Prompt } from 'react-router-dom'
-import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useRewards from 'ambire-common/src/hooks/useRewards'
 import { Loading } from 'components/common'

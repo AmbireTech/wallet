@@ -77,7 +77,6 @@ export default function usePortfolio({
     getBalances,
     getCoingeckoPrices,
     getCoingeckoPriceByContract,
-    getCoingeckoAssetPlatforms,
     relayerURL,
     useRelayerData,
     eligibleRequests,
