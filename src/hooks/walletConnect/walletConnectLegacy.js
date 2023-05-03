@@ -372,7 +372,28 @@ export default function useWalletConnectLegacy({
           })
           return
         }
-        // FutureProof? WC does not implement it yet
+
+        if (payload.method === 'wallet_addEthereumChain') {
+          const supportedNetwork = allNetworks.find(
+            (a) => a.chainId === parseInt(payload.params[0].chainId, 16)
+          )
+
+          if (supportedNetwork) {
+            setNetwork(supportedNetwork.chainId)
+            payload = {
+              ...payload,
+              method: 'wallet_switchEthereumChain',
+              params: [{chainId: payload.params[0].chainId}]
+            }
+          } else {
+            addToast(
+              `dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`,
+              { error: true }
+            )
+            connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' } })
+          }
+        }
+
         if (payload.method === 'wallet_switchEthereumChain') {
           const supportedNetwork = allNetworks.find(
             (a) => a.chainId === parseInt(payload.params[0].chainId, 16)
@@ -380,10 +401,11 @@ export default function useWalletConnectLegacy({
 
           if (supportedNetwork) {
             setNetwork(supportedNetwork.chainId)
-            connector.approveRequest({
-              id: payload.id,
-              result: { chainId: supportedNetwork.chainId }
-            })
+            payload = {
+              ...payload,
+              method: 'wallet_switchEthereumChain',
+              params: [{chainId: payload.params[0].chainId}]
+            }
           } else {
             // Graceful error for user
             addToast(
