@@ -10,16 +10,16 @@
   .title {
     display: flex;
     align-items: center;
-    padding: 0 30px;
-    font-size: 20px;
-    margin-bottom: 14px;
+    padding: 0 1.875rem;
+    font-size: 1.25rem;
+    margin-bottom: 0.875rem;
 
     .titleSpacedLeft {
-      margin-left: 35px;
+      margin-left: 2.1875rem;
     }
     h3 {
       font-weight: 400;
-      font-size: 20px;
+      font-size: 1.25rem;
       margin: 0;
     }
 
@@ -31,8 +31,8 @@
       flex: 1.5;
       display: flex;
       align-items: center;
-      gap: 10px;
-      
+      gap: 0.625rem;
+
       .sortButtons {
         display: flex;
       }
@@ -50,19 +50,19 @@
   .list {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .title {
-      padding: 0 20px;
+      padding: 0 1.25rem;
     }
   }
 }
 
-@media screen and (max-width: 768px) {
+@include sm-breakpoint {
   .wrapper {
     .title {
       display: none;

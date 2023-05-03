@@ -5,9 +5,9 @@
   flex-direction: row;
   align-items: center;
   background-color: $c-mirage;
-  border-radius: 12px;
-  padding: 10px 15px;
-  
+  border-radius: $border-radius;
+  padding: 0.625rem 0.9375rem;
+
   &:hover {
     background-color: $c-mirage;
   }
@@ -20,32 +20,32 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 40px;
-    width: 40px;
-    border-radius: 12px;
+    height: 2.5rem;
+    width: 2.5rem;
+    border-radius: $border-radius;
     background: rgba($c-titan-white, 0.05);
 
     .icon {
-      width: 20px;
-      height: 20px;
+      width: 1.25rem;
+      height: 1.25rem;
     }
   }
 
   .name {
     font-weight: 500;
-    font-size: 16px;
-    margin-left: 10px;
+    font-size: 1rem;
+    margin-left: 0.625rem;
   }
 
   .usd {
     color: $c-manatee;
-    padding-right: 8px;
+    padding-right: 0.5rem;
   }
 
   .amount {
-    font-size: 14px;
-    opacity: .9;
-    margin-left: 8px;
+    font-size: 0.875rem;
+    opacity: 0.9;
+    margin-left: 0.5rem;
     flex-shrink: 1;
 
     .amountUsd {
@@ -55,8 +55,8 @@
 
   .status {
     margin-left: auto;
-    font-size: 14px;
-    opacity: .8;
+    font-size: 0.875rem;
+    opacity: 0.8;
 
     .warning {
       color: $warning-color;
@@ -68,19 +68,19 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
-    padding: 15px 20px;
+    gap: 0.625rem;
+    padding: 0.9375rem 1.25rem;
 
     .name {
       margin-left: 0;
     }
 
     .amount {
-      margin-bottom: 10px;
+      margin-bottom: 0.625rem;
     }
 
     .status {

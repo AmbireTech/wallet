@@ -1,4 +1,4 @@
-@import "variables.scss";
+@import 'variables.scss';
 
 .wrapper {
   position: fixed;
@@ -18,43 +18,43 @@
     flex-direction: column;
     height: 100%;
     width: 100%;
-    padding-bottom: 46px;
-    max-width: 1760px;
-    padding: 37px 40px;
-    
+    padding-bottom: 2.875rem;
+    max-width: 110rem;
+    padding: 2.3125rem 2.5rem;
+
     .containerBody {
       overflow: hidden;
       flex: 1;
       display: flex;
-      gap: 16px;
+      gap: 1rem;
 
       .panel {
         flex: 1;
-        padding: 30px 40px;
-  
+        padding: 1.875rem 2.5rem;
+
         &:first-child {
           flex: 2;
         }
-    
-        & > div { // Panel .content div
+
+        & > div {
+          // Panel .content div
           justify-content: space-between;
         }
-  
+
         .panelTitle {
           margin: 0;
-          margin-bottom: 27px;
-          font-size: 25px;
+          margin-bottom: 1.6875rem;
+          font-size: 1.5625rem;
           font-weight: 400;
           text-align: center;
         }
       }
     }
-
   }
 }
 // Here we are not using a breakpoint from variables.scss, but SendTransaction
 // covers the whole screen, so it shouldn't be a problem.
-@media screen and (max-width: 1600px) { 
+@media screen and (max-width: 1600px) {
   .wrapper {
     .container {
       .containerBody {
@@ -62,9 +62,9 @@
           &:first-child {
             flex: 1.5;
           }
-  
+
           .panelTitle {
-            font-size: 23px;
+            font-size: 1.4375rem;
           }
         }
       }
@@ -72,46 +72,46 @@
   }
 }
 
-@media (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .container {
-      padding: 40px 20px;
-      padding-top: 5px; // Fix for the Back Icon being cut
-      max-width: 900px;
+      padding: 2.5rem 1.25rem;
+      padding-top: 0.3125rem; // Fix for the Back Icon being cut
+      max-width: 56.25rem;
       margin: 0 auto;
-      margin-top: 30px;
+      margin-top: 1.875rem;
       overflow-y: auto;
-      
+
       .containerBody {
         overflow: unset;
         flex-direction: column;
-        gap: 40px;
+        gap: 2.5rem;
         flex: unset;
 
         .panel {
           overflow-y: unset;
-          padding: 20px;
-  
+          padding: 1.25rem;
+
           .panelTitle {
-            font-size: 20px;
+            font-size: 1.25rem;
           }
         }
       }
-
     }
   }
 }
 
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
   .wrapper {
     .container {
-      padding: 30px 15px;
-      padding-top: 5px;
-      margin-top: 15px;
+      padding: 1.875rem 0.9375rem;
+      padding-top: 0.3125rem;
+      margin-top: 0.9375rem;
 
       .containerBody {
+        gap: 1.0625rem;
         .panel {
-          padding: 15px;
+          padding: 0.9375rem;
         }
       }
     }

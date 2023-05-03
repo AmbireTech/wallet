@@ -9,32 +9,32 @@
   .body {
     display: flex;
     flex-direction: column;
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem;
 
     &.loading {
       .swapIcon {
-        margin-bottom: 30px;
+        margin-bottom: 1.875rem;
       }
     }
 
     .selectInput {
       .selectIcon {
         position: relative;
-        width: 20px;
-        height: 20px;
-        margin: 0 10px;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0 0.625rem;
       }
 
       &::before {
         position: absolute;
-        top: 10px;
-        left: 20px;
-        width: 40px;
-        height: 40px;
+        top: 0.625rem;
+        left: 1.25rem;
+        width: 2.5rem;
+        height: 2.5rem;
         content: '';
         background-color: $c-titan-white;
         opacity: 0.05;
-        border-radius: 12px;
+        border-radius: $border-radius;
       }
     }
 
@@ -50,52 +50,52 @@
     }
 
     .fromSection {
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem;
 
       .inputs {
-        gap: 40px;
+        gap: 2.5rem;
       }
     }
 
     .swapIcon {
-      min-width: 48px;
-      min-height: 48px;
+      min-width: 3rem;
+      min-height: 3rem;
       align-self: center;
       flex: 1;
       background-color: rgba($c-titan-white, 0.05);
-      border-radius: 12px;
+      border-radius: $border-radius;
       transform: rotate(90deg);
     }
   }
 
   .button {
     flex: 0 0 auto;
-    max-width: 400px;
+    max-width: 25rem;
     width: 100%;
     margin: 0 auto;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .body {
       .swapIcon {
-        min-width: 40px;
-        min-height: 40px;
-        width: 40px;
-        height: 40px;
+        min-width: 2.5rem;
+        min-height: 2.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
       }
 
       .selectInput {
-        padding: 0 10px;
-        font-size: 14px;
+        padding: 0 0.625rem;
+        font-size: 0.875rem;
 
         .selectIcon {
-          margin-left: 10px;
+          margin-left: 0.625rem;
         }
 
         &::before {
-          left: 10px;
+          left: 0.625rem;
         }
       }
     }

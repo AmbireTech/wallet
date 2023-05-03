@@ -10,9 +10,19 @@ import { ReactComponent as ExternalLinkIcon } from 'resources/icons/external-lin
 
 import styles from './TxStatus.module.scss'
 
-
 const TxStatus = ({
-  data: { sourceTx, fromNetwork, toNetwork, toAsset, toAmount, from, to, serviceTimeMinutes, isPending, statusError },
+  data: {
+    sourceTx,
+    fromNetwork,
+    toNetwork,
+    toAsset,
+    toAmount,
+    from,
+    to,
+    serviceTimeMinutes,
+    isPending,
+    statusError
+  }
 }) => {
   return (
     <TxStatusComponent
@@ -24,7 +34,13 @@ const TxStatus = ({
       fromTokenAmount={from.amount ? formatAmount(from.amount, from.asset) : ''}
       fromTokenIcon={from?.asset?.icon}
       toTokenName={to?.asset?.symbol}
-      toTokenAmount={to.amount ? formatAmount(to.amount, to.asset) : ((toAsset && toAmount) ? formatAmount(parseFloat(toAmount), toAsset) : '')}
+      toTokenAmount={
+        to.amount
+          ? formatAmount(to.amount, to.asset)
+          : toAsset && toAmount
+          ? formatAmount(parseFloat(toAmount), toAsset)
+          : ''
+      }
       toTokenIcon={to?.asset?.icon}
     >
       <div className={styles.details}>

@@ -1,0 +1,66 @@
+$xsBreakpoint: 450px;
+$smBreakpoint: 768px;
+$mdBreakpoint: 1024px;
+$lgBreakpoint: 1279px;
+$xlBreakpoint: 1479px;
+$xxlBreakpoint: 1720px;
+
+@mixin xs-breakpoint {
+  @media only screen and (max-width: $xsBreakpoint) {
+    @content;
+  }
+}
+
+@mixin sm-breakpoint {
+  @media only screen and (max-width: $smBreakpoint) {
+    @content;
+  }
+}
+
+@mixin md-breakpoint {
+  @media only screen and (max-width: $mdBreakpoint) {
+    @content;
+  }
+}
+
+@mixin lg-breakpoint {
+  @media only screen and (max-width: $lgBreakpoint) {
+    @content;
+  }
+}
+
+@mixin xl-breakpoint {
+  @media only screen and (max-width: $xlBreakpoint) {
+    @content;
+  }
+}
+
+@mixin xxl-breakpoint {
+  @media only screen and (max-width: $xxlBreakpoint) {
+    @content;
+  }
+}
+
+@mixin rem-scaling {
+  @media screen and (min-width: 1920px) {
+    font-size: 16px;
+  }
+  @media screen and (min-width: 3000px) {
+    font-size: 22.5px;
+  }
+  @include xxl-breakpoint {
+    font-size: 15px;
+  }
+  @include xl-breakpoint {
+    font-size: 14px;
+  }
+  @include lg-breakpoint {
+    font-size: 13.5px;
+  }
+  @include md-breakpoint {
+    font-size: 13px;
+  }
+  @include sm-breakpoint {
+    font-size: 14px;
+  }
+}

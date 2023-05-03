@@ -1,49 +1,49 @@
 @import 'variables';
 
-$titleBar-height: 90px;
+$titleBar-height: 5.625rem;
 
 .wrapper {
-	position: relative;
-	z-index: 99;
-	display: flex;
-	align-items: center;
-	width: 100%;
-  margin-bottom: 30px;
+  position: relative;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 1.875rem;
 
-	.row {
-		@include flex-center-center;
-		gap: 10px;
+  .row {
+    @include flex-center-center;
+    gap: 0.625rem;
 
     &.dismiss {
       cursor: pointer;
     }
-	}
+  }
 
-	.backIcon {
-		background-color: theme(background-icon);
-		min-width: 40px;
-		min-height: 40px;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		border-radius: 12px;
-	}
+  .backIcon {
+    background-color: theme(background-icon);
+    min-width: 2.5rem;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius;
+  }
 
-	.backLabel {
-		margin: 0;
-		font-size: 16px;
-		font-weight: 300;
-		transition: 0.3s ease-in-out opacity;
-	}
+  .backLabel {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 300;
+    transition: 0.3s ease-in-out opacity;
+  }
 
-	.infoIcon {
-		width: 20px;
-		height: 20px;
-	}
+  .infoIcon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 
-	&:hover {
-		.backLabel {
-			opacity: 0.8;
-		}
-	}
+  &:hover {
+    .backLabel {
+      opacity: 0.8;
+    }
+  }
 }

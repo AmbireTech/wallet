@@ -1,13 +1,13 @@
 @import 'variables.scss';
 
-$collectible-size: 204px;
+$collectible-size: 12.75rem;
 
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 15px;
-  padding: 0 50px;
-  margin-top: 12px;
+  gap: 0.9375rem;
+  padding: 0 3.125rem;
+  margin-top: 0.75rem;
 
   .relative {
     position: relative;
@@ -16,13 +16,26 @@ $collectible-size: 204px;
   .collectiblesWrapper {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax($collectible-size, 1fr));
-    grid-gap: 30px 46px;
+    gap: 1.875rem 2.875rem;
     justify-items: center;
   }
 }
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
-    padding: 0 20px;
+    padding: 0 1.25rem;
+
+    .collectiblesWrapper {
+      gap: 1.5rem;
+    }
+  }
+}
+
+@include xs-breakpoint {
+  .wrapper {
+    .collectiblesWrapper {
+      gap: 1rem;
+      grid-template-columns: 1fr 1fr;
+    }
   }
 }

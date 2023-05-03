@@ -4,17 +4,17 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  font-size: 14px;
+  font-size: 0.875rem;
   text-align: center;
-  padding-left: 20px;
+  padding-left: 1.25rem;
 
   p {
     margin: 0;
   }
 
   .icon {
-    width: 24px;
-    height: 24px;
+    width: 1.5rem;
+    height: 1.5rem;
     color: $c-titan-white;
     fill: $c-titan-white;
   }
@@ -27,11 +27,11 @@
     .gasTank {
       display: flex;
       flex: 1 0 0;
-  
+
       svg {
-        width: 32px;
-        height: 32px;
-        
+        width: 2rem;
+        height: 2rem;
+
         * [fill] {
           fill: $c-titan-white;
           color: $c-titan-white;
@@ -57,28 +57,28 @@
       align-items: center;
       justify-content: left;
       font-weight: 300;
-      gap: 10px;
-   
+      gap: 0.625rem;
+
       .tokenIcon {
         position: relative;
         flex: 0 0 auto;
         @include flex-center-center;
-        height: 32px;
-        width: 32px;
-        border-radius: 12px;
+        height: 2rem;
+        width: 2rem;
+        border-radius: $border-radius;
         background-color: rgba($c-titan-white, 0.05);
         overflow: hidden;
-        margin-left: 12px;
-    
+        margin-left: 0.75rem;
+
         img {
-          height: 18px;
-          width: 18px;
+          height: 1.125rem;
+          width: 1.125rem;
           user-select: none;
         }
       }
 
       .name {
-        font-size: 14px;
+        font-size: 0.875rem;
         font-weight: 300;
         margin: 0;
       }
@@ -86,14 +86,14 @@
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     position: relative;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
     padding-left: 0;
-    margin-left: 20px;
-    padding-bottom: 12px;
+    margin-left: 1.25rem;
+    padding-bottom: 0.75rem;
     border-bottom: 1px solid rgba($c-scampi, 0.2);
 
     &:last-child {
@@ -102,14 +102,15 @@
     }
 
     .icon {
-      width: 20px;
-      height: 20px;
+      width: 1.25rem;
+      height: 1.25rem;
       position: absolute;
       top: 0;
       right: 0;
     }
 
-    .iconAndDate, .balanceAndLink {
+    .iconAndDate,
+    .balanceAndLink {
       width: 100%;
       flex: unset;
       justify-content: space-between;
@@ -122,9 +123,9 @@
 
       .date {
         text-align: left;
-        font-size: 12px;
+        font-size: 0.8rem;
         font-weight: 300;
-        opacity: .7;
+        opacity: 0.7;
       }
     }
 

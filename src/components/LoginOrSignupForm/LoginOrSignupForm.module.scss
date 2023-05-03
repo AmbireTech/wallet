@@ -2,8 +2,12 @@
 
 .checkboxLabel {
   color: theme(text-primary);
-  
+
   a {
     color: theme(highlight-primary);
   }
+}
+
+.button {
+  width: 100%;
 }

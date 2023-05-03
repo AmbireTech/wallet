@@ -8,19 +8,19 @@
 }
 
 .wrapper {
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 500;
-  padding: 10px;
+  padding: 0.625rem;
   background-color: $ambire-purple;
   justify-content: space-between;
-  gap: 15px;
+  gap: 0.9375rem;
 
   .button {
-    margin-left: 5px;
+    margin-left: 0.3125rem;
   }
 
   .swapInfo {
-    font-size: 18px;
+    font-size: 1.125rem;
     .link {
       color: theme(highlight-secondary);
     }

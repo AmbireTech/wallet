@@ -38,9 +38,10 @@ const Token = ({ img, symbol, balance, balanceUSD, address, network }) => {
           to={{
             pathname: disabled ? '' : `/wallet/transfer/${address}`,
             state: {
-              gasTankMsg: 'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
-              isTopUp: true,
-            },
+              gasTankMsg:
+                'Warning: You are about to top up your Gas Tank. Top ups to the Gas Tank are non-refundable.',
+              isTopUp: true
+            }
           }}
           className={styles.topUpLink}
         >

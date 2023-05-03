@@ -8,22 +8,24 @@ import UnsupportedDAppsModal from './UnsupportedDAppsModal/UnsupportedDAppsModal
 import AmbireEarnDetailsModal from './AmbireEarnDetailsModal/AmbireEarnDetailsModal'
 import EarnDetailsModal from './EarnDetailsModal/EarnDetailsModal'
 import AddAddressModal from './AddAddressModal/AddAddressModal'
+import CongratsRewardsModal from './CongratsRewardsModal/CongratsRewardsModal'
 import AddCustomDappModal from './AddCustomDappModal/AddCustomDappModal'
 import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
 import GuardarianDepositProviderModal from './GuardarianDepositProviderModal/GuardarianDepositProviderModal'
 
 export {
-    PermissionsModal,
-    InputModal,
-    SelectSignerAccountModal,
-    ResetPasswordModal,
-    WalletTokenModal,
-    LatticeModal,
-    UnsupportedDAppsModal,
-    AmbireEarnDetailsModal,
-    EarnDetailsModal,
-    AddAddressModal,
-    GasTankBalanceByTokensModal,
-    AddCustomDappModal,
-    GuardarianDepositProviderModal
+  PermissionsModal,
+  InputModal,
+  SelectSignerAccountModal,
+  ResetPasswordModal,
+  WalletTokenModal,
+  LatticeModal,
+  UnsupportedDAppsModal,
+  AmbireEarnDetailsModal,
+  EarnDetailsModal,
+  AddAddressModal,
+  CongratsRewardsModal,
+  GasTankBalanceByTokensModal,
+  AddCustomDappModal,
+  GuardarianDepositProviderModal
 }

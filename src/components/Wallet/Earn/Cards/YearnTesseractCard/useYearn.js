@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useState } from 'react'
 import { Yearn } from '@yfi/sdk'
-import { MdInfo } from "react-icons/md"
-import { ToolTip } from "components/common"
+import { MdInfo } from 'react-icons/md'
+import { ToolTip } from 'components/common'
 
 import YEARN_ICON from 'resources/yearn.svg'
 
-const v2VaultsAddresses = { ethereum: [
+const v2VaultsAddresses = {
+  ethereum: [
     '0xdA816459F1AB5631232FE5e97a05BBBb94970c95',
     '0xa354F35829Ae975e850e23e9615b11Da1B3dC4DE',
     '0xdb25cA703181E7484a155DD612b06f57E12Be5F0',
@@ -17,8 +18,9 @@ const v2VaultsAddresses = { ethereum: [
     '0xFBEB78a723b8087fD2ea7Ef1afEc93d35E8Bed42',
     '0x6d765CbE5bC922694afE112C140b8878b9FB0390',
     '0xFD0877d9095789cAF24c98F7CCe092fa8E120775',
-    '0xd9788f3931Ede4D5018184E198699dC6d66C1915',
-], fantom: [
+    '0xd9788f3931Ede4D5018184E198699dC6d66C1915'
+  ],
+  fantom: [
     '0x0DEC85e74A92c52b7F708c4B10207D9560CEFaf0',
     '0x695A4a6e5888934828Cb97A3a7ADbfc71A70922D',
     '0x935601c5694f23491921c14aA235c65c2ea2c4DE',
@@ -59,117 +61,126 @@ const v2VaultsAddresses = { ethereum: [
     '0x0fBbf9848D969776a5Eb842EdAfAf29ef4467698',
     '0xA36c91E38bf24E9F2df358E47D4134a8894C6a4c',
     '0xCbCaF8cB8cbeAFA927ECEE0c5C56560F83E9B7D9',
-    '0xcF3b91D83cD5FE15269E6461098fDa7d69138570'	
-] }
+    '0xcF3b91D83cD5FE15269E6461098fDa7d69138570'
+  ]
+}
 
 const customVaultMetadata = {
-    '0xa258C4606Ca8206D8aA700cE2143D7db854D168c': {
-        displayName: 'WETH',
-        displayIcon: 'https://etherscan.io/token/images/weth_28.png'
-    }
+  '0xa258C4606Ca8206D8aA700cE2143D7db854D168c': {
+    displayName: 'WETH',
+    displayIcon: 'https://etherscan.io/token/images/weth_28.png'
+  }
 }
 
 const useYearn = ({ tokens, networkDetails, provider, currentNetwork }) => {
-    const [tokensItems, setTokensItems] = useState([])
-    const [details, setDetails] = useState([])
-    const [vaults, setVaults] = useState([])
+  const [tokensItems, setTokensItems] = useState([])
+  const [details, setDetails] = useState([])
+  const [vaults, setVaults] = useState([])
 
-    const getTokenFromPortfolio = useCallback(tokenAddress => tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {}, [tokens])
+  const getTokenFromPortfolio = useCallback(
+    (tokenAddress) =>
+      tokens.find(({ address }) => address.toLowerCase() === tokenAddress.toLowerCase()) || {},
+    [tokens]
+  )
 
-    const toTokensItems = useCallback((type, vaults) => {
-        return vaults.map(vault => {
-            let token 
-            if (type === 'deposit') {
-               token = vault.token
-            } else {
-                token = vault.yToken
-            }
-            const { apy } = vault
-            const { address, symbol, decimals } = token
-            const { balance, balanceRaw } = getTokenFromPortfolio(address)
-            return {
-                ...vault,
-                type,
-                label: `${symbol} (${apy}% APY)`,
-                symbol,
-                decimals,
-                tokenAddress: address,
-                balance: balance || 0,
-                balanceRaw: balanceRaw || '0',
-            }
-        })
-    }, [getTokenFromPortfolio])
+  const toTokensItems = useCallback(
+    (type, vaults) => {
+      return vaults.map((vault) => {
+        let token
+        if (type === 'deposit') {
+          token = vault.token
+        } else {
+          token = vault.yToken
+        }
+        const { apy } = vault
+        const { address, symbol, decimals } = token
+        const { balance, balanceRaw } = getTokenFromPortfolio(address)
+        return {
+          ...vault,
+          type,
+          label: `${symbol} (${apy}% APY)`,
+          symbol,
+          decimals,
+          tokenAddress: address,
+          balance: balance || 0,
+          balanceRaw: balanceRaw || '0'
+        }
+      })
+    },
+    [getTokenFromPortfolio]
+  )
 
-    const loadVaults = useCallback(async () => {
-        const yearn = new Yearn(networkDetails.chainId, { provider })
+  const loadVaults = useCallback(async () => {
+    const yearn = new Yearn(networkDetails.chainId, { provider })
 
-        const v2Vaults = await yearn.vaults.get(v2VaultsAddresses[networkDetails.id])
-        const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => {
-            const { apy, displayName, displayIcon} = {
-                ...metadata,
-                ...customVaultMetadata[address] || {}
-            }
-            const formattedAPY = (apy?.net_apy * 100).toFixed(2) || 0
+    const v2Vaults = await yearn.vaults.get(v2VaultsAddresses[networkDetails.id])
+    const vaults = v2Vaults.map(({ address, metadata, symbol, token, decimals }) => {
+      const { apy, displayName, displayIcon } = {
+        ...metadata,
+        ...(customVaultMetadata[address] || {})
+      }
+      const formattedAPY = (apy?.net_apy * 100).toFixed(2) || 0
 
-            return {
-                vaultAddress: address,
-                apy: formattedAPY,
-                icon: displayIcon,
-                value: address,
-                token: {
-                    address: token,
-                    symbol: displayName,
-                    decimals
-                },
-                yToken: {
-                    address,
-                    symbol,
-                    decimals
-                }
-            }
-        })
+      return {
+        vaultAddress: address,
+        apy: formattedAPY,
+        icon: displayIcon,
+        value: address,
+        token: {
+          address: token,
+          symbol: displayName,
+          decimals
+        },
+        yToken: {
+          address,
+          symbol,
+          decimals
+        }
+      }
+    })
 
+    // Prevent race conditions
+    if (currentNetwork.current !== networkDetails.id) return
+    setVaults(vaults)
+  }, [provider, networkDetails, currentNetwork])
 
-
-        // Prevent race conditions
-        if (currentNetwork.current !== networkDetails.id) return
-        setVaults(vaults)
-    }, [provider, networkDetails, currentNetwork])
-
-    const onTokenSelect = useCallback(address => {
-        const selectedToken = tokensItems.find(t => t.tokenAddress === address)
-        if (selectedToken) setDetails([
-            [
-                <>
-                    <ToolTip label="Annual Percentage Yield">
-                        <div>APY&nbsp;<MdInfo/></div>
-                    </ToolTip>
-                </>,
-             `${selectedToken.apy}%`],
-            ['Lock', 'No Lock'],
-            ['Type', 'Variable Rate'],
+  const onTokenSelect = useCallback(
+    (address) => {
+      const selectedToken = tokensItems.find((t) => t.tokenAddress === address)
+      if (selectedToken)
+        setDetails([
+          [
+            <ToolTip label="Annual Percentage Yield">
+              <div>
+                APY&nbsp;
+                <MdInfo />
+              </div>
+            </ToolTip>,
+            `${selectedToken.apy}%`
+          ],
+          ['Lock', 'No Lock'],
+          ['Type', 'Variable Rate']
         ])
-    }, [tokensItems])
+    },
+    [tokensItems]
+  )
 
-    useEffect(() => {
-        const depositTokenItems = toTokensItems('deposit', vaults)
-        const withdrawTokenItems = toTokensItems('withdraw', vaults)
-        
-        setTokensItems([
-            ...depositTokenItems,
-            ...withdrawTokenItems
-        ])
-        
-        return () => setTokensItems([])
-    }, [vaults, toTokensItems])
+  useEffect(() => {
+    const depositTokenItems = toTokensItems('deposit', vaults)
+    const withdrawTokenItems = toTokensItems('withdraw', vaults)
 
-    return {
-        icon: YEARN_ICON,
-        loadVaults,
-        tokensItems,
-        details,
-        onTokenSelect
-    }
+    setTokensItems([...depositTokenItems, ...withdrawTokenItems])
+
+    return () => setTokensItems([])
+  }, [vaults, toTokensItems])
+
+  return {
+    icon: YEARN_ICON,
+    loadVaults,
+    tokensItems,
+    details,
+    onTokenSelect
+  }
 }
 
 export default useYearn

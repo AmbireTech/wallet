@@ -1,59 +1,59 @@
 @import 'variables.scss';
 
-$segment-height: 50px;
-$segment-small-height: 40px;
+$segment-height: 3.125rem;
+$segment-small-height: 2.5rem;
 
 .segments {
-    flex: 0 0 auto;
+  flex: 0 0 auto;
+  height: $segment-height;
+  display: flex;
+  gap: 0.625rem;
+  padding: 0.9375rem;
+
+  .segment {
+    position: relative;
+    flex: 1 0 auto;
+    box-sizing: border-box;
     height: $segment-height;
-    display: flex;
-    gap: 10px;
-    padding: 15px;
+    @include flex-center-center;
+    gap: 0.625rem;
+    font-size: 1.125rem;
+    font-weight: 400;
+    padding: 0 1.875rem;
+    cursor: pointer;
+    color: $c-scampi;
+    transition: all 0.3s ease-out;
+    user-select: none;
+    box-shadow: 0 2px 0 0 transparent;
+
+    .icon {
+      @include flex-center-center;
+      font-size: 1.25rem;
+    }
+
+    &.active {
+      color: $c-titan-white;
+      box-shadow: 0 2px 0 0 $c-turquoise;
+    }
+
+    &:not(.active):hover {
+      box-shadow: 0 2px 0 0 rgba($c-scampi, 0.7);
+      opacity: 0.7;
+    }
+  }
+
+  &.small {
+    height: $segment-small-height;
+    padding: 0;
+
+    .icon {
+      font-size: 0.9375rem;
+    }
 
     .segment {
-        position: relative;
-        flex: 1 0 auto;
-        box-sizing: border-box;
-        height: $segment-height;
-        @include flex-center-center;
-        gap: 10px;
-        font-size: 18px;
-        font-weight: 400;
-        padding: 0 30px;
-        cursor: pointer;
-        color: $c-scampi;
-        transition: all 0.3s ease-out;
-        user-select: none;
-        box-shadow: 0 2px 0 0 transparent;
-
-        .icon {
-            @include flex-center-center;
-            font-size: 20px;
-        }
-
-        &.active {
-            color: $c-titan-white;
-            box-shadow: 0 2px 0 0 $c-turquoise;
-        }
-
-        &:not(.active):hover {
-            box-shadow: 0 2px 0 0 rgba($c-scampi, .7);
-            opacity: .7;
-        }
+      height: $segment-small-height;
+      padding: 0 0.625rem;
+      font-size: 0.875rem;
     }
-
-    &.small {
-        height: $segment-small-height;
-        padding: 0;
-
-        .icon {
-            font-size: 15px;
-        }
-
-        .segment {
-            height: $segment-small-height;
-            padding: 0 10px;
-            font-size: 14px;
-        }
-    }
+  }
 }

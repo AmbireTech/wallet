@@ -18,9 +18,9 @@
       height: 64px;
       padding: 8px;
       margin-bottom: 10px;
-      border-radius: 12px;
+      border-radius: $border-radius;
       background-color: $c-white;
-      
+
       .networkIcon {
         width: 100%;
       }

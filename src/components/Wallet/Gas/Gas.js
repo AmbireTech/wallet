@@ -1,10 +1,17 @@
+import { Alert } from 'components/common'
 import LeftPanel from './LeftPanel/LeftPanel'
 import RightPanel from './RightPanel/RightPanel'
 
 import styles from './Gas.module.scss'
-import { Alert } from 'components/common'
 
-const Gas = ({ selectedNetwork, relayerURL, portfolio, selectedAccount, gasTankState, setGasTankState }) =>
+const Gas = ({
+  selectedNetwork,
+  relayerURL,
+  portfolio,
+  selectedAccount,
+  gasTankState,
+  setGasTankState
+}) =>
   selectedNetwork.isGasTankAvailable ? (
     <section className={styles.wrapper}>
       <LeftPanel
