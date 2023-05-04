@@ -374,8 +374,11 @@ export default function useWalletConnectLegacy({
         }
 
         if (payload.method === 'wallet_addEthereumChain') {
+          const chainId = payload.params[0]?.chainId
+          if (!chainId) return
+          
           const supportedNetwork = allNetworks.find(
-            (a) => a.chainId === parseInt(payload.params[0].chainId, 16)
+            (a) => a.chainId === parseInt(chainId, 16)
           )
 
           if (supportedNetwork) {
@@ -383,20 +386,23 @@ export default function useWalletConnectLegacy({
             payload = {
               ...payload,
               method: 'wallet_switchEthereumChain',
-              params: [{chainId: payload.params[0].chainId}]
+              params: [{ chainId }]
             }
           } else {
             addToast(
-              `dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`,
+              `dApp asked to switch to an unsupported chain: ${chainId}`,
               { error: true }
             )
             connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' } })
+            return
           }
         }
 
         if (payload.method === 'wallet_switchEthereumChain') {
+          const chainId = payload.params[0]?.chainId
+          if (!chainId) return
           const supportedNetwork = allNetworks.find(
-            (a) => a.chainId === parseInt(payload.params[0].chainId, 16)
+            (a) => a.chainId === parseInt(chainId, 16)
           )
 
           if (supportedNetwork) {
@@ -404,15 +410,16 @@ export default function useWalletConnectLegacy({
             payload = {
               ...payload,
               method: 'wallet_switchEthereumChain',
-              params: [{chainId: payload.params[0].chainId}]
+              params: [{ chainId }]
             }
           } else {
             // Graceful error for user
             addToast(
-              `dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`,
+              `dApp asked to switch to an unsupported chain: ${chainId}`,
               { error: true }
             )
             connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' } })
+            return
           }
         }
 
