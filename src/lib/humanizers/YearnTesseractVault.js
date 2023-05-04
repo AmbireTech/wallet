@@ -76,6 +76,23 @@ const YearnTesseractMapping = (humanizerInfo) => {
       return !extended
         ? [`Withdraw ${amount} units from ${vaultNames[network.id]}`]
         : toExtended('Withdraw', 'from', network, amount, txn.to)
+    },
+    [iface.getSighash('withdraw(uint256)')]: (txn, network, { extended = false }) => {
+      const [maxShares] = iface.parseTransaction(txn).args
+      
+      const vaultInfo = getVaultInfo(txn)
+      if (vaultInfo)
+        return !extended
+          ? [
+              `Withdraw ${addTokenPrefix(
+                token(humanizerInfo, vaultInfo.baseToken, maxShares),
+                network.id
+              )} from ${vaultInfo.name}`
+            ]
+          : toExtendedRich(humanizerInfo, 'Withdraw', 'from', vaultInfo, maxShares)
+      return !extended
+        ? [`Withdraw ${maxShares} units from ${vaultNames[network.id]}`]
+        : toExtended('Withdraw', 'from', network, maxShares, txn.to)
     }
   }
 }
