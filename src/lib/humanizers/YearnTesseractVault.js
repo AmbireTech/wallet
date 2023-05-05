@@ -21,7 +21,7 @@ const toExtendedRich = (humanizerInfo, action, word, vaultInfo, amount) => [
     {
       type: 'address',
       name: vaultInfo.name,
-      address: vaultInfo.addr
+      address: ''
     }
   ]
 ]
