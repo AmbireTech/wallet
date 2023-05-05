@@ -301,7 +301,13 @@ export default function useWalletConnectLegacy({
         // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
         // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
         // it breaks Ambire and other smart wallets cause it relies on ecrecover and does not depend on EIP1271
-        if (payload.params && !payload.params.length) return
+        if (payload.params && !payload.params.length) {
+          connector.rejectRequest({
+            id: payload.id,
+            error: { message: 'Missing Payload params' }
+          })
+          return
+        }
 
         let txn = payload.params[0]
         if (payload.method === 'eth_signTypedData') {
@@ -394,7 +400,11 @@ export default function useWalletConnectLegacy({
 
         if (payload.method === 'wallet_addEthereumChain') {
           const chainIdPayload = payload.params[0]?.chainId
-          if (!chainIdPayload) return
+          if (!chainIdPayload) {
+            connector.rejectRequest({ id: payload.id, error: { message: 'Missing chainId' } })
+            return
+          }
+
           const supportedNetwork = allNetworks.find(
             (a) => a.chainId === parseInt(chainIdPayload, 16)
           )
@@ -417,7 +427,10 @@ export default function useWalletConnectLegacy({
 
         if (payload.method === 'wallet_switchEthereumChain') {
           const chainIdPayload = payload.params[0]?.chainId
-          if (!chainIdPayload) return
+          if (!chainIdPayload) {
+            connector.rejectRequest({ id: payload.id, error: { message: 'Missing chainId' } })
+            return
+          }
           const supportedNetwork = allNetworks.find(
             (a) => a.chainId === parseInt(chainIdPayload, 16)
           )
