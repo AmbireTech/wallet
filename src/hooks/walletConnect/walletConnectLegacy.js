@@ -301,10 +301,27 @@ export default function useWalletConnectLegacy({
         // Opensea "unlock currency" hack; they use a stupid MetaTransactions system built into WETH on Polygon
         // There's no point of this because the user has to sign it separately as a tx anyway; but more importantly,
         // it breaks Ambire and other smart wallets cause it relies on ecrecover and does not depend on EIP1271
+        if (payload.params && !payload.params.length) {
+          connector.rejectRequest({
+            id: payload.id,
+            error: { message: 'Missing Payload params' }
+          })
+          return
+        }
+
         let txn = payload.params[0]
         if (payload.method === 'eth_signTypedData') {
-          // @TODO: try/catch the JSON parse?
-          const signPayload = JSON.parse(payload.params[1])
+          let signPayload
+          try {
+            signPayload = JSON.parse(payload.params[1])
+          } catch (e) {
+            connector.rejectRequest({
+              id: payload.id,
+              error: { message: 'Missing signPayload' }
+            })
+            return
+          }
+
           payload = {
             ...payload,
             method: 'eth_signTypedData'
@@ -326,8 +343,16 @@ export default function useWalletConnectLegacy({
           }
         }
         if (payload.method === 'eth_signTypedData_v4') {
-          // @TODO: try/catch the JSON parse?
-          const signPayload = JSON.parse(payload.params[1])
+          let signPayload
+          try {
+            signPayload = JSON.parse(payload.params[1])
+          } catch (e) {
+            connector.rejectRequest({
+              id: payload.id,
+              error: { message: 'Missing signPayload' }
+            })
+            return
+          }
           payload = {
             ...payload,
             method: 'eth_signTypedData_v4'
@@ -372,25 +397,58 @@ export default function useWalletConnectLegacy({
           })
           return
         }
-        // FutureProof? WC does not implement it yet
-        if (payload.method === 'wallet_switchEthereumChain') {
+
+        if (payload.method === 'wallet_addEthereumChain') {
+          const chainIdPayload = payload.params[0]?.chainId
+          if (!chainIdPayload) {
+            connector.rejectRequest({ id: payload.id, error: { message: 'Missing chainId' } })
+            return
+          }
+
           const supportedNetwork = allNetworks.find(
-            (a) => a.chainId === parseInt(payload.params[0].chainId, 16)
+            (a) => a.chainId === parseInt(chainIdPayload, 16)
           )
 
           if (supportedNetwork) {
             setNetwork(supportedNetwork.chainId)
-            connector.approveRequest({
-              id: payload.id,
-              result: { chainId: supportedNetwork.chainId }
+            payload = {
+              ...payload,
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainId: chainIdPayload }]
+            }
+          } else {
+            addToast(`dApp asked to switch to an unsupported chain: ${chainIdPayload}`, {
+              error: true
             })
+            connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' } })
+            return
+          }
+        }
+
+        if (payload.method === 'wallet_switchEthereumChain') {
+          const chainIdPayload = payload.params[0]?.chainId
+          if (!chainIdPayload) {
+            connector.rejectRequest({ id: payload.id, error: { message: 'Missing chainId' } })
+            return
+          }
+          const supportedNetwork = allNetworks.find(
+            (a) => a.chainId === parseInt(chainIdPayload, 16)
+          )
+
+          if (supportedNetwork) {
+            setNetwork(supportedNetwork.chainId)
+            payload = {
+              ...payload,
+              method: 'wallet_switchEthereumChain',
+              params: [{ chainI: chainIdPayload }]
+            }
           } else {
             // Graceful error for user
-            addToast(
-              `dApp asked to switch to an unsupported chain: ${payload.params[0]?.chainId}`,
-              { error: true }
-            )
+            addToast(`dApp asked to switch to an unsupported chain: ${chainIdPayload}`, {
+              error: true
+            })
             connector.rejectRequest({ id: payload.id, error: { message: 'Unsupported chain' } })
+            return
           }
         }
 
