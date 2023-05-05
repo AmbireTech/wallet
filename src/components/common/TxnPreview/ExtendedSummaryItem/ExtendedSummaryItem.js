@@ -47,8 +47,6 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
   }
 
   if (item.type === 'address') {
-    if (!item.address) return <span>Error: unknown address</span>
-    
     const shortenedAddress = `${item.address.substring(0, 8)}...${item.address.substring(
       item.address.length - 3,
       item.address.length
