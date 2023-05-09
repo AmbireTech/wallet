@@ -26,6 +26,7 @@ import { useRelayerData } from 'hooks'
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
 import { MdInfo } from 'react-icons/md'
 import RecipientInput from './RecipientInput/RecipientInput'
+import useConstants from 'hooks/useConstants'
 
 import styles from './Send.module.scss'
 
@@ -64,6 +65,10 @@ const Send = ({
     feeAssetsRes.filter(
       (item) => item.network === selectedNetwork.id && !item.disableGasTankDeposit
     )
+  const {
+    constants: { humanizerInfo }
+  } = useConstants()
+  const { names, tokens } = humanizerInfo
   const { addToast } = useToasts()
 
   const [amount, setAmount] = useState(0)
@@ -74,6 +79,7 @@ const Send = ({
   const [addressConfirmed, setAddressConfirmed] = useState(false)
   const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
   const [newAddress, setNewAddress] = useState('')
+  const [warning, setWarning] = useState(false)
   const [validationFormMgs, setValidationFormMgs] = useState({
     success: {
       amount: false,
@@ -187,6 +193,17 @@ const Send = ({
       addToast(`Error: ${e.message || e}`, { error: true })
     }
   }
+
+  useEffect(() => {
+    const addressToLowerCase = address.toLowerCase()
+    const tokensAddresses = Object.keys(tokens)
+    const contractsAddresses = Object.keys(names)
+    const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
+    const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
+
+    setWarning(isKnowTokenOrContract)
+    setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc)
+  }, [address, amount, selectedAcc, selectedAsset])
 
   useEffect(() => {
     // check gasTank topUp with token for convertion
@@ -430,6 +447,12 @@ const Send = ({
             />
           ) : null}
         </div>
+        {warning && (
+          <div className={styles.validationError}>
+            <BsXLg size={12} />
+            &nbsp;You are trying to send tokens to a smart contract. Doing so would burn them.
+          </div>
+        )}
         {validationFormMgs.messages.address && (
           <div className={styles.validationError}>
             <BsXLg size={12} />
