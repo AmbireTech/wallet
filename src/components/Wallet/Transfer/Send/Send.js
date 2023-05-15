@@ -1,5 +1,5 @@
 import { BsXLg } from 'react-icons/bs'
-import { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
 import { useToasts } from 'hooks/toasts'
@@ -26,7 +26,6 @@ import { useRelayerData } from 'hooks'
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
 import { MdInfo } from 'react-icons/md'
 import RecipientInput from './RecipientInput/RecipientInput'
-import useConstants from 'hooks/useConstants'
 
 import styles from './Send.module.scss'
 
@@ -49,7 +48,8 @@ const Send = ({
   setAsset,
   tokenAddress,
   selectedAsset,
-  title
+  title,
+  humanizerInfo
 }) => {
   const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
   const { feeAssetsRes } = useGasTankData({
@@ -65,10 +65,6 @@ const Send = ({
     feeAssetsRes.filter(
       (item) => item.network === selectedNetwork.id && !item.disableGasTankDeposit
     )
-  const {
-    constants: { humanizerInfo }
-  } = useConstants()
-  const { names, tokens } = humanizerInfo
   const { addToast } = useToasts()
 
   const [amount, setAmount] = useState(0)
@@ -194,16 +190,19 @@ const Send = ({
     }
   }
 
-  useEffect(() => {
-    const addressToLowerCase = address.toLowerCase()
-    const tokensAddresses = Object.keys(tokens)
-    const contractsAddresses = Object.keys(names)
-    const isKnowTokenOrContract = tokensAddresses.includes(addressToLowerCase) || contractsAddresses.includes(addressToLowerCase)
-    const isAddressValid = /^0x[a-fA-F0-9]{40}$/.test(address)
-
-    setWarning(isKnowTokenOrContract)
-    setDisabled(isKnowTokenOrContract || !isAddressValid || !(amount > 0) || !(amount <= selectedAsset?.balance) || address === selectedAcc)
-  }, [address, amount, selectedAcc, selectedAsset])
+  const isKnowTokenOrContract = useCallback(
+    (addr) => {
+      if (!humanizerInfo) return
+      const addressToLowerCase = addr.toLowerCase()
+      const tokensAddresses = Object.keys(humanizerInfo.tokens)
+      const contractsAddresses = Object.keys(humanizerInfo.names)
+      return (
+        tokensAddresses.includes(addressToLowerCase) ||
+        contractsAddresses.includes(addressToLowerCase)
+      )
+    },
+    [humanizerInfo]
+  )
 
   useEffect(() => {
     // check gasTank topUp with token for convertion
@@ -264,9 +263,11 @@ const Send = ({
         }
       })
 
+      setWarning(isKnowTokenOrContract(address))
       setDisabled(
         !isValidRecipientAddress.success ||
           !isValidSendTransferAmount.success ||
+          isKnowTokenOrContract(address) ||
           (showSWAddressWarning && !sWAddressConfirmed)
       )
     } else {
@@ -338,7 +339,8 @@ const Send = ({
     addAddress,
     uDAddress,
     disabled,
-    ensAddress
+    ensAddress,
+    isKnowTokenOrContract
   ])
 
   const amountLabel = (

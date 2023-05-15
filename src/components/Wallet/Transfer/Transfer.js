@@ -13,7 +13,7 @@ import Addresses from './Addresses/Addresses'
 import styles from './Transfer.module.scss'
 
 const Transfer = (props) => {
-  const { portfolio, selectedNetwork, addressBook, selectedAcc, relayerURL } = props
+  const { portfolio, selectedNetwork, addressBook, selectedAcc, relayerURL, humanizerInfo } = props
   const { addresses, addAddress, removeAddress } = addressBook
 
   const { state } = useLocation()
@@ -46,6 +46,7 @@ const Transfer = (props) => {
               setAsset={setAsset}
               tokenAddress={tokenAddress}
               selectedAsset={selectedAsset}
+              humanizerInfo={humanizerInfo}
             />
           }
           secondTab={
@@ -74,6 +75,7 @@ const Transfer = (props) => {
             setAsset={setAsset}
             tokenAddress={tokenAddress}
             selectedAsset={selectedAsset}
+            humanizerInfo={humanizerInfo}
           />
         </Panel>
       )}
