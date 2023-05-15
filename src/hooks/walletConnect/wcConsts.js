@@ -30,7 +30,8 @@ export const WC1_SUPPORTED_METHODS = [
   'eth_signTypedData_v4',
   'eth_signTypedData',
   'wallet_switchEthereumChain',
-  'ambire_sendBatchTransaction'
+  'ambire_sendBatchTransaction',
+  'wallet_addEthereumChain'
 ]
 
 export const DEFAULT_EIP155_METHODS = [
