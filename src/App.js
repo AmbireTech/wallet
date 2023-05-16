@@ -3,7 +3,7 @@ import useGasTank from 'ambire-common/src/hooks/useGasTank'
 import './App.scss'
 
 import { HashRouter as Router, Switch, Route, Redirect, Prompt } from 'react-router-dom'
-import { useState, useEffect, useMemo, useCallback, Suspense } from 'react'
+import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useRewards from 'ambire-common/src/hooks/useRewards'
 import { Loading } from 'components/common'
@@ -230,6 +230,7 @@ function AppInner() {
     }
     return true
   }
+  const requestPendingState = useRef(false)
 
   // Keeping track of sent transactions
   const [sentTxn, setSentTxn] = useState([])
@@ -248,12 +249,15 @@ function AppInner() {
       { url: `${network.explorerUrl}/tx/${hash}`, timeout: 15000 }
     )
   }
-  const confirmSentTx = (txHash) =>
-    setSentTxn((sentTxn) => {
-      const tx = sentTxn.find((tx) => tx.hash === txHash)
-      tx.confirmed = true
-      return [...sentTxn.filter((tx) => tx.hash !== txHash), tx]
-    })
+  const confirmSentTx = txHash => setSentTxn(sentTxn => {
+    const tx = sentTxn.find(tx => tx.hash === txHash)
+    tx.confirmed = true
+    requestPendingState.current = false
+    return [
+      ...sentTxn.filter(tx => tx.hash !== txHash),
+      tx
+    ]
+  })
 
   // Portfolio: this hook actively updates the balances/assets of the currently selected user
   const portfolio = usePortfolio({
@@ -266,7 +270,8 @@ function AppInner() {
     requests,
     selectedAccount: accounts.find((x) => x.id === selectedAcc),
     sentTxn,
-    accounts
+    accounts,
+    requestPendingState
   })
 
   // Show notifications for all requests
@@ -357,6 +362,7 @@ function AppInner() {
             replaceByDefault={sendTxnState.replaceByDefault}
             mustReplaceNonce={sendTxnState.mustReplaceNonce}
             onBroadcastedTxn={onBroadcastedTxn}
+            requestPendingState={requestPendingState}
             gasTankState={gasTankState}
           />
         ) : (
