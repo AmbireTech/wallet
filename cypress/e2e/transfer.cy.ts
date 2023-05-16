@@ -20,9 +20,9 @@ describe('Transfering funds', () => {
     // Here we are sending funds to a random Recipient's address intentionally,
     // in order to overcome the Relayer logic regarding sending funds to a known address (3 or more txns sent to the same address).
     // If so (3+ txns) - the confirmation code is skipped and our test will fail.
-    cy.get('[data-testid="recipient"]').type(Wallet.createRandom().address, { delay: 100 })
+    cy.get('[data-testid="recipient"]').type(Wallet.createRandom().address, { delay: 50 })
     // Wait a bit, because of React re-renders, both checkboxes are not visible immediately
-    cy.wait(1000)
+    cy.wait(2000)
     cy.get('[data-testid="unknownAddressWarning"]').click({force: true})
     cy.get('[data-testid="binance-address-warning-label"]').click()
     cy.get('[data-testid="send"]').click()
