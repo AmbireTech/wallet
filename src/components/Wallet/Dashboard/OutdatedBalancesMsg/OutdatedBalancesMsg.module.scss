@@ -2,59 +2,59 @@
 
 .wrapper {
   position: relative;
-  margin-bottom: 9px;
-  
+  margin-bottom: 0.5625rem;
+
   .shadow {
     position: absolute;
     left: 50%;
     z-index: 1;
-    bottom: -6.5px;
+    bottom: -0.4063rem;
     width: 99%;
-    height: 40px;
+    height: 2.5rem;
     transform: translateX(-50%);
-    background: rgba($c-mirage, .8);
+    background: rgba($c-mirage, 0.8);
     mix-blend-mode: multiply;
-    border-radius: 10px;
-    filter: blur(5px);
+    border-radius: 0.625rem;
+    filter: blur(0.3125rem);
   }
 
   .alertWrapper {
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: $border-radius;
 
     .alert {
       position: relative;
       z-index: 2;
       display: flex;
       align-items: center;
-      padding: 13px 20px;
-      padding-left: 13px;
+      padding: 0.8125rem 1.25rem;
+      padding-left: 0.8125rem;
       background-color: $c-half-spanish-white;
-      border-left: 7px solid $warning-color;
+      border-left: 0.4375rem solid $warning-color;
       color: $c-martinique-light;
-    
+
       .body {
-        margin-left: 20px;
+        margin-left: 1.25rem;
         flex: 1;
-    
+
         .title {
           margin: 0;
-          margin-bottom: 5px;
-          font-size: 20px;
+          margin-bottom: 0.3125rem;
+          font-size: 1.25rem;
         }
-    
+
         .text {
           margin: 0;
-          font-size: 16px;
-    
+          font-size: 1rem;
+
           .link {
             color: $c-heliotrope;
           }
         }
       }
-    
+
       .close {
-        margin-left: 30px;
+        margin-left: 1.875rem;
         cursor: pointer;
         color: $warning-color;
         background-color: transparent;
@@ -64,46 +64,46 @@
     }
   }
 }
-  
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+
+@include lg-breakpoint {
   .wrapper {
     .alertWrapper {
       .alert {
         display: flex;
         flex-direction: column;
-        padding: 20px;
-        gap: 20px;
+        padding: 1.25rem;
+        gap: 1.25rem;
         border-left: 0;
         border-top: 7px solid $warning-color;
         text-align: center;
-      
+
         svg {
-          width: 48px;
-          height: 48px;
+          width: 3rem;
+          height: 3rem;
         }
-      
+
         .body {
           margin-left: 0;
-      
+
           .title {
-            margin-bottom: 15px;
-            font-size: 18px;
+            margin-bottom: 0.9375rem;
+            font-size: 1.125rem;
           }
-      
+
           .text {
-            font-size: 14px;
+            font-size: 0.875rem;
           }
         }
-      
+
         .close {
-          margin-left: 30px;
+          margin-left: 1.875rem;
           cursor: pointer;
           color: $warning-color;
           background-color: transparent;
           border: 0;
           outline: none;
         }
-      }  
+      }
     }
   }
 }

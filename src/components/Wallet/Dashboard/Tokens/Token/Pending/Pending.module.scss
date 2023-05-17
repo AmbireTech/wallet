@@ -1,38 +1,38 @@
 @import 'variables';
 
 .wrapper {
-  margin-left: 60px;
-  margin-top: 19px;
+  margin-left: 3.75rem;
+  margin-top: 1.1875rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: flex-start;
-  gap: 8px;
+  gap: 0.5rem;
 
   &.extraMargin {
-    margin-left: 95px;
+    margin-left: 5.9375rem;
   }
 
   .ovals {
     display: flex;
-    gap: 10px;
+    gap: 0.625rem;
     align-items: center;
 
     .oval {
       display: block;
       border: 1px solid $warning-color;
       color: $warning-color;
-      border-radius: 15px;
-      font-size: 12px;
+      border-radius: 0.9375rem;
+      font-size: 0.75rem;
       font-weight: 300;
-      padding: 5px 12px;
+      padding: 0.3125rem 0.75rem;
       margin: 0;
     }
   }
 
   .latest {
     margin: 0;
-    font-size: 16px;
+    font-size: 1rem;
     color: $c-turquoise;
     opacity: 0.4;
     span {
@@ -41,7 +41,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@include sm-breakpoint {
   .wrapper {
     align-items: center;
     margin-left: 0;

@@ -1,44 +1,49 @@
 @import 'variables.scss';
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 1.5rem;
+  background: $c-ebony-clay;
+  border: 1px solid $c-fiord;
+  border-radius: $border-radius;
+
+  .emptyLabel {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .header {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 24px;
-    background: $c-ebony-clay;
-    border: 1px solid $c-fiord;
-    border-radius: 12px;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    color: $c-scampi;
 
-    .header {
-        display: flex;
-        justify-content: space-between;
-        padding: 8px 16px;
-        color: $c-scampi;
-
-        h3 {
-            font-size: 16px;
-            font-weight: 400;
-            margin: 0;
-            flex: 1;
-        }
-
-        .dapp {
-            flex: 1.2;
-        }
-
-        .placeholder {
-            width: 36px;
-            height: 1px;
-        }
+    h3 {
+      font-size: 1rem;
+      font-weight: 400;
+      margin: 0;
+      flex: 1;
     }
+
+    .dapp {
+      flex: 1.2;
+    }
+
+    .placeholder {
+      width: 2.25rem;
+      height: 0.0625rem;
+    }
+  }
 }
 
-@media screen and (max-width: 800px) {
-    .wrapper {
-        padding: 10px;
-        
-        .header {
-            display: none;
-        }
+@include sm-breakpoint {
+  .wrapper {
+    padding: 0.625rem;
+
+    .header {
+      display: none;
     }
+  }
 }

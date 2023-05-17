@@ -5,7 +5,6 @@ import { AbiCoder, keccak256 } from 'ethers/lib/utils'
 const REFRESH_INTVL = 30 * 1000
 
 export default function usePasswordRecoveryCheck(relayerURL, currentAccount, selectedNetwork) {
-
   const [cacheBreak, setCacheBreak] = useState(() => Date.now())
   const [relayerData, setRelayerData] = useState(null)
 
@@ -27,25 +26,23 @@ export default function usePasswordRecoveryCheck(relayerURL, currentAccount, sel
   const { data, errMsg, isLoading } = useRelayerData({ url })
 
   useEffect(() => {
-
     const privileges = data ? data.privileges : {}
     const recoveryLock = data && data.recoveryLock
 
-    const accHash = signer => {
+    const accHash = (signer) => {
       const abiCoder = new AbiCoder()
       const { timelock, one, two } = signer
       return keccak256(abiCoder.encode(['tuple(uint, address, address)'], [[timelock, one, two]]))
     }
-    const hasPendingReset = privileges[currentAccount.signer.quickAccManager] && (
-      (recoveryLock && recoveryLock.status && !isLoading)
-      || (
-        privileges && currentAccount.signer.quickAccManager
-        // is or has been in recovery state
-        && currentAccount.signer.preRecovery
-        // but that's not finalized yet
-        && accHash(currentAccount.signer) !== privileges[currentAccount.signer.quickAccManager]
-      )
-    )
+    const hasPendingReset =
+      privileges[currentAccount.signer.quickAccManager] &&
+      ((recoveryLock && recoveryLock.status && !isLoading) ||
+        (privileges &&
+          currentAccount.signer.quickAccManager &&
+          // is or has been in recovery state
+          currentAccount.signer.preRecovery &&
+          // but that's not finalized yet
+          accHash(currentAccount.signer) !== privileges[currentAccount.signer.quickAccManager]))
 
     setRelayerData({
       hasPendingReset,
@@ -67,15 +64,20 @@ export default function usePasswordRecoveryCheck(relayerURL, currentAccount, sel
         // refresh mode only OFF, until isLoading is again true
         setIsRefreshingOnly(false)
       }
+    } else if (isRefreshingOnly) {
+      setIsPasswordRecoveryCheckLoading(false)
     } else {
-      if (isRefreshingOnly) {
-        setIsPasswordRecoveryCheckLoading(false)
-      } else {
-        setIsPasswordRecoveryCheckLoading(isLoading)
-      }
+      setIsPasswordRecoveryCheckLoading(isLoading)
     }
-
-  }, [data, errMsg, isLoading, currentAccount, accountNetworkPair, selectedNetwork.id, isRefreshingOnly])
+  }, [
+    data,
+    errMsg,
+    isLoading,
+    currentAccount,
+    accountNetworkPair,
+    selectedNetwork.id,
+    isRefreshingOnly
+  ])
 
   return {
     data,

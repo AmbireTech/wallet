@@ -3,10 +3,10 @@
 .wrapper {
   display: flex;
   flex-wrap: wrap;
-  gap: 30px 10px;
-  padding: 5px 15px;
-  border-radius: 12px;
-  margin-bottom: 10px;
+  gap: 1.875rem 0.625rem;
+  padding: 0.3125rem 0.9375rem;
+  border-radius: $border-radius;
+  margin-bottom: 0.625rem;
   background-color: $c-mirage;
   border-bottom: 1px solid $c-mirage;
 
@@ -21,31 +21,32 @@
   .checkboxWrapper {
     display: flex;
     align-items: center;
-   
+
     .checkbox {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 0.625rem;
       margin: 0;
-  
+
       .checkboxLabel {
         display: flex;
         align-items: center;
-        gap: 5px;
-    
+        gap: 0.3125rem;
+
         .tokenIcon {
-          width: 24px;
-          height: 24px;
+          width: 1.5rem;
+          height: 1.5rem;
         }
 
         .tokenName {
           white-space: nowrap;
-          padding-left: 4px;
-          padding-top: 0px;
+          padding-left: 0.25rem;
+          padding-top: 0;
         }
       }
 
-      div { // Checkbox mark
+      div {
+        // Checkbox mark
         margin-top: 0;
       }
     }
@@ -54,26 +55,26 @@
   .amountWrapper {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 0.9375rem;
     margin-left: auto;
 
     .amountUsd {
-      margin-left: 10px;
+      margin-left: 0.625rem;
     }
 
     .amountInput {
       input {
-        width: 200px;
-        height: 40px;
-        padding: 5px 10px;
+        width: 12.5rem;
+        height: 2.5rem;
+        padding: 0.3125rem 0.625rem;
       }
     }
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
-    padding: 15px 20px;
+    padding: 0.9375rem 1.25rem;
     flex-direction: column;
     justify-content: center;
 
@@ -95,10 +96,10 @@
       .amountUsd {
         margin-left: 0;
       }
-      
+
       .amountInput {
         input {
-          max-width: 200px;
+          max-width: 12.5rem;
           width: 100%;
         }
       }

@@ -1,12 +1,13 @@
 @import 'variables';
 
 .wrapper {
-	overflow: hidden;
-	padding: 16px;
-  border-radius: 12px;
-	background-color: $c-mirage;
+  overflow: hidden;
+  padding: 1rem;
+  border-radius: $border-radius;
+  background-color: $c-mirage;
 
-  h4, p {
+  h4,
+  p {
     margin: 0;
   }
 
@@ -14,20 +15,20 @@
     display: flex;
     align-items: center;
     cursor: pointer;
-    font-size: 14px;
+    font-size: 0.875rem;
     user-select: none;
 
     .dappInfo {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 0.625rem;
       flex: 1.2;
 
       .dappIcon {
-        width: 36px;
-        height: 36px;
-        padding: 8px;
-        border-radius: 12px;
+        width: 2.25rem;
+        height: 2.25rem;
+        padding: 0.5rem;
+        border-radius: $border-radius;
         background-color: rgba($c-titan-white, 0.05);
       }
     }
@@ -37,7 +38,8 @@
       align-items: center;
       flex: 2;
 
-      .type, .timestamp {
+      .type,
+      .timestamp {
         flex: 1;
       }
     }
@@ -46,14 +48,14 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 36px;
-      height: 36px;
-      border-radius: 12px;
+      width: 2.25rem;
+      height: 2.25rem;
+      border-radius: $border-radius;
       background-color: rgba($c-titan-white, 0.05);
 
       svg {
-        width: 12px;
-        height: 12px;
+        width: 0.75rem;
+        height: 0.75rem;
       }
     }
   }
@@ -61,20 +63,20 @@
   .advanced {
     display: flex;
     flex-direction: column;
-    gap: 10px;
-    padding-top: 15px;
+    gap: 0.625rem;
+    padding-top: 0.9375rem;
 
     .advancedItem {
       .advancedTitle {
-        margin-bottom: 5px;
-        font-size: 16px;
+        margin-bottom: 0.3125rem;
+        font-size: 1rem;
         font-weight: 400;
         user-select: none;
       }
 
       .advancedText {
-        color: $c-scampi; 
-        font-size: 14px;
+        color: $c-scampi;
+        font-size: 0.875rem;
         font-weight: 300;
         word-wrap: break-word;
         white-space: break-spaces;
@@ -83,13 +85,13 @@
   }
 }
 
-@media screen and (max-width: 800px) {
-  .wrapper {    
-    padding: 12px;
-    
+@include sm-breakpoint {
+  .wrapper {
+    padding: 0.75rem;
+
     .body {
       align-items: stretch;
-      font-size: 12px;
+      font-size: 0.75rem;
 
       .dappInfo {
         flex-direction: column;
@@ -101,27 +103,28 @@
         align-items: flex-end;
         justify-content: space-between;
 
-        .type, .timestamp {
+        .type,
+        .timestamp {
           flex: unset;
         }
 
         .type {
           color: $c-heliotrope;
-          font-size: 14px;
+          font-size: 0.875rem;
         }
       }
 
       .expandIcon {
-        margin-left: 10px;
+        margin-left: 0.625rem;
       }
     }
     .advanced {
       .advancedItem {
         .advancedTitle {
-          font-size: 12px;
+          font-size: 0.75rem;
         }
         .advancedText {
-          font-size: 10.5px;
+          font-size: 0.6563rem;
         }
       }
     }

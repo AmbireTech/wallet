@@ -1,18 +1,18 @@
 @import 'variables';
 
 .wrapper {
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem;
 
   .titleWrapper {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
-    margin-bottom: 43px;
+    gap: 0.625rem;
+    margin-bottom: 2.6875rem;
 
     .title {
       margin: 0;
-      font-size: 16px;
+      font-size: 1rem;
       text-transform: uppercase;
       font-weight: 400;
       color: $c-turquoise;
@@ -21,29 +21,29 @@
     .network {
       display: flex;
       align-items: center;
-      gap: 10px;
-      
+      gap: 0.625rem;
+
       p {
         margin: 0;
-        font-size: 14px;
-        opacity: .9;
+        font-size: 0.875rem;
+        opacity: 0.9;
 
         &.name {
           text-transform: capitalize;
         }
       }
-      
+
       .networkIcon {
         flex: 0 0 auto;
         @include flex-center-center;
-        height: 32px;
-        width: 32px;
-        border-radius: 12px;
+        height: 2rem;
+        width: 2rem;
+        border-radius: $border-radius;
         background-color: $c-mirage;
-    
+
         img {
-          height: 24px;
-          width: 24px;
+          height: 1.5rem;
+          width: 1.5rem;
           user-select: none;
         }
       }
@@ -55,71 +55,75 @@
     flex-direction: column;
     overflow: hidden;
     overflow-y: auto;
-    max-height: 210px;
-    margin-bottom: 20px;
-    padding-right: 20px;
-    gap: 10px;
+    max-height: 13.125rem;
+    margin-bottom: 1.25rem;
+    padding-right: 1.25rem;
+    gap: 0.625rem;
   }
 
   .warning {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 30px;
+    gap: 0.625rem;
+    margin-bottom: 1.875rem;
 
     .warningIcon {
-      width: 24px;
-      height: 24px;
+      width: 1.5rem;
+      height: 1.5rem;
       color: $c-ebony-clay;
     }
 
     .warningText {
       flex: 1;
-      font-size: 14px;
+      font-size: 0.875rem;
       margin: 0;
       color: $warning-color;
 
       span {
         font-weight: bold;
-        font-size: 16px;
+        font-size: 1rem;
       }
     }
   }
 
   .depositBtn {
-    max-width: 400px;
+    max-width: 25rem;
     width: 100%;
     margin: 0 auto;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .list {
-      max-height: 430px;
-      padding-right: 12px;
+      max-height: 26.875rem;
+      padding-right: 0.75rem;
     }
 
     .depositBtn {
-      font-size: 16px;
-      height: 50px;
+      font-size: 1rem;
+      height: 3.125rem;
     }
   }
 }
 
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
   .wrapper {
     .titleWrapper {
       flex-direction: column;
+
+      .title {
+        font-size: 1.2rem;
+      }
     }
     .warning {
-      margin-bottom: 20px;
-      
+      margin-bottom: 1.25rem;
+
       .warningText {
-        font-size: 12px;
+        font-size: 0.75rem;
 
         span {
-          font-size: 14px;
+          font-size: 0.875rem;
         }
       }
     }

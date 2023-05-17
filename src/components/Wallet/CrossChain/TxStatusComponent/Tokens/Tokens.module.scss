@@ -6,7 +6,7 @@
   align-items: center;
   width: $width;
   height: $height;
-  border-radius: 12px;
+  border-radius: $border-radius;
   background-color: rgba($c-titan-white, 0.05);
 }
 
@@ -17,39 +17,39 @@
   width: 100%;
 
   .swapIcon {
-    width: 30px;
-    height: 30px;
+    width: 1.875rem;
+    height: 1.875rem;
     // We stop it from shrinking
-    min-width: 30px;
-    min-height: 30px;
+    min-width: 1.875rem;
+    min-height: 1.875rem;
   }
 
   .token {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 0.625rem;
     flex: 1;
 
     .tokenBody {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 0.625rem;
     }
 
     .tokenText {
-      font-size: 14px;
-      max-width: 120px;
+      font-size: 0.875rem;
+      max-width: 7.5rem;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
     .iconWrapper {
-      @include Icon(28px, 28px);
+      @include Icon(1.75rem, 1.75rem);
 
       .icon {
-        width: 18px;
-        height: 18px;
+        width: 1.125rem;
+        height: 1.125rem;
       }
     }
 
@@ -59,10 +59,10 @@
   }
 }
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     justify-content: unset;
-    gap: 15px;
+    gap: 0.9375rem;
 
     .token {
       flex-direction: column-reverse;
@@ -77,7 +77,7 @@
         }
       }
       .tokenText {
-        font-size: 12px;
+        font-size: 0.75rem;
 
         max-width: unset;
         flex: 1;
@@ -86,7 +86,7 @@
   }
 }
 
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
   .wrapper {
     align-items: flex-start;
     flex-wrap: wrap;
@@ -97,7 +97,7 @@
 
     .token {
       .tokenText {
-        max-width: 120px;
+        max-width: 7.5rem;
       }
     }
   }

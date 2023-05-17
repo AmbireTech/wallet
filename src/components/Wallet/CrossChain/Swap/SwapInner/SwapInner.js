@@ -18,7 +18,7 @@ const defaultState = {
 
 const getEquivalentToken = ({ fromTokens, toTokensItems }) => {
   const currentFromToken = fromTokens.items.find(({ value }) => value === fromTokens.selected)
-  
+
   if (!currentFromToken) return
   const equivalentToken = toTokensItems.find(({ symbol }) => symbol === currentFromToken.symbol)
 
@@ -56,15 +56,18 @@ const SwapInner = ({
 
   const onCancel = () => setQuotes(null)
 
-  const onQuotesConfirmed = useCallback((quoteRequest) => {
-    const updatedQuotesConfirmed = [...quotesConfirmed, quoteRequest]
-    setQuotesConfirmed(updatedQuotesConfirmed)
-  }, [quotesConfirmed, setQuotesConfirmed])
+  const onQuotesConfirmed = useCallback(
+    (quoteRequest) => {
+      const updatedQuotesConfirmed = [...quotesConfirmed, quoteRequest]
+      setQuotesConfirmed(updatedQuotesConfirmed)
+    },
+    [quotesConfirmed, setQuotesConfirmed]
+  )
 
   // On every network change we reset the state
   useEffect(() => {
     // We reset the state in a batch to avoid inconsistencies
-    setStatus(() =>  {
+    setStatus(() => {
       setFromTokens(defaultState)
       setToChains(defaultState)
       setToTokens(defaultState)
@@ -92,11 +95,14 @@ const SwapInner = ({
       if (!isSupported) return
 
       const newToChains = chains
-        .filter(({ chainId }) => chainId !== fromChain && networks.map(({ chainId }) => chainId).includes(chainId))
+        .filter(
+          ({ chainId }) =>
+            chainId !== fromChain && networks.map(({ chainId }) => chainId).includes(chainId)
+        )
         .map(({ icon, chainId, name }) => ({
           icon,
           label: name,
-          value: chainId,
+          value: chainId
         }))
 
       setToChains({
@@ -119,7 +125,7 @@ const SwapInner = ({
     if (!fromChain || portfolio.isCurrNetworkBalanceLoading) return
     loadToChains()
   }, [selectedAccount, portfolio.isCurrNetworkBalanceLoading, loadToChains, fromChain])
-  
+
   // We set portfolio tokens to the ref to avoid unnecessary re-renders (may be better to change it in the future)
   useEffect(() => {
     portfolioTokens.current = portfolio.tokens
@@ -139,7 +145,7 @@ const SwapInner = ({
                 .includes(address)
             )
             .map(({ address }) => address)
-        ),
+        )
       ]
 
       const newFromTokensItems = uniqueFromTokenAddresses
@@ -149,7 +155,7 @@ const SwapInner = ({
           icon,
           label: `${name} (${symbol})`,
           value: address,
-          symbol,
+          symbol
         }))
 
       // We want to keep the selected token, unless we have changed fromChain
@@ -167,14 +173,14 @@ const SwapInner = ({
 
   useEffect(() => {
     if (!fromChain || status.loading || status.disabled) return
-    
+
     loadFromTokens()
   }, [selectedAccount, fromChain, loadFromTokens, status.disabled, status.loading])
 
   const loadToTokens = useCallback(async () => {
     try {
       const unfilteredToTokens = await fetchToTokens(fromChain, toChains.selected)
-      const filteredToTokens = unfilteredToTokens.filter(({ name }) => name) 
+      const filteredToTokens = unfilteredToTokens.filter(({ name }) => name)
       const uniqueTokenAddresses = [...new Set(unfilteredToTokens.map(({ address }) => address))]
       const newToTokensItems = uniqueTokenAddresses
         .map((address) => filteredToTokens.find((token) => token.address === address))
@@ -183,12 +189,12 @@ const SwapInner = ({
           icon,
           label: `${name} (${symbol})`,
           value: address,
-          symbol,
+          symbol
         }))
         .sort((a, b) => a.label.localeCompare(b.label))
 
       // Find an equivalent toToken, based on the fromToken
-      const equivalentToken = getEquivalentToken({fromTokens, toTokensItems: newToTokensItems})
+      const equivalentToken = getEquivalentToken({ fromTokens, toTokensItems: newToTokensItems })
 
       setToTokens({
         items: newToTokensItems,
@@ -204,10 +210,16 @@ const SwapInner = ({
 
   useEffect(() => {
     if (!fromChain || status.loading || status.disabled || fromTokens.loading) return
-    
+
     loadToTokens()
-  }, [selectedAccount, fromChain, status.disabled, status.loading, fromTokens.loading, loadToTokens])
-  
+  }, [
+    selectedAccount,
+    fromChain,
+    status.disabled,
+    status.loading,
+    fromTokens.loading,
+    loadToTokens
+  ])
 
   useEffect(() => setAmount(0), [fromTokens.selected, setAmount, fromChain])
 
@@ -215,17 +227,25 @@ const SwapInner = ({
   useEffect(() => {
     setToTokens((prev) => ({ ...prev, loading: true }))
   }, [toChains.selected, fromTokens.selected, setToTokens])
-    
-  if (status.loading || portfolio.isCurrNetworkBalanceLoading || loadingQuotes || (fromTokens.loading  && !status.disabled)) {
+
+  if (
+    status.loading ||
+    portfolio.isCurrNetworkBalanceLoading ||
+    loadingQuotes ||
+    (fromTokens.loading && !status.disabled)
+  ) {
     return <Loading />
-  } else if (status.disabled) {
+  }
+  if (status.disabled) {
     return <p className={styles.placeholder}>Not supported on this Network</p>
-  } else if (!portfolio.balance.total.full) {
+  }
+  if (!portfolio.balance.total.full) {
     return <NoFundsPlaceholder />
-  } else if (!fromTokens.loading && !fromTokens.items.length) {
+  }
+  if (!fromTokens.loading && !fromTokens.items.length) {
     return <p className={styles.placeholder}>You don't have any available tokens to swap</p>
   }
-  
+
   return quotes ? (
     <Quotes
       addRequest={addRequest}

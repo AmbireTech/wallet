@@ -5,7 +5,7 @@
   height: 100%;
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .panelBody {
     overflow-y: hidden;
   }

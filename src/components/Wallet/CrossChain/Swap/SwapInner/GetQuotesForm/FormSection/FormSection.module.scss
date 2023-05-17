@@ -4,29 +4,29 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 224px;
+  height: 14rem;
   width: 100%;
   background-color: $c-mirage;
-  border-radius: 12px;
-  margin-bottom: 20px;
+  border-radius: $border-radius;
+  margin-bottom: 1.25rem;
 
   &.smaller {
-    height: 140px;
+    height: 8.75rem;
   }
 }
 
 .wrapper {
   .label {
     display: block;
-    padding-left: 20px;
-    margin-bottom: 10px;
-    font-size: 14px;
+    padding-left: 1.25rem;
+    margin-bottom: 0.625rem;
+    font-size: 0.875rem;
   }
 
   .inputs {
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
   }
 }

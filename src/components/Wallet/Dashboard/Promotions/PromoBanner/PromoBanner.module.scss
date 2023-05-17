@@ -1,235 +1,233 @@
 @import 'variables.scss';
 
 @mixin GetBannerStyle($background, $color) {
-	background-color: $background;
-	border-left-color: $color;
+  background-color: $background;
+  border-left-color: $color;
 
-	.iconWrapper {
-		background-color: rgba($color, 0.05);
-		border-color: $color;
-	}
+  .iconWrapper {
+    background-color: rgba($color, 0.05);
+    border-color: $color;
+  }
 
-	.minimizeIconWrapper {
-		background-color: rgba($color, 0.16);
-		color: $color;
-	}
+  .minimizeIconWrapper {
+    background-color: rgba($color, 0.16);
+    color: $color;
+  }
 
-	.body {
-		.text {
-			.link {
-				color: mix($color, $c-mirage, 90%);
-			}
-		}
-	}
+  .body {
+    .text {
+      .link {
+        color: mix($color, $c-mirage, 90%);
+      }
+    }
+  }
 
-	@media screen and (max-width: 1024px) {
-		border-left-color: transparent;
-		border-top-color: $color;
-	}
+  @include md-breakpoint {
+    border-left-color: transparent;
+    border-top-color: $color;
+  }
 }
 
 .wrapper {
-	position: relative;
-	width: 100%;
-	
-	.bannerWrapper {
-		overflow: hidden;
-		position: relative;
-		z-index: 2;
-		border-radius: 12px;
-		transition: .1s ease-out transform;
-	}
+  position: relative;
+  width: 100%;
 
-	&::after {
-		content: '';
-		transition: none;
-		position: absolute;
-		left: 50%;
-		z-index: 1;
-		bottom: 0;
-		width: 99%;
-		height: 40px;
-		transform: translateX(-50%);
-		background: rgba($c-mirage, 0.8);
-		mix-blend-mode: multiply;
-		border-radius: 10px;
-		filter: blur(5px);
-		transition: .3s ease-out opacity;
-	}
+  .bannerWrapper {
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    border-radius: $border-radius;
+    transition: 0.1s ease-out transform;
+  }
 
-	.bellIcon {
-		position: absolute;
-		transition: 0.1s ease-out transform;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%) scale(1);
+  &::after {
+    content: '';
+    transition: none;
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    bottom: 0;
+    width: 99%;
+    height: 2.5rem;
+    transform: translateX(-50%);
+    background: rgba($c-mirage, 0.8);
+    mix-blend-mode: multiply;
+    border-radius: 0.625rem;
+    filter: blur(0.3125rem);
+    transition: 0.3s ease-out opacity;
+  }
 
-		&:not(.visible) {
-			transform: translate(-50%, -50%) scale(0);
-		}
-	}
+  .bellIcon {
+    position: absolute;
+    transition: 0.1s ease-out transform;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1);
 
-	&.minimized {
-		overflow: hidden;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 50px;
-		height: 50px;
-		border-radius: 12px;
-		background-color: $c-mirage;
-		cursor: pointer;
+    &:not(.visible) {
+      transform: translate(-50%, -50%) scale(0);
+    }
+  }
 
-		svg {
-			width: 24px;
-			height: 24px;
-		}
+  &.minimized {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.125rem;
+    height: 3.125rem;
+    border-radius: $border-radius;
+    background-color: $c-mirage;
+    cursor: pointer;
 
-		&::after {
-			opacity: 0;
-		}
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
 
-		.bannerWrapper {
-			transform: scale(0);
-			opacity: 0;
-		}
-	}
+    &::after {
+      opacity: 0;
+    }
 
-	.banner {
-		z-index: 2;
-		position: relative;
-		display: flex;
-		align-items: center;
-		flex-wrap: wrap;
-		gap: 20px;
-		padding: 13px 20px;
-		padding-left: 13px;
-		color: $c-martinique-light;
-		border-left: 7px solid;
+    .bannerWrapper {
+      transform: scale(0);
+      opacity: 0;
+    }
+  }
 
-		&.success {
-			@include GetBannerStyle($success-background-color, $success-color);
-		}
+  .banner {
+    z-index: 2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 0.8125rem 1.25rem;
+    padding-left: 0.8125rem;
+    color: $c-martinique-light;
+    border-left: 0.4375rem solid;
 
-		&.warning {
-			@include GetBannerStyle($warning-background-color, $warning-color);
-		}
+    &.success {
+      @include GetBannerStyle($success-background-color, $success-color);
+    }
 
-		&.danger {
-			@include GetBannerStyle($danger-background-color, $danger-color);
-		}
+    &.warning {
+      @include GetBannerStyle($warning-background-color, $warning-color);
+    }
 
-		&.info,
-		&.degenTip {
-			@include GetBannerStyle($info-background-color, $ambire-dark-blue);
-		}
+    &.danger {
+      @include GetBannerStyle($danger-background-color, $danger-color);
+    }
 
-		.iconWrapper,
-		.minimizeIconWrapper {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			width: 34px;
-			height: 34px;
-			border-radius: 12px;
-		}
+    &.info,
+    &.degenTip {
+      @include GetBannerStyle($info-background-color, $ambire-dark-blue);
+    }
 
-		.iconAndBody {
-			display: flex;
-			align-items: center;
-			gap: 15px;
-			flex: 1;
+    .iconWrapper,
+    .minimizeIconWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.125rem;
+      height: 2.125rem;
+      border-radius: $border-radius;
+    }
 
-			.iconWrapper {
-				font-size: 20px;
-				border-width: 1px;
-				border-style: solid;
-			}
+    .iconAndBody {
+      display: flex;
+      align-items: center;
+      gap: 0.9375rem;
+      flex: 1;
 
-			.body {
-				flex: 1;
+      .iconWrapper {
+        font-size: 1.25rem;
+        border-width: 0.0625rem;
+        border-style: solid;
+      }
 
-				.title {
-					margin: 0;
-					font-size: 20px;
-				}
+      .body {
+        flex: 1;
 
-				.text {
-					margin: 0;
-					font-size: 16px;
-					text-align: left;
-				}
-			}
-		}
-	}
+        .title {
+          margin: 0;
+          font-size: 1.25rem;
+        }
 
-	.minimizeIconWrapper {
-		cursor: pointer;
+        .text {
+          margin: 0;
+          font-size: 1rem;
+          text-align: left;
+        }
+      }
+    }
+  }
 
-		.minimizeIcon {
-			width: 12px;
-			height: 9px;
-		}
-	}
+  .minimizeIconWrapper {
+    cursor: pointer;
+
+    .minimizeIcon {
+      width: 0.75rem;
+      height: 0.5625rem;
+    }
+  }
 }
 
+@include md-breakpoint {
+  .wrapper {
+    .banner {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.25rem;
+      border-left: none;
+      border-top: 0.4375rem solid;
 
+      .iconAndBody {
+        align-self: flex-start;
 
-@media screen and (max-width: 1024px) {
-	.wrapper {
-		.banner {
-			flex-direction: column;
-			align-items: flex-start;
-			padding: 20px;
-			border-left: none;
-			border-top: 7px solid;
+        .body {
+          .title {
+            font-size: 1.125rem;
+            margin-bottom: 0.625rem;
+          }
+          .text {
+            font-size: 0.875rem;
+          }
+        }
+      }
+    }
 
-			.iconAndBody {
-				align-self: flex-start;
-
-				.body {
-					.title {
-						font-size: 18px;
-						margin-bottom: 10px;
-					}
-					.text {
-						font-size: 14px;
-					}
-				}
-			}
-		}
-
-		.minimizeIconWrapper {
-			position: absolute;
-			bottom: 20px;
-			right: 20px;
-		}
-	}
+    .minimizeIconWrapper {
+      position: absolute;
+      bottom: 1.25rem;
+      right: 1.25rem;
+    }
+  }
 }
 
-@media screen and (max-width: 500px) {
-	.wrapper {
-		text-align: center;
+@include xs-breakpoint {
+  .wrapper {
+    text-align: center;
 
-		.banner {
-			align-items: center;
+    .banner {
+      align-items: center;
 
-			.iconAndBody {
-				flex-direction: column;
+      .iconAndBody {
+        flex-direction: column;
 
-				.body {
-					.text {
-						text-align: center;
-					}
-				}
-			}
-		}
+        .body {
+          .text {
+            text-align: center;
+          }
+        }
+      }
+    }
 
-		.minimizeIconWrapper {
-			position: static;
-			top: unset;
-			right: unset;
-			align-self: flex-end;
-		}
-	}
+    .minimizeIconWrapper {
+      position: static;
+      top: unset;
+      right: unset;
+      align-self: flex-end;
+    }
+  }
 }

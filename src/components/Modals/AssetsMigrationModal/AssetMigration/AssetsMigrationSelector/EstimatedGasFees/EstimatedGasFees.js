@@ -22,9 +22,15 @@ const EstimatedGasFees = ({ estimatedGasFees, selectedGasSpeed, setSelectedGasSp
       <div className={styles.details}>
         <p className={styles.detailsLabel}>
           Signer fee
-          {(!!estimatedGasFees.nativeTransfersCount || !!estimatedGasFees.regularTransfersCount) && (
+          {(!!estimatedGasFees.nativeTransfersCount ||
+            !!estimatedGasFees.regularTransfersCount) && (
             <span className={styles.actions}>
-              (<span>{estimatedGasFees.nativeTransfersCount + estimatedGasFees.regularTransfersCount} transfers</span>)
+              (
+              <span>
+                {estimatedGasFees.nativeTransfersCount + estimatedGasFees.regularTransfersCount}{' '}
+                transfers
+              </span>
+              )
             </span>
           )}
         </p>

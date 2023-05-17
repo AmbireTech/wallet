@@ -1,19 +1,20 @@
 @import 'variables.scss';
 
 .wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
 
-    svg {
-        // In the case we have a bigger label text, the svg width gets auto decreased, because of the flex.
-        // In order to fix this - we are setting a minimum required width too.
-        min-width: 24px;
-        width: 24px;
-        height: 24px;
-    }
+  .icon {
+    // In the case we have a bigger label text, the svg width gets auto decreased, because of the flex.
+    // In order to fix this - we are setting a minimum required width too.
+    min-width: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
 
-    label {
-        font-size: 16px;
-    }
+  .text {
+    margin: 0;
+    font-size: 1rem;
+  }
 }

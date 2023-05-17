@@ -1,48 +1,47 @@
 @import 'variables.scss';
 
 .wrapper {
-    h4 {
-        font-weight: 400;
-        margin: 0;
-        margin-bottom: 15px;
-    }
-    
-    .timer {
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-    .timerResetMsg {
-        text-align: center;
-        margin: 35px 0;
-        font-size: 20px;
-        color: $danger-color;
-    }
+  h4 {
+    font-weight: 400;
+    margin: 0;
+    margin-bottom: 0.9375rem;
+  }
 
-    form {
-        display: flex;
-        flex-direction: column;
-        height: 425px;
-        
-        div {
-            width: 100%;
-        }
-        
+  .timer {
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .timerResetMsg {
+    text-align: center;
+    margin: 2.1875rem 0;
+    font-size: 1.25rem;
+    color: $danger-color;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    height: 26.5625rem;
+
+    div {
+      width: 100%;
     }
+  }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-    .wrapper {
-        min-height: unset;
-        height: auto;
-        
-        .input {
-            input {
-                height: 50px;
-            }
-        }
-  
-        .button {
-            height: 50px!important;
-        }
+@include lg-breakpoint {
+  .wrapper {
+    min-height: unset;
+    height: auto;
+
+    .input {
+      input {
+        height: 3.125rem;
+      }
     }
+
+    .button {
+      height: 3.125rem !important;
+    }
+  }
 }

@@ -4,11 +4,11 @@
   height: 100%;
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .buttons {
       button {
-        font-size: 14px!important;
+        font-size: 0.875rem !important;
       }
     }
   }

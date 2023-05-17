@@ -2,7 +2,7 @@
 
 .wrapper {
   display: flex;
-  gap: 70px;
+  gap: 4.375rem;
   height: 100%;
   overflow: hidden;
   color: $c-titan-white;
@@ -10,14 +10,14 @@
   .donut {
     position: relative;
     z-index: 1;
-    max-width: 205px;
+    max-width: 12.8125rem;
     width: 100%;
     align-self: center;
 
     .lastUpdate {
-      font-size: 12px;
+      font-size: 0.75rem;
       color: $c-scampi;
-      margin-top: 15px;
+      margin-top: 0.9375rem;
       text-align: center;
     }
     .networkInfo {
@@ -30,17 +30,17 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 8px;
+      gap: 0.5rem;
 
       .networkIcon {
         background-color: $c-mirage;
-        border-radius: 12px;
-        width: 32px;
-        height: 32px;
+        width: 2rem;
+        height: 2rem;
+        border-radius: $border-radius;
       }
 
       .networkAmount {
-        font-size: 30px;
+        font-size: 1.875rem;
         font-weight: 400;
         color: $c-titan-white;
 
@@ -49,7 +49,6 @@
         }
       }
     }
-    
   }
 
   .legend {
@@ -58,134 +57,158 @@
     display: flex;
     flex-direction: column;
     justify-content: stretch;
-    
+
     .legendTitle {
-      font-size: 25px;
+      font-size: 1.5625rem;
       font-weight: 400;
       margin: 0;
-      margin-bottom: 20px;
+      margin-bottom: 1.25rem;
     }
 
     .legendItems {
       width: 100%;
       display: flex;
       flex-direction: column;
-      padding-right: 15px;
+      padding-right: 0.9375rem;
       overflow-y: auto;
       scrollbar-width: thin;
 
       .item {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 7px 5px;
-        border-radius: 8px;
+        gap: 1.125rem;
+        padding: 0.4375rem 0.3125rem;
+        border-radius: 0.5rem;
         border: 1px solid transparent;
-        transition: .3s ease-out border;
-        height: 36px;
+        transition: 0.3s ease-out border;
+        height: 2.25rem;
 
         &:last-child {
           border-bottom: none;
         }
-  
+
         &.active {
           background-color: $c-ebony-clay-light;
           border: 1px solid $c-fiord;
         }
-  
+
         .separator {
           flex: 1 0 auto;
         }
-  
+
         .color {
           flex: 0 0 auto;
-          height: 20px;
-          width: 20px;
-          border-radius: 8px;
+          height: 1.25rem;
+          width: 1.25rem;
+          border-radius: 0.5rem;
         }
-  
+
         label {
           flex: 0 0 auto;
-          font-size: 14px;
+          font-size: 0.875rem;
           color: $c-titan-white;
         }
-  
+
         .percent {
           flex: 0 0 auto;
-          font-size: 14px;
+          font-size: 0.875rem;
           color: $c-titan-white;
         }
       }
-    } 
+    }
     .noTokensWrapper {
       display: flex;
       flex: 1;
       align-items: center;
       .noTokens {
         display: flex;
-        gap: 10px;
-        max-width: 250px;
-  
+        gap: 0.625rem;
+        max-width: 15.625rem;
+
         label {
           flex: 1;
         }
-  
+
         svg {
-          margin-top: 5px;
+          margin-top: 0.3125rem;
         }
       }
-
     }
   }
 }
 
-@media screen and (max-width: 1800px) {
+@include xxl-breakpoint {
   .wrapper {
-    gap: 40px;
+    gap: 2.5rem;
 
     .legend {
       .legendTitle {
-        font-size: 20px;
+        font-size: 1.25rem;
       }
     }
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include xl-breakpoint {
+  .wrapper {
+    .legend {
+      .legendItems {
+        .item {
+          label,
+          .percent {
+            font-size: 1rem;
+          }
+        }
+      }
+    }
+  }
+}
+
+@include lg-breakpoint {
   .wrapper {
     .donut {
       height: auto;
 
       .networkInfo {
         .networkIcon {
-          width: 28px;
-          height: 28px;
+          width: 1.75rem;
+          height: 1.75rem;
         }
 
         .networkAmount {
-          font-size: 24px;
+          font-size: 1.5rem;
         }
       }
     }
-    
+
     .noTokensWrapper {
-      padding: 20px;
+      padding: 1.25rem;
       background: $c-ebony-clay;
       border: 1px solid $c-fiord;
-      border-radius: 12px;
+      border-radius: $border-radius;
     }
 
     .legend {
       .legendTitle {
-        margin-left: 20px;
-        margin-bottom: 15px;
+        margin-left: 1.25rem;
+        margin-bottom: 0.9375rem;
       }
       .legendItems {
-        padding: 10px 20px;
+        padding: 0.625rem 1.25rem;
         background: $c-ebony-clay;
         border: 1px solid $c-fiord;
-        border-radius: 12px;
+        border-radius: $border-radius;
         overflow-y: auto;
+      }
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    .donut {
+      .lastUpdate {
+        font-size: 0.875rem;
       }
     }
   }

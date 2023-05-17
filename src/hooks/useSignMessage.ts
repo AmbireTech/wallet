@@ -8,7 +8,7 @@ import { arrayify, isHexString, toUtf8Bytes } from 'ethers/lib/utils'
 import { useCallback, useMemo, useState } from 'react'
 
 import { verifyMessage } from '@ambire/signature-validator'
-import { getWallet } from "lib/getWallet"
+import { getWallet } from 'lib/getWallet'
 
 import { getNetworkByChainId } from 'ambire-common/src/services/getNetwork'
 import { getProvider } from 'ambire-common/src/services/provider'
@@ -19,6 +19,7 @@ import { fetchPost } from 'lib/fetch'
 import { UseStorageProps } from 'ambire-common/src/hooks/useStorage'
 import { useToasts } from 'hooks/toasts'
 import { UseAccountsReturnType } from 'ambire-common/src/hooks/useAccounts'
+import { wrapSignature } from 'lib/EIP6492Signature'
 
 export type UseSignMessageProps = {
   account: UseAccountsReturnType['account']
@@ -53,7 +54,6 @@ export type UseSignMessageReturnType = {
     icons: string[]
   }
 }
-
 
 function getMessageAsBytes(msg: string) {
   // Transforming human message / hex string to bytes
@@ -189,7 +189,7 @@ const useSignMessage = ({
           JSON.parse(account.primaryKeyBackup),
           credentials.password
         )
-        const sig = await (isTypedData
+        let sig = await (isTypedData
           ? signMessage712(
               wallet,
               account.id,
@@ -207,20 +207,20 @@ const useSignMessage = ({
               signature
             ))
 
+        if (!isDeployed) sig = wrapSignature(sig, account)
+
         await verifySignature(msgToSign, sig, requestedNetwork?.id)
 
-        addSignedMessage(
-          {
-            accountId: account.id,
-            networkId: requestedChainId,
-            date: new Date().getTime(),
-            typed: isTypedData,
-            signer: account.signer,
-            message: msgToSign.txn,
-            signature: sig,
-            dApp
-          }
-        )
+        addSignedMessage({
+          accountId: account.id,
+          networkId: requestedChainId,
+          date: new Date().getTime(),
+          typed: isTypedData,
+          signer: account.signer,
+          message: msgToSign.txn,
+          signature: sig,
+          dApp
+        })
 
         // keeping resolve at the very end, because it can trigger components unmounting, and code after resolve may or may not run
         resolve({ success: true, result: sig })
@@ -244,6 +244,7 @@ const useSignMessage = ({
       dApp,
       requestedChainId,
       addSignedMessage,
+      isDeployed
     ]
   )
   // Passing hardware device is required only for the mobile app
@@ -256,13 +257,11 @@ const useSignMessage = ({
       setLoading(true)
 
       try {
-        const wallet = getWallet(
-          {
-            signer: account.signer,
-            signerExtra: account.signerExtra,
-            chainId: 1 // does not matter
-          }
-        )
+        const wallet = getWallet({
+          signer: account.signer,
+          signerExtra: account.signerExtra,
+          chainId: 1 // does not matter
+        })
 
         if (!wallet) {
           return
@@ -272,7 +271,7 @@ const useSignMessage = ({
         // Unfortunately that isn't possible, because isValidSignature only takes a bytes32 hash; so to sign this with
         // a personal message, we need to be signing the hash itself as binary data such that we match 'Ethereum signed message:\n32<hash binary data>' on the contract
 
-        const sig = await (isTypedData
+        let sig = await (isTypedData
           ? signMessage712(
               wallet,
               account.id,
@@ -283,19 +282,20 @@ const useSignMessage = ({
             )
           : signMessage(wallet, account.id, account.signer, getMessageAsBytes(msgToSign.txn)))
 
+        if (!isDeployed) sig = wrapSignature(sig, account)
+
         await verifySignature(msgToSign, sig, requestedNetwork?.id)
 
         addSignedMessage({
-            accountId: account.id,
-            networkId: requestedChainId,
-            date: new Date().getTime(),
-            typed: isTypedData,
-            signer: account.signer,
-            message: msgToSign.txn,
-            signature: sig,
-            dApp
-          }
-        )
+          accountId: account.id,
+          networkId: requestedChainId,
+          date: new Date().getTime(),
+          typed: isTypedData,
+          signer: account.signer,
+          message: msgToSign.txn,
+          signature: sig,
+          dApp
+        })
 
         // keeping resolve at the very end, because it can trigger components unmounting, and code after resolve may or may not run
         resolve({ success: true, result: sig })
@@ -316,7 +316,8 @@ const useSignMessage = ({
       verifySignature,
       addSignedMessage,
       dApp,
-      requestedChainId
+      requestedChainId,
+      isDeployed
     ]
   )
 

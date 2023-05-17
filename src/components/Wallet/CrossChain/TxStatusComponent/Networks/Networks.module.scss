@@ -6,7 +6,7 @@
   align-items: center;
   width: $width;
   height: $height;
-  border-radius: 12px;
+  border-radius: $border-radius;
   background-color: rgba($c-titan-white, 0.05);
 }
 
@@ -23,24 +23,24 @@
 
   .network {
     display: flex;
-    gap: 10px;
+    gap: 0.625rem;
     align-items: center;
 
     .iconWrapper {
-      @include Icon(40px, 40px);
+      @include Icon(2.5rem, 2.5rem);
 
       .icon {
-        width: 36px;
-        height: 36px;
+        width: 2.25rem;
+        height: 2.25rem;
       }
     }
 
     .networkName {
-      font-size: 14px;
+      font-size: 0.875rem;
 
       .name {
         margin: 0;
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: 600;
       }
     }
@@ -53,7 +53,7 @@
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   // Networks
   .wrapper {
     .network {
@@ -69,7 +69,7 @@
   }
 }
 
-@media screen and (max-width: 600px) {
+@include sm-breakpoint {
   .wrapper {
     position: relative;
 
@@ -78,16 +78,16 @@
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
-      top: 5px;
-      width: 30px;
-      height: 30px;
+      top: 0.3125rem;
+      width: 1.875rem;
+      height: 1.875rem;
     }
     .network {
       .networkName {
-        font-size: 12px;
+        font-size: 0.75rem;
 
         .name {
-          font-size: 14px;
+          font-size: 0.875rem;
         }
       }
     }

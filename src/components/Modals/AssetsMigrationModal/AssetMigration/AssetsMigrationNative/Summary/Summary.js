@@ -27,12 +27,13 @@ const Summary = ({
   const [hasModifiedAmount, setHasModifiedAmount] = useState(false)
 
   const erc20TransfersCount = (selectedTokensWithAllowance) => {
-    return selectedTokensWithAllowance.filter((t) => t.selected && !t.permittable && !t.native).length
+    return selectedTokensWithAllowance.filter((t) => t.selected && !t.permittable && !t.native)
+      .length
   }
 
   const updateAmount = useCallback(
     (amount) => {
-      let newHumanAmount = new BigNumber(amount)
+      const newHumanAmount = new BigNumber(amount)
         .dividedBy(10 ** nativeTokenData.decimals)
         .toFixed(nativeTokenData.decimals)
         .replace(/\.?0+$/g, '')
@@ -68,7 +69,7 @@ const Summary = ({
         setCurrentGasPrice(gasPrice)
       })
       .catch((err) => {
-        setError(err.message + ' ' + url)
+        setError(`${err.message} ${url}`)
       })
   }, [
     setTransactionEstimationCost,
@@ -89,7 +90,10 @@ const Summary = ({
         setNativeAmount(0)
         return
       }
-      if ((val.endsWith('.') && val.split('.').length === 2) || (val.split('.').length === 2 && val.endsWith('0'))) {
+      if (
+        (val.endsWith('.') && val.split('.').length === 2) ||
+        (val.split('.').length === 2 && val.endsWith('0'))
+      ) {
         setNativeHumanAmount(val)
         return
       }
@@ -105,11 +109,13 @@ const Summary = ({
             .dividedBy(10 ** nativeTokenData.decimals)
             .toFixed(nativeTokenData.decimals)
         }
-        //trim trailing . or 0
+        // trim trailing . or 0
         newHumanAmount = newHumanAmount.replace(/\.?0+$/g, '')
 
         setNativeHumanAmount(newHumanAmount)
-        setNativeAmount(new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).toFixed(0))
+        setNativeAmount(
+          new BigNumber(newHumanAmount).multipliedBy(10 ** nativeTokenData.decimals).toFixed(0)
+        )
       }
     },
     [nativeTokenData, setNativeAmount]
@@ -128,16 +134,27 @@ const Summary = ({
     <div className={styles.wrapper}>
       <div className={styles.item}>
         <span className={styles.itemTitle}>Current balance</span>
-        <span className={styles.selection} onClick={() => updateAmount(nativeTokenData.availableBalance)}>
-          {new BigNumber(nativeTokenData.availableBalance).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)}{' '}
+        <span
+          className={styles.selection}
+          onClick={() => updateAmount(nativeTokenData.availableBalance)}
+        >
+          {new BigNumber(nativeTokenData.availableBalance)
+            .dividedBy(10 ** nativeTokenData.decimals)
+            .toFixed(6)}{' '}
           {nativeTokenData.name}
         </span>
       </div>
 
       <div className={styles.item}>
         <span className={styles.itemTitle}>Amount to migrate</span>
-        {hasModifiedAmount || (maxRecommendedAmount !== null && nativeAmount > maxRecommendedAmount) ? (
-          <TextInput small className={styles.amountInput} value={nativeHumanAmount} onChange={onAmountChange} />
+        {hasModifiedAmount ||
+        (maxRecommendedAmount !== null && nativeAmount > maxRecommendedAmount) ? (
+          <TextInput
+            small
+            className={styles.amountInput}
+            value={nativeHumanAmount}
+            onChange={onAmountChange}
+          />
         ) : (
           <div>{nativeHumanAmount}</div>
         )}
@@ -146,14 +163,21 @@ const Summary = ({
       {maxRecommendedAmount !== null && new BigNumber(nativeAmount).gt(maxRecommendedAmount) && (
         <div className="notification-hollow warning mt-4">
           <div>
-            {!!erc20TransfersCount(selectedTokensWithAllowance)
+            {erc20TransfersCount(selectedTokensWithAllowance)
               ? 'Signer transactions cost'
               : 'Current Transaction cost'}
-            : ~{new BigNumber(transactionEstimationCost).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)}{' '}
+            : ~
+            {new BigNumber(transactionEstimationCost)
+              .dividedBy(10 ** nativeTokenData.decimals)
+              .toFixed(6)}{' '}
             {nativeTokenData.name}
             <span className={styles.usd}>
               {' '}
-              (${new BigNumber(transactionEstimationCost).multipliedBy(nativeTokenData.rate).toFixed(2)})
+              ($
+              {new BigNumber(transactionEstimationCost)
+                .multipliedBy(nativeTokenData.rate)
+                .toFixed(2)}
+              )
             </span>
           </div>
 
@@ -161,8 +185,13 @@ const Summary = ({
             {maxRecommendedAmount > 0 ? (
               <>
                 <span>You should migrate up to </span>
-                <span className={styles.selection} onClick={() => updateAmount(maxRecommendedAmount)}>
-                  {new BigNumber(maxRecommendedAmount).dividedBy(10 ** nativeTokenData.decimals).toFixed(6)}{' '}
+                <span
+                  className={styles.selection}
+                  onClick={() => updateAmount(maxRecommendedAmount)}
+                >
+                  {new BigNumber(maxRecommendedAmount)
+                    .dividedBy(10 ** nativeTokenData.decimals)
+                    .toFixed(6)}{' '}
                   {nativeTokenData.name}
                 </span>
                 <span> because will you need funds to pay the transaction costs.</span>
@@ -182,8 +211,9 @@ const Summary = ({
       )}
       {isMigrationPending && !hasERC20Tokens && (
         <div className="notification-hollow info mt-4">
-          The amount of {nativeTokenData.name} will be updated in your wallet, once the transaction has been confirmed
-          and mined. If you confirmed your transaction, you can already close this window
+          The amount of {nativeTokenData.name} will be updated in your wallet, once the transaction
+          has been confirmed and mined. If you confirmed your transaction, you can already close
+          this window
         </div>
       )}
     </div>

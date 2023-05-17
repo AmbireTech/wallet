@@ -1,139 +1,137 @@
 @import 'variables.scss';
 
+// We use mixins to reduce the repetition of code
+@mixin BorderButton($primary-color) {
+  background-color: transparent;
+  color: $primary-color;
+  border: 2px solid $primary-color;
+}
+
+@mixin FilledButton($primary-color) {
+  background: $primary-color;
+  color: theme(text-primary);
+}
+
 .wrapper {
-    height: 60px;
-    border-radius: 12px;
-    @include flex-center-center;
-    gap: 10px;
-    padding: 0 20px;
-    border: none;
-    font-family: 'Poppins', sans-serif;
-    font-size: 20px;
-    font-weight: 500;
+  @include flex-center-center;
+  gap: 0.5em; // We use em to make the button responsive for different button sizes(xsm, sm, normal)
+  height: 3.75rem;
+  padding: 0 1em; // We use em to make the button responsive for different button sizes(xsm, sm, normal)
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 500;
+  border-radius: $border-radius;
+  border: none;
+  outline: none;
+  transition: 0.3s ease-in-out;
+  transition-property: color, opacity, text-decoration;
+  cursor: pointer;
+
+  svg {
+    width: 1.3em; // We use em to make the button responsive for different button sizes(xsm, sm, normal)
+    height: 1.3em; // We use em to make the button responsive for different button sizes(xsm, sm, normal)
+    color: inherit;
+  }
+
+  // Colors
+  &.primary {
+    // DEFAULT
+    @include BorderButton(theme(highlight-secondary));
+  }
+
+  &.secondary {
+    @include FilledButton(rgba(0, 0, 0, 0.15));
+  }
+
+  &.danger {
+    @include BorderButton($danger-color);
+  }
+
+  // Gradients
+  &.primaryGradient {
+    @include FilledButton(theme(gradient-primary));
+  }
+
+  &.secondaryGradient {
+    @include FilledButton(theme(gradient-secondary));
+  }
+
+  &.terniaryGradient {
+    @include FilledButton(theme(gradient-terniary));
+  }
+
+  // Text only
+  &.text {
+    color: theme(text-primary);
+    display: inline;
     background-color: transparent;
-    color: $c-turquoise;
-    border: 2px solid $c-turquoise;
-    outline: none;
-    transition: 0.1s ease-in-out;
+    border: none;
+    font-size: 1rem;
+    font-weight: 400;
+    padding: 0;
+    height: auto;
 
-    .iconButton {
-        @include flex-center-center;
-        color: $c-turquoise !important;
+    &:hover:not(.disabled) {
+      text-decoration: underline;
+    }
+  }
+
+  // Sizes
+  &.sm {
+    font-size: 1.0625rem;
+    height: 3.125rem;
+  }
+
+  &.xsm {
+    height: 2.5rem;
+    font-size: 0.875rem;
+    padding: 0 0.8em;
+  }
+
+  // Other states
+  &.loading {
+    @keyframes spin {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
     }
 
-    &.small {
-        height: 50px;
-        font-size: 17px;
-    }
+    .loadingInner {
+      display: flex;
+      justify-content: center;
+      gap: 1em;
+      align-items: center;
 
-    &.full {
-        width: 100%;
-    }
-
-    &.mini {
-        gap: 5px;
-        height: 40px;
-        padding: 0 10px;
-        font-size: 14px;
-    }
-
-    &.danger {
-        border: none;
-        color: $c-titan-white;
-        background: $danger-color;
-
-        .iconButton {
-            color: inherit!important;
-        }
-    }
-
-    &.clear {
-        border: none;
-        color: $c-titan-white;
-        background-color: rgba(0, 0, 0, 0.1);
-
-        .iconButton {
-            color: inherit!important;
-        }
-
-        &:not([disabled]):hover {
-            background-color: rgba(0, 0, 0, 0.2);
-        }
-    }
-
-    &.primaryGradient {
-        border: none;
-        background: theme(gradient-primary);
-        color: $c-titan-white;
-
-        .iconButton {
-            color: inherit!important;
-        }
-    }
-
-    &.secondaryGradient {
-        border: none;
-        background: theme(gradient-secondary);
-        color: $c-titan-white;
-
-        .iconButton {
-            color: inherit!important;
-        }
-    }
-
-    &.terniaryGradient {
-        border: none;
-        background: theme(gradient-terniary);
-        color: $c-titan-white;
-
-        .iconButton {
-            color: inherit!important;
-        }
-    }
-
-    &.secondary {
-        border: none;
-        color: $c-titan-white;
-        background-color: $c-heliotrope;
-
-        .iconButton {
-            color: inherit!important;
-        }
-    }
-
-    &.textOnly {
-        padding: 0;
+      .loadingText {
         margin: 0;
-        height: auto;
-        background: 0;
-        border: none;
-        color: theme(text-primary);
-        font-size: 1em;
-        display: inline-flex;
+      }
+
+      svg {
+        animation: spin 1.5s infinite ease-in-out;
+      }
     }
+  }
 
-    &.border {
-        color: theme(highlight-secondary);
-        background-color: transparent;
-        border: 2px solid theme(highlight-secondary);
+  &:hover:not(.disabled) {
+    opacity: 0.6;
+  }
 
-        .iconButton {
-            color: theme(highlight-secondary) !important;
-        }
-    }
+  &:active:not(.disabled) {
+    opacity: 1;
+  }
 
-    &:disabled, &.disabled{
-        opacity: 0.4 !important;
-    }
+  &.disabled {
+    opacity: 0.2;
+    cursor: not-allowed;
+  }
+}
 
-    &:not([disabled]):not(.disabled) {
-        &:hover {
-            cursor: pointer;
-            opacity: 0.8;
-        }
-
-        &:active {
-            opacity: 0.6;
-        }
-    }
+@include lg-breakpoint {
+  .wrapper {
+    font-size: 1rem;
+  }
 }
