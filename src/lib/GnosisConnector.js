@@ -1,8 +1,4 @@
-import {
-  getSDKVersion,
-  MessageFormatter,
-  Methods
-} from '@gnosis.pm/safe-apps-sdk'
+import { getSDKVersion, MessageFormatter, Methods } from '@gnosis.pm/safe-apps-sdk'
 
 function GnosisConnector(_iframeRef, _app) {
   this.iframeRef = _iframeRef
@@ -35,8 +31,8 @@ function GnosisConnector(_iframeRef, _app) {
       : MessageFormatter.makeResponse(requestId, data, sdkVersion)
 
     if (this.iframeRef) {
-      //console.log("Posting to child")
-      //console.log(msg)
+      // console.log("Posting to child")
+      // console.log(msg)
       this.iframeRef.current?.contentWindow?.postMessage(msg, '*')
     } else {
       console.log('Iframe not referenced ')
@@ -44,7 +40,6 @@ function GnosisConnector(_iframeRef, _app) {
   }
 
   this.handleIncomingMessage = async (msg) => {
-
     const validMessage = this.isValidMessage(msg)
     const hasHandler = this.canHandleMessage(msg)
 
@@ -59,20 +54,20 @@ function GnosisConnector(_iframeRef, _app) {
           this.send(response, msg.data.id)
         }
       } catch (err) {
-        console.error("GS : " + err);
+        console.error(`GS : ${err}`)
         this.send(null, msg.data.id, err.message)
-        /*trackError(Errors._901, err.message, {
+        /* trackError(Errors._901, err.message, {
           contexts: {
             safeApp: this.app,
             request: msg.data,
           },
-        })*/
+        }) */
       }
     }
   }
 
   this.clear = () => {
-    //console.log('removeListener...')
+    // console.log('removeListener...')
     window.removeEventListener('message', this.handleIncomingMessage)
   }
 
@@ -80,4 +75,4 @@ function GnosisConnector(_iframeRef, _app) {
   window.addEventListener('message', this.handleIncomingMessage)
 }
 
-export {GnosisConnector}
+export { GnosisConnector }

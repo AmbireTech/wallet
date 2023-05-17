@@ -1,11 +1,11 @@
 import cn from 'classnames'
 
-import { ToolTip } from "components/common";
+import { ToolTip } from 'components/common'
 
-import { ReactComponent as ChevronLeftIcon } from "resources/icons/chevron-left.svg";
-import { ReactComponent as InfoIcon } from "resources/icons/information.svg";
+import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
+import { ReactComponent as InfoIcon } from 'resources/icons/information.svg'
 
-import styles from "./BackButton.module.scss";
+import styles from './BackButton.module.scss'
 
 const BackButton = ({ onDismiss }) => (
   <div className={styles.wrapper}>
@@ -21,6 +21,6 @@ const BackButton = ({ onDismiss }) => (
       </ToolTip>
     </div>
   </div>
-);
+)
 
-export default BackButton;
+export default BackButton

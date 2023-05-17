@@ -1,14 +1,11 @@
 name: E2E tests
 
 on:
-  push:
-    branches:
-      - main
-      - development
   pull_request:
-    branches:
-      - main
-      - development
+    types:
+      - opened
+      - reopened
+      - synchronize
 
 jobs:
   cypress-run:
@@ -30,7 +27,7 @@ jobs:
         with:
           start: npm start
           wait-on: 'http://localhost:3000'
-          wait-on-timeout: 120
+          wait-on-timeout: 240
           browser: chrome
         env:
           CYPRESS_SELECTED_ACCOUNT: ${{ secrets.CYPRESS_SELECTED_ACCOUNT }}

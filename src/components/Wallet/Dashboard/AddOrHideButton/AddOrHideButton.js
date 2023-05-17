@@ -4,7 +4,7 @@ import styles from './AddOrHideButton.module.scss'
 
 const AddOrHideButton = ({ onClick, className, children }) => (
   <button className={cn(styles.wrapper, className)} onClick={onClick}>
-    { children }
+    {children}
   </button>
 )
 

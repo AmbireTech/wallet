@@ -1,59 +1,58 @@
 @import 'variables.scss';
 
 .panel {
-    padding: 0;
-    flex: 1;
+  padding: 0;
+  flex: 1;
 
-    &.sendOnly {
-        max-width: 750px;
-    }
+  &.sendOnly {
+    max-width: 46.875rem;
+  }
 }
 
 .wrapper {
-    display: flex;
-    justify-content: center;
-    gap: 17px;
-    overflow-y: hidden;
+  display: flex;
+  justify-content: center;
+  gap: 1.0625rem;
+  overflow-y: hidden;
+  height: 100%;
+
+  .gasTankSendTitle {
+    margin: 0;
+    font-size: 1.5625rem;
+    font-weight: 400;
+  }
+  .sell {
     height: 100%;
-
-    .gasTankSendTitle {
-        margin: 0;
-        font-size: 25px;
-        font-weight: 400;
-    }
-    .sell {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        padding: 40px;
-        padding-top: 15px;
-        gap: 40px;
-        overflow-y: auto;
-    }
-}
-
-@media screen and (max-width: 1400px) {
-    .wrapper {
-        flex-direction: column;
-        height: auto;
-    }
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 2.5rem;
+    padding-top: 0.9375rem;
+    gap: 2.5rem;
+    overflow-y: auto;
+  }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-    .wrapper {
-        gap: 15px;
+@include lg-breakpoint {
+  .wrapper {
+    flex-direction: column;
+    gap: 0.9375rem;
+    height: auto;
 
-        .sell {
-            padding: 20px;
-        }
+    .tab {
+      overflow-y: visible;
     }
 
-    .panel {
-        padding: 0;
-        flex: 0 1 50%;
-        min-height: unset;
-        max-height: unset;
+    .sell {
+      padding: 1.25rem;
     }
+  }
+
+  .panel {
+    padding: 0;
+    flex: 0 1 50%;
+    min-height: unset;
+    max-height: unset;
+  }
 }

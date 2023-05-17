@@ -8,18 +8,18 @@
   }
 
   .title {
-    font-size: 18px;
+    font-size: 1.125rem;
     text-align: center;
     font-weight: 400;
     margin: 0;
-    margin-bottom: 30px;
+    margin-bottom: 1.875rem;
   }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     .title {
-      font-size: 14px;
+      font-size: 0.875rem;
     }
   }
 }

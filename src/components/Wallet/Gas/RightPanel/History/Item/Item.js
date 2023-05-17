@@ -8,7 +8,8 @@ import { ReactComponent as ExternalLinkIcon } from 'resources/icons/external-lin
 
 import styles from './Item.module.scss'
 
-const toLocaleDateTime = (date) => `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {timeStyle: 'short'})}`
+const toLocaleDateTime = (date) =>
+  `${date.toLocaleDateString()} ${date.toLocaleTimeString([], { timeStyle: 'short' })}`
 
 const Item = ({ tokenDetails, item, network }) => (
   <div className={styles.wrapper}>
@@ -16,7 +17,9 @@ const Item = ({ tokenDetails, item, network }) => (
       <div className={styles.gasTank}>
         <GasTankIcon className={cn(styles.icon)} />
       </div>
-      <p className={styles.date}>{item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString()}</p>
+      <p className={styles.date}>
+        {item.submittedAt && toLocaleDateTime(new Date(item.submittedAt)).toString()}
+      </p>
     </div>
     <div className={styles.balanceAndLink}>
       <p className={styles.balance}>
@@ -37,7 +40,7 @@ const Item = ({ tokenDetails, item, network }) => (
         )}
       </p>
       <a
-        href={network.explorerUrl + '/tx/' + item.txId}
+        href={`${network.explorerUrl}/tx/${item.txId}`}
         target="_blank"
         rel="noreferrer"
         onClick={(e) => e.stopPropagation()}

@@ -1,10 +1,10 @@
 @import 'variables.scss';
 
 .transferButton {
-  max-width: 400px;
+  max-width: 25rem;
   width: 100%;
   margin: 0 auto;
-  min-height: 60px;
+  min-height: 3.75rem;
 }
 
 .wrapper {
@@ -12,30 +12,30 @@
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  padding: 40px;
-  padding-top: 15px;
-  gap: 40px;
+  padding: 2.5rem;
+  padding-top: 0.9375rem;
+  gap: 2.5rem;
   overflow-y: auto;
 
   .confirmations {
-    padding-left: 20px;
+    padding-left: 1.25rem;
   }
 
   .validationError {
     color: $danger-color;
     text-align: center;
-    font-size: 14px;
+    font-size: 0.875rem;
   }
 
   .content {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 1.25rem;
     flex: 1;
   }
 
   .amountLabel {
-    font-size: 14px;
+    font-size: 0.875rem;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -45,132 +45,56 @@
   .separator {
     flex-grow: 1;
     @include flex-center-center;
-    font-size: 40px;
+    font-size: 2.5rem;
     opacity: 0.5;
   }
 
   .gasTankMsg {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
     background-color: mix($c-ebony-clay, $warning-color, 90%);
     color: $warning-color;
-    padding: 15px;
-    font-size: 14px;
-    border-radius: 12px;
+    padding: 0.9375rem;
+    font-size: 0.875rem;
+    border-radius: $border-radius;
+
+    svg {
+      color: $c-ebony-clay;
+      width: 2.25rem;
+      height: 2.25rem;
+    }
   }
 
   .gasTankConvertMsg {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 0.75rem;
     background-color: mix($c-ebony-clay, $c-turquoise, 90%);
     color: $c-turquoise;
-    padding: 15px;
-    font-size: 14px;
-    border-radius: 12px;
-  }
-
-  .recipientField {
-    position: relative;
-    display: flex;
-
-    .recipientInput {
-      width: 100%;
-
-      div:last-child {
-        opacity: 1;
-        padding-left: 20px;
-      }
-
-      input {
-        // border-radius: 12px 0 0 12px;
-        padding-right: 290px;
-      }
-    }
-
-    .dropdown {
-      position: absolute;
-      right: 0;
-    }
-
-    .udomainsLogo {
-      position: absolute;
-      top: 18px;
-      right: 250px;
-      height: 25px;
-      width: 25px;
-      background-image: url('/resources/ud-logo-inactive.png');
-    }
-
-    .udomainsLogoActive {
-      background-image: url('/resources/ud-logo-active.png') !important;  
-    }
-
-    .ensLogo {
-      position: absolute;
-      top: 18px;
-      right: 200px;
-      height: 25px;
-      width: 25px;
-      background-image: url('/resources/ens-logo-inactive.png');
-    }
-
-    .ensLogoActive {
-      background-image: url('/resources/ens-logo-active.png') !important;  
-    }
+    padding: 0.9375rem;
+    font-size: 0.875rem;
+    border-radius: $border-radius;
   }
 
   .binanceAddressWarning {
     margin: 0;
-    
+
     .checkBoxLabel {
       vertical-align: middle;
-      margin-top: 3px;
+      margin-top: 0.1875rem;
     }
     a {
       vertical-align: middle;
-      margin-left: 10px;
+      margin-left: 0.625rem;
     }
   }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
-    gap: 30px;
-    padding: 20px;
-
-    .recipientField {
-      flex-direction: column;
-      gap: 10px;
-
-      .dropdown {
-        position: relative;
-        border-radius: 12px!important;
-      }
-
-      .recipientInput {
-        input {
-          padding-right: 80px;
-        }
-      }
-
-      .udomainsLogo {
-        position: absolute;
-        top: 18px;
-        right: 50px;
-        height: 25px;
-        width: 25px;
-      }
-
-      .ensLogo {
-        position: absolute;
-        top: 18px;
-        right: 15px;
-        height: 25px;
-        width: 25px;
-      }
-    }
+    gap: 1.875rem;
+    padding: 1.25rem;
   }
 }

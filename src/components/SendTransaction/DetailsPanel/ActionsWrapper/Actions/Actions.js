@@ -1,40 +1,41 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
-import { Wallet, ethers } from "ethers";
-import { Interface } from 'ethers/lib/utils';
-import accountPresets from "ambire-common/src/constants/accountPresets";
-import { Bundle } from "adex-protocol-eth/js";
+import { Wallet, ethers } from 'ethers'
+import { Interface } from 'ethers/lib/utils'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
+import { Bundle } from 'adex-protocol-eth/js'
 import cn from 'classnames'
 
-import { getWallet } from "lib/getWallet";
-import { fetchPost } from "lib/fetch";
+import { getWallet } from 'lib/getWallet'
+import { fetchPost } from 'lib/fetch'
 import { getProvider } from 'ambire-common/src/services/provider'
 
-import { useToasts } from 'hooks/toasts';
+import { useToasts } from 'hooks/toasts'
 import { Button, TextInput } from 'components/common'
-import { isTokenEligible } from 'components/SendTransaction/helpers'
-import { sendNoRelayer } from "components/SendTransaction/noRelayer";
-import { getFeesData, toHexAmount } from "components/SendTransaction/helpers";
+import { isTokenEligible, getFeesData, toHexAmount } from 'components/SendTransaction/helpers'
+import { sendNoRelayer } from 'components/SendTransaction/noRelayer'
 
 import styles from './Actions.module.scss'
 
-const ERC20 = new Interface(require("adex-protocol-eth/abi/ERC20"));
+const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
 
 function getErrorMessage(e) {
-  if (e && e.message === "NOT_TIME") {
-    return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period.";
-  } else if (e && e.message === "WRONG_ACC_OR_NO_PRIV") {
-    return "Unable to sign with this email/password account. Please contact support.";
-    // NOTE: is INVALID_SIGNATURE even a real error?
-  } else if (e && e.message === "INVALID_SIGNATURE") {
-    return "Invalid signature. This may happen if you used password/derivation path on your hardware wallet.";
-  } else if (e && e.message === "INSUFFICIENT_PRIVILEGE") {
-    return "Wrong signature. This may happen if you used password/derivation path on your hardware wallet.";
-  } else {
-    return e.message || e;
+  if (e && e.message === 'NOT_TIME') {
+    return "Your 72 hour recovery waiting period still hasn't ended. You will be able to use your account after this lock period."
   }
+  if (e && e.message === 'WRONG_ACC_OR_NO_PRIV') {
+    return 'Unable to sign with this email/password account. Please contact support.'
+    // NOTE: is INVALID_SIGNATURE even a real error?
+  }
+  if (e && e.message === 'INVALID_SIGNATURE') {
+    return 'Invalid signature. This may happen if you used password/derivation path on your hardware wallet.'
+  }
+  if (e && e.message === 'INSUFFICIENT_PRIVILEGE') {
+    return 'Wrong signature. This may happen if you used password/derivation path on your hardware wallet.'
+  }
+  return e.message || e
 }
 
-const Actions = ({ 
+const Actions = ({
   signingStatus,
   setSigningStatus,
   account,
@@ -52,192 +53,189 @@ const Actions = ({
   isGasTankEnabled,
   currentAccGasTankState,
   onBroadcastedTxn,
-  resolveMany
-  }) => {
+  resolveMany,
+  requestPendingState
+}) => {
   const { addToast } = useToasts()
   const [quickAccCredentials, setQuickAccCredentials] = useState({ code: '', passphrase: '' })
   // reset this every time the signing status changes
-  useEffect(() => !signingStatus && setQuickAccCredentials(prev => ({ ...prev, code: '' })), [signingStatus])
+  useEffect(
+    () => !signingStatus && setQuickAccCredentials((prev) => ({ ...prev, code: '' })),
+    [signingStatus]
+  )
 
   const form = useRef(null)
 
   const rejectButton = rejectTxn && (
     // WARNING: DO NOT remove type='button' here, it indicates that this button is not a submit button in the <form>
     // if it is, pressing Enter will reject the transaction rather than submit it
-    <Button danger type='button' className={cn(styles.button, styles.danger)} onClick={rejectTxn}>Reject</Button>
+    <Button
+      variant="danger"
+      type="button"
+      className={cn(styles.button, styles.danger)}
+      onClick={rejectTxn}
+    >
+      Reject
+    </Button>
   )
 
   const approveTxn = ({ quickAccCredentials }) => {
-    if (signingStatus && signingStatus.inProgress) return;
-    setSigningStatus(signingStatus || { inProgress: true });
+    if (signingStatus && signingStatus.inProgress) return
+    setSigningStatus(signingStatus || { inProgress: true })
 
-    if (account.signerExtra && account.signerExtra.type === "ledger") {
-      addToast("Please confirm this transaction on your Ledger device.", {
-        timeout: 10000,
-      });
+    if (account.signerExtra && account.signerExtra.type === 'ledger') {
+      addToast('Please confirm this transaction on your Ledger device.', {
+        timeout: 10000
+      })
     }
 
-    if (account.signerExtra && account.signerExtra.type === "Lattice") {
-      addToast("Please confirm this transaction on your Lattice device.", {
-        timeout: 10000,
-      });
+    if (account.signerExtra && account.signerExtra.type === 'Lattice') {
+      addToast('Please confirm this transaction on your Lattice device.', {
+        timeout: 10000
+      })
     }
 
-    const requestIds = bundle.requestIds;
+    const requestIds = bundle.requestIds
     const approveTxnPromise = bundle.signer.quickAccManager
       ? approveTxnImplQuickAcc({ quickAccCredentials })
-      : approveTxnImpl();
+      : approveTxnImpl()
     approveTxnPromise
       .then((bundleResult) => {
+        requestPendingState.current = true
         // special case for approveTxnImplQuickAcc: when a user interaction prevents the operation from completing
-        if (!bundleResult) return;
+        if (!bundleResult) return
 
         // do not to call this after onDimiss, cause it might cause state to be changed post-unmount
-        if (isMounted.current) setSigningStatus(null);
+        if (isMounted.current) setSigningStatus(null)
 
         // Inform everything that's waiting for the results (eg WalletConnect)
         const skipResolve =
           !bundleResult.success &&
           bundleResult.message &&
-          bundleResult.message.match(/underpriced/i);
+          bundleResult.message.match(/underpriced/i)
         if (!skipResolve && requestIds)
           resolveMany(requestIds, {
             success: bundleResult.success,
             result: bundleResult.txId,
-            message: bundleResult.message,
-          });
+            message: bundleResult.message
+          })
 
         if (bundleResult.success) {
-          onBroadcastedTxn(bundleResult.txId);
-          onDismiss();
+          onBroadcastedTxn(bundleResult.txId)
+          onDismiss()
         } else {
           // to force replacementBundle to be null, so it's not filled from previous state change in App.js in useEffect
           // basically close the modal if the txn was already mined
-          if (bundleResult.message.includes("was already mined")) {
-            onDismiss();
+          if (bundleResult.message.includes('was already mined')) {
+            onDismiss()
           }
           addToast(`Transaction error: ${getErrorMessage(bundleResult)}`, {
-            error: true,
-          }); //'unspecified error'
+            error: true
+          }) // 'unspecified error'
         }
       })
       .catch((e) => {
-        if (isMounted.current) setSigningStatus(null);
-        console.error(e);
-        if (e && e.message.includes("must provide an Ethereum address")) {
+        if (isMounted.current) setSigningStatus(null)
+        console.error(e)
+        if (e && e.message.includes('must provide an Ethereum address')) {
           addToast(
             `Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`,
             { error: true }
-          );
-        } else if (e && e.message.includes("0x6b0c")) {
+          )
+        } else if (e && e.message.includes('0x6b0c')) {
           // not sure if that's actually the case with this hellish error, but after unlocking the device it no longer appeared
           // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
           addToast(
-            `Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?`,
+            'Ledger: unknown error (0x6b0c): is your Ledger unlocked and in the Ethereum application?',
             { error: true }
-          );
+          )
         } else {
-          addToast(`Signing error: ${getErrorMessage(e)}`, { error: true });
+          addToast(`Signing error: ${getErrorMessage(e)}`, { error: true })
         }
-      });
-  };
+      })
+  }
 
   const approveTxnImpl = async () => {
-    if (!estimation) throw new Error("no estimation: should never happen");
+    if (!estimation) throw new Error('no estimation: should never happen')
 
-    const finalBundle = getFinalBundle();
-    const provider = getProvider(network.id);
-    const signer = finalBundle.signer;
+    const finalBundle = getFinalBundle()
+    const provider = getProvider(network.id)
+    const signer = finalBundle.signer
 
     // a bit redundant cause we already called it at the beginning of approveTxn, but
     // we need to freeze finalBundle in the UI in case signing takes a long time (currently only to freeze the fee selector)
-    setSigningStatus({ inProgress: true, finalBundle });
+    setSigningStatus({ inProgress: true, finalBundle })
 
     const wallet = getWallet({
       signer,
       signerExtra: account.signerExtra,
-      chainId: network.chainId,
-    });
+      chainId: network.chainId
+    })
 
     if (relayerURL) {
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
       // finalBundle.estimate({ relayerURL, fetch }).then(estimation => console.log('fee costs: ', estimation.gasLimit - initialLimit), estimation.selectedFeeToken).catch(console.error)
-      await finalBundle.sign(wallet);
-      return await finalBundle.submit({ relayerURL, fetch });
-    } else {
-      return await sendNoRelayer({
-        finalBundle,
-        account,
-        network,
-        wallet,
-        estimation,
-        feeSpeed,
-        provider,
-      });
+      await finalBundle.sign(wallet)
+      return await finalBundle.submit({ relayerURL, fetch })
     }
-  };
+    return sendNoRelayer({
+      finalBundle,
+      account,
+      network,
+      wallet,
+      estimation,
+      feeSpeed,
+      provider
+    })
+  }
 
   const getFinalBundle = useCallback(() => {
     if (!relayerURL) {
       return new Bundle({
         ...bundle,
-        gasLimit: estimation.gasLimit,
-      });
+        gasLimit: estimation.gasLimit
+      })
     }
 
-    const feeToken = estimation.selectedFeeToken;
+    const feeToken = estimation.selectedFeeToken
 
     const {
       feeInNative,
       // feeInUSD, // don't need fee in USD for stables as it will work with feeInFeeToken
       // Also it can be stable but not in USD
       feeInFeeToken,
-      addedGas,
-    } = getFeesData(
-      feeToken,
-      estimation,
-      feeSpeed,
-      currentAccGasTankState.isEnabled,
-      network
-    );
+      addedGas
+    } = getFeesData(feeToken, estimation, feeSpeed, currentAccGasTankState.isEnabled, network)
     const feeTxn =
       feeToken.symbol === network.nativeAssetSymbol
         ? // TODO: check native decimals
-          [accountPresets.feeCollector, toHexAmount(feeInNative, 18), "0x"]
+          [accountPresets.feeCollector, toHexAmount(feeInNative, 18), '0x']
         : [
             feeToken.address,
-            "0x0",
-            ERC20.encodeFunctionData("transfer", [
+            '0x0',
+            ERC20.encodeFunctionData('transfer', [
               accountPresets.feeCollector,
-              toHexAmount(feeInFeeToken, feeToken.decimals),
-            ]),
-          ];
+              toHexAmount(feeInFeeToken, feeToken.decimals)
+            ])
+          ]
 
-    const nextFreeNonce = estimation.nextNonce?.nonce;
-    const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce;
+    const nextFreeNonce = estimation.nextNonce?.nonce
+    const nextNonMinedNonce = estimation.nextNonce?.nextNonMinedNonce
     // If we've passed in a bundle, use it's nonce (when using a replacementBundle); else, depending on whether we want to replace the current pending bundle,
     // either use the next non-mined nonce or the next free nonce
-    const nonce = isInt(bundle.nonce)
-      ? bundle.nonce
-      : replaceTx
-      ? nextNonMinedNonce
-      : nextFreeNonce;
+    const nonce = isInt(bundle.nonce) ? bundle.nonce : replaceTx ? nextNonMinedNonce : nextFreeNonce
 
-    if (!!currentAccGasTankState.isEnabled) {
-      let gasLimit;
-      if (bundle.txns.length > 1)
-        gasLimit = estimation.gasLimit + (bundle.extraGas || 0);
-      else gasLimit = estimation.gasLimit;
+    if (currentAccGasTankState.isEnabled) {
+      let gasLimit
+      if (bundle.txns.length > 1) gasLimit = estimation.gasLimit + (bundle.extraGas || 0)
+      else gasLimit = estimation.gasLimit
 
-      let value;
-      if (feeToken.address === "0x0000000000000000000000000000000000000000")
-        value = feeInNative;
+      let value
+      if (feeToken.address === '0x0000000000000000000000000000000000000000') value = feeInNative
       else {
-        const fToken = estimation.remainingFeeTokenBalances.find(
-          (i) => i.id === feeToken.id
-        );
-        value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate;
+        const fToken = estimation.remainingFeeTokenBalances.find((i) => i.id === feeToken.id)
+        value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate
       }
 
       return new Bundle({
@@ -246,12 +244,12 @@ const Actions = ({
           assetId: feeToken.id,
           value: ethers.utils
             .parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals)
-            .toString(),
+            .toString()
         },
         txns: [...bundle.txns],
         gasLimit,
-        nonce,
-      });
+        nonce
+      })
     }
 
     return new Bundle({
@@ -259,8 +257,8 @@ const Actions = ({
       txns: [...bundle.txns, feeTxn],
       gasTankFee: null,
       gasLimit: estimation.gasLimit + addedGas + (bundle.extraGas || 0),
-      nonce,
-    });
+      nonce
+    })
   }, [
     relayerURL,
     estimation,
@@ -269,22 +267,18 @@ const Actions = ({
     network,
     bundle,
     replaceTx,
-    isInt,
-  ]);
+    isInt
+  ])
 
   const approveTxnImplQuickAcc = async ({ quickAccCredentials }) => {
-    if (!estimation) throw new Error("no estimation: should never happen");
+    if (!estimation) throw new Error('no estimation: should never happen')
     if (!relayerURL)
-      throw new Error(
-        "Email/Password account signing without the relayer is not supported yet"
-      );
+      throw new Error('Email/Password account signing without the relayer is not supported yet')
 
-    const finalBundle =
-      (signingStatus && signingStatus.finalBundle) || getFinalBundle();
-    const signer = finalBundle.signer;
+    const finalBundle = (signingStatus && signingStatus.finalBundle) || getFinalBundle()
+    const signer = finalBundle.signer
 
-    const canSkip2FA =
-      signingStatus && signingStatus.confCodeRequired === "notRequired";
+    const canSkip2FA = signingStatus && signingStatus.confCodeRequired === 'notRequired'
     const { signature, success, message, confCodeRequired } = await fetchPost(
       `${relayerURL}/second-key/${bundle.identity}/${network.id}/sign`,
       {
@@ -293,151 +287,183 @@ const Actions = ({
         nonce: finalBundle.nonce,
         gasLimit: finalBundle.gasLimit,
         ...(!canSkip2FA && {
-          code: quickAccCredentials && quickAccCredentials.code,
+          code: quickAccCredentials && quickAccCredentials.code
         }),
         // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
         recoveryMode: finalBundle.recoveryMode,
-        canSkip2FA: canSkip2FA,
+        canSkip2FA,
         isGasTankEnabled: currentAccGasTankState.isEnabled && !!relayerURL,
         meta: (!!finalBundle.meta && finalBundle.meta) || null
       }
-    );
+    )
     if (!success) {
-      if (!message)
-        throw new Error(`Secondary key: no success but no error message`);
-      if (message.includes("invalid confirmation code")) {
-        addToast("Unable to sign: wrong confirmation code", { error: true });
-        return;
+      if (!message) throw new Error('Secondary key: no success but no error message')
+      if (message.includes('invalid confirmation code')) {
+        addToast('Unable to sign: wrong confirmation code', { error: true })
+        return
       }
-      throw new Error(`Secondary key error: ${message}`);
+      throw new Error(`Secondary key error: ${message}`)
     }
     if (confCodeRequired) {
-      setSigningStatus({ quickAcc: true, finalBundle, confCodeRequired });
+      setSigningStatus({ quickAcc: true, finalBundle, confCodeRequired })
     } else {
-      if (!signature)
-        throw new Error(`QuickAcc internal error: there should be a signature`);
+      if (!signature) throw new Error('QuickAcc internal error: there should be a signature')
       if (!account.primaryKeyBackup)
         throw new Error(
-          `No key backup found: you need to import the account from JSON or login again.`
-        );
+          'No key backup found: you need to import the account from JSON or login again.'
+        )
       setSigningStatus({
         quickAcc: true,
         inProgress: true,
-        confCodeRequired: canSkip2FA ? "notRequired" : undefined,
-      });
+        confCodeRequired: canSkip2FA ? 'notRequired' : undefined
+      })
       if (!finalBundle.recoveryMode) {
         // Make sure we let React re-render without blocking (decrypting and signing will block)
-        await new Promise((resolve) => setTimeout(resolve, 0));
-        const pwd = quickAccCredentials.passphrase || alert("Enter password");
-        const wallet = await Wallet.fromEncryptedJson(
-          JSON.parse(account.primaryKeyBackup),
-          pwd
-        );
-        await finalBundle.sign(wallet);
+        await new Promise((resolve) => setTimeout(resolve, 0))
+        const pwd = quickAccCredentials.passphrase || alert('Enter password')
+        const wallet = await Wallet.fromEncryptedJson(JSON.parse(account.primaryKeyBackup), pwd)
+        await finalBundle.sign(wallet)
       } else {
         // set both .signature and .signatureTwo to the same value: the secondary signature
         // this will trigger a timelocked txn
-        finalBundle.signature = signature;
+        finalBundle.signature = signature
       }
-      finalBundle.signatureTwo = signature;
-      return await finalBundle.submit({ relayerURL, fetch });
+      finalBundle.signatureTwo = signature
+      return await finalBundle.submit({ relayerURL, fetch })
     }
-  };
-
-  const insufficientFee = estimation && estimation.feeInUSD
-    && !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
-  const willFail = (estimation && !estimation.success) || insufficientFee
-  if (willFail) {
-    return (<div className={styles.buttons}>
-      {rejectButton}
-    </div>)
   }
 
-  const isRecoveryMode = signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
+  const insufficientFee =
+    estimation &&
+    estimation.feeInUSD &&
+    !isTokenEligible(estimation.selectedFeeToken, feeSpeed, estimation, isGasTankEnabled, network)
+  const willFail = (estimation && !estimation.success) || insufficientFee
+  if (willFail) {
+    return <div className={styles.buttons}>{rejectButton}</div>
+  }
+
+  const isRecoveryMode =
+    signingStatus && signingStatus.finalBundle && signingStatus.finalBundle.recoveryMode
   if (signingStatus && signingStatus.quickAcc) {
-    return (<div className={styles.wrapper}>
-      {
-        signingStatus.confCodeRequired ?
+    return (
+      <div className={styles.wrapper}>
+        {signingStatus.confCodeRequired ? (
           <div className={styles.confirmationCodeInfo}>
             <div className={styles.confirmationCodeInfoTitle}>Confirmation</div>
             <div className={styles.confirmationCodeInfoMessage}>
-              {signingStatus.confCodeRequired === 'otp' ? <p>Please enter your OTP code and your password.</p> : null}
-              {signingStatus.confCodeRequired === 'email' ?
-                (isRecoveryMode
-                  ? <p>A confirmation code was sent to your email. Please enter it to initiate the recovery.</p>
-                  : <p>A confirmation code was sent to your email. Please enter it along with your password.</p>)
-                      : null
-	      }
+              {signingStatus.confCodeRequired === 'otp' ? (
+                <p>Please enter your OTP code and your password.</p>
+              ) : null}
+              {signingStatus.confCodeRequired === 'email' ? (
+                isRecoveryMode ? (
+                  <p>
+                    A confirmation code was sent to your email. Please enter it to initiate the
+                    recovery.
+                  </p>
+                ) : (
+                  <p>
+                    A confirmation code was sent to your email. Please enter it along with your
+                    password.
+                  </p>
+                )
+              ) : null}
             </div>
           </div>
-          :
-          null
-      }
-  
-      <form ref={form} className={styles.quickAccSigningForm} onSubmit={e => { e.preventDefault() }}>
-        {signingStatus.confCodeRequired === 'notRequired' &&
-          <p className={styles.code2faNotRequiredMsg}>You already sent 3 or more transactions to this address, confirmation code is not needed.</p>
-        }
-        <div className={styles.inputsContainer}>
-          <TextInput
-            password
-            required
-            minLength={3}
-            placeholder='Password'
-            value={quickAccCredentials.passphrase}
-            style={isRecoveryMode ? { visibility: 'hidden' } : {} }
-            disabled={isRecoveryMode}
-            onChange={value => setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })}
-            className={styles.textInput}
-            testId="password"
-          ></TextInput>
-          {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
-          {signingStatus.confCodeRequired !== 'notRequired' &&
+        ) : null}
+
+        <form
+          ref={form}
+          className={styles.quickAccSigningForm}
+          onSubmit={(e) => {
+            e.preventDefault()
+          }}
+        >
+          {signingStatus.confCodeRequired === 'notRequired' && (
+            <p className={styles.code2faNotRequiredMsg}>
+              You already sent 3 or more transactions to this address, confirmation code is not
+              needed.
+            </p>
+          )}
+          <div className={styles.inputsContainer}>
             <TextInput
-              title='Confirmation code should be 6 digits'
-              autoComplete='nope'
-              required minLength={6} maxLength={6}
-              placeholder={signingStatus.confCodeRequired === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'}
-              value={quickAccCredentials.code}
-              onChange={value => setQuickAccCredentials({ ...quickAccCredentials, code: value })}
+              password
+              required
+              minLength={3}
+              placeholder="Password"
+              value={quickAccCredentials.passphrase}
+              style={isRecoveryMode ? { visibility: 'hidden' } : {}}
+              disabled={isRecoveryMode}
+              onChange={(value) =>
+                setQuickAccCredentials({ ...quickAccCredentials, passphrase: value })
+              }
               className={styles.textInput}
-              testId="confirmationCode"
-            ></TextInput>
-          }
-        </div>
-        <div className={styles.buttons}>
-          <Button
-            danger
-            disabled={signingStatus?.inProgress}
-            type='button'
-            className={cn(styles.button, styles.danger)}
-            onClick={cancelSigning}
-          >
-            Cancel
-          </Button>
-          <Button
-            primaryGradient
-            className={cn(styles.button, styles.confirm)}
-            disabled={signingStatus?.inProgress}
-            onClick={() => {
-              if (!form.current.checkValidity()) return
-              approveTxn({ quickAccCredentials })
-            }}
-            testId="confirmSigning"
-          >
-            { signingStatus && signingStatus.inProgress ? 'Loading...' : 'Confirm'}
-          </Button>
-        </div>
-      </form>
-    </div>)
+              testId="password"
+            />
+            {/* Changing the autoComplete prop to a random string seems to disable it in more cases */}
+            {signingStatus.confCodeRequired !== 'notRequired' && (
+              <TextInput
+                title="Confirmation code should be 6 digits"
+                autoComplete="nope"
+                required
+                minLength={6}
+                maxLength={6}
+                placeholder={
+                  signingStatus.confCodeRequired === 'otp'
+                    ? 'Authenticator OTP code'
+                    : 'Confirmation code'
+                }
+                value={quickAccCredentials.code}
+                onChange={(value) =>
+                  setQuickAccCredentials({ ...quickAccCredentials, code: value })
+                }
+                className={styles.textInput}
+                testId="confirmationCode"
+              />
+            )}
+          </div>
+          <div className={styles.buttons}>
+            <Button
+              variant="danger"
+              disabled={signingStatus?.inProgress}
+              className={cn(styles.button, styles.danger)}
+              onClick={cancelSigning}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="primaryGradient"
+              className={cn(styles.button, styles.confirm)}
+              loading={signingStatus?.inProgress}
+              onClick={() => {
+                if (!form.current.checkValidity()) return
+                approveTxn({ quickAccCredentials })
+              }}
+              testId="confirmSigning"
+            >
+              Confirm
+            </Button>
+          </div>
+        </form>
+      </div>
+    )
   }
 
-  return (<div className={styles.buttons}>
+  return (
+    <div className={styles.buttons}>
       {rejectButton}
-      <Button primaryGradient className={cn(styles.button, styles.confirm)} disabled={!estimation || signingStatus?.inProgress} onClick={approveTxn} testId="approveTxn">
-        {signingStatus && signingStatus.inProgress ? 'Signing...' : 'Sign and Send'}
+      <Button
+        variant="primaryGradient"
+        className={cn(styles.button, styles.confirm)}
+        disabled={!estimation}
+        loading={signingStatus?.inProgress}
+        loadingText="Signing..."
+        onClick={approveTxn}
+        testId="approveTxn"
+      >
+        Sign and Send
       </Button>
-  </div>)
+    </div>
+  )
 }
 
 export default Actions

@@ -1,59 +1,59 @@
 @import 'variables.scss';
 
-$toggle-height: 14px;
-$slider-margin: 8px;
+$toggle-height: 0.875rem;
+$slider-margin: 0.5rem;
 $slider-size: calc(#{$toggle-height} - #{$slider-margin});
 
 .toggle {
-    flex: 0 0 auto;
-    position: relative;
-    display: inline-block;
-    width: 35px;
-    height: $toggle-height;
+  flex: 0 0 auto;
+  position: relative;
+  display: inline-block;
+  width: 2.1875rem;
+  height: $toggle-height;
 
-    input {
-        opacity: 0;
-        width: 0;
-        height: 0;
-    }
+  input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
 
-    .slider {
-        position: absolute;
-        cursor: pointer;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: $toggle-height;
-        background-color: transparent;
-        border: 2px solid $danger-color;
-        transition: .4s;
-        opacity: .5;
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: $toggle-height;
+    background-color: transparent;
+    border: 2px solid $danger-color;
+    transition: 0.4s;
+    opacity: 0.5;
 
-        &:before {
-            position: absolute;
-            content: "";
-            height: 20px;
-            width: 20px;
-            top: 50%;
-            transform: translateY(-50%);
-            box-shadow: 1px 0 1px 2px rgba(#000, 0.15);
-            left: -2px;
-            border-radius: 50%;
-            background-color: $danger-color;
-            transition: .4s;
-        }
+    &:before {
+      position: absolute;
+      content: '';
+      height: 1.25rem;
+      width: 1.25rem;
+      top: 50%;
+      transform: translateY(-50%);
+      box-shadow: 1px 0 1px 2px rgba(#000, 0.15);
+      left: -0.125rem;
+      border-radius: 50%;
+      background-color: $danger-color;
+      transition: 0.4s;
     }
+  }
 
-    input:checked + .slider {
-        opacity: 1;
-        background-color: rgba($c-turquoise, .61);
-        border: 2px solid transparent;
-    }
-    
-    input:checked + .slider:before {
-        box-shadow: -1px 0px 1px 2px rgba(#000, 0.15);
-        left: calc(100% - 18px);// Circle width - 2px
-        background-color: $c-turquoise;
-    }
+  input:checked + .slider {
+    opacity: 1;
+    background-color: rgba($c-turquoise, 0.61);
+    border: 2px solid transparent;
+  }
+
+  input:checked + .slider:before {
+    box-shadow: -1px 0 1px 2px rgba(#000, 0.15);
+    left: calc(100% - 1.125rem); // Circle width - .125rem
+    background-color: $c-turquoise;
+  }
 }

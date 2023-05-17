@@ -17,7 +17,7 @@ const TxStatusComponent = ({
   toTokenName,
   toTokenAmount,
   toTokenIcon,
-  className,
+  className
 }) => {
   return (
     <div className={cn(styles.wrapper, className)}>

@@ -1,7 +1,7 @@
 import * as blockies from 'blockies-ts'
 
-import AccountAndNetwork from './AccountAndNetwork/AccountAndNetwork'
 import { FeeSelector } from 'components/SendTransaction/DetailsPanel/Options/FeeSelector/FeeSelector'
+import AccountAndNetwork from './AccountAndNetwork/AccountAndNetwork'
 
 import styles from './Options.module.scss'
 
@@ -19,22 +19,16 @@ const Options = ({
   canProceed,
   currentAccGasTankState
 }) => {
-  const accountAvatar = blockies.create({ seed: account.id }).toDataURL();
+  const accountAvatar = blockies.create({ seed: account.id }).toDataURL()
 
   return (
     <div className={styles.wrapper}>
-      <AccountAndNetwork
-        account={account}
-        accountAvatar={accountAvatar}
-        network={network}
-      />
+      <AccountAndNetwork account={account} accountAvatar={accountAvatar} network={network} />
       {/* Only lock the fee selector when the bundle is locked too - to make sure that the fee really is set in stone (won't change on the next getFinalBundle()) */}
       {canProceed && (
         <FeeSelector
           disabled={
-            signingStatus &&
-            signingStatus.finalBundle &&
-            !(estimation && !estimation.success)
+            signingStatus && signingStatus.finalBundle && !(estimation && !estimation.success)
           }
           signer={bundle.signer}
           estimation={estimation}

@@ -1,17 +1,17 @@
 @import 'variables';
 
 .wrapper {
-  max-width: 500px;
+  max-width: 31.25rem;
   width: 100%;
-  height: 600px!important;
-  
+  height: 37.5rem !important;
+
   .content {
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-  
-      svg {
-        cursor: pointer;
-      }
+    display: flex;
+    flex-direction: column;
+    gap: 0.3125rem;
+
+    svg {
+      cursor: pointer;
+    }
   }
 }

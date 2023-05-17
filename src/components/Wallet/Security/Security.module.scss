@@ -1,16 +1,24 @@
 @import 'variables.scss';
 
+.alert {
+  margin-bottom: 1.875rem;
+
+  .link {
+    color: $c-heliotrope;
+  }
+}
+
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 17px;
+  gap: 1.0625rem;
   border: 1px dashed transparent;
 
   .title {
-    font-size: 25px;
+    font-size: 1.5625rem;
     font-weight: 400;
   }
-    
+
   .depositAddress {
     width: 100%;
   }
@@ -19,16 +27,16 @@
     z-index: 2;
     position: absolute;
     color: $c-turquoise;
-    top: calc(50% - 50px);
-    left: calc(50% - 50px);
+    top: calc(50% - 3.125rem);
+    left: calc(50% - 3.125rem);
   }
 
   .rejectStyleIcon {
     z-index: 2;
     position: absolute;
     color: $danger-color;
-    top: calc(50% - 50px);
-    left: calc(50% - 50px);
+    top: calc(50% - 3.125rem);
+    left: calc(50% - 3.125rem);
   }
 
   &.activeStyle {
@@ -47,13 +55,13 @@
   }
 
   .panel {
-    padding: 30px 40px;
+    padding: 1.875rem 2.5rem;
   }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
-    gap: 15px;
+    gap: 0.9375rem;
   }
 }

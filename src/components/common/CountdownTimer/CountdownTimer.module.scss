@@ -1,19 +1,25 @@
 @import 'variables.scss';
 
 .wrapper {
-    display: flex;
-    align-items: center;
-    color: $c-turquoise;
-    gap: 10px;
+  display: flex;
+  align-items: center;
+  color: $c-turquoise;
+  gap: 0.625rem;
 
-    &.isTimeUp {
-        color: $danger-color;
-        svg {
-            color: $danger-color;
-        }
+  &.isTimeUp {
+    color: $danger-color;
+    svg {
+      color: $danger-color;
     }
+  }
 
-    label {
-        font-size: 25px;
-    }
+  .clockIcon {
+    width: 2rem;
+    height: 2rem;
+  }
+
+  .timer {
+    margin: 0;
+    font-size: 1.5625rem;
+  }
 }

@@ -5,22 +5,22 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 10px 30px;
+  gap: 0.625rem 1.875rem;
 
   .account {
     display: flex;
     align-items: center;
-    gap: 20px;
+    gap: 1.25rem;
 
     .avatar {
-      width: 40px;
-      height: 40px;
-      border-radius: 12px;
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: $border-radius;
     }
 
     .address {
       color: theme(text-primary);
-      font-size: 16px;
+      font-size: 1rem;
       margin: 0;
       word-break: break-all;
     }
@@ -30,31 +30,30 @@
     display: flex;
     justify-self: flex-end;
     align-items: center;
-    gap: 10px;
+    gap: 0.625rem;
     color: theme(text-secondary);
-    font-size: 14px;
+    font-size: 0.875rem;
     margin: 0;
 
     .icon {
-      border-radius: 12px;
-      width: 24px;
-      height: 24px;
+      border-radius: $border-radius;
+      width: 1.5rem;
+      height: 1.5rem;
       background-color: theme(background-icon);
     }
   }
 }
 
-
-@media (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     flex-direction: column;
-    gap: 10px;
+    gap: 0.625rem;
 
     .account {
       flex-direction: column;
 
       .address {
-        font-size: 13px;
+        font-size: 0.8125rem;
         text-align: center;
       }
     }

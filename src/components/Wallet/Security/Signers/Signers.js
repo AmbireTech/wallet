@@ -1,22 +1,20 @@
 import { useHistory } from 'react-router-dom'
 import privilegesOptions from 'ambire-common/src/constants/privilegesOptions'
-import { Interface } from "ethers/lib/utils"
+import { Interface } from 'ethers/lib/utils'
 
-import { useModals } from "hooks"
-import { useToasts } from "hooks/toasts"
+import { useModals } from 'hooks'
+import { useToasts } from 'hooks/toasts'
 
-import { ResetPasswordModal } from "components/Modals"
-import OtpTwoFADisableModal from "components/Modals/OtpTwoFADisableModal/OtpTwoFADisableModal"
-import OtpTwoFAModal from "components/Modals/OtpTwoFAModal/OtpTwoFAModal"
-import AddAuthSignerModal from "components/Modals/AddAuthSignerModal/AddAuthSignerModal"
-import Signer from "./Signer/Signer"
+import { ResetPasswordModal } from 'components/Modals'
+import OtpTwoFADisableModal from 'components/Modals/OtpTwoFADisableModal/OtpTwoFADisableModal'
+import OtpTwoFAModal from 'components/Modals/OtpTwoFAModal/OtpTwoFAModal'
+import AddAuthSignerModal from 'components/Modals/AddAuthSignerModal/AddAuthSignerModal'
+import { ReactComponent as AddIcon } from 'resources/icons/add.svg'
+import Signer from './Signer/Signer'
 
 import styles from './Signers.module.scss'
-import { ReactComponent as AddIcon } from 'resources/icons/add.svg'
 
-const IDENTITY_INTERFACE = new Interface(
-  require('adex-protocol-eth/abi/Identity5.2')
-)
+const IDENTITY_INTERFACE = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 
 const Signers = ({
   relayerURL,
@@ -40,13 +38,15 @@ const Signers = ({
       addToast('Unsupported without a connection to the relayer', { error: true })
       return
     }
-    showModal(<ResetPasswordModal
-      account={selectedAccount}
-      selectedNetwork={selectedNetwork}
-      relayerURL={relayerURL}
-      onAddAccount={onAddAccount}
-      showSendTxns={showSendTxns}
-    />)
+    showModal(
+      <ResetPasswordModal
+        account={selectedAccount}
+        selectedNetwork={selectedNetwork}
+        relayerURL={relayerURL}
+        onAddAccount={onAddAccount}
+        showSendTxns={showSendTxns}
+      />
+    )
   }
 
   const handleEnableOtp = () => {
@@ -54,43 +54,58 @@ const Signers = ({
       return addToast('Unsupported without a connection to the relayer', { error: true })
     }
 
-    showModal(<OtpTwoFAModal
-      relayerURL={relayerURL} 
-      selectedAcc={selectedAccount} 
-      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
-      />)
+    showModal(
+      <OtpTwoFAModal
+        relayerURL={relayerURL}
+        selectedAcc={selectedAccount}
+        setCacheBreak={() => {
+          setCacheBreak(Date.now())
+        }}
+      />
+    )
   }
 
-  const handleDisableOtp = async() => {
+  const handleDisableOtp = async () => {
     if (!relayerURL) {
       return addToast('Unsupported without a connection to the relayer', { error: true })
     }
-    
-    showModal(<OtpTwoFADisableModal
-      relayerURL={relayerURL} 
-      selectedAcc={selectedAccount} 
-      setCacheBreak={() => { setCacheBreak(Date.now()) }} 
-      />)
+
+    showModal(
+      <OtpTwoFADisableModal
+        relayerURL={relayerURL}
+        selectedAcc={selectedAccount}
+        setCacheBreak={() => {
+          setCacheBreak(Date.now())
+        }}
+      />
+    )
   }
 
-  const onAddBtnClickedHandler = newSignerAddress => {
-    const txn = craftTransaction(
-      newSignerAddress.address,
-      privilegesOptions.true
+  const onAddBtnClickedHandler = (newSignerAddress) => {
+    const signerIsAdded = signers?.find(
+      (s) => s[0]?.toLowerCase() === newSignerAddress.address.toLowerCase()
     )
+    if (signerIsAdded)
+      return addToast('You have already added this signer', { timeout: 3000, error: true })
+
+    const txn = craftTransaction(newSignerAddress.address, privilegesOptions.true)
     addTransactionToAddRequest(txn)
   }
 
   const onMakeDefaultBtnClicked = async (account, address, isQuickAccount) => {
     if (isQuickAccount) {
-      return addToast((<span>To make this signer default, <a href='#/email-login'>please login with the email</a></span>), {url: '/#/email-login', error: true})
-    } else {
-      onAddAccount({ ...account, signer: { address: address }, signerExtra: null })
-      addToast(
-        'This signer is now the default. If it is a hardware wallet, you will have to re-add the account manually to connect it directly, otherwise you will have to add this signer address to your web3 wallet.',
-        { timeout: 30000 }
+      return addToast(
+        <span>
+          To make this signer default, <a href="#/email-login">please login with the email</a>
+        </span>,
+        { url: '/#/email-login', error: true }
       )
     }
+    onAddAccount({ ...account, signer: { address }, signerExtra: null })
+    addToast(
+      'This signer is now the default. If it is a hardware wallet, you will have to re-add the account manually to connect it directly, otherwise you will have to add this signer address to your web3 wallet.',
+      { timeout: 30000 }
+    )
 
     history.push('/wallet/security')
   }
@@ -98,23 +113,20 @@ const Signers = ({
   const craftTransaction = (address, privLevel) => {
     return {
       to: selectedAcc,
-      data: IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [
-        address,
-        privLevel,
-      ]),
-      value: '0x00',
+      data: IDENTITY_INTERFACE.encodeFunctionData('setAddrPrivilege', [address, privLevel]),
+      value: '0x00'
     }
   }
 
-  const addTransactionToAddRequest = txn => {
+  const addTransactionToAddRequest = (txn) => {
     try {
       addRequest({
         id: `setPriv_${txn.data}`,
         dateAdded: new Date().valueOf(),
         type: 'eth_sendTransaction',
-        txn: txn,
+        txn,
         chainId: selectedNetwork.chainId,
-        account: selectedAcc,
+        account: selectedAcc
       })
     } catch (err) {
       console.error(err)
@@ -122,46 +134,48 @@ const Signers = ({
     }
   }
 
-  const onRemoveBtnClicked = key => {
+  const onRemoveBtnClicked = (key) => {
     const txn = craftTransaction(key, privilegesOptions.false)
     addTransactionToAddRequest(txn)
   }
-  
-  return <div className={styles.wrapper}>
-    {signers.map(([addr, privValue]) => (
-      <Signer
-        key={addr}
-        addr={addr}
-        addToast={addToast}
-        privValue={privValue}
-        selectedAccount={selectedAccount}
-        hasPendingReset={hasPendingReset}
-        relayerData={relayerData}
-        handleDisableOtp={handleDisableOtp}
-        handleEnableOtp={handleEnableOtp}
-        onMakeDefaultBtnClicked={onMakeDefaultBtnClicked}
-        showResetPasswordModal={showResetPasswordModal}
-        onRemoveBtnClicked={onRemoveBtnClicked}
-      />
-    ))}
-    <div 
-      className={styles.addSigner} 
-      onClick={() => {
-        showModal(
-          <AddAuthSignerModal 
-            selectedAcc={selectedAccount} 
-            selectedNetwork={selectedNetwork} 
-            onAddBtnClicked={onAddBtnClickedHandler} 
-          />
-        )
-      }}
-    >
-      <div className={styles.addSignerBody}>
-        <AddIcon />
-        <label>Add Signer</label>
+
+  return (
+    <div className={styles.wrapper}>
+      {signers.map(([addr, privValue]) => (
+        <Signer
+          key={addr}
+          addr={addr}
+          addToast={addToast}
+          privValue={privValue}
+          selectedAccount={selectedAccount}
+          hasPendingReset={hasPendingReset}
+          relayerData={relayerData}
+          handleDisableOtp={handleDisableOtp}
+          handleEnableOtp={handleEnableOtp}
+          onMakeDefaultBtnClicked={onMakeDefaultBtnClicked}
+          showResetPasswordModal={showResetPasswordModal}
+          onRemoveBtnClicked={onRemoveBtnClicked}
+        />
+      ))}
+      <div
+        className={styles.addSigner}
+        onClick={() => {
+          showModal(
+            <AddAuthSignerModal
+              selectedAcc={selectedAccount}
+              selectedNetwork={selectedNetwork}
+              onAddBtnClicked={onAddBtnClickedHandler}
+            />
+          )
+        }}
+      >
+        <div className={styles.addSignerBody}>
+          <AddIcon />
+          <label>Add Signer</label>
+        </div>
       </div>
     </div>
-  </div>
+  )
 }
 
 export default Signers
