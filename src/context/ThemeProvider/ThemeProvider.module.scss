@@ -58,10 +58,21 @@
 .dark {
   --theme: dark;
   @include Text($c-titan-white, $c-scampi);
-  @include Background($c-mirage, $c-martinique, $c-ebony-clay, $c-ebony-clay-light, $c-fiord, $c-titan-white);
+  @include Background(
+    $c-mirage,
+    $c-martinique,
+    $c-ebony-clay,
+    $c-ebony-clay-light,
+    $c-fiord,
+    $c-titan-white
+  );
   @include Border($c-mirage, $c-fiord, $c-scampi, $c-titan-white);
   @include Highlight($c-heliotrope, $c-turquoise);
-  @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
+  @include Gradient(
+    GetGradient($c-turquoise, $c-electric-violet),
+    GetGradient($c-heliotrope, $c-electric-violet),
+    GetGradient($c-turquoise, $c-blue-lagoon)
+  );
   // Other
   @include BackgroundGradient($c-fiord, $c-ebony-clay);
   @include Scrollbar($c-mirage, $c-blue-bell);
@@ -70,11 +81,15 @@
 .light {
   --theme: light;
   @include Text($c-fiord, rgba($c-fiord, 0.8));
-  @include Background($c-titan-white, red, #F7F8FF, red, red, $c-fiord);
+  @include Background($c-titan-white, red, #f7f8ff, red, red, $c-fiord);
   @include Border($c-titan-white, $c-titan-white, red, $c-fiord);
   @include Highlight($c-blue-lagoon, $c-electric-violet);
   // Our gradients are currently the same, but we may change them later
-  @include Gradient(GetGradient($c-turquoise, $c-electric-violet), GetGradient($c-heliotrope, $c-electric-violet), GetGradient($c-turquoise, $c-blue-lagoon));
+  @include Gradient(
+    GetGradient($c-turquoise, $c-electric-violet),
+    GetGradient($c-heliotrope, $c-electric-violet),
+    GetGradient($c-turquoise, $c-blue-lagoon)
+  );
   // Other
   @include BackgroundGradient(white, white);
   @include Scrollbar(rgba($c-blue-bell, 0.3), $c-blue-bell);

@@ -7,10 +7,10 @@
   width: 100%;
   max-width: 15rem;
   background: $c-mirage;
-  border: .0625rem solid $c-scampi;
+  border: 0.0625rem solid $c-scampi;
   border-radius: $border-radius;
-  padding: .875rem;
-  padding-top: .9375rem;
+  padding: 0.875rem;
+  padding-top: 0.9375rem;
 
   &.active {
     border-color: $c-turquoise;
@@ -24,15 +24,15 @@
     margin-bottom: 1.875rem;
 
     .makeDefault {
-      padding: 0 .75rem;
+      padding: 0 0.75rem;
       height: 2.125rem;
       border-radius: $border-radius;
       background-color: transparent;
-      border: .125rem solid $c-scampi;
+      border: 0.125rem solid $c-scampi;
       font-family: inherit;
       color: $c-scampi;
       font-weight: 500;
-      font-size: .875rem;
+      font-size: 0.875rem;
       cursor: pointer;
 
       &.default {
@@ -50,12 +50,12 @@
       height: 2.125rem;
       padding: 0;
       background-color: transparent;
-      border: .0625rem rgba($danger-color, 0.8) solid;
+      border: 0.0625rem rgba($danger-color, 0.8) solid;
       border-radius: $border-radius;
       cursor: pointer;
 
       &.disabled {
-        opacity: .5;
+        opacity: 0.5;
         cursor: unset;
       }
 
@@ -78,10 +78,10 @@
       word-wrap: break-word;
 
       &:first-child {
-        margin-bottom: .625rem;
+        margin-bottom: 0.625rem;
       }
     }
-    
+
     .privText {
       color: $c-scampi;
     }
@@ -93,8 +93,8 @@
       width: 100%;
       height: 3.125rem;
       font-size: 1rem;
-      padding: .8125rem 0;
-      margin-bottom: .625rem;
+      padding: 0.8125rem 0;
+      margin-bottom: 0.625rem;
 
       &:last-child {
         margin-bottom: 0;

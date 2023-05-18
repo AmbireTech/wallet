@@ -1,48 +1,47 @@
 @import 'variables.scss';
 
 .wrapper {
-    h4 {
-        font-weight: 400;
-        margin: 0;
-        margin-bottom: .9375rem;
-    }
-    
-    .timer {
-        justify-content: center;
-        margin-bottom: 1.25rem;
-    }
-    .timerResetMsg {
-        text-align: center;
-        margin: 2.1875rem 0;
-        font-size: 1.25rem;
-        color: $danger-color;
-    }
+  h4 {
+    font-weight: 400;
+    margin: 0;
+    margin-bottom: 0.9375rem;
+  }
 
-    form {
-        display: flex;
-        flex-direction: column;
-        height: 26.5625rem;
-        
-        div {
-            width: 100%;
-        }
-        
+  .timer {
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .timerResetMsg {
+    text-align: center;
+    margin: 2.1875rem 0;
+    font-size: 1.25rem;
+    color: $danger-color;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    height: 26.5625rem;
+
+    div {
+      width: 100%;
     }
+  }
 }
 
 @include lg-breakpoint {
-    .wrapper {
-        min-height: unset;
-        height: auto;
-        
-        .input {
-            input {
-                height: 3.125rem;
-            }
-        }
-  
-        .button {
-            height: 3.125rem!important;
-        }
+  .wrapper {
+    min-height: unset;
+    height: auto;
+
+    .input {
+      input {
+        height: 3.125rem;
+      }
     }
+
+    .button {
+      height: 3.125rem !important;
+    }
+  }
 }

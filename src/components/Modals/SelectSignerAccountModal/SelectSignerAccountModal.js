@@ -1,10 +1,9 @@
-import styles from  './SelectSignerAccountModal.module.scss'
-
 import { useModals } from 'hooks'
 import { Modal } from 'components/common'
 import SelectSignerAccount from 'components/common/SelectSignerAccount/SelectSignerAccount'
+import styles from './SelectSignerAccountModal.module.scss'
 
-const SelectSignerAccountModal = props => {
+const SelectSignerAccountModal = (props) => {
   const { hideModal } = useModals()
 
   const onSignerAddressClicked = (...args) => {

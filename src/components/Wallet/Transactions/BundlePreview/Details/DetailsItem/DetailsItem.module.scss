@@ -1,18 +1,18 @@
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: .625rem;
+  gap: 0.625rem;
   overflow: hidden;
 
   .itemTitle {
     margin: 0;
-    font-size: .75rem;
+    font-size: 0.75rem;
     font-weight: 500;
   }
 
   .itemText {
     margin: 0;
-    font-size: .75rem;
+    font-size: 0.75rem;
     font-weight: 300;
     opacity: 0.8;
     white-space: nowrap;

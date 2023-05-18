@@ -4,13 +4,19 @@ pragma solidity ^0.8.7;
 import "./libs/SignatureValidatorV2.sol";
 
 contract AmbireAccount {
+	address private constant FALLBACK_HANDLER_SLOT = address(0x6969);
+
+	// Variables
 	mapping (address => bytes32) public privileges;
-	// The next allowed nonce
 	uint public nonce;
+	mapping (bytes32 => uint) public scheduledRecoveries;
 
 	// Events
 	event LogPrivilegeChanged(address indexed addr, bytes32 priv);
 	event LogErr(address indexed to, uint value, bytes data, bytes returnData); // only used in tryCatch
+	event LogScheduled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, address indexed recoveryKey, uint nonce, uint time, Transaction[] txns);
+	event LogCancelled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, address indexed recoveryKey, uint time);
+	event LogExecScheduled(bytes32 indexed txnHash, bytes32 indexed recoveryHash, uint time);
 
 	// Transaction structure
 	// we handle replay protection separately by requiring (address(this), chainID, nonce) as part of the sig
@@ -19,6 +25,14 @@ contract AmbireAccount {
 		uint value;
 		bytes data;
 	}
+	struct RecoveryInfo {
+		address[] keys;
+		uint timelock;
+	}
+
+	// Recovery mode constants
+	uint8 private constant SIGMODE_RECOVER = 254;
+	uint8 private constant SIGMODE_CANCEL = 255;
 
 	constructor(address[] memory addrs) {
 		uint len = addrs.length;
@@ -31,26 +45,15 @@ contract AmbireAccount {
 
 	// This contract can accept ETH without calldata
 	receive() external payable {}
+	// To support EIP 721 and EIP 1155, we need to respond to those methods with their own method signature
+	function onERC721Received(address, address, uint256, bytes memory) external pure returns (bytes4) { return this.onERC721Received.selector; }
+	function onERC1155Received(address, address, uint256, uint256, bytes memory) external pure returns (bytes4) { return this.onERC1155Received.selector; }
+	function onERC1155BatchReceived(address, address, uint256[] memory, uint256[] memory, bytes memory) external pure returns (bytes4) {  return this.onERC1155BatchReceived.selector;  }
 
 	// This contract can accept ETH with calldata
-	// However, to support EIP 721 and EIP 1155, we need to respond to those methods with their own method signature
 	fallback() external payable {
-		bytes4 method = msg.sig;
-		if (
-			method == 0x150b7a02 // bytes4(keccak256("onERC721Received(address,address,uint256,bytes)"))
-				|| method == 0xf23a6e61 // bytes4(keccak256("onERC1155Received(address,address,uint256,uint256,bytes)"))
-				|| method == 0xbc197c81 // bytes4(keccak256("onERC1155BatchReceived(address,address,uint256[],uint256[],bytes)"))
-		) {
-			// Copy back the method
-			// solhint-disable-next-line no-inline-assembly
-			assembly {
-				calldatacopy(0, 0, 0x04)
-				return (0, 0x20)
-			}
-		}
-
 		// We store the fallback handler at this magic slot
-		address fallbackHandler = address(uint160(uint(privileges[address(0x6969)])));
+		address fallbackHandler = address(uint160(uint(privileges[FALLBACK_HANDLER_SLOT])));
 		if (fallbackHandler == address(0)) return;
 		assembly {
 			// We can use memory addr 0, since it's not occupied
@@ -74,16 +77,6 @@ contract AmbireAccount {
 		emit LogPrivilegeChanged(addr, priv);
 	}
 
-	// Useful for pre-EIP1559 flashbots
-	function tipMiner(uint amount)
-		external
-	{
-		require(msg.sender == address(this), 'ONLY_IDENTITY_CAN_CALL');
-		// See https://docs.flashbots.net/flashbots-auction/searchers/advanced/coinbase-payment/#managing-payments-to-coinbaseaddress-when-it-is-a-contract
-		// generally this contract is reentrancy proof cause of the nonce
-		executeCall(block.coinbase, amount, new bytes(0));
-	}
-
 	// Useful when we need to do multiple operations but ignore failures in some of them
 	function tryCatch(address to, uint value, bytes calldata data)
 		external
@@ -102,41 +95,76 @@ contract AmbireAccount {
 
 	// WARNING: if the signature of this is changed, we have to change IdentityFactory
 	function execute(Transaction[] calldata txns, bytes calldata signature)
-		external
+		public
 	{
-		require(txns.length > 0, 'MUST_PASS_TX');
 		uint currentNonce = nonce;
 		// NOTE: abi.encode is safer than abi.encodePacked in terms of collision safety
 		bytes32 hash = keccak256(abi.encode(address(this), block.chainid, currentNonce, txns));
 		// We have to increment before execution cause it protects from reentrancies
 		nonce = currentNonce + 1;
 
-		address signer = SignatureValidator.recoverAddrImpl(hash, signature, true);
-		require(privileges[signer] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
-		uint len = txns.length;
-		for (uint i=0; i<len; i++) {
-			Transaction memory txn = txns[i];
-			executeCall(txn.to, txn.value, txn.data);
+		address signerKey;
+		// Recovery signature: allows to perform timelocked txns
+		uint8 sigMode = uint8(signature[signature.length - 1]);
+		if (sigMode == SIGMODE_RECOVER || sigMode == SIGMODE_CANCEL) {
+			(bytes memory sig,) = SignatureValidator.splitSignature(signature);
+			(RecoveryInfo memory recoveryInfo, bytes memory recoverySignature, address recoverySigner, address postRecoverySigner) = abi.decode(sig, (RecoveryInfo, bytes, address, address));
+			bool isCancellation = sigMode == SIGMODE_CANCEL;
+			bytes32 recoveryInfoHash = keccak256(abi.encode(recoveryInfo));
+			require(privileges[recoverySigner] == recoveryInfoHash, 'RECOVERY_NOT_AUTHORIZED');
+			uint scheduled = scheduledRecoveries[hash];
+			if (scheduled != 0 && !isCancellation) {
+				// signerKey is set to postRecoverySigner so that the anti-bricking check can pass
+				signerKey = postRecoverySigner;
+				require(block.timestamp > scheduled, 'RECOVERY_NOT_READY');
+				delete scheduledRecoveries[hash];
+				emit LogExecScheduled(hash, recoveryInfoHash, block.timestamp);
+			} else {
+				address recoveryKey = SignatureValidator.recoverAddr(hash, recoverySignature);
+				bool isIn;
+				for (uint i=0; i<recoveryInfo.keys.length; i++) {
+					if (recoveryInfo.keys[i] == recoveryKey) { isIn = true; break; }
+				}
+				require(isIn, 'RECOVERY_NOT_AUTHORIZED');
+				if (isCancellation) {
+					delete scheduledRecoveries[hash];
+					emit LogCancelled(hash, recoveryInfoHash, recoveryKey, block.timestamp);
+				} else {
+					scheduledRecoveries[hash] = block.timestamp + recoveryInfo.timelock;
+					emit LogScheduled(hash, recoveryInfoHash, recoveryKey, currentNonce, block.timestamp, txns);
+				}
+				return;
+			}
+		} else {
+			signerKey = SignatureValidator.recoverAddrImpl(hash, signature, true);
+			require(privileges[signerKey] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
 		}
-		// The actual anti-bricking mechanism - do not allow a signer to drop their own priviledges
-		require(privileges[signer] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
+
+		executeBatch(txns);
+		// The actual anti-bricking mechanism - do not allow a signerKey to drop their own priviledges
+		require(privileges[signerKey] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
+	}
+
+	// built-in batching of multiple execute()'s; useful when performing timelocked recoveries
+	struct ExecuteArgs { Transaction[] txns; bytes signature; }
+	function executeMultiple(ExecuteArgs[] calldata toExec) external {
+		for (uint i = 0; i != toExec.length; i++) execute(toExec[i].txns, toExec[i].signature);
 	}
 
 	// no need for nonce management here cause we're not dealing with sigs
 	function executeBySender(Transaction[] calldata txns) external {
-		require(txns.length > 0, 'MUST_PASS_TX');
 		require(privileges[msg.sender] != bytes32(0), 'INSUFFICIENT_PRIVILEGE');
-		uint len = txns.length;
-		for (uint i=0; i<len; i++) {
-			Transaction memory txn = txns[i];
-			executeCall(txn.to, txn.value, txn.data);
-		}
+		executeBatch(txns);
 		// again, anti-bricking
 		require(privileges[msg.sender] != bytes32(0), 'PRIVILEGE_NOT_DOWNGRADED');
 	}
 
 	function executeBySelf(Transaction[] calldata txns) external {
 		require(msg.sender == address(this), 'ONLY_IDENTITY_CAN_CALL');
+		executeBatch(txns);
+	}
+
+	function executeBatch(Transaction[] memory txns) internal {
 		require(txns.length > 0, 'MUST_PASS_TX');
 		uint len = txns.length;
 		for (uint i=0; i<len; i++) {
@@ -146,11 +174,6 @@ contract AmbireAccount {
 	}
 
 	// we shouldn't use address.call(), cause: https://github.com/ethereum/solidity/issues/2884
-	// copied from https://github.com/uport-project/uport-identity/blob/develop/contracts/Proxy.sol
-	// there's also
-	// https://github.com/gnosis/MultiSigWallet/commit/e1b25e8632ca28e9e9e09c81bd20bf33fdb405ce
-	// https://github.com/austintgriffith/bouncer-proxy/blob/master/BouncerProxy/BouncerProxy.sol
-	// https://github.com/gnosis/safe-contracts/blob/7e2eeb3328bb2ae85c36bc11ea6afc14baeb663c/contracts/base/Executor.sol
 	function executeCall(address to, uint256 value, bytes memory data)
 		internal
 	{

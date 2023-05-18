@@ -4,7 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: .625rem 1.25rem;
+  padding: 0.625rem 1.25rem;
   height: 3.75rem;
   border-radius: $border-radius;
   color: $c-titan-white;
@@ -54,7 +54,7 @@
         font-size: 1.25rem;
         font-weight: 500;
         margin: 0;
-        margin-left: .75rem;
+        margin-left: 0.75rem;
       }
     }
 
@@ -71,12 +71,12 @@
 
       .currency {
         display: flex;
-        gap: .3125rem;
+        gap: 0.3125rem;
         font-size: 1rem;
       }
 
       .dollar {
-        font-size: .875rem;
+        font-size: 0.875rem;
         color: $c-turquoise;
       }
     }
@@ -86,12 +86,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: .3125rem;
+    gap: 0.3125rem;
     height: 2.5rem;
     padding: 0 1.125rem;
     background-color: rgba($c-titan-white, 0.04);
     border-radius: $border-radius;
-    font-size: .875rem;
+    font-size: 0.875rem;
     opacity: 1;
     transition: 0.3s ease-out opacity;
     cursor: not-allowed;
@@ -102,8 +102,8 @@
   .wrapper {
     flex-direction: column;
     height: auto;
-    gap: .625rem;
-    padding: .9375rem;
+    gap: 0.625rem;
+    padding: 0.9375rem;
 
     .body {
       width: 100%;
@@ -112,7 +112,7 @@
       .baseInfo {
         .name {
           font-size: 1rem;
-          margin-left: .5rem;
+          margin-left: 0.5rem;
         }
       }
 

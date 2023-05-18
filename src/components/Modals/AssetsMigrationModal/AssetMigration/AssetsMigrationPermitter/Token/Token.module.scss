@@ -6,8 +6,8 @@
   align-items: center;
   background-color: $c-mirage;
   border-radius: $border-radius;
-  padding: .625rem .9375rem;
-  
+  padding: 0.625rem 0.9375rem;
+
   &:hover {
     background-color: $c-mirage;
   }
@@ -34,18 +34,18 @@
   .name {
     font-weight: 500;
     font-size: 1rem;
-    margin-left: .625rem;
+    margin-left: 0.625rem;
   }
 
   .usd {
     color: $c-manatee;
-    padding-right: .5rem;
+    padding-right: 0.5rem;
   }
 
   .amount {
-    font-size: .875rem;
-    opacity: .9;
-    margin-left: .5rem;
+    font-size: 0.875rem;
+    opacity: 0.9;
+    margin-left: 0.5rem;
     flex-shrink: 1;
 
     .amountUsd {
@@ -55,8 +55,8 @@
 
   .status {
     margin-left: auto;
-    font-size: .875rem;
-    opacity: .8;
+    font-size: 0.875rem;
+    opacity: 0.8;
 
     .warning {
       color: $warning-color;
@@ -72,15 +72,15 @@
   .wrapper {
     flex-direction: column;
     justify-content: center;
-    gap: .625rem;
-    padding: .9375rem 1.25rem;
+    gap: 0.625rem;
+    padding: 0.9375rem 1.25rem;
 
     .name {
       margin-left: 0;
     }
 
     .amount {
-      margin-bottom: .625rem;
+      margin-bottom: 0.625rem;
     }
 
     .status {

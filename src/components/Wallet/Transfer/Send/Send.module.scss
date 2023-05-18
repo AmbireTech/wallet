@@ -13,7 +13,7 @@
   flex-direction: column;
   justify-content: space-between;
   padding: 2.5rem;
-  padding-top: .9375rem;
+  padding-top: 0.9375rem;
   gap: 2.5rem;
   overflow-y: auto;
 
@@ -24,7 +24,7 @@
   .validationError {
     color: $danger-color;
     text-align: center;
-    font-size: .875rem;
+    font-size: 0.875rem;
   }
 
   .content {
@@ -35,7 +35,7 @@
   }
 
   .amountLabel {
-    font-size: .875rem;
+    font-size: 0.875rem;
     width: 100%;
     display: flex;
     justify-content: space-between;
@@ -49,27 +49,44 @@
     opacity: 0.5;
   }
 
+  .gasTankMsg {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background-color: mix($c-ebony-clay, $warning-color, 90%);
+    color: $warning-color;
+    padding: 0.9375rem;
+    font-size: 0.875rem;
+    border-radius: $border-radius;
+
+    svg {
+      color: $c-ebony-clay;
+      width: 2.25rem;
+      height: 2.25rem;
+    }
+  }
+
   .gasTankConvertMsg {
     display: flex;
     align-items: center;
-    gap: .75rem;
+    gap: 0.75rem;
     background-color: mix($c-ebony-clay, $c-turquoise, 90%);
     color: $c-turquoise;
-    padding: .9375rem;
-    font-size: .875rem;
+    padding: 0.9375rem;
+    font-size: 0.875rem;
     border-radius: $border-radius;
   }
 
   .binanceAddressWarning {
     margin: 0;
-    
+
     .checkBoxLabel {
       vertical-align: middle;
-      margin-top: .1875rem;
+      margin-top: 0.1875rem;
     }
     a {
       vertical-align: middle;
-      margin-left: .625rem;
+      margin-left: 0.625rem;
     }
   }
 }

@@ -36,14 +36,14 @@ $max-width: 40.625rem;
         display: flex;
         align-items: center;
         background-color: theme(background-primary);
-        padding: .125rem .5rem;
+        padding: 0.125rem 0.5rem;
         color: $text-container-color;
         font-weight: 300;
         font-size: 1rem;
         border-radius: $border-radius;
 
         span {
-          margin-left: .25rem;
+          margin-left: 0.25rem;
         }
       }
     }
@@ -58,15 +58,15 @@ $max-width: 40.625rem;
     .dappMessage {
       display: flex;
       flex-direction: row;
-      gap: .5rem;
-      row-gap: .1875rem;
+      gap: 0.5rem;
+      row-gap: 0.1875rem;
       align-items: center;
       flex-wrap: wrap;
 
       .dapp {
         display: flex;
         flex-direction: row;
-        gap: .5rem;
+        gap: 0.5rem;
         color: theme(highlight-primary);
 
         .icon {
@@ -78,7 +78,7 @@ $max-width: 40.625rem;
           background-color: theme(background-icon);
 
           svg {
-            font-size: .75rem;
+            font-size: 0.75rem;
             opacity: 0.2;
           }
         }
@@ -105,7 +105,7 @@ $max-width: 40.625rem;
     resize: none;
     font-family: 'Poppins', sans-serif;
     font-weight: 300;
-    font-size: .875rem;
+    font-size: 0.875rem;
   }
 
   .actions {
@@ -151,14 +151,14 @@ $max-width: 40.625rem;
 
       .signMessageTitle {
         .signMessageTitleSignatureType {
-          font-size: .75rem;
+          font-size: 0.75rem;
         }
       }
     }
 
     .requestMessage {
       .dappMessage {
-        font-size: .75rem;
+        font-size: 0.75rem;
 
         a {
           display: flex;
@@ -167,16 +167,16 @@ $max-width: 40.625rem;
       }
     }
     .signMessage {
-      font-size: .75rem;
+      font-size: 0.75rem;
       min-height: 11.25rem;
-      padding: .625rem 1.25rem;
-      padding-bottom: .9375rem;
+      padding: 0.625rem 1.25rem;
+      padding-bottom: 0.9375rem;
     }
     .actions {
       form {
         .buttons {
           flex-direction: column-reverse;
-          gap: .625rem;
+          gap: 0.625rem;
 
           .button {
             flex: unset;

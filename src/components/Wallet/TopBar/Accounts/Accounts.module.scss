@@ -3,218 +3,217 @@
 $account-height: 3.75rem;
 
 .wrapper {
-    max-width: 13.75rem;
-    width: 100%;
-    color: $c-titan-white;
+  max-width: 13.75rem;
+  width: 100%;
+  color: $c-titan-white;
 
-    .content {
-        cursor: pointer;
+  .content {
+    cursor: pointer;
+  }
+
+  .selectedAddress {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 6.875rem;
+    gap: 0.3125rem;
+
+    p {
+      margin: 0;
     }
 
-    .selectedAddress {
+    .selectedAddressCopyIcon {
+      width: 1.125rem;
+      height: 1.125rem;
+      transition: 0.3s ease-in-out opacity;
+
+      &:hover {
+        opacity: 0.6;
+      }
+    }
+  }
+
+  .menu {
+    background-color: $c-mirage;
+    padding-top: 0.9375rem;
+    min-width: 35rem;
+
+    .list {
+      max-height: calc(#{$account-height} * 6.5);
+      overflow-x: hidden;
+      overflow-y: auto;
+      scrollbar-width: thin;
+
+      .sortButtons {
+        padding: 0 0.625rem;
+      }
+
+      .account {
+        padding: 0 0.625rem;
+        position: relative;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        width: 100%;
-        max-width: 6.875rem;
-        gap: .3125rem;
-        
-        p {
-            margin: 0;
+
+        &[draggable='true'] .dragHandle {
+          cursor: grab;
+          cursor: -moz-grab;
+          cursor: -webkit-grab;
         }
 
-        .selectedAddressCopyIcon {
-            width: 1.125rem;
-            height: 1.125rem;
-            transition: .3s ease-in-out opacity;
+        &[draggable='true']:active .dragHandle {
+          cursor: grabbing;
+          cursor: -moz-grabbing;
+          cursor: -webkit-grabbing;
+        }
+
+        .inner {
+          min-width: 0;
+          height: $account-height;
+          display: flex;
+          flex: 1;
+          align-items: center;
+          justify-content: flex-start;
+          gap: 1.3125rem;
+          margin-right: 0.625rem;
+          opacity: 0.6;
+          padding: 0 0.625rem;
+          border-radius: $border-radius;
+          cursor: pointer;
+
+          .icon {
+            flex: 0 0 auto;
+            height: 2rem;
+            width: 2rem;
+            @include flex-center-center;
+            border-radius: $border-radius;
+            background-size: cover;
+          }
+
+          .details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+            overflow: hidden;
+
+            .address,
+            label {
+              overflow: hidden;
+              white-space: nowrap;
+              text-overflow: ellipsis;
+            }
+
+            .address {
+              font-size: 0.875rem;
+              font-weight: 400;
+            }
+
+            label {
+              font-size: 0.75rem;
+              font-weight: 500;
+              opacity: 0.5;
+              cursor: pointer;
+            }
+          }
+
+          &:hover {
+            background-color: $c-ebony-clay;
+
+            // ~.buttons .button {
+            //     svg {
+            //         opacity: 1;
+            //     }
+            //     background-color: $c-ebony-clay;
+            // }
+          }
+        }
+
+        .buttons {
+          display: flex;
+          flex-direction: row;
+
+          .button {
+            display: block;
+            flex: 0 0 auto;
+            height: 3.75rem;
+            width: 3.125rem;
+            @include flex-center-center;
+            color: $c-titan-white;
+            font-size: 2.5rem;
+            cursor: pointer;
+            border-radius: $border-radius;
+
+            svg {
+              opacity: 0.4;
+              width: 1.75rem;
+              height: 1.75rem;
+            }
 
             &:hover {
-                opacity: .6;
+              background-color: $c-ebony-clay;
+
+              svg {
+                opacity: 1;
+              }
             }
+
+            &:active {
+              background-color: rgba(255, 255, 255, 0.05);
+            }
+          }
         }
+
+        &.active {
+          .inner {
+            opacity: 1;
+          }
+        }
+      }
+    }
+
+    .confirmDeleteAccount {
+      display: flex;
+      align-items: center;
+      gap: 1.3125rem;
+
+      .message {
+        margin: 0;
+        margin-left: 0.625rem;
+        font-size: 0.9375rem;
+      }
+    }
+  }
+  .addAccount {
+    padding: 1.25rem 0.625rem;
+    padding-bottom: 1.125rem;
+
+    button {
+      width: 100%;
+    }
+  }
+}
+
+// Mobile
+
+@include lg-breakpoint {
+  .wrapper {
+    max-width: 100%;
+
+    .selectedAddress {
+      max-width: 8.75rem;
     }
 
     .menu {
-        background-color: $c-mirage;
-        padding-top: .9375rem;
-        min-width: 35rem;
-        
+      min-width: 100%;
+      width: 100%;
 
-        .list {
-            max-height: calc(#{$account-height} * 6.5);
-            overflow-x: hidden;
-            overflow-y: auto;
-            scrollbar-width: thin;
-
-            .sortButtons {
-                padding: 0 .625rem;
-            }
-
-            .account {
-                padding: 0 .625rem;
-                position: relative;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-
-                &[draggable="true"] .dragHandle {
-                    cursor: grab;
-                    cursor: -moz-grab;
-                    cursor: -webkit-grab;
-                }
-
-                &[draggable="true"]:active .dragHandle {
-                    cursor: grabbing;
-                    cursor: -moz-grabbing;
-                    cursor: -webkit-grabbing;
-                }
-
-                .inner {
-                    min-width: 0;
-                    height: $account-height;
-                    display: flex;
-                    flex: 1;
-                    align-items: center;
-                    justify-content: flex-start;
-                    gap: 1.3125rem;
-                    margin-right: .625rem;
-                    opacity: 0.6;
-                    padding: 0 .625rem;
-                    border-radius: $border-radius;
-                    cursor: pointer;
-
-                    .icon {
-                        flex: 0 0 auto;
-                        height: 2rem;
-                        width: 2rem;
-                        @include flex-center-center;
-                        border-radius: $border-radius;
-                        background-size: cover;
-                    }
-
-                    .details {
-                        display: flex;
-                        flex-direction: column;
-                        gap: .125rem;
-                        overflow: hidden;
-
-                        .address, label {
-                            overflow: hidden;
-                            white-space: nowrap;
-                            text-overflow: ellipsis;
-                        }
-
-                        .address {
-                            font-size: .875rem;
-                            font-weight: 400;
-                        }
-
-                        label {
-                            font-size: .75rem;
-                            font-weight: 500;
-                            opacity: 0.5;
-                            cursor: pointer;
-                        }
-                    }
-
-                    &:hover {
-                        background-color: $c-ebony-clay;
-
-                        // ~.buttons .button {
-                        //     svg {
-                        //         opacity: 1;
-                        //     }
-                        //     background-color: $c-ebony-clay;
-                        // }
-                    }
-                }
-
-                .buttons {
-                    display: flex;
-                    flex-direction: row;
-
-                    .button {
-                        display: block;
-                        flex: 0 0 auto;
-                        height: 3.75rem;
-                        width: 3.125rem;
-                        @include flex-center-center;
-                        color: $c-titan-white;
-                        font-size: 2.5rem;
-                        cursor: pointer;
-                        border-radius: $border-radius;
-
-                        svg {
-                            opacity: 0.4;
-                            width: 1.75rem;
-                            height: 1.75rem;
-                        }
-
-                        &:hover {
-                            background-color: $c-ebony-clay;
-
-                            svg {
-                                opacity: 1;
-                            }
-                        }
-
-                        &:active {
-                            background-color: rgba(255, 255, 255, 0.05);
-                        }
-                    }
-                }
-
-                &.active {
-
-                    .inner {
-                        opacity: 1;
-                    }
-                }
-            }
+      .confirmDeleteAccount {
+        .message {
+          font-size: 0.875rem;
+          word-wrap: break-word;
         }
-
-        .confirmDeleteAccount {
-            display: flex;
-            align-items: center;
-            gap: 1.3125rem;
-            
-            .message {
-                margin: 0;
-                margin-left: .625rem;
-                font-size: .9375rem;
-            }
-        }
+      }
     }
-    .addAccount {
-        padding: 1.25rem .625rem;
-        padding-bottom: 1.125rem;
-    
-        button {
-            width: 100%;
-        }
-    }
-}
-
-// Mobile 
-
-@include lg-breakpoint {
-    .wrapper {
-        max-width: 100%;
-
-        .selectedAddress {
-            max-width: 8.75rem;
-        }
-
-        .menu {
-            min-width: 100%;
-            width: 100%;
-
-            .confirmDeleteAccount {
-                .message {
-                    font-size: .875rem;
-                    word-wrap: break-word;
-                }
-            }
-        }
-    }
+  }
 }

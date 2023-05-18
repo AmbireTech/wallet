@@ -3,145 +3,165 @@
 $heading-height: 2.8125rem;
 
 .handle {
-    display: none!important;
+  display: none !important;
 }
 
 .dropdownTitleIcon {
-    width: 2.5rem;
-    height: 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
 }
 
 .addressBook {
-    height: 3.75rem !important;
-    background-color: $c-mirage-dark!important;
-    border: none!important;
-    border-radius: 0 $border-radius $border-radius 0!important;
-    padding: 0 .625rem;
-    opacity: 1;
-    transition: .3s ease-in-out opacity;
+  height: 3.75rem !important;
+  background-color: $c-mirage-dark !important;
+  border: none !important;
+  border-radius: 0 $border-radius $border-radius 0 !important;
+  padding: 0;
+  opacity: 1;
+  transition: 0.3s ease-in-out opacity;
 
-    &:hover {
-        cursor: pointer;
+  &:hover {
+    cursor: pointer;
+  }
+
+  .dropdownTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 auto;
+
+    .addressBookIcon {
+      width: 35px;
+      height: 35px;
     }
 
-    .content {
-        cursor: pointer;
+    .addressBookTitle {
+      display: none;
+    }
+  }
 
-        .title {
-            flex-direction: row !important;
-        }
+  .content {
+    cursor: pointer;
+  }
+
+  .menu {
+    top: 4.375rem !important;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 0;
+    white-space: nowrap;
+    min-width: 16.25rem;
+    max-width: 25rem;
+  }
+
+  .button {
+    background-color: transparent;
+    border: none;
+    height: 100%;
+    @include flex-center-center;
+    font-size: 1.0625rem;
+    font-weight: bold;
+    color: $c-titan-white;
+
+    &:not([disabled]):hover {
+      cursor: pointer;
+      opacity: 1;
+      background-color: rgba($c-mirage, 0.2) !important;
     }
 
-    .menu {
-        top: 4.375rem !important;
-        display: flex;
-        flex-direction: column;
-        gap: 0;
-        padding: 0;
-        white-space: nowrap;
-        min-width: 16.25rem;
-        max-width: 25rem;
+    &:active {
+      background-color: $c-mirage !important;
+    }
+  }
+
+  .heading {
+    height: $heading-height;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 1.25rem;
+    background-color: $c-mirage;
+
+    .title {
+      display: flex;
+      flex-direction: row !important;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.9375rem;
+      font-weight: 400;
     }
 
     .button {
-        height: 100%;
-        @include flex-center-center;
-        font-size: 1.0625rem;
-        font-weight: bold;
-        color: $c-titan-white;
+      width: $heading-height;
+    }
+  }
 
-        &:not([disabled]):hover {
-            cursor: pointer;
-            opacity: 1;
-            background-color: rgba($c-mirage, 0.2) !important;
-        }
+  .content {
+    max-height: 15.625rem;
+    display: flex;
+    flex-direction: column;
+    padding: 0;
+    overflow-y: auto;
 
-        &:active {
-            background-color: $c-mirage!important;
-        }
+    .text-input {
+      input {
+        padding-right: initial !important;
+      }
     }
 
-    .heading {
-        height: $heading-height;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding-left: 1.25rem;
+    .emptyText {
+      padding: 0.9375rem;
+      font-size: 0.875rem;
+      margin: 0;
+    }
+
+    .address {
+      border-radius: 0;
+    }
+  }
+
+  .addAddress {
+    padding: 0.625rem;
+
+    .fields {
+      display: flex;
+      flex-direction: column;
+      gap: 0.625rem;
+
+      input[type='text'] {
+        display: block;
+        height: 2.5rem;
+        width: 18.75rem;
+        margin: 0 auto;
+        font-size: 1em !important;
         background-color: $c-mirage;
-
-        .title {
-            display: flex;
-            flex-direction: row !important;
-            align-items: center;
-            gap: .625rem;
-            font-size: .9375rem;
-            font-weight: 400;
-        }
-
-        .button {
-            width: $heading-height;
-        }
+        border-radius: 0.5rem;
+        color: $c-titan-white;
+      }
     }
 
-    .content {
-        max-height: 15.625rem;
-        display: flex;
-        flex-direction: column;
-        padding: 0;
-        overflow-y: auto;
-
-        .text-input {
-            input {
-                padding-right: initial !important;
-            }
-        }
-
-        .emptyText {
-            padding: .9375rem;
-            font-size: .875rem;
-            margin: 0;
-        }
-
-        .address {
-            border-radius: 0;
-        }
+    button {
+      width: 100%;
+      max-width: 18.75rem;
+      margin: 0 auto;
+      margin-top: 0.9375rem;
+      color: $c-titan-white;
     }
-
-    .addAddress {
-        padding: .625rem;
-
-        .fields {
-            display: flex;
-            flex-direction: column;
-            gap: .625rem;
-
-            input[type=text] {
-                display: block;
-                height: 2.5rem;
-                width: 18.75rem;
-                margin: 0 auto;
-                font-size: 1em !important;
-                background-color: $c-mirage;
-                border-radius: .5rem;
-                color: $c-titan-white;
-            }
-        }
-
-        button {
-            width: 100%;
-            max-width: 18.75rem;
-            margin: 0 auto;
-            margin-top: .9375rem;
-            color: $c-titan-white;
-        }
-    }
+  }
 }
 
 // Mobile
 @include lg-breakpoint {
-    .addressBook {
-        .menu {
-            width: 100%;
-        }
+  .addressBook {
+    .dropdownTitle {
+      margin: 0;
+      .addressBookTitle {
+        display: block;
+      }
     }
+    .menu {
+      width: 100%;
+    }
+  }
 }

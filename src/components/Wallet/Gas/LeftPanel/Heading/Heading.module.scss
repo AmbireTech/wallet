@@ -11,19 +11,19 @@
   .allNetworksAndToggle {
     display: flex;
     justify-content: space-between;
-    gap: 1.25rem .625rem;
+    gap: 1.25rem 0.625rem;
     flex: 1;
-    
+
     .toggleWrapper {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: .625rem;
+      gap: 0.625rem;
       margin: 0 auto;
 
       .toggleLabel {
-        font-size: .875rem;
+        font-size: 0.875rem;
         color: $c-scampi;
       }
     }
@@ -32,7 +32,7 @@
   .box {
     display: flex;
     flex-direction: column;
-    padding: .4375rem .625rem;
+    padding: 0.4375rem 0.625rem;
     align-items: center;
     color: $c-scampi;
     justify-content: space-around;
@@ -40,12 +40,12 @@
     border-radius: $border-radius;
     background: $c-ebony-clay;
     box-shadow: $box-shadow;
-    border: .0625rem solid $c-heliotrope;
+    border: 0.0625rem solid $c-heliotrope;
 
     .balanceAllNetworks {
       color: $c-titan-white;
-      margin-bottom: .3125rem;
-      font-size: .75rem;
+      margin-bottom: 0.3125rem;
+      font-size: 0.75rem;
 
       svg {
         color: $c-heliotrope;
@@ -63,7 +63,7 @@
         font-size: 1.375rem;
 
         span {
-          font-size: .75rem;
+          font-size: 0.75rem;
         }
       }
 
@@ -74,7 +74,7 @@
     }
 
     .footer {
-      font-size: .75rem;
+      font-size: 0.75rem;
       color: $c-scampi;
       margin: 0;
       text-align: center;
@@ -83,21 +83,21 @@
     &.totalSave {
       border-color: $c-scampi;
       align-items: flex-start;
-      padding: .9375rem .625rem;
-      padding-bottom: .75rem;
+      padding: 0.9375rem 0.625rem;
+      padding-bottom: 0.75rem;
       box-shadow: none;
       max-width: 12.5rem;
 
       .smallText {
         display: flex;
         justify-content: space-between;
-        font-size: .75rem;
+        font-size: 0.75rem;
         width: 100%;
         align-items: center;
-        margin-bottom: .3125rem;
+        margin-bottom: 0.3125rem;
 
         .label {
-          font-size: .75rem;
+          font-size: 0.75rem;
           font-weight: 300;
           color: $c-heliotrope;
           max-width: 60%;
@@ -125,7 +125,7 @@
 
 @include lg-breakpoint {
   .wrapper {
-    margin-bottom: .625rem;
+    margin-bottom: 0.625rem;
   }
 }
 
@@ -134,7 +134,7 @@
     flex-direction: column;
     gap: 1.25rem;
 
-    .allNetworksAndToggle { 
+    .allNetworksAndToggle {
       flex-direction: column-reverse;
 
       .toggleWrapper {

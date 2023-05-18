@@ -13,13 +13,13 @@
   height: 2.25rem;
   border: 1px solid transparent;
   border-bottom-color: $c-fiord;
-  padding: .0625rem 1.25rem;
+  padding: 0.0625rem 1.25rem;
   padding-left: 0;
   cursor: pointer;
   transition: opacity 0.1s ease-in-out;
 
   &:hover {
-    opacity: .8;
+    opacity: 0.8;
   }
 
   &:last-child {
@@ -31,14 +31,14 @@
     cursor: pointer;
     color: $c-titan-white;
     font-weight: 300;
-    font-size: .875rem;
+    font-size: 0.875rem;
   }
 
   .network {
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: .5rem;
+    gap: 0.5rem;
     font-weight: 400;
   }
 }

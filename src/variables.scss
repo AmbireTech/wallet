@@ -3,35 +3,35 @@
 $sidebar-mobile-height: 5rem;
 
 $basic-transition: all 0.1s ease-in-out;
-$border-radius: .75rem;
-$box-shadow: 0 .3125rem .625rem #00000026;
+$border-radius: 0.75rem;
+$box-shadow: 0 0.3125rem 0.625rem #00000026;
 
 @mixin flex-center-center {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @mixin flex-full-grow-container {
-    display: flex;
-    flex-direction: column;
-    flex-grow: 1;
-    align-items: stretch;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  align-items: stretch;
 }
 
 @mixin absolute-full-size {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 $layout-spacing: 9.375rem;
 
 // Redesign variables. Later we will apply them in the current variables naming pattern.
 $c-ebony-clay: #24263d;
-$c-ebony-clay-light: #282B44;
+$c-ebony-clay-light: #282b44;
 $c-mirage: #1e2033;
 $c-mirage-dark: #171826;
 $c-shark: #202229;
@@ -40,34 +40,34 @@ $c-martinique: #2d314d;
 $c-martinique-light: #333757;
 $c-manatee: #88899d;
 $c-blue-bell: #898dcb;
-$c-scampi: #6770B3;
+$c-scampi: #6770b3;
 $c-heliotrope: #ae60ff;
-$c-electric-violet: #6000FF;
+$c-electric-violet: #6000ff;
 $c-turquoise: #27e8a7;
-$c-blue-lagoon: #007D8A;
-$c-picton-blue: #47AEE9;
+$c-blue-lagoon: #007d8a;
+$c-picton-blue: #47aee9;
 $c-half-spanish-white: #fef5db;
 $c-titan-white: #ebecff;
 $c-white: #ffffff;
 $c-lavender-mist: #ede2ff;
 
-$tertiary-accent-color: #C3D4F6;
+$tertiary-accent-color: #c3d4f6;
 $success-color: $c-turquoise;
-$success-background-color: #C8FFFE;
+$success-background-color: #c8fffe;
 $danger-color: #fd1a64;
-$danger-background-color: #FEE2E8;
+$danger-background-color: #fee2e8;
 $warning-color: #ffbc00;
 $warning-background-color: $c-half-spanish-white;
-$success-background-color: #C8FFFE;
+$success-background-color: #c8fffe;
 $info-color: #7189ff;
-$info-background-color: #EDE2FF;
+$info-background-color: #ede2ff;
 $alert-text-color: $c-martinique-light;
 
-$ambire-dark-blue: #6000FF;
-$ambire-purple: #AF50FF;
+$ambire-dark-blue: #6000ff;
+$ambire-purple: #af50ff;
 
 $text-container-color: mix($c-titan-white, $c-ebony-clay, 60%);
 
 @function theme($color-name) {
-    @return var(--#{$color-name});
+  @return var(--#{$color-name});
 }

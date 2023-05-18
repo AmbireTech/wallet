@@ -6,23 +6,26 @@
   gap: 1.25rem;
   padding: 1.25rem;
   background: $c-ebony-clay;
-  border: .0625rem solid $c-fiord;
+  border: 0.0625rem solid $c-fiord;
   border-radius: $border-radius;
 
   .message {
     margin: 0;
     display: flex;
     flex-direction: column;
+    align-items: flex-start;
     flex: 1;
 
-    .link {
+    .button {
       cursor: pointer;
       display: block;
       color: $c-turquoise;
       text-decoration: underline;
-  
-      &.linkMargin {
-        margin-top: .5rem;
+      padding: 0;
+
+      &.buttonMargin {
+        margin-top: 0.5rem;
+        align-self: center;
       }
     }
   }

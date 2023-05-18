@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useRef, useState, useMemo } from 'react'
-import { NavLink, useRouteMatch  } from 'react-router-dom'
+import { NavLink, useRouteMatch } from 'react-router-dom'
 import cn from 'classnames'
 
 import { Loading, Button } from 'components/common'
@@ -22,12 +22,26 @@ import styles from './SideBar.module.scss'
 
 const helpCenterUrl = 'https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet'
 
-const round = num => Math.round((num + Number.EPSILON) * 100) / 100
+const round = (num) => Math.round((num + Number.EPSILON) * 100) / 100
 
-const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwork, dappsCatalog }) => {
+const SideBar = ({
+  match,
+  portfolio,
+  hidePrivateValue,
+  relayerURL,
+  selectedNetwork,
+  dappsCatalog
+}) => {
   const networkBalance = portfolio.balance.total.full
-  const allTokensWithoutPrice = portfolio?.tokens.length && portfolio?.tokens.every(t => !t.price)
-  const shortBalance = networkBalance >= 10000 ? `${String(round(networkBalance/1000)).split('.').join(',')}K` : (allTokensWithoutPrice && !networkBalance ? ' -' : networkBalance.toFixed(2))
+  const allTokensWithoutPrice = portfolio?.tokens.length && portfolio?.tokens.every((t) => !t.price)
+  const shortBalance =
+    networkBalance >= 10000
+      ? `${String(round(networkBalance / 1000))
+          .split('.')
+          .join(',')}K`
+      : allTokensWithoutPrice && !networkBalance
+      ? ' -'
+      : networkBalance.toFixed(2)
   const sidebarRef = useRef()
   const [balanceFontSize, setBalanceFontSize] = useState(0)
   const { isDappMode, sideBarOpen, toggleSideBarOpen, toggleDappMode } = dappsCatalog
@@ -35,108 +49,123 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
 
   const dappModeSidebar = useMemo(() => isDappMode && routeMatch, [isDappMode, routeMatch])
 
-    const resizeBalance = useCallback(() => {
-        const balanceFontSizes = {
-            3: '2.2rem',
-            5: '1.8rem',
-            7: '1.6rem',
-            9: '1.4rem',
-            11: '1.2rem',
-        }
+  const resizeBalance = useCallback(() => {
+    const balanceFontSizes = {
+      3: '2.2rem',
+      5: '1.8rem',
+      7: '1.6rem',
+      9: '1.4rem',
+      11: '1.2rem'
+    }
 
-        const charLength = portfolio.balance.total.truncated.length
-        const closest = Object.keys(balanceFontSizes).reduce((prev, current) => Math.abs(current - charLength) < Math.abs(prev - charLength) ? current : prev)
-        setBalanceFontSize(balanceFontSizes[closest])
-    }, [portfolio.balance.total])
+    const charLength = portfolio.balance.total.truncated.length
+    const closest = Object.keys(balanceFontSizes).reduce((prev, current) =>
+      Math.abs(current - charLength) < Math.abs(prev - charLength) ? current : prev
+    )
+    setBalanceFontSize(balanceFontSizes[closest])
+  }, [portfolio.balance.total])
 
-    useEffect(() => resizeBalance(), [resizeBalance])
+  useEffect(() => resizeBalance(), [resizeBalance])
 
   const onDappsClick = useCallback(() => {
-    if(dappModeSidebar) {
+    if (dappModeSidebar) {
       toggleDappMode()
     }
   }, [dappModeSidebar, toggleDappMode])
 
   return (
-    <div className={cn(styles.wrapper, {
+    <div
+      className={cn(styles.wrapper, {
         [styles.dappMode]: dappModeSidebar,
         [styles.open]: sideBarOpen
-    })} ref={sidebarRef}>
+      })}
+      ref={sidebarRef}
+    >
       {/* NOTE: click outside not working because of the iframe - ths is simpler than adding event listeners to the dapps ifeame  */}
-      {dappModeSidebar && sideBarOpen && <div className={styles.outsideHandler} onClick={() => toggleSideBarOpen()}></div> }
-      {dappModeSidebar &&
-      <div className={styles.ambireLogo}>
-        <div className={styles.logo} />
-        <div className={styles.icon} />
-        <Button clear icon={<MdClose size={23} />} mini
-          onClick={toggleSideBarOpen}
-        ></Button>
-      </div>
-      }
+      {dappModeSidebar && sideBarOpen && (
+        <div className={styles.outsideHandler} onClick={() => toggleSideBarOpen()} />
+      )}
+      {dappModeSidebar && (
+        <div className={styles.ambireLogo}>
+          <div className={styles.logo} />
+          <div className={styles.icon} />
+          <Button
+            variant="secondary"
+            size="xsm"
+            startIcon={<MdClose size={23} />}
+            onClick={toggleSideBarOpen}
+          />
+        </div>
+      )}
 
-      { !dappModeSidebar && <NavLink to={'/wallet/dashboard'} className={styles.sidebarLogo}>
-        <img src='/resources/logo.svg' alt='ambire-logo' />
-      </NavLink>
-      }
+      {!dappModeSidebar && (
+        <NavLink to="/wallet/dashboard" className={styles.sidebarLogo}>
+          <img src="/resources/logo.svg" alt="ambire-logo" />
+        </NavLink>
+      )}
       <div className={styles.balance}>
         <label>Balance</label>
         {portfolio.isCurrNetworkBalanceLoading ? (
-          <div className={'loaderContainer'}>
+          <div className="loaderContainer">
             <Loading />
           </div>
         ) : (
-          <div
-            className={styles.balanceDollarAmount}
-            style={{ fontSize: balanceFontSize }}
-          >
+          <div className={styles.balanceDollarAmount} style={{ fontSize: balanceFontSize }}>
             <span className={cn(styles.dollarSign, styles.highlight)}>$</span>
             {hidePrivateValue(shortBalance)}
           </div>
         )}
         <div>
-          <GasIndicator 
-            relayerURL={relayerURL} selectedNetwork={selectedNetwork} match={match}/>
+          <GasIndicator relayerURL={relayerURL} selectedNetwork={selectedNetwork} match={match} />
         </div>
       </div>
       <nav>
-        <NavLink to={match.url + "/dashboard"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/dashboard`} activeClassName={styles.selected}>
           <div className={styles.item}>
-              <DashboardIcon />Dashboard
+            <DashboardIcon />
+            Dashboard
           </div>
         </NavLink>
-        <NavLink to={match.url + "/deposit"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/deposit`} activeClassName={styles.selected}>
           <div className={styles.item}>
-              <DepositIcon />Deposit
+            <DepositIcon />
+            Deposit
           </div>
         </NavLink>
-        <NavLink to={match.url + "/transfer"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/transfer`} activeClassName={styles.selected}>
           <div className={styles.item}>
-              <TransferIcon />Transfer
+            <TransferIcon />
+            Transfer
           </div>
         </NavLink>
-        <NavLink to={match.url + "/swap"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/swap`} activeClassName={styles.selected}>
           <div className={styles.item}>
-              <SwapIcon />Swap
+            <SwapIcon />
+            Swap
           </div>
         </NavLink>
-        <NavLink to={match.url + "/gas-tank"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/gas-tank`} activeClassName={styles.selected}>
           <div className={styles.item}>
-              <GasTankIcon/>Gas Tank
+            <GasTankIcon />
+            Gas Tank
           </div>
         </NavLink>
-        <NavLink to={match.url + "/cross-chain"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/cross-chain`} activeClassName={styles.selected}>
           <div className={styles.item}>
-              <CrossChainIcon />Cross-Chain
+            <CrossChainIcon />
+            Cross-Chain
           </div>
         </NavLink>
-        <NavLink to={match.url + "/earn"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/earn`} activeClassName={styles.selected}>
           <div className={styles.item}>
-              <EarnIcon />Earn
+            <EarnIcon />
+            Earn
           </div>
         </NavLink>
-        <NavLink to={match.url + "/transactions"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/transactions`} activeClassName={styles.selected}>
           <div className={styles.item}>
-                <TransactionsIcon />Transactions
+            <TransactionsIcon />
+            Transactions
           </div>
         </NavLink>
         {/* Temporarily commented OpenSea tab. */}
@@ -145,19 +174,22 @@ const SideBar = ({ match, portfolio, hidePrivateValue, relayerURL, selectedNetwo
             <div className='opensea-icon'/>OpenSea
           </div>
         </NavLink> */}
-        <NavLink to={match.url + "/dapps"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/dapps`} activeClassName={styles.selected}>
           <div className={styles.item} onClick={onDappsClick}>
-              <DappsIcon />dApps
+            <DappsIcon />
+            dApps
           </div>
         </NavLink>
-        <NavLink to={match.url + "/security"} activeClassName={styles.selected}>
+        <NavLink to={`${match.url}/security`} activeClassName={styles.selected}>
           <div className={styles.item}>
-            <SecurityIcon />Security
+            <SecurityIcon />
+            Security
           </div>
         </NavLink>
         <a href={helpCenterUrl} target="_blank" rel="noreferrer">
           <div className={cn(styles.item, styles.helpLink)}>
-            <HelpIcon />Help Center
+            <HelpIcon />
+            Help Center
           </div>
         </a>
       </nav>

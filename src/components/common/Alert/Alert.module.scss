@@ -2,7 +2,7 @@
 
 .wrapper {
   position: relative;
-  
+
   .shadow {
     position: absolute;
     left: 50%;
@@ -13,8 +13,8 @@
     transform: translateX(-50%);
     background: rgba($c-mirage, 0.8);
     mix-blend-mode: multiply;
-    border-radius: .625rem;
-    filter: blur(.3125rem);
+    border-radius: 0.625rem;
+    filter: blur(0.3125rem);
   }
 
   .alertWrapper {
@@ -27,10 +27,10 @@
       align-items: center;
       z-index: 2;
       gap: 1.25rem;
-      padding: .8125rem 1.25rem;
-      padding-left: .8125rem;
+      padding: 0.8125rem 1.25rem;
+      padding-left: 0.8125rem;
       color: $c-martinique-light;
-      border-left: .4375rem solid;
+      border-left: 0.4375rem solid;
 
       &.alertIconNextToTitle {
         padding-left: 1.25rem;
@@ -56,7 +56,8 @@
         border-left-color: $danger-color;
       }
 
-      &.info, &.degenTip {
+      &.info,
+      &.degenTip {
         background-color: $info-background-color;
         border-left-color: $ambire-dark-blue;
       }
@@ -90,7 +91,7 @@
       &.small {
         .body {
           .titleWrapper {
-            gap: .625rem;
+            gap: 0.625rem;
 
             .title {
               font-size: 1rem;
@@ -99,7 +100,7 @@
           }
 
           .text {
-            font-size: .875rem;
+            font-size: 0.875rem;
           }
         }
       }
@@ -118,7 +119,7 @@
 
         .body {
           .titleWrapper {
-            gap: .9375rem;
+            gap: 0.9375rem;
 
             .title {
               font-size: 1.125rem;
@@ -126,7 +127,7 @@
           }
 
           .text {
-            font-size: .875rem;
+            font-size: 0.875rem;
           }
         }
 
@@ -141,16 +142,16 @@
 
         // Sizes
         &.small {
-          gap: .625rem;
-          
+          gap: 0.625rem;
+
           .body {
             .titleWrapper {
               .title {
-                font-size: .9375rem;
+                font-size: 0.9375rem;
               }
             }
             .text {
-              font-size: .8125rem;
+              font-size: 0.8125rem;
             }
           }
         }
@@ -159,30 +160,31 @@
   }
 }
 
-@include lg-breakpoint{
+@include lg-breakpoint {
   .wrapper {
     .alertWrapper {
       .alert {
         display: flex;
         flex-direction: column;
         padding: 1.25rem;
-        gap: .625rem;
+        gap: 0.625rem;
         border-left: 0;
-        border-top: .4375rem solid;
+        border-top: 0.4375rem solid;
         text-align: center;
 
-        &.info, &.degenTip {
+        &.info,
+        &.degenTip {
           border-top-color: $ambire-dark-blue;
         }
-  
+
         &.success {
           border-top-color: $success-color;
         }
-  
+
         &.warning {
           border-top-color: $warning-color;
         }
-  
+
         &.danger {
           border-top-color: $danger-color;
         }
@@ -195,13 +197,13 @@
         .body {
           display: flex;
           flex-direction: column;
-          gap: .625rem;
+          gap: 0.625rem;
           margin-left: 0;
 
           .titleWrapper {
             flex-direction: column;
             justify-content: flex-start;
-            gap: .3125rem;
+            gap: 0.3125rem;
 
             .title {
               font-size: 1rem;
@@ -209,7 +211,7 @@
           }
 
           .text {
-            font-size: .75rem;
+            font-size: 0.75rem;
             text-align: center;
           }
         }

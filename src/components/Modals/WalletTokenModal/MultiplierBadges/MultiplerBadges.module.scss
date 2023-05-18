@@ -4,73 +4,72 @@ $badge-size-width: 4rem;
 $badge-size-height: 5.625rem;
 
 .wrapper {
-    width: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 1.25rem;
+  padding-top: 0.75rem;
+  margin-bottom: 0; // Badges svg already have visual margin
+
+  a {
+    color: initial !important;
+  }
+
+  .badge {
+    position: relative;
+    height: $badge-size-height;
+    width: $badge-size-width;
     display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: center;
-    gap: 1.25rem;
-    padding-top: .75rem;
-    margin-bottom: 0; // Badges svg already have visual margin
+    margin-bottom: 0.625rem;
+    user-select: none;
+    opacity: 0.3;
+    transition: transform 0.1s ease-out;
 
-    a {
-        color: initial !important;
+    .multiplier {
+      font-size: 0.75rem;
+      font-weight: bold;
+      color: $c-titan-white;
     }
 
-    .badge {
-        position: relative;
-        height: $badge-size-height;
-        width: $badge-size-width;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: .625rem;
-        user-select: none;
-        opacity: 0.3;
-        transition: transform 0.1s ease-out;
+    .iconSvg {
+      background-size: contain;
+      width: 6.125rem;
+      height: 7rem;
+      display: block;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
 
-        .multiplier {
-            font-size: .75rem;
-            font-weight: bold;
-            color: $c-titan-white;
-        }
+      &.beta-tester {
+        background-image: url('/resources/rewards/reward-beta-tester.svg');
+      }
 
-        .iconSvg {
-            background-size: contain;
-            width: 6.125rem;
-            height: 7rem;
-            display: block;
-            background-repeat: no-repeat;
-            background-position: 50% 50%;
+      &.lobsters {
+        background-image: url('/resources/rewards/reward-lobsters.svg');
+      }
 
-            &.beta-tester {
-                background-image: url('/resources/rewards/reward-beta-tester.svg');
-            }
+      &.powerUserMultiplier {
+        background-image: url('/resources/rewards/reward-powerUserMultiplier.svg');
+      }
 
-            &.lobsters {
-                background-image: url('/resources/rewards/reward-lobsters.svg');
-            }
+      &.cryptoTesters {
+        background-image: url('/resources/rewards/reward-cryptoTesters.svg');
+      }
 
-            &.powerUserMultiplier {
-                background-image: url('/resources/rewards/reward-powerUserMultiplier.svg');
-            }
-
-            &.cryptoTesters {
-                background-image: url('/resources/rewards/reward-cryptoTesters.svg');
-            }
-
-            &.gasTankNft {
-                background-image: url('/resources/rewards/reward-gasTankNft.svg');
-            }
-
-        }
-
-        &.badgeActive {
-            opacity: 1;
-
-            &:hover {
-                filter: drop-shadow(0 0 .3125rem rgba(0, 0, 0, 0.3));
-                transform: scale(1.05);
-            }
-        }
+      &.gasTankNft {
+        background-image: url('/resources/rewards/reward-gasTankNft.svg');
+      }
     }
+
+    &.badgeActive {
+      opacity: 1;
+
+      &:hover {
+        filter: drop-shadow(0 0 0.3125rem rgba(0, 0, 0, 0.3));
+        transform: scale(1.05);
+      }
+    }
+  }
 }

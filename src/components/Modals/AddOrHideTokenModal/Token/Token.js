@@ -1,7 +1,7 @@
 import cn from 'classnames'
-import styles from './Token.module.scss'
 import { Image } from 'components/common'
 import { getTokenIcon } from 'lib/icons'
+import styles from './Token.module.scss'
 
 const Token = ({ name, address, network, icon, className, children }) => (
   <div className={cn(styles.wrapper, className)}>
@@ -16,14 +16,10 @@ const Token = ({ name, address, network, icon, className, children }) => (
         />
       </div>
       <h3 className={styles.name}>
-        { name }
-        {' '}
-        <span>
-          ({ network })
-        </span>
+        {name} <span>({network})</span>
       </h3>
     </div>
-    { children }
+    {children}
   </div>
 )
 
