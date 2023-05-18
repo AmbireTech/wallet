@@ -3,44 +3,44 @@ import { providers } from 'ethers'
 
 export const rpcUrls = {
   // Ankr RPCs for tests
-  ethereum:
-    'https://rpc.ankr.com/eth/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  polygon:
-    'https://rpc.ankr.com/polygon/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  fantom:
-    'https://rpc.ankr.com/fantom/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  'binance-smart-chain':
-    'https://rpc.ankr.com/bsc/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  avalanche:
-    'https://rpc.ankr.com/avalanche/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  arbitrum:
-    'https://rpc.ankr.com/arbitrum/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  andromeda:
-    'https://rpc.ankr.com/metis/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  moonbeam:
-    'https://rpc.ankr.com/moonbeam/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  gnosis:
-    'https://rpc.ankr.com/gnosis/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  optimism:
-    'https://rpc.ankr.com/optimism/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  mumbai:
-    'https://rpc.ankr.com/polygon_mumbai/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
-  sepolia:
-    'https://rpc.ankr.com/eth_sepolia/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // ethereum:
+  //   'https://rpc.ankr.com/eth/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // polygon:
+  //   'https://rpc.ankr.com/polygon/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // fantom:
+  //   'https://rpc.ankr.com/fantom/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // 'binance-smart-chain':
+  //   'https://rpc.ankr.com/bsc/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // avalanche:
+  //   'https://rpc.ankr.com/avalanche/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // arbitrum:
+  //   'https://rpc.ankr.com/arbitrum/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // andromeda:
+  //   'https://rpc.ankr.com/metis/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // moonbeam:
+  //   'https://rpc.ankr.com/moonbeam/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // gnosis:
+  //   'https://rpc.ankr.com/gnosis/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // optimism:
+  //   'https://rpc.ankr.com/optimism/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // mumbai:
+  //   'https://rpc.ankr.com/polygon_mumbai/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+  // sepolia:
+  //   'https://rpc.ankr.com/eth_sepolia/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
 
   // original RPCs
-  // ethereum: 'https://eth-mainnet.alchemyapi.io/v2/e5Gr8LP_EH0SBPZiNCcC08OuEDrvgoYK',
-  // polygon: 'https://polygon-mainnet.g.alchemy.com/v2/JfC7t8yyhMt4UkYv3QgHaQZ79F98Xsma',
-  // avalanche: 'https://rpc.ankr.com/avalanche',
-  // 'binance-smart-chain': 'https://bsc-dataseed1.defibit.io',
-  // fantom: 'https://rpc.ftm.tools',
-  // moonbeam: 'https://rpc.api.moonbeam.network',
-  // arbitrum: 'https://arb-mainnet.g.alchemy.com/v2/wBLFG9QR-n45keJvKjc4rrfp2F1sy1Cp',
-  // gnosis: 'https://rpc.ankr.com/gnosis',
-  // optimism: 'https://opt-mainnet.g.alchemy.com/v2/WoXh70mDVRLSfHao9i7ATeLKFmK7pHwm',
-  // andromeda: 'https://andromeda.metis.io/?owner=1088',
-  // mumbai: 'https://polygon-mumbai.g.alchemy.com/v2/rxBAvusV5YEzxEHX2LF9Y_jfIoRpIEGL',
-  // sepolia: 'https://eth-sepolia.g.alchemy.com/v2/nauTOhyzYtvU9NjWY00XrC73z0yzBYm_'
+  ethereum: 'https://eth-mainnet.alchemyapi.io/v2/e5Gr8LP_EH0SBPZiNCcC08OuEDrvgoYK',
+  polygon: 'https://polygon-mainnet.g.alchemy.com/v2/JfC7t8yyhMt4UkYv3QgHaQZ79F98Xsma',
+  avalanche: 'https://rpc.ankr.com/avalanche',
+  'binance-smart-chain': 'https://bsc-dataseed1.defibit.io',
+  fantom: 'https://rpc.ftm.tools',
+  moonbeam: 'https://rpc.api.moonbeam.network',
+  arbitrum: 'https://arb-mainnet.g.alchemy.com/v2/wBLFG9QR-n45keJvKjc4rrfp2F1sy1Cp',
+  gnosis: 'https://rpc.ankr.com/gnosis',
+  optimism: 'https://opt-mainnet.g.alchemy.com/v2/WoXh70mDVRLSfHao9i7ATeLKFmK7pHwm',
+  andromeda: 'https://andromeda.metis.io/?owner=1088',
+  mumbai: 'https://polygon-mumbai.g.alchemy.com/v2/rxBAvusV5YEzxEHX2LF9Y_jfIoRpIEGL',
+  sepolia: 'https://eth-sepolia.g.alchemy.com/v2/nauTOhyzYtvU9NjWY00XrC73z0yzBYm_',
 
   // ethereum: 'https://mainnet.infura.io/v3/3d22938fd7dd41b7af4197752f83e8a1',
   // ethereum: 'https://morning-wild-water.quiknode.pro/66011d2c6bdebc583cade5365086c8304c13366c/',
