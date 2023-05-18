@@ -47,8 +47,6 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
   }
 
   if (item.type === 'address') {
-    if (!item.address) return <span>Error: unknown address</span>
-    
     const shortenedAddress = `${item.address.substring(0, 8)}...${item.address.substring(
       item.address.length - 3,
       item.address.length
@@ -65,8 +63,10 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         <ToolTip disabled={!item.address} label={item.address}>
           <span className={styles.toAddress}>{item.name ? item.name : item.address}</span>
           <span className={cn(styles.toAddress, styles.short)}>
-            {item.name ? item.name : null}
-            {!item.name && item.address.length > 14 ? shortenedAddress : item.address}
+            {item.name 
+              ? item.name 
+              : (item.address.length > 14 ? shortenedAddress : item.address)
+            }
           </span>
           {item.address ? <ExternalLinkIcon className={styles.externalLink} /> : null}
         </ToolTip>

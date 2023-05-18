@@ -29,7 +29,8 @@ export default function SendTransaction({
   mustReplaceNonce,
   onBroadcastedTxn,
   onDismiss,
-  gasTankState
+  gasTankState,
+  requestPendingState
 }) {
   // NOTE: this can be refactored at a top level to only pass the selected account (full object)
   // keeping it that way right now (selectedAcc, accounts) cause maybe we'll need the others at some point?
@@ -75,6 +76,7 @@ export default function SendTransaction({
       onBroadcastedTxn={onBroadcastedTxn}
       onDismiss={onDismiss}
       gasTankState={gasTankState}
+      requestPendingState={requestPendingState}
     />
   )
 }
@@ -89,7 +91,8 @@ function SendTransactionWithBundle({
   relayerURL,
   onBroadcastedTxn,
   onDismiss,
-  gasTankState
+  gasTankState,
+  requestPendingState
 }) {
   const currentAccGasTankState = network.isGasTankAvailable
     ? gasTankState.find((i) => i.account === account.id)
@@ -266,6 +269,7 @@ function SendTransactionWithBundle({
             currentAccGasTankState={currentAccGasTankState}
             REJECT_MSG={REJECT_MSG}
             onBroadcastedTxn={onBroadcastedTxn}
+            requestPendingState={requestPendingState}
             panelClassName={styles.panel}
             panelTitleClassName={styles.panelTitle}
           />

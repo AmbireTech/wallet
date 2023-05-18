@@ -21,12 +21,12 @@ const toExtendedRich = (humanizerInfo, action, word, vaultInfo, amount) => [
     {
       type: 'address',
       name: vaultInfo.name,
-      address: vaultInfo.addr
+      address: ''
     }
   ]
 ]
 
-const toExtended = (action, word, network, amount) => [
+const toExtended = (action, word, network, amount, address) => [
   [
     action,
     {
@@ -37,7 +37,8 @@ const toExtended = (action, word, network, amount) => [
     word,
     {
       type: 'address',
-      name: vaultNames[network.id]
+      name: vaultNames[network.id],
+      address
     }
   ]
 ]
@@ -58,7 +59,7 @@ const YearnTesseractMapping = (humanizerInfo) => {
           : toExtendedRich(humanizerInfo, 'Deposit', 'to', vaultInfo, amount)
       return !extended
         ? [`Deposit ${amount} units to ${vaultNames[network.id]}`]
-        : toExtended('Deposit', 'to', network, amount)
+        : toExtended('Deposit', 'to', network, amount, txn.to)
     },
     [iface.getSighash('withdraw(uint256,address)')]: (txn, network, { extended = false }) => {
       const [amount] = iface.parseTransaction(txn).args
@@ -74,7 +75,24 @@ const YearnTesseractMapping = (humanizerInfo) => {
           : toExtendedRich(humanizerInfo, 'Withdraw', 'from', vaultInfo, amount)
       return !extended
         ? [`Withdraw ${amount} units from ${vaultNames[network.id]}`]
-        : toExtended('Withdraw', 'from', network, amount)
+        : toExtended('Withdraw', 'from', network, amount, txn.to)
+    },
+    [iface.getSighash('withdraw(uint256)')]: (txn, network, { extended = false }) => {
+      const [maxShares] = iface.parseTransaction(txn).args
+      
+      const vaultInfo = getVaultInfo(txn)
+      if (vaultInfo)
+        return !extended
+          ? [
+              `Withdraw ${addTokenPrefix(
+                token(humanizerInfo, vaultInfo.baseToken, maxShares),
+                network.id
+              )} from ${vaultInfo.name}`
+            ]
+          : toExtendedRich(humanizerInfo, 'Withdraw', 'from', vaultInfo, maxShares)
+      return !extended
+        ? [`Withdraw ${maxShares} units from ${vaultNames[network.id]}`]
+        : toExtended('Withdraw', 'from', network, maxShares, txn.to)
     }
   }
 }
