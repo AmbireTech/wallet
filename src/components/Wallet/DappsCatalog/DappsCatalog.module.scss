@@ -361,18 +361,6 @@ $gap: 0.75rem;
     margin-top: 1.25rem;
     color: rgba($c-titan-white, 0.8);
   }
-
-  .infoWc {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 0.625rem;
-    padding: 0.75rem;
-    background-color: $c-mirage;
-    border-radius: $border-radius;
-    color: rgba($c-titan-white, 0.8);
-  }
 }
 
 @include lg-breakpoint {
@@ -395,10 +383,6 @@ $gap: 0.75rem;
         width: 100%;
         margin: 0 auto;
       }
-    }
-
-    .infoWc {
-      border-radius: $border-radius $border-radius 0 0;
     }
   }
 }

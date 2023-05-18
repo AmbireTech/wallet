@@ -344,18 +344,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                             </div>
                           </ToolTip>
                         )}
-
-                        <div className={cn(styles.tagRow, styles.tagTypes)}>
-                          <span
-                            className={cn(
-                              styles.tag,
-                              styles.typeTag,
-                              styles[`typeTag${item.category}`]
-                            )}
-                          >
-                            {CONNECTION_TYPE_LABEL[item.category] || item.category}
-                          </span>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -369,10 +357,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                 No dApp found in our list matching your criteria
               </div>
             ) : null}
-
-            <div className={styles.infoWc}>
-              <MdInfo /> Note: any dApp that supports WalletConnect can be connected as well
-            </div>
           </div>
         </div>
       )}
