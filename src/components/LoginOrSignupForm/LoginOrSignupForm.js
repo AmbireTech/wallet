@@ -4,6 +4,7 @@ import { useModals } from 'hooks'
 import { WeakPasswordModal } from 'components/Modals'
 import passwordChecks, { checkHaveIbeenPwned } from 'components/AddAccount/passwordChecks'
 import AddAccountForm from 'components/AddAccount/Form/Form'
+import { Button } from 'components/common'
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
   const { showModal } = useModals()
@@ -91,11 +92,11 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
         placeholder="Email"
         value={state.email}
         onChange={(e) => onUpdate({ email: e.target.value })}
-      ></input>
+      />
       {
         // Trick the password manager into putting in the email
         !isSignup ? (
-          <input type="password" style={{ display: 'none' }}></input>
+          <input type="password" style={{ display: 'none' }} />
         ) : (
           <AddAccountForm
             state={state}
@@ -107,23 +108,18 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
           />
         )
       }
-      <input
+      <Button
         type="submit"
+        variant="primaryGradient"
+        loading={inProgress}
+        loadingText={isSignup ? 'Signing Up...' : 'Logging In...'}
         disabled={
-          inProgress ||
           !state.email?.length ||
           (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied))
         }
-        value={
-          isSignup
-            ? inProgress
-              ? 'Signing up...'
-              : 'Sign Up'
-            : inProgress
-            ? 'Logging in...'
-            : 'Log In'
-        }
-      ></input>
+      >
+        {isSignup ? 'Sign Up' : 'Log In'}
+      </Button>
     </form>
   )
 }
