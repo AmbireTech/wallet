@@ -138,6 +138,6 @@ For **NETWORK_NAME** you have to use one of Ambire Wallet supported networks:
 ---
 
 #### Have questions? Get in touch: 
-- [Ambire on Discord](https://discord.gg/nMBGJsb)
+- [Ambire on Discord](https://discord.gg/QQb4xc4ksJ)
 - [Chat to us on Telegram](https://t.me/AmbireOfficial)
 
