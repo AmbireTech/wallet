@@ -241,7 +241,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
         </div>
       </div>
 
-      {(
+      {shouldDisplayMintableVesting && (
         <div className={styles.item}>
           <div className={styles.details}>
             <label>Claimable early supporters vesting</label>
