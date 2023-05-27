@@ -268,7 +268,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
                 variant="primaryGradient"
                 className={styles.fullWidthButton}
                 onClick={claimVesting}
-                // disabled={!!disabledReason}
+                disabled={!!disabledReason}
               >
                 Claim
               </Button>
