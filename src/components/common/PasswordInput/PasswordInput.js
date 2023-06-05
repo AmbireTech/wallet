@@ -17,7 +17,9 @@ const PasswordInput = forwardRef(
       value,
       onInput,
       onChange,
-      className
+      className,
+      onFocus,
+      onBlur
     },
     ref
   ) => {
@@ -35,6 +37,8 @@ const PasswordInput = forwardRef(
             disabled={disabled}
             onInput={(ev) => onInput && onInput(ev.target.value)}
             onChange={(ev) => onChange && onChange(ev.target.value)}
+            onFocus={onFocus}
+            onBlur={onBlur}
             ref={ref}
           />
           {peakPassword && !showPassword ? (
