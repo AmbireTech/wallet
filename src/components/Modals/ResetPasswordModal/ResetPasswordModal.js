@@ -1,4 +1,4 @@
-import { useState, useMemo, createRef, useEffect, useCallback } from 'react'
+import { useState, useMemo, createRef, useCallback, useEffect } from 'react'
 import { Wallet } from 'ethers'
 import { id } from 'ethers/lib/utils'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
@@ -6,13 +6,20 @@ import accountPresets from 'ambire-common/src/constants/accountPresets'
 import buildRecoveryBundle from 'lib/recoveryBundle'
 import { fetchPost } from 'lib/fetch'
 
-import { useModals } from 'hooks'
+import { useModals, useCheckPasswordStrength } from 'hooks'
 import { useToasts } from 'hooks/toasts'
 import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from 'components/common'
 
 import { MdOutlineHelpOutline } from 'react-icons/md'
 
+import PasswordStrength from 'components/AddAccount/Form/PasswordStrength/PasswordStrength'
 import styles from './ResetPasswordModal.module.scss'
+
+const onFocusOrUnfocus = (e, setIsFocused, state) => {
+  if (e.currentTarget === e.target) {
+    setIsFocused(state)
+  }
+}
 
 const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, showSendTxns }) => {
   const { hideModal } = useModals()
@@ -25,9 +32,12 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
   const [disabled, setDisabled] = useState(true)
 
-  const [passwordsMustMatchWarning, setPasswordsMustMatchWarning] = useState(false)
-  const [passwordsLengthWarning, setPasswordsLengthWarning] = useState(false)
-  const [oldPasswordEmptyWarning, setOldPasswordEmptyWarning] = useState(false)
+  const [isFocused, setIsFocused] = useState(false)
+
+  const { passwordStrength } = useCheckPasswordStrength({
+    passphrase: newPassword,
+    passphraseConfirm: newPasswordConfirm
+  })
 
   const radios = useMemo(
     () => [
@@ -96,9 +106,6 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
     setOldPassword('')
     setNewPassword('')
     setNewPasswordConfirm('')
-    setOldPasswordEmptyWarning(false)
-    setPasswordsMustMatchWarning(false)
-    setPasswordsLengthWarning(false)
   }
 
   const changePassword = async () => {
@@ -190,9 +197,6 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
   }
 
   const validateForm = useCallback(() => {
-    const arePasswordsMatching = newPassword === newPasswordConfirm
-    const isLengthValid = newPassword.length >= 8 && newPasswordConfirm.length >= 8
-    const areFieldsNotEmpty = newPassword.length && newPasswordConfirm.length
     let isOldPasswordNotEmpty = false
     let areCheckboxesChecked = false
 
@@ -206,23 +210,8 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
       areCheckboxesChecked = checkboxes[1].every(({ ref }) => ref.current && ref.current.checked)
     }
 
-    setDisabled(
-      !isLengthValid || !arePasswordsMatching || !areCheckboxesChecked || !isOldPasswordNotEmpty
-    )
-
-    if (areFieldsNotEmpty) {
-      if (isLengthValid && arePasswordsMatching) {
-        setOldPasswordEmptyWarning(!isOldPasswordNotEmpty)
-      }
-
-      setPasswordsLengthWarning(!isLengthValid)
-      setPasswordsMustMatchWarning(!arePasswordsMatching)
-    } else {
-      setOldPasswordEmptyWarning(false)
-      setPasswordsMustMatchWarning(false)
-      setPasswordsMustMatchWarning(false)
-    }
-  }, [checkboxes, type, oldPassword, newPassword, newPasswordConfirm])
+    setDisabled(!areCheckboxesChecked || !isOldPasswordNotEmpty || !passwordStrength.satisfied)
+  }, [checkboxes, type, oldPassword, passwordStrength.satisfied])
 
   useEffect(
     () => validateForm(),
@@ -256,47 +245,54 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
         </div>
       ) : null}
       <Radios radios={radios} onChange={onRadioChange} className={styles.radiosContainer} />
-      <form>
-        {type === 'change' ? (
+      {type === 'change' || type === 'reset' ? (
+        <form>
+          {type === 'change' ? (
+            <PasswordInput
+              className={styles.passwordInput}
+              autocomplete="current-password"
+              placeholder="Old Password"
+              onInput={(value) => setOldPassword(value)}
+            />
+          ) : null}
+          <div className={styles.passwordInputWrapper}>
+            <PasswordInput
+              className={styles.passwordInput}
+              peakPassword
+              autocomplete="new-password"
+              placeholder="New Password"
+              onInput={(value) => setNewPassword(value)}
+              onFocus={(e) => onFocusOrUnfocus(e, setIsFocused, true)}
+              onBlur={(e) => onFocusOrUnfocus(e, setIsFocused, false)}
+            />
+            <PasswordStrength
+              passwordStrength={passwordStrength}
+              hasPassword={newPassword?.length > 0}
+              isFocused={isFocused}
+            />
+          </div>
           <PasswordInput
             className={styles.passwordInput}
-            autocomplete="current-password"
-            placeholder="Old Password"
-            onInput={(value) => setOldPassword(value)}
+            autocomplete="new-password"
+            placeholder="Confirm New Password"
+            onInput={(value) => setNewPasswordConfirm(value)}
+            onFocus={(e) => onFocusOrUnfocus(e, setIsFocused, true)}
+            onBlur={(e) => onFocusOrUnfocus(e, setIsFocused, false)}
           />
-        ) : null}
-        <PasswordInput
-          className={styles.passwordInput}
-          peakPassword
-          autocomplete="new-password"
-          placeholder="New Password"
-          onInput={(value) => setNewPassword(value)}
-        />
-        <PasswordInput
-          className={styles.passwordInput}
-          autocomplete="new-password"
-          placeholder="Confirm New Password"
-          onInput={(value) => setNewPasswordConfirm(value)}
-        />
-        {checkboxes[type === 'change' ? 0 : 1].map(({ label, ref }, i) => (
-          <Checkbox
-            labelClassName="checkbox-label"
-            key={`checkbox-${i}`}
-            ref={ref}
-            label={label}
-            onChange={() => validateForm()}
-          />
-        ))}
-      </form>
+          {checkboxes[type === 'change' ? 0 : 1].map(({ label, ref }, i) => (
+            <Checkbox
+              labelClassName="checkbox-label"
+              key={`checkbox-${i}`}
+              ref={ref}
+              label={label}
+              onChange={() => validateForm()}
+            />
+          ))}
+        </form>
+      ) : null}
       <div id="warnings">
-        {oldPasswordEmptyWarning ? (
+        {type === 'change' && oldPassword.length === 0 ? (
           <div className={styles.warning}>Old Password must be set</div>
-        ) : null}
-        {passwordsMustMatchWarning ? (
-          <div className={styles.warning}>Passwords must match</div>
-        ) : null}
-        {passwordsLengthWarning ? (
-          <div className={styles.warning}>Password must be at least 8 characters</div>
         ) : null}
       </div>
     </Modal>
