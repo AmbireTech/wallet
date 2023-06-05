@@ -2,16 +2,13 @@ import { useState, useRef } from 'react'
 
 import { useModals } from 'hooks'
 import { WeakPasswordModal } from 'components/Modals'
-import passwordChecks, { checkHaveIbeenPwned } from 'components/AddAccount/passwordChecks'
+import { checkHaveIbeenPwned } from 'components/AddAccount/passwordChecks'
 import AddAccountForm from 'components/AddAccount/Form/Form'
 import { Button } from 'components/common'
+import useCheckPasswordStrength from 'hooks/useCheckPasswordStrength'
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
   const { showModal } = useModals()
-  const [passwordStrength, setPasswordStrength] = useState({
-    checks: passwordChecks,
-    satisfied: false
-  })
 
   const passConfirmInput = useRef(null)
   const passInput = useRef(null)
@@ -21,18 +18,9 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     passphraseConfirm: '',
     action
   })
-  const [arePasswordsMatching, setArePasswordsMatching] = useState(false)
-  const isSignup = state.action === 'SIGNUP'
+  const { passwordStrength, arePasswordsMatching } = useCheckPasswordStrength(state)
 
-  const checkPasswordStrength = (passphrase, passphraseConfirm) => {
-    setPasswordStrength((prev) => ({
-      satisfied: prev.checks.every((check) => check.check(passphrase, passphraseConfirm)),
-      checks: prev.checks.map((check) => ({
-        ...check,
-        satisfied: check.check(passphrase, passphraseConfirm)
-      }))
-    }))
-  }
+  const isSignup = state.action === 'SIGNUP'
 
   const handleRegister = () => {
     onAccRequest({
@@ -64,10 +52,6 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     // @Todo: Split logic and markup for Login and Add Account
     if (shouldValidate) {
       const invalid = newState.passphrase !== newState.passphraseConfirm
-
-      // We check the password strength and compare the passwords
-      setArePasswordsMatching(!invalid)
-      checkPasswordStrength(newState.passphrase, newState.passphraseConfirm)
 
       // If the password is invalid, set a custom validity message
       if (!passwordStrength.satisfied) {
