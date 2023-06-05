@@ -13,6 +13,7 @@ import { Modal, Radios, Checkbox, Button, ToolTip, Loading, PasswordInput } from
 import { MdOutlineHelpOutline } from 'react-icons/md'
 
 import PasswordStrength from 'components/AddAccount/Form/PasswordStrength/PasswordStrength'
+import { checkHaveIbeenPwned } from 'components/AddAccount/passwordChecks'
 import styles from './ResetPasswordModal.module.scss'
 
 const onFocusOrUnfocus = (e, setIsFocused, state) => {
@@ -31,6 +32,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
   const [newPassword, setNewPassword] = useState('')
   const [newPasswordConfirm, setNewPasswordConfirm] = useState('')
   const [disabled, setDisabled] = useState(true)
+  const [isPasswordBreached, setIsPasswordBreached] = useState(false)
 
   const [isFocused, setIsFocused] = useState(false)
 
@@ -218,25 +220,67 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
     [isLoading, validateForm, oldPassword, newPassword, newPasswordConfirm]
   )
 
+  const onSubmit = async (e) => {
+    e.preventDefault()
+
+    const submitFunc = type === 'change' ? changePassword : resetPassword
+
+    const breached = await checkHaveIbeenPwned(newPassword)
+
+    setIsPasswordBreached(breached)
+
+    if (breached) return
+
+    submitFunc()
+  }
+
+  const handleGoBack = () => {
+    setIsPasswordBreached(false)
+  }
+
+  const handleContinueAnyway = () => {
+    if (type === 'change') {
+      changePassword()
+    } else {
+      resetPassword()
+    }
+  }
+
   return (
     <Modal
       className={styles.wrapper}
       contentClassName={styles.content}
       title="Reset Password"
       buttons={
-        <>
-          <Button size="sm" variant="secondary" onClick={() => hideModal()}>
-            Cancel
-          </Button>
-          <Button
-            size="sm"
-            variant="primaryGradient"
-            disabled={disabled}
-            onClick={() => (type === 'change' ? changePassword() : resetPassword())}
-          >
-            Confirm
-          </Button>
-        </>
+        !isPasswordBreached ? (
+          <>
+            <Button size="sm" variant="secondary" onClick={() => hideModal()}>
+              Cancel
+            </Button>
+            <Button size="sm" variant="primaryGradient" disabled={disabled} onClick={onSubmit}>
+              Confirm
+            </Button>
+          </>
+        ) : (
+          <>
+            <Button
+              size="sm"
+              variant="primaryGradient"
+              onClick={handleGoBack}
+              className={styles.button}
+            >
+              Go back
+            </Button>
+            <Button
+              size="sm"
+              variant="danger"
+              onClick={handleContinueAnyway}
+              className={styles.button}
+            >
+              Continue anyway
+            </Button>
+          </>
+        )
       }
     >
       {isLoading ? (
@@ -293,6 +337,12 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
       <div id="warnings">
         {type === 'change' && oldPassword.length === 0 ? (
           <div className={styles.warning}>Old Password must be set</div>
+        ) : null}
+        {isPasswordBreached ? (
+          <div className={styles.warning}>
+            The password you are trying to use has been found in a data breach. We strongly
+            recommend you to use a different password.
+          </div>
         ) : null}
       </div>
     </Modal>
