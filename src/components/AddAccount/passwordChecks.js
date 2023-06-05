@@ -30,6 +30,14 @@ const passwordChecks = [
     check(passphrase) {
       return passphrase.length >= 8
     }
+  },
+  {
+    label: 'Passwords match',
+    id: 'match',
+    satisfied: false,
+    check(passphrase, passphraseConfirm) {
+      return passphrase === passphraseConfirm
+    }
   }
 ]
 

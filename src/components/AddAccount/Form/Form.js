@@ -77,6 +77,8 @@ export default function AddAccountForm({
         className={cn(styles.confirmPassword, {
           [styles.error]: hasPassword && (!passwordStrength.satisfied || !arePasswordsMatching)
         })}
+        onFocus={(e) => onFocusOrUnfocus(e, setIsFocused, true)}
+        onBlur={(e) => onFocusOrUnfocus(e, setIsFocused, false)}
       />
       <Checkbox
         labelClassName={styles.checkboxLabel}

@@ -24,12 +24,12 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
   const [arePasswordsMatching, setArePasswordsMatching] = useState(false)
   const isSignup = state.action === 'SIGNUP'
 
-  const checkPasswordStrength = (passphrase) => {
+  const checkPasswordStrength = (passphrase, passphraseConfirm) => {
     setPasswordStrength((prev) => ({
-      satisfied: prev.checks.every((check) => check.check(passphrase)),
+      satisfied: prev.checks.every((check) => check.check(passphrase, passphraseConfirm)),
       checks: prev.checks.map((check) => ({
         ...check,
-        satisfied: check.check(passphrase)
+        satisfied: check.check(passphrase, passphraseConfirm)
       }))
     }))
   }
@@ -67,7 +67,7 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
 
       // We check the password strength and compare the passwords
       setArePasswordsMatching(!invalid)
-      checkPasswordStrength(newState.passphrase)
+      checkPasswordStrength(newState.passphrase, newState.passphraseConfirm)
 
       // If the password is invalid, set a custom validity message
       if (!passwordStrength.satisfied) {
