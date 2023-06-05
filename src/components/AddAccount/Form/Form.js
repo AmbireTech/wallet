@@ -2,12 +2,10 @@ import { useState } from 'react'
 import cn from 'classnames'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 
-import { ReactComponent as XIcon } from 'resources/icons/x.svg'
-import { ReactComponent as CheckIcon } from 'resources/icons/check.svg'
-
 import { Checkbox } from 'components/common'
 
 import styles from './Form.module.scss'
+import PasswordStrength from './PasswordStrength/PasswordStrength'
 
 const minPwdLen = 8
 const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
@@ -51,20 +49,11 @@ export default function AddAccountForm({
           onFocus={(e) => onFocusOrUnfocus(e, setIsFocused, true)}
           onBlur={(e) => onFocusOrUnfocus(e, setIsFocused, false)}
         />
-        <div
-          className={cn(styles.passwordStrength, { [styles.visible]: hasPassword && isFocused })}
-        >
-          {passwordStrength.checks.map((check) => (
-            <div key={check.id} className={styles.check}>
-              {check.satisfied ? (
-                <CheckIcon className={styles.checkIcon} />
-              ) : (
-                <XIcon className={styles.xIcon} />
-              )}
-              <span className={styles.checkLabel}>{check.label}</span>
-            </div>
-          ))}
-        </div>
+        <PasswordStrength
+          passwordStrength={passwordStrength}
+          hasPassword={hasPassword}
+          isFocused={isFocused}
+        />
       </div>
       <input
         ref={passConfirmInput}
