@@ -256,64 +256,38 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
         </div>
       ) : null}
       <Radios radios={radios} onChange={onRadioChange} className={styles.radiosContainer} />
-      {type === 'change' ? (
-        <form>
+      <form>
+        {type === 'change' ? (
           <PasswordInput
             className={styles.passwordInput}
             autocomplete="current-password"
             placeholder="Old Password"
             onInput={(value) => setOldPassword(value)}
           />
-          <PasswordInput
-            className={styles.passwordInput}
-            peakPassword
-            autocomplete="new-password"
-            placeholder="New Password"
-            onInput={(value) => setNewPassword(value)}
+        ) : null}
+        <PasswordInput
+          className={styles.passwordInput}
+          peakPassword
+          autocomplete="new-password"
+          placeholder="New Password"
+          onInput={(value) => setNewPassword(value)}
+        />
+        <PasswordInput
+          className={styles.passwordInput}
+          autocomplete="new-password"
+          placeholder="Confirm New Password"
+          onInput={(value) => setNewPasswordConfirm(value)}
+        />
+        {checkboxes[type === 'change' ? 0 : 1].map(({ label, ref }, i) => (
+          <Checkbox
+            labelClassName="checkbox-label"
+            key={`checkbox-${i}`}
+            ref={ref}
+            label={label}
+            onChange={() => validateForm()}
           />
-          <PasswordInput
-            className={styles.passwordInput}
-            autocomplete="new-password"
-            placeholder="Confirm New Password"
-            onInput={(value) => setNewPasswordConfirm(value)}
-          />
-          {checkboxes[0].map(({ label, ref }, i) => (
-            <Checkbox
-              labelClassName="checkbox-label"
-              key={`checkbox-${i}`}
-              ref={ref}
-              label={label}
-              onChange={() => validateForm()}
-            />
-          ))}
-        </form>
-      ) : null}
-      {type === 'reset' ? (
-        <form>
-          <PasswordInput
-            className={styles.passwordInput}
-            peakPassword
-            autocomplete="new-password"
-            placeholder="New Password"
-            onInput={(value) => setNewPassword(value)}
-          />
-          <PasswordInput
-            className={styles.passwordInput}
-            autocomplete="new-password"
-            placeholder="Confirm New Password"
-            onInput={(value) => setNewPasswordConfirm(value)}
-          />
-          {checkboxes[1].map(({ label, ref }, i) => (
-            <Checkbox
-              labelClassName={styles.checkboxLabel}
-              key={`checkbox-${i}`}
-              ref={ref}
-              label={label}
-              onChange={() => validateForm()}
-            />
-          ))}
-        </form>
-      ) : null}
+        ))}
+      </form>
       <div id="warnings">
         {oldPasswordEmptyWarning ? (
           <div className={styles.warning}>Old Password must be set</div>
