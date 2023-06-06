@@ -1,9 +1,19 @@
-import { screen, render, waitFor } from '@testing-library/react'
+import { screen, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import ToastProvider from 'context/ToastProvider/ToastProvider'
 import ModalProvider from 'context/ModalProvider/ModalProvider'
+import { ConstantsContext } from 'context/ConstantsProvider/ConstantsProvider'
 import Transfer from './Transfer'
+
+const humanizerInfo = {
+  names: {
+    '0x0c2de78e008020500c38e76e2956ae4a81c5124c': 'Swappin'
+  },
+  tokens: {
+    '0xc2132d05d31c914a87c6611c10748aeb04b58e8f': ['USDT', 6]
+  }
+}
 
 // Utilities
 const renderWithRouter = (ui, { route = '/' } = {}) => {
@@ -12,9 +22,11 @@ const renderWithRouter = (ui, { route = '/' } = {}) => {
   return {
     user: userEvent.setup(),
     ...render(
-      <ToastProvider>
-        <ModalProvider>{ui}</ModalProvider>
-      </ToastProvider>,
+      <ConstantsContext.Provider value={{ constants: { humanizerInfo } }}>
+        <ToastProvider>
+          <ModalProvider>{ui}</ModalProvider>
+        </ToastProvider>
+      </ConstantsContext.Provider>,
       { wrapper: BrowserRouter }
     )
   }
@@ -51,14 +63,6 @@ const selectedNetwork = {
   chainId: 137
 }
 const userAddress = '0x9a8b505305d8499e4D4393f8677169b9a4c9fa67'
-const humanizerInfo = {
-  names: {
-    '0x0c2de78e008020500c38e76e2956ae4a81c5124c': 'Swappin'
-  },
-  tokens: {
-    '0xc2132d05d31c914a87c6611c10748aeb04b58e8f': ["USDT", 6]
-  }
-}
 
 const usdtTokenContract = '0xc2132d05d31c914a87c6611c10748aeb04b58e8f'
 
@@ -69,7 +73,6 @@ test('it should not be allowed to send tokens to your own address', async () => 
       selectedNetwork={selectedNetwork}
       addressBook={addressBook}
       selectedAcc={userAddress}
-      humanizerInfo={humanizerInfo}
     />
   )
   const button = screen.getByText('MAX')
@@ -94,7 +97,6 @@ test('can send token', async () => {
       addressBook={addressBook}
       selectedAcc={userAddress}
       addRequest={addRequest}
-      humanizerInfo={humanizerInfo}
     />
   )
 
@@ -134,7 +136,6 @@ test('it should not be allowed to send tokens to known token or contract', async
       selectedNetwork={selectedNetwork}
       addressBook={addressBook}
       selectedAcc={userAddress}
-      humanizerInfo={humanizerInfo}
     />
   )
   const button = screen.getByText('MAX')
