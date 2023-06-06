@@ -2,6 +2,7 @@ import { BsXLg } from 'react-icons/bs'
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
+import ERC20_ABI from 'adex-protocol-eth/abi/ERC20'
 import { useToasts } from 'hooks/toasts'
 import {
   NumberInput,
@@ -25,11 +26,12 @@ import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 import { useRelayerData } from 'hooks'
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
 import { MdInfo } from 'react-icons/md'
+import useConstants from 'hooks/useConstants'
 import RecipientInput from './RecipientInput/RecipientInput'
 
 import styles from './Send.module.scss'
 
-const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
+const ERC20 = new Interface(ERC20_ABI)
 
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
 
@@ -48,9 +50,11 @@ const Send = ({
   setAsset,
   tokenAddress,
   selectedAsset,
-  title,
-  humanizerInfo
+  title
 }) => {
+  const {
+    constants: { humanizerInfo }
+  } = useConstants()
   const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
   const { feeAssetsRes } = useGasTankData({
     relayerURL,
@@ -98,11 +102,11 @@ const Send = ({
   } else eligibleFeeTokens = portfolio.tokens
 
   const assetsItems = eligibleFeeTokens.map(
-    ({ label, symbol, address, img, tokenImageUrl, network }) => ({
+    ({ label, symbol, address: assetAddress, img, tokenImageUrl, network }) => ({
       label: label || symbol,
-      value: address,
+      value: assetAddress,
       icon: img || tokenImageUrl,
-      fallbackIcon: getTokenIcon(network, address)
+      fallbackIcon: getTokenIcon(network, assetAddress)
     })
   )
 
@@ -126,8 +130,6 @@ const Send = ({
     [gasTankDetails, tokenAddress, selectedNetwork.id]
   )
 
-  const setMaxAmount = () => onAmountChange(maxAmount)
-
   const onAmountChange = (value) => {
     if (value) {
       const { decimals } = selectedAsset
@@ -137,6 +139,8 @@ const Send = ({
 
     setAmount(value)
   }
+
+  const setMaxAmount = () => onAmountChange(maxAmount)
 
   const sendTx = () => {
     const recipientAddress = uDAddress || ensAddress || address
@@ -190,7 +194,7 @@ const Send = ({
     }
   }
 
-  const isKnowTokenOrContract = useCallback(
+  const isKnownTokenOrContract = useCallback(
     (addr) => {
       if (!humanizerInfo) return
       const addressToLowerCase = addr.toLowerCase()
@@ -263,11 +267,13 @@ const Send = ({
         }
       })
 
-      setWarning(isKnowTokenOrContract(address))
+      const isKnownTokenOrContractValue = isKnownTokenOrContract(address)
+
+      setWarning(isKnownTokenOrContractValue)
       setDisabled(
         !isValidRecipientAddress.success ||
           !isValidSendTransferAmount.success ||
-          isKnowTokenOrContract(address) ||
+          isKnownTokenOrContractValue ||
           (showSWAddressWarning && !sWAddressConfirmed)
       )
     } else {
@@ -340,7 +346,7 @@ const Send = ({
     uDAddress,
     disabled,
     ensAddress,
-    isKnowTokenOrContract
+    isKnownTokenOrContract
   ])
 
   const amountLabel = (
@@ -377,9 +383,7 @@ const Send = ({
           <p className={styles.gasTankConvertMsg}>
             <AlertIcon /> {feeBaseTokenWarning}
           </p>
-        ) : (
-          <></>
-        )}
+        ) : null}
         <NumberInput
           label={amountLabel}
           value={amount}

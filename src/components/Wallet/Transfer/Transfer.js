@@ -1,6 +1,5 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, withRouter, useParams } from 'react-router-dom'
 import { useState } from 'react'
-import { withRouter, useParams } from 'react-router'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { isValidAddress } from 'ambire-common/src/services/address'
 import cn from 'classnames'
@@ -13,7 +12,7 @@ import Addresses from './Addresses/Addresses'
 import styles from './Transfer.module.scss'
 
 const Transfer = (props) => {
-  const { portfolio, selectedNetwork, addressBook, selectedAcc, relayerURL, humanizerInfo } = props
+  const { portfolio, selectedNetwork, addressBook, selectedAcc, relayerURL } = props
   const { addresses, addAddress, removeAddress } = addressBook
 
   const { state } = useLocation()
@@ -27,7 +26,7 @@ const Transfer = (props) => {
   const [gasTankDetails] = useState(state || null)
   const [address, setAddress] = useState(gasTankDetails ? accountPresets.feeCollector : '')
 
-  const selectedAsset = portfolio?.tokens.find(({ address }) => address === asset)
+  const selectedAsset = portfolio?.tokens.find(({ address: tAddress }) => tAddress === asset)
 
   return (
     <div className={styles.wrapper}>
@@ -46,7 +45,6 @@ const Transfer = (props) => {
               setAsset={setAsset}
               tokenAddress={tokenAddress}
               selectedAsset={selectedAsset}
-              humanizerInfo={humanizerInfo}
             />
           }
           secondTab={
@@ -75,7 +73,6 @@ const Transfer = (props) => {
             setAsset={setAsset}
             tokenAddress={tokenAddress}
             selectedAsset={selectedAsset}
-            humanizerInfo={humanizerInfo}
           />
         </Panel>
       )}
@@ -86,7 +83,7 @@ const Transfer = (props) => {
           addresses={addresses}
           addAddress={addAddress}
           removeAddress={removeAddress}
-          onSelectAddress={(address) => setAddress(address)}
+          onSelectAddress={(selectedAddress) => setAddress(selectedAddress)}
         />
       )}
     </div>

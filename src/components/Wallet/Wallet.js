@@ -25,7 +25,6 @@ import CrossChain from './CrossChain/CrossChain'
 import OpenSea from './OpenSea/OpenSea'
 import Deposit from './Deposit/Deposit'
 import Gas from './Gas/Gas'
-import useConstants from 'hooks/useConstants'
 
 export default function Wallet(props) {
   const { showModal } = useModals()
@@ -43,10 +42,7 @@ export default function Wallet(props) {
     key: 'dAppsAdvancedMode',
     defaultValue: []
   })
-  const {
-    constants: { humanizerInfo }
-  } = useConstants()
-  
+
   const routes = [
     {
       path: '/dashboard/:tabId?/:page?',
@@ -93,7 +89,6 @@ export default function Wallet(props) {
           accounts={props.accounts}
           addressBook={props.addressBook}
           relayerURL={props.relayerURL}
-          humanizerInfo={humanizerInfo}
         />
       )
     },
