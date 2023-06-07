@@ -1,9 +1,9 @@
 import './Earn.scss'
 import { Loading } from 'components/common'
+import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 import AAVECard from './Cards/AAVECard/AAVECard'
 import YearnTesseractCard from './Cards/YearnTesseractCard/YearnTesseractCard'
 import AmbireTokensCard from './Cards/AmbireTokensCard/AmbireTokensCard'
-import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 
 const Earn = ({ portfolio, selectedNetwork, rewardsData, selectedAcc, addRequest }) => {
   return (
