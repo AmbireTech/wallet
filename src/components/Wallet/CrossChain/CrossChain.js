@@ -1,5 +1,4 @@
 import { useLocalStorage } from 'hooks'
-import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 import History from './History/History'
 import Swap from './Swap/Swap'
 
@@ -24,26 +23,24 @@ const CrossChain = ({ addRequest, selectedAccount, portfolio, network, relayerUR
   })
 
   return (
-    <OfflineWrapper>
-      <div className={styles.wrapper}>
-        <Swap
-          network={network}
-          portfolio={portfolio}
-          addRequest={addRequest}
-          selectedAccount={selectedAccount}
-          quotesConfirmed={quotesConfirmed}
-          setQuotesConfirmed={setQuotesConfirmed}
-          panelClassName={styles.panel}
-        />
-        <History
-          network={network}
-          account={selectedAccount}
-          quotesConfirmed={quotesConfirmed}
-          relayerURL={relayerURL}
-          panelClassName={styles.panel}
-        />
-      </div>
-    </OfflineWrapper>
+    <div className={styles.wrapper}>
+      <Swap
+        network={network}
+        portfolio={portfolio}
+        addRequest={addRequest}
+        selectedAccount={selectedAccount}
+        quotesConfirmed={quotesConfirmed}
+        setQuotesConfirmed={setQuotesConfirmed}
+        panelClassName={styles.panel}
+      />
+      <History
+        network={network}
+        account={selectedAccount}
+        quotesConfirmed={quotesConfirmed}
+        relayerURL={relayerURL}
+        panelClassName={styles.panel}
+      />
+    </div>
   )
 }
 

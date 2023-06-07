@@ -4,7 +4,7 @@ import React, { createRef, useState, useCallback, useEffect } from 'react'
 import { MdOutlineClose } from 'react-icons/md'
 import { TransitionGroup, CSSTransition } from 'react-transition-group'
 import { useHistory } from 'react-router-dom'
-import { useOfflineStatus } from 'components/OfflineWrapper/OfflineProvider'
+import { useOfflineStatus } from 'context/OfflineContext/OfflineContext'
 
 const ToastContext = React.createContext(null)
 const ERROR_MSG_LIMIT_COUNT = 3
@@ -112,28 +112,30 @@ const ToastProvider = ({ children }) => {
     >
       <div id="toast-container" className={!toasts.length ? 'hide' : ''}>
         <TransitionGroup className="transition-group">
-          {toasts.map(
-            ({ id, ref, url, route, error, sticky, badge, position, content, onClick }) => (
-              <CSSTransition timeout={200} classNames="slide-fade" key={id} nodeRef={ref}>
-                <div
-                  className={`toast ${error ? 'error' : ''} ${sticky ? 'sticky' : ''} ${
-                    position || ''
-                  }`}
-                  ref={ref}
-                >
-                  <div className="inner" onClick={() => onToastClick(id, onClick, url, route)}>
-                    {badge ? <div className="badge">{badge}</div> : null}
-                    { isOffline ? 'You\'re currently offline, unable to update information' : content }
-                  </div>
-                  {sticky ? (
-                    <div className="close" onClick={() => removeToast(id)}>
-                      <MdOutlineClose />
+          {!isOffline
+            ? toasts.map(
+                ({ id, ref, url, route, error, sticky, badge, position, content, onClick }) => (
+                  <CSSTransition timeout={200} classNames="slide-fade" key={id} nodeRef={ref}>
+                    <div
+                      className={`toast ${error ? 'error' : ''} ${sticky ? 'sticky' : ''} ${
+                        position || ''
+                      }`}
+                      ref={ref}
+                    >
+                      <div className="inner" onClick={() => onToastClick(id, onClick, url, route)}>
+                        {badge ? <div className="badge">{badge}</div> : null}
+                        {content}
+                      </div>
+                      {sticky ? (
+                        <div className="close" onClick={() => removeToast(id)}>
+                          <MdOutlineClose />
+                        </div>
+                      ) : null}
                     </div>
-                  ) : null}
-                </div>
-              </CSSTransition>
-            )
-          )}
+                  </CSSTransition>
+                )
+              )
+            : null}
         </TransitionGroup>
       </div>
       {children}

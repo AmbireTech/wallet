@@ -5,7 +5,7 @@ import { useLocalStorage } from 'hooks'
 import useDynamicModal from 'hooks/useDynamicModals'
 import { Button, ToolTip, Loading } from 'components/common'
 import { WalletTokenModal, CongratsRewardsModal } from 'components/Modals'
-import { useOfflineStatus } from 'components/OfflineWrapper/OfflineProvider'
+import { useOfflineStatus } from 'context/OfflineContext/OfflineContext'
 
 import styles from './WalletTokenButton.module.scss'
 

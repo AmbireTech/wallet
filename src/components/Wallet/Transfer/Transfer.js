@@ -9,7 +9,6 @@ import { Panel, Tabs } from 'components/common'
 import Providers from 'components/Wallet/Deposit/Providers/Providers'
 import Send from './Send/Send'
 import Addresses from './Addresses/Addresses'
-import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 
 import styles from './Transfer.module.scss'
 
@@ -31,43 +30,14 @@ const Transfer = (props) => {
   const selectedAsset = portfolio?.tokens.find(({ address }) => address === asset)
 
   return (
-    <OfflineWrapper>
-      <div className={styles.wrapper}>
-        {!gasTankDetails ? (
-          <Tabs
-            className={styles.tab}
-            firstTabLabel="Send"
-            secondTabLabel="Sell Crypto"
-            firstTab={
-              <Send
-                {...props}
-                address={address}
-                setAddress={setAddress}
-                gasTankDetails={gasTankDetails}
-                asset={asset}
-                setAsset={setAsset}
-                tokenAddress={tokenAddress}
-                selectedAsset={selectedAsset}
-              />
-            }
-            secondTab={
-              <div className={styles.sell}>
-                <Providers
-                  walletAddress={selectedAcc}
-                  networkDetails={selectedNetwork}
-                  relayerURL={relayerURL}
-                  portfolio={portfolio}
-                  sellMode
-                  selectedAsset={selectedAsset || null}
-                />
-              </div>
-            }
-            panelClassName={styles.panel}
-          />
-        ) : (
-          <Panel className={cn(styles.panel, styles.sendOnly)}>
+    <div className={styles.wrapper}>
+      {!gasTankDetails ? (
+        <Tabs
+          className={styles.tab}
+          firstTabLabel="Send"
+          secondTabLabel="Sell Crypto"
+          firstTab={
             <Send
-              title={<h1 className={styles.gasTankSendTitle}>Send</h1>}
               {...props}
               address={address}
               setAddress={setAddress}
@@ -77,20 +47,47 @@ const Transfer = (props) => {
               tokenAddress={tokenAddress}
               selectedAsset={selectedAsset}
             />
-          </Panel>
-        )}
-        {!gasTankDetails && (
-          <Addresses
+          }
+          secondTab={
+            <div className={styles.sell}>
+              <Providers
+                walletAddress={selectedAcc}
+                networkDetails={selectedNetwork}
+                relayerURL={relayerURL}
+                portfolio={portfolio}
+                sellMode
+                selectedAsset={selectedAsset || null}
+              />
+            </div>
+          }
+          panelClassName={styles.panel}
+        />
+      ) : (
+        <Panel className={cn(styles.panel, styles.sendOnly)}>
+          <Send
+            title={<h1 className={styles.gasTankSendTitle}>Send</h1>}
+            {...props}
+            address={address}
+            setAddress={setAddress}
+            gasTankDetails={gasTankDetails}
+            asset={asset}
+            setAsset={setAsset}
+            tokenAddress={tokenAddress}
             selectedAsset={selectedAsset}
-            selectedNetwork={selectedNetwork}
-            addresses={addresses}
-            addAddress={addAddress}
-            removeAddress={removeAddress}
-            onSelectAddress={(address) => setAddress(address)}
           />
-        )}
-      </div>
-    </OfflineWrapper>
+        </Panel>
+      )}
+      {!gasTankDetails && (
+        <Addresses
+          selectedAsset={selectedAsset}
+          selectedNetwork={selectedNetwork}
+          addresses={addresses}
+          addAddress={addAddress}
+          removeAddress={removeAddress}
+          onSelectAddress={(address) => setAddress(address)}
+        />
+      )}
+    </div>
   )
 }
 

@@ -1,4 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react'
+import cn from 'classnames'
+import { RiWifiOffLine } from 'react-icons/ri'
+import styles from './OfflineContext.module.scss'
 
 const OfflineContext = React.createContext(false)
 
@@ -17,7 +20,15 @@ const OfflineProvider = ({ children }) => {
       window.removeEventListener('offline', updateOnlineStatus)
     }
   }, [])
-  return <OfflineContext.Provider value={isOffline}>{children}</OfflineContext.Provider>
+  return (
+    <OfflineContext.Provider value={isOffline}>
+      <span className={cn(styles.message, { [styles.active]: isOffline })}>
+        <RiWifiOffLine className={styles.icon} />
+        You are currently offline.
+      </span>
+      {children}
+    </OfflineContext.Provider>
+  )
 }
 
 export const useOfflineStatus = () => {

@@ -4,7 +4,7 @@ import './App.scss'
 
 import { HashRouter as Router, Switch, Route, Redirect, Prompt } from 'react-router-dom'
 import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react'
-import OfflineProvider from 'components/OfflineWrapper/OfflineProvider'
+import OfflineProvider from 'context/OfflineContext/OfflineContext'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useRewards from 'ambire-common/src/hooks/useRewards'
 import { Loading } from 'components/common'

@@ -13,7 +13,6 @@ import {
 import Backup from './Backup/Backup'
 import PendingRecoveryNotice from './PendingRecoveryNotice/PendingRecoveryNotice'
 import Signers from './Signers/Signers'
-import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 
 import styles from './Security.module.scss'
 
@@ -167,27 +166,25 @@ const Security = ({
     </Panel>
   )
   return (
-    <OfflineWrapper>
-      <section
-        className={cn(styles.wrapper, {
-          [styles.activeStyle]: isDragActive,
-          [styles.acceptStyle]: isDragAccept,
-          [styles.rejectStyle]: isDragReject
-        })}
-        {...getRootProps()}
-      >
-        {(isDragAccept || isDragReject) && (
-          <div className={isDragAccept ? styles.acceptStyleIcon : styles.rejectStyleIcon}>
-            <RiDragDropLine size={100} />
-          </div>
-        )}
+    <section
+      className={cn(styles.wrapper, {
+        [styles.activeStyle]: isDragActive,
+        [styles.acceptStyle]: isDragAccept,
+        [styles.rejectStyle]: isDragReject
+      })}
+      {...getRootProps()}
+    >
+      {(isDragAccept || isDragReject) && (
+        <div className={isDragAccept ? styles.acceptStyleIcon : styles.rejectStyleIcon}>
+          <RiDragDropLine size={100} />
+        </div>
+      )}
 
-        <input {...getInputProps()} />
-        {signersFragment}
+      <input {...getInputProps()} />
+      {signersFragment}
 
-        <Backup selectedAccount={selectedAccount} onOpen={open} onAddAccount={onAddAccount} />
-      </section>
-    </OfflineWrapper>
+      <Backup selectedAccount={selectedAccount} onOpen={open} onAddAccount={onAddAccount} />
+    </section>
   )
 }
 

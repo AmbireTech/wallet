@@ -14,8 +14,6 @@ import Collectibles from './Collectibles/Collectibles'
 import Promotions from './Promotions/Promotions'
 import Chart from './Chart/Chart'
 import OutdatedBalancesMsg from './OutdatedBalancesMsg/OutdatedBalancesMsg'
-import { useOfflineStatus } from 'components/OfflineWrapper/OfflineProvider'
-import { Alert } from 'components/common'
 
 import styles from './Dashboard.module.scss'
 
@@ -57,7 +55,6 @@ export default function Dashboard({
   showSendTxns
 }) {
   const { tabId } = useParams()
-  const isOffline = useOfflineStatus()
   const balance = useMemo(() => portfolio.balance, [portfolio.balance])
   const tokens = useMemo(() => portfolio.tokens, [portfolio.tokens])
   const [chartTokensData, setChartTokensData] = useState([])
@@ -111,7 +108,6 @@ export default function Dashboard({
 
   return (
     <section className={styles.wrapper}>
-      {isOffline && <Alert type="warning" title="No Internet Connection" iconNextToTitle />}
       {isBalancesCachedCurrentNetwork && (
         <OutdatedBalancesMsg selectedNetwork={selectedNetwork} selectedAccount={selectedAccount} />
       )}

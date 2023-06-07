@@ -1,0 +1,26 @@
+@import 'variables';
+
+.message {
+  position: fixed;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(calc(-100% - 1.25rem));
+  display: flex;
+  align-items: center;
+  gap: .625rem;
+  padding: 1rem;
+  background-color: $c-mirage;
+  border: 1px solid $danger-color;
+  border-radius: $border-radius;
+  text-align: center;
+  z-index: 9999;
+
+  .icon {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  &.active {
+    transform: translateX(-50%) translateY(0);
+  }
+}

@@ -17,7 +17,6 @@ import { ReactComponent as ConfirmedActiveTxsIcon } from './images/confirmed-act
 import { ReactComponent as ConfirmedInactiveTxsIcon } from './images/confirmed-inactive.svg'
 import SignedMessages from './SignedMessages/SignedMessages'
 import BundlePreview from './BundlePreview/BundlePreview'
-import OfflineWrapper from 'components/OfflineWrapper/OfflineWrapper'
 
 import styles from './Transactions.module.scss'
 
@@ -214,148 +213,146 @@ function Transactions({
   )
 
   return (
-    <OfflineWrapper>
-      <section className={styles.transactions}>
-        {!!eligibleRequests.length && (
-          <div className={cn(styles.panel, styles.waitingTransactions)}>
-            <div className={styles.panelHeading}>
-              <div className={styles.title}>
-                <WaitingTxsIcon />
-                Waiting to be signed (current batch)
-              </div>
+    <section className={styles.transactions}>
+      {!!eligibleRequests.length && (
+        <div className={cn(styles.panel, styles.waitingTransactions)}>
+          <div className={styles.panelHeading}>
+            <div className={styles.title}>
+              <WaitingTxsIcon />
+              Waiting to be signed (current batch)
             </div>
-            <div className={styles.content}>
-              <div className={styles.bundle}>
-                <div className={styles.bundleList} onClick={() => showSendTxns(null)}>
-                  {eligibleRequests.map((req) => (
-                    <TxnPreview
-                      key={req.id}
-                      network={selectedNetwork.id}
-                      account={selectedAcc}
-                      disableExpand
-                      txn={toBundleTxn(req.txn, selectedAcc)}
-                    />
-                  ))}
-                </div>
-                <div className={styles.actions}>
-                  {/*
+          </div>
+          <div className={styles.content}>
+            <div className={styles.bundle}>
+              <div className={styles.bundleList} onClick={() => showSendTxns(null)}>
+                {eligibleRequests.map((req) => (
+                  <TxnPreview
+                    key={req.id}
+                    network={selectedNetwork.id}
+                    account={selectedAcc}
+                    disableExpand
+                    txn={toBundleTxn(req.txn, selectedAcc)}
+                  />
+                ))}
+              </div>
+              <div className={styles.actions}>
+                {/*
                   <Button size="sm" className='cancel' onClick={
                     () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
                   }>Reject all</Button> */}
-                  <Button
-                    size="sm"
-                    variant="primaryGradient"
-                    className={styles.gradient}
-                    onClick={() => showSendTxns(null)}
-                  >
-                    Sign or Reject
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {!!firstPending && (
-          <div className={cn(styles.panel, styles.pending)}>
-            <div className={styles.panelHeading}>
-              <div className={styles.title}>
-                <PendingTxsIcon />
-                Pending transactions
-              </div>
-            </div>
-            <div className={styles.content}>
-              <div className={styles.bundle}>
-                <BundlePreview bundle={firstPending} feeAssets={feeAssets} />
-                <div className={styles.actions}>
-                  <Button size="sm" className={styles.cancel} onClick={() => cancel(firstPending)}>
-                    Cancel
-                  </Button>
-                  <Button size="sm" className={styles.speedUp} onClick={() => speedup(firstPending)}>
-                    Speed up
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="primaryGradient"
-                    className={styles.gradient}
-                    onClick={() => replace(firstPending)}
-                  >
-                    Replace or Modify
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-        {allPending && allPending.length > 1 && (
-          <h4>NOTE: There are a total of {allPending.length} pending transaction bundles.</h4>
-        )}
-
-        <div className={cn(styles.panel, styles.confirmed)}>
-          <div className={styles.panelHeading}>
-            <div className={styles.buttons}>
-              <div className={styles.title}>
-                {showMessages ? <ConfirmedInactiveTxsIcon /> : <ConfirmedActiveTxsIcon />}
-                <button
-                  className={
-                    showMessages
-                      ? cn(styles.inactive, styles.txnBtn)
-                      : cn(styles.active, styles.txnBtn)
-                  }
-                  onClick={() => {
-                    setShowMessages(false)
-                    setPage(1)
-                  }}
+                <Button
+                  size="sm"
+                  variant="primaryGradient"
+                  className={styles.gradient}
+                  onClick={() => showSendTxns(null)}
                 >
-                  Confirmed Transactions
-                </button>
-              </div>
-              <div className={styles.title}>
-                {showMessages ? <SignedMsgActiveIcon /> : <SignedMsgInactiveIcon />}
-                <button
-                  className={
-                    showMessages
-                      ? cn(styles.active, styles.msgBtn)
-                      : cn(styles.inactive, styles.msgBtn)
-                  }
-                  onClick={() => {
-                    setShowMessages(true)
-                    setPage(1)
-                  }}
-                >
-                  Signed Messages
-                </button>
+                  Sign or Reject
+                </Button>
               </div>
             </div>
-            <div className={styles.topPagination}>{maxPages >= 1 ? paginationControls : null}</div>
           </div>
-          {!showMessages && (
-            <div className={styles.content}>
-              {!relayerURL && (
-                <h3 className={styles.validationError}>
-                  Unsupported: not currently connected to a relayer.
-                </h3>
-              )}
-              {errMsg && (
-                <h3 className={styles.validationError}>
-                  Error getting list of transactions: {errMsg}
-                </h3>
-              )}
-              {isLoading && !data ? <Loading /> : !bundlesList.length ? null : <>{bundlesList}</>}
-            </div>
-          )}
-          {showMessages && (
-            <SignedMessages
-              filteredMessages={filteredMessages}
-              privateMode={privateMode}
-              page={page}
-              selectedAcc={selectedAcc}
-              selectedNetwork={selectedNetwork}
-            />
-          )}
-          <div className={styles.bottomPagination}>{maxPages >= 1 ? paginationControls : null}</div>
         </div>
-      </section>
-    </OfflineWrapper>
+      )}
+      {!!firstPending && (
+        <div className={cn(styles.panel, styles.pending)}>
+          <div className={styles.panelHeading}>
+            <div className={styles.title}>
+              <PendingTxsIcon />
+              Pending transactions
+            </div>
+          </div>
+          <div className={styles.content}>
+            <div className={styles.bundle}>
+              <BundlePreview bundle={firstPending} feeAssets={feeAssets} />
+              <div className={styles.actions}>
+                <Button size="sm" className={styles.cancel} onClick={() => cancel(firstPending)}>
+                  Cancel
+                </Button>
+                <Button size="sm" className={styles.speedUp} onClick={() => speedup(firstPending)}>
+                  Speed up
+                </Button>
+                <Button
+                  size="sm"
+                  variant="primaryGradient"
+                  className={styles.gradient}
+                  onClick={() => replace(firstPending)}
+                >
+                  Replace or Modify
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {allPending && allPending.length > 1 && (
+        <h4>NOTE: There are a total of {allPending.length} pending transaction bundles.</h4>
+      )}
+
+      <div className={cn(styles.panel, styles.confirmed)}>
+        <div className={styles.panelHeading}>
+          <div className={styles.buttons}>
+            <div className={styles.title}>
+              {showMessages ? <ConfirmedInactiveTxsIcon /> : <ConfirmedActiveTxsIcon />}
+              <button
+                className={
+                  showMessages
+                    ? cn(styles.inactive, styles.txnBtn)
+                    : cn(styles.active, styles.txnBtn)
+                }
+                onClick={() => {
+                  setShowMessages(false)
+                  setPage(1)
+                }}
+              >
+                Confirmed Transactions
+              </button>
+            </div>
+            <div className={styles.title}>
+              {showMessages ? <SignedMsgActiveIcon /> : <SignedMsgInactiveIcon />}
+              <button
+                className={
+                  showMessages
+                    ? cn(styles.active, styles.msgBtn)
+                    : cn(styles.inactive, styles.msgBtn)
+                }
+                onClick={() => {
+                  setShowMessages(true)
+                  setPage(1)
+                }}
+              >
+                Signed Messages
+              </button>
+            </div>
+          </div>
+          <div className={styles.topPagination}>{maxPages >= 1 ? paginationControls : null}</div>
+        </div>
+        {!showMessages && (
+          <div className={styles.content}>
+            {!relayerURL && (
+              <h3 className={styles.validationError}>
+                Unsupported: not currently connected to a relayer.
+              </h3>
+            )}
+            {errMsg && (
+              <h3 className={styles.validationError}>
+                Error getting list of transactions: {errMsg}
+              </h3>
+            )}
+            {isLoading && !data ? <Loading /> : !bundlesList.length ? null : <>{bundlesList}</>}
+          </div>
+        )}
+        {showMessages && (
+          <SignedMessages
+            filteredMessages={filteredMessages}
+            privateMode={privateMode}
+            page={page}
+            selectedAcc={selectedAcc}
+            selectedNetwork={selectedNetwork}
+          />
+        )}
+        <div className={styles.bottomPagination}>{maxPages >= 1 ? paginationControls : null}</div>
+      </div>
+    </section>
   )
 }
 
