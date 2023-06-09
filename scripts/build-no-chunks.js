@@ -37,5 +37,5 @@ config.optimization.runtimeChunk = false
 config.output.filename = 'static/js/[name].js'
 
 // Renames main.b100e6da.css to main.css
-config.plugins[5].options.filename = 'static/css/[name].css'
-config.plugins[5].options.moduleFilename = () => 'static/css/main.css'
+config.plugins[4].options.filename = 'static/css/[name].css'
+config.plugins[4].options.moduleFilename = () => 'static/css/main.css'
