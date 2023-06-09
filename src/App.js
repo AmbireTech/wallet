@@ -4,6 +4,7 @@ import './App.scss'
 
 import { HashRouter as Router, Switch, Route, Redirect, Prompt } from 'react-router-dom'
 import { useState, useEffect, useMemo, useCallback, useRef, Suspense } from 'react'
+import OfflineProvider from 'context/OfflineContext/OfflineContext'
 import useNetwork from 'ambire-common/src/hooks/useNetwork'
 import useRewards from 'ambire-common/src/hooks/useRewards'
 import { Loading } from 'components/common'
@@ -443,15 +444,17 @@ function AppInner() {
 export default function App() {
   return (
     <Router>
-      <ConstantsProvider>
-        <ThemeProvider>
-          <ToastProvider>
-            <ModalProvider>
-              <AppInner />
-            </ModalProvider>
-          </ToastProvider>
-        </ThemeProvider>
-      </ConstantsProvider>
+      <OfflineProvider>
+        <ConstantsProvider>
+          <ThemeProvider>
+            <ToastProvider>
+              <ModalProvider>
+                <AppInner/>
+              </ModalProvider>
+            </ToastProvider>
+          </ThemeProvider>
+        </ConstantsProvider>
+      </OfflineProvider>
     </Router>
   )
 }

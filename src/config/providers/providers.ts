@@ -1,3 +1,4 @@
+// @ts-nocheck
 import networks, { NetworkId, NETWORKS, NetworkType } from 'ambire-common/src/constants/networks'
 import { providers } from 'ethers'
 
@@ -31,6 +32,52 @@ export const rpcUrls = {
 
 // @ts-ignore
 const rpcProviders: { [key in NetworkId]: any } = {}
+const CHECK_NET_INTERVAL_MS = 2000
+const TRIES_LEFT = 10
+
+const wait = (ms: number) => {
+    return new Promise<void>((resolve, reject) => {
+        setTimeout(() => {
+            resolve()
+        }, ms)
+    })
+}
+
+async function retryRPCPromiseWithDelay<Promise>(
+    promise: any,
+    retriesLeft: number,
+    delay: number
+): Promise {
+    try {
+        return await promise
+    } catch (error) {
+        if (retriesLeft === 0) {
+            return Promise.reject(error)
+        }
+        await wait(delay)
+        return retryRPCPromiseWithDelay(promise, retriesLeft - 1, delay)
+    }
+}
+const handleTypeFunction = async(target: any, prop: string, args: any) => {
+  let result
+  if (prop === 'send' && args[0] === 'eth_chainId') {
+    result = `0x${target._network.chainId.toString(16)}`
+    return result
+  }
+
+  if (['getBlock', 'getBlockWithTransactions'].includes(prop)) {
+    args[0] = args[0] === -1 ? 'latest' : args[0]
+  }
+  
+  result = target[prop](...args)
+
+  if (typeof result === 'object' && typeof result.then === 'function') {
+    const res = await retryRPCPromiseWithDelay(result, TRIES_LEFT, CHECK_NET_INTERVAL_MS)
+    return new Promise(resolve => resolve(res))
+  }
+
+  return result
+}
 
 const setProvider = (_id: NetworkId) => {
   // eslint-disable-next-line no-underscore-dangle
@@ -39,20 +86,33 @@ const setProvider = (_id: NetworkId) => {
   if (!network) return null
 
   const { id: name, chainId, ensName } = network as NetworkType
-
+  let provider
   if (url.startsWith('wss:')) {
-    return new providers.WebSocketProvider(url, {
+    provider = new providers.WebSocketProvider(url, {
+      name: ensName || name,
+      chainId
+    })
+  } else {
+    provider = new providers.StaticJsonRpcProvider(url, {
       name: ensName || name,
       chainId
     })
   }
-  return new providers.StaticJsonRpcProvider(url, {
-    name: ensName || name,
-    chainId
+  
+  return new Proxy(provider, {
+    get: function (target: any, prop: string, receiver) {
+      if (typeof target[prop] === 'function') {
+        return async function() {
+          return await handleTypeFunction(target, prop, arguments)
+        }
+      }
+      
+      return target[prop]
+    }
   })
 }
 
-;(Object.keys(NETWORKS) as Array<keyof typeof NETWORKS>).forEach((networkId: NetworkId) => {
+;(Object.keys(NETWORKS) as Array<keyof typeof NETWORKS>).forEach(async(networkId: NetworkId) => {
   rpcProviders[networkId] = setProvider(networkId)
 })
 

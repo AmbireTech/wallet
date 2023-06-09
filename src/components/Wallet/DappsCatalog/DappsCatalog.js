@@ -211,12 +211,12 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
               <div className={cn(styles.catalogItem, styles.addCustomDapp)}>
                 <div className={styles.tools}>
                   {/* <ToolTip label={`Click here to see how create dApp for Ambire Wallet catalog`}>
-                    <a className={styles.infoBtn} href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
-                      target="_blank"
-                      rel="noreferrer noopener">
-                      <MdBuildCircle size={23} />
-                    </a>
-                  </ToolTip> */}
+                      <a className={styles.infoBtn} href={'https://github.com/AmbireTech/wallet-dapp-catalog#readme'}
+                        target="_blank"
+                        rel="noreferrer noopener">
+                        <MdBuildCircle size={23} />
+                      </a>
+                    </ToolTip> */}
                   <img className={styles.customDapp} src={DAPPS_ICON} alt="add custom dapps" />
                 </div>
                 <div className={styles.customDappIconWrapper}>

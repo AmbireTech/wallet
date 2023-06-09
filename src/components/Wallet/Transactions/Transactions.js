@@ -237,9 +237,9 @@ function Transactions({
               </div>
               <div className={styles.actions}>
                 {/*
-                <Button size="sm" className='cancel' onClick={
-                  () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
-                }>Reject all</Button> */}
+                  <Button size="sm" className='cancel' onClick={
+                    () => resolveMany(eligibleRequests.map(x => x.id), { message: 'Ambire user rejected all requests' })
+                  }>Reject all</Button> */}
                 <Button
                   size="sm"
                   variant="primaryGradient"
