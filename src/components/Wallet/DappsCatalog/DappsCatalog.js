@@ -3,7 +3,7 @@ import NETWORKS from 'consts/networks'
 import { TextInput, ToolTip, Button } from 'components/common'
 import GnosisSafeAppIframe from 'components/Plugins/GnosisSafeApps/GnosisSafeAppIframe'
 import { useCallback, useEffect, useState } from 'react'
-import { MdInfo, MdDelete } from 'react-icons/md'
+import { MdDelete } from 'react-icons/md'
 import { AiOutlineStar, AiFillStar } from 'react-icons/ai'
 import DAPPS_ICON from 'resources/dapps.svg'
 import AMBIRE_ICON_HOT from 'resources/icon.png'
@@ -17,10 +17,6 @@ import { useHistory } from 'react-router-dom'
 import { ReactComponent as SearchIcon } from 'resources/icons/search.svg'
 
 import styles from './DappsCatalog.module.scss'
-
-const CONNECTION_TYPE_LABEL = {
-  walletconnect: 'WalletConnect'
-}
 
 const CATEGORY_LABEL = {
   walletconnect: 'WalletConnect'
@@ -70,29 +66,32 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     [network]
   )
 
-  const getNetworkTooltipContent = useCallback((networks) => {
-    return (
-      <div className={styles.tooltipNetworks}>
-        {networks
-          ?.map((n) => {
-            const network = NETWORKS.find((an) => an.id === n)
-            if (network) {
-              return (
-                <div key={network.id} className={styles.tooltipNetwork}>
-                  <span
-                    className={styles.tooltipNetworkIcon}
-                    style={{ backgroundImage: `url(${network.iconUrl})` }}
-                  />
-                  <span>{network.name}</span>
-                </div>
-              )
-            }
-            return null
-          })
-          .filter((n) => n)}
-      </div>
-    )
-  }, [])
+  const getNetworkTooltipContent = useCallback(
+    (networks) => {
+      return (
+        <div className={styles.tooltipNetworks}>
+          {networks
+            ?.map((n) => {
+              const sameNetwork = NETWORKS.find((an) => an.id === n)
+              if (sameNetwork) {
+                return (
+                  <div key={sameNetwork.id} className={styles.tooltipNetwork}>
+                    <span
+                      className={styles.tooltipNetworkIcon}
+                      style={{ backgroundImage: `url(${network.iconUrl})` }}
+                    />
+                    <span>{sameNetwork.name}</span>
+                  </div>
+                )
+              }
+              return null
+            })
+            .filter((n) => n)}
+        </div>
+      )
+    },
+    [network.iconUrl]
+  )
 
   const onFavoriteClick = useCallback(
     (e, item) => {
@@ -129,8 +128,8 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
   )
 
   const openCustomDappModal = useCallback(
-    (_ev, dappUrl) => {
-      showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} dappUrl={dappUrl} />)
+    (_ev, customDappUrl) => {
+      showModal(<AddCustomDappModal dappsCatalog={dappsCatalog} dappUrl={customDappUrl} />)
     },
     [dappsCatalog, showModal]
   )
@@ -146,21 +145,21 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
     const loaded = loadDappFromUrl(dappUrlFromLink)
     setDappUrlsFromLink('')
 
-    if (loaded) {
-    } else {
-      async function tryAutoLoad() {
-        const manifest = await getManifestFromDappUrl(fetch, dappUrlFromLink)
-        if (manifest && manifest.isWalletPlugin) {
-          addCustomDapp(manifest)
-        } else {
-          openCustomDappModal(null, dappUrlFromLink)
-        }
-      }
+    if (loaded) return
 
-      tryAutoLoad().catch((e) => {
-        console.error('tryAutoLoad:', e)
-      })
+    async function tryAutoLoad() {
+      const manifest = await getManifestFromDappUrl(fetch, dappUrlFromLink)
+      if (manifest && manifest.isWalletPlugin) {
+        addCustomDapp(manifest)
+      } else {
+        openCustomDappModal(null, dappUrlFromLink)
+      }
     }
+
+    tryAutoLoad().catch((e) => {
+      // eslint-disable-next-line no-console
+      console.error('tryAutoLoad:', e)
+    })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dappUrlFromLink, loadDappFromUrl, selectedAcc])
@@ -329,13 +328,13 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                                 ?.slice(0, 3)
                                 .reverse()
                                 .map((n) => {
-                                  const network = NETWORKS.find((an) => an.id === n)
-                                  if (network) {
+                                  const sameNetwork = NETWORKS.find((an) => an.id === n)
+                                  if (sameNetwork) {
                                     return (
                                       <span
-                                        key={network.id}
+                                        key={sameNetwork.id}
                                         className={cn(styles.tag, styles.networkTag)}
-                                        style={{ backgroundImage: `url(${network.icon})` }}
+                                        style={{ backgroundImage: `url(${sameNetwork.icon})` }}
                                       />
                                     )
                                   }
@@ -344,18 +343,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                             </div>
                           </ToolTip>
                         )}
-
-                        <div className={cn(styles.tagRow, styles.tagTypes)}>
-                          <span
-                            className={cn(
-                              styles.tag,
-                              styles.typeTag,
-                              styles[`typeTag${item.category}`]
-                            )}
-                          >
-                            {CONNECTION_TYPE_LABEL[item.category] || item.category}
-                          </span>
-                        </div>
                       </div>
                     </div>
                   </div>
@@ -369,10 +356,6 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
                 No dApp found in our list matching your criteria
               </div>
             ) : null}
-
-            <div className={styles.infoWc}>
-              <MdInfo /> Note: any dApp that supports WalletConnect can be connected as well
-            </div>
           </div>
         </div>
       )}
