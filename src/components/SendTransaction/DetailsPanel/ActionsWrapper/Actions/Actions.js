@@ -292,7 +292,8 @@ const Actions = ({
         // This can be a boolean but it can also contain the new signer/primaryKeyBackup, which instructs /second-key to update acc upon successful signature
         recoveryMode: finalBundle.recoveryMode,
         canSkip2FA,
-        isGasTankEnabled: currentAccGasTankState.isEnabled && !!relayerURL
+        isGasTankEnabled: currentAccGasTankState.isEnabled && !!relayerURL,
+        meta: (!!finalBundle.meta && finalBundle.meta) || null
       }
     )
     if (!success) {

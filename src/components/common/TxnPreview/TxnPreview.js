@@ -36,7 +36,8 @@ export default function TxnPreview({
   disableDismiss,
   disableDismissLabel,
   addressLabel = null,
-  feeAssets
+  feeAssets,
+  meta = null
 }) {
   const {
     constants: { tokenList, humanizerInfo }
@@ -48,7 +49,8 @@ export default function TxnPreview({
   const networkDetails = networks.find(({ id }) => id === network)
   const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, {
     mined,
-    extended: true
+    extended: true,
+    meta
   })
 
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
