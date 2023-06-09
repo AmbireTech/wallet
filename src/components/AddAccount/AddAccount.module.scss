@@ -58,6 +58,9 @@
   button:not([type='submit']):not([disabled]):hover {
     opacity: 1;
   }
+  button[type='submit'] {
+    width: 100%;
+  }
 
   input:disabled,
   button:disabled {

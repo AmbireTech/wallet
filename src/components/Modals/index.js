@@ -12,6 +12,7 @@ import CongratsRewardsModal from './CongratsRewardsModal/CongratsRewardsModal'
 import AddCustomDappModal from './AddCustomDappModal/AddCustomDappModal'
 import GasTankBalanceByTokensModal from './GasTankBalanceByTokensModal/GasTankBalanceByTokensModal'
 import GuardarianDepositProviderModal from './GuardarianDepositProviderModal/GuardarianDepositProviderModal'
+import WeakPasswordModal from './WeakPasswordModal/WeakPasswordModal'
 
 export {
   PermissionsModal,
@@ -27,5 +28,6 @@ export {
   CongratsRewardsModal,
   GasTankBalanceByTokensModal,
   AddCustomDappModal,
-  GuardarianDepositProviderModal
+  GuardarianDepositProviderModal,
+  WeakPasswordModal
 }
