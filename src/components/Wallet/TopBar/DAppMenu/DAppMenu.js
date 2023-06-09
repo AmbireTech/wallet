@@ -21,7 +21,7 @@ const DAppMenu = ({ toggleSideBarOpen, currentDappData, loadCurrentDappData }) =
         {/* TODO: update the blogpost link */}
         <a
           className="info-btn"
-          href="https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect-c1bc096a531e"
+          href="https://blog.ambire.com/connect-to-any-dapp-with-ambire-wallet-and-walletconnect/"
           target="_blank"
           rel="noreferrer noopener"
         >

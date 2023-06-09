@@ -153,7 +153,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
       <div className={styles.info}>
         You are receiving $WALLETs for holding funds on your Ambire wallet as an early user.{' '}
         <a
-          href="https://blog.ambire.com/announcing-the-wallet-token-a137aeda9747"
+          href="https://blog.ambire.com/announcing-the-wallet-token/"
           target="_blank"
           rel="noreferrer"
         >
