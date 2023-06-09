@@ -1,13 +1,13 @@
-import './Loading.scss';
+import './Loading.scss'
 
 const Dots = () => {
-    return (
-        <span className="loading-dots">
-            <span>.</span>
-            <span>.</span>
-            <span>.</span>
-        </span>
-    );
-};
+  return (
+    <span className="loading-dots">
+      <span>.</span>
+      <span>.</span>
+      <span>.</span>
+    </span>
+  )
+}
 
-export default Dots;
+export default Dots

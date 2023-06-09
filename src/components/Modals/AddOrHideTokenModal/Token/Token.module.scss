@@ -1,0 +1,43 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.9375rem;
+  margin-bottom: 1.875rem;
+
+  .info {
+    display: flex;
+    align-items: center;
+
+    .iconWrapper {
+      width: 2.125rem;
+      height: 2.125rem;
+      background-color: rgba($c-titan-white, 0.05);
+      border-radius: $border-radius;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 0.625rem;
+    }
+    .failedIcon {
+      border-radius: 0;
+      width: 1.375rem;
+    }
+
+    .innerImage {
+      border-radius: $border-radius;
+    }
+
+    .name {
+      font-size: 0.875rem;
+      font-weight: 400;
+      margin: 0;
+
+      span {
+        color: $c-scampi;
+      }
+    }
+  }
+}

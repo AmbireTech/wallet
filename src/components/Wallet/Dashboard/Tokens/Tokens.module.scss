@@ -1,0 +1,34 @@
+@import 'variables.scss';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.875rem;
+  margin: 0 3.125rem;
+  border-radius: $border-radius;
+  overflow: hidden;
+  color: $c-scampi;
+  margin-top: 0.1875rem;
+
+  .tokensPlaceholderAddOrHide {
+    margin: 1.875rem 0;
+  }
+
+  .dragHandle {
+    margin-right: 0.9375rem;
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .sortButtons {
+    display: flex;
+    align-items: flex-end;
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    gap: 1.25rem;
+    margin: 0;
+  }
+}

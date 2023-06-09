@@ -16,18 +16,16 @@ async function getTransport() {
   if (connectedDevices.length) {
     if (connectedDevices[0].opened) {
       return new TransportWebHID(connectedDevices[0])
-    } else { // when transport is still not closed and time between 2 requests is short
-      return TransportWebHID.open(connectedDevices[0])
+    } // when transport is still not closed and time between 2 requests is short
+    return TransportWebHID.open(connectedDevices[0])
+  }
+  try {
+    return await TransportWebHID.request()
+  } catch (e) {
+    if (e.message.includes("reading 'open'")) {
+      throw new Error('ledger WebHID request denied')
     }
-  } else {
-    try {
-      return await TransportWebHID.request()
-    } catch (e) {
-      if (e.message.includes('reading \'open\'')) {
-        throw new Error('ledger WebHID request denied')
-      }
-      throw new Error('Could not request WebHID ledger: ' + e.message)
-    }
+    throw new Error(`Could not request WebHID ledger: ${e.message}`)
   }
 }
 
@@ -36,19 +34,23 @@ export async function ledgerGetAddresses() {
   const accounts = await getAccounts(transport)
   transport.close()
 
-  return accounts.map(a => a.address)
+  return accounts.map((a) => a.address)
 }
 
 async function getAccounts(transport) {
   const parentKeyDerivationPath = `m/${PARENT_HD_PATH}`
   let ledgerResponse
-  ledgerResponse = await getAddressInternal(transport, parentKeyDerivationPath).then(o => o).catch(err => {
-    if (err.statusCode === 25871 || err.statusCode === 27404) {
-      throw Error('Please make sure your ledger is unlocked and running the Ethereum app. ' + err.message)
-    } else {
-      throw Error('Could not get address from ledger : ' + err)
-    }
-  })
+  ledgerResponse = await getAddressInternal(transport, parentKeyDerivationPath)
+    .then((o) => o)
+    .catch((err) => {
+      if (err.statusCode === 25871 || err.statusCode === 27404) {
+        throw Error(
+          `Please make sure your ledger is unlocked and running the Ethereum app. ${err.message}`
+        )
+      } else {
+        throw Error(`Could not get address from ledger : ${err}`)
+      }
+    })
 
   const hdKey = new HDNode()
   hdKey.publicKey = Buffer.from(ledgerResponse.publicKey, 'hex')
@@ -59,13 +61,12 @@ async function getAccounts(transport) {
     hdKey,
     address: mainAddress,
     derivationPath: parentKeyDerivationPath,
-    baseDerivationPath: PARENT_HD_PATH,
+    baseDerivationPath: PARENT_HD_PATH
   }
 
   // currently we can't get addrs to match with what appears in MM/Ledger live so only one is derived
   return calculateDerivedHDKeyInfos(initialDerivedKeyInfo, 1)
 }
-
 
 async function getAddressInternal(transport, parentKeyDerivationPath) {
   let timeoutHandle
@@ -94,37 +95,40 @@ export async function ledgerSignTransaction(txn, chainId) {
   const unsignedTxObj = {
     ...txn,
     gasLimit: txn.gasLimit || txn.gas,
-    chainId: chainId
+    chainId
   }
   delete unsignedTxObj.from
   delete unsignedTxObj.gas
 
-  let serializedUnsigned = serialize(unsignedTxObj)
+  const serializedUnsigned = serialize(unsignedTxObj)
   const accountsData = await getAccounts(transport)
 
-  //Managing only 1 addr for now
+  // Managing only 1 addr for now
   const address = accountsData[0].address
 
   let serializedSigned
   if (address.toLowerCase() === fromAddr.toLowerCase()) {
     let rsvResponse
     try {
-      rsvResponse = await new AppEth(transport).signTransaction(accountsData[0].derivationPath, serializedUnsigned.substr(2))
+      rsvResponse = await new AppEth(transport).signTransaction(
+        accountsData[0].derivationPath,
+        serializedUnsigned.substr(2)
+      )
     } catch (e) {
-      throw new Error('Could not sign transaction ' + e)
+      throw new Error(`Could not sign transaction ${e}`)
     }
 
     const intV = parseInt(rsvResponse.v, 16)
     const signedChainId = Math.floor((intV - EIP_155_CONSTANT) / 2)
 
     if (signedChainId !== chainId) {
-      throw new Error('Invalid returned V 0x' + rsvResponse.v)
+      throw new Error(`Invalid returned V 0x${rsvResponse.v}`)
     }
 
     delete unsignedTxObj.v
     serializedSigned = serialize(unsignedTxObj, {
-      r: '0x' + rsvResponse.r,
-      s: '0x' + rsvResponse.s,
+      r: `0x${rsvResponse.r}`,
+      s: `0x${rsvResponse.s}`,
       v: intV
     })
   } else {
@@ -141,16 +145,19 @@ export async function ledgerSignMessage(hash, signerAddress) {
 
   const accountsData = await getAccounts(transport)
 
-  //TODO for multiple accs?
+  // TODO for multiple accs?
   const account = accountsData[0]
 
   let signedMsg
   if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
     try {
-      const rsvReply = await new AppEth(transport).signPersonalMessage(account.derivationPath, hash.substr(2))
-      signedMsg = '0x' + rsvReply.r + rsvReply.s + rsvReply.v.toString(16)
+      const rsvReply = await new AppEth(transport).signPersonalMessage(
+        account.derivationPath,
+        hash.substr(2)
+      )
+      signedMsg = `0x${rsvReply.r}${rsvReply.s}${rsvReply.v.toString(16)}`
     } catch (e) {
-      throw new Error('Signature denied ' + e.message)
+      throw new Error(`Signature denied ${e.message}`)
     }
   } else {
     throw new Error('Incorrect address. Are you using the correct account/ledger?')
@@ -164,16 +171,20 @@ export async function ledgerSignMessage712(domainSeparator, hashStructMessage, s
 
   const accountsData = await getAccounts(transport)
 
-  //TODO for multiple accs?
+  // TODO for multiple accs?
   const account = accountsData[0]
 
   let signedMsg
   if (account.address.toLowerCase() === signerAddress.toLowerCase()) {
     try {
-      const rsvReply = await new AppEth(transport).signEIP712HashedMessage(account.derivationPath, domainSeparator, hashStructMessage)
-      signedMsg = '0x' + rsvReply.r + rsvReply.s + rsvReply.v.toString(16)
+      const rsvReply = await new AppEth(transport).signEIP712HashedMessage(
+        account.derivationPath,
+        domainSeparator,
+        hashStructMessage
+      )
+      signedMsg = `0x${rsvReply.r}${rsvReply.s}${rsvReply.v.toString(16)}`
     } catch (e) {
-      throw new Error('Signature denied ' + e.message)
+      throw new Error(`Signature denied ${e.message}`)
     }
   } else {
     throw new Error('Incorrect address. Are you using the correct account/ledger?')
@@ -185,7 +196,6 @@ export async function ledgerSignMessage712(domainSeparator, hashStructMessage, s
 function calculateDerivedHDKeyInfos(initialDerivedKeyInfo, count) {
   const derivedKeys = []
   for (let i = 0; i < count; i++) {
-
     const fullDerivationPath = `m/${initialDerivedKeyInfo.baseDerivationPath}/${i}`
     const path = `m/${i}`
     const hdKey = initialDerivedKeyInfo.hdKey.derive(path)
@@ -194,7 +204,7 @@ function calculateDerivedHDKeyInfos(initialDerivedKeyInfo, count) {
       address,
       hdKey,
       baseDerivationPath: initialDerivedKeyInfo.baseDerivationPath,
-      derivationPath: fullDerivationPath,
+      derivationPath: fullDerivationPath
     }
 
     derivedKeys.push(derivedKey)

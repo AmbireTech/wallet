@@ -1,0 +1,61 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.625rem 1.875rem;
+
+  .account {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+
+    .avatar {
+      width: 2.5rem;
+      height: 2.5rem;
+      border-radius: $border-radius;
+    }
+
+    .address {
+      color: theme(text-primary);
+      font-size: 1rem;
+      margin: 0;
+      word-break: break-all;
+    }
+  }
+
+  .network {
+    display: flex;
+    justify-self: flex-end;
+    align-items: center;
+    gap: 0.625rem;
+    color: theme(text-secondary);
+    font-size: 0.875rem;
+    margin: 0;
+
+    .icon {
+      border-radius: $border-radius;
+      width: 1.5rem;
+      height: 1.5rem;
+      background-color: theme(background-icon);
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    flex-direction: column;
+    gap: 0.625rem;
+
+    .account {
+      flex-direction: column;
+
+      .address {
+        font-size: 0.8125rem;
+        text-align: center;
+      }
+    }
+  }
+}

@@ -1,0 +1,62 @@
+@import 'variables.scss';
+
+.wrapper {
+  margin-top: 0.5rem;
+  background: #292b43;
+  border-radius: $border-radius;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  display: inline-flex;
+  margin-left: auto;
+  gap: 0.75rem;
+  color: $c-titan-white;
+
+  .gasPrice {
+    cursor: pointer;
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    display: flex;
+    align-items: center;
+
+    span {
+      color: $c-titan-white;
+      font-family: 'Poppins', sans-serif;
+      opacity: 0.5;
+      margin-left: 0.125rem;
+      font-weight: 300;
+      font-size: 0.75rem;
+    }
+
+    svg {
+      width: 0.9375rem;
+      height: 0.9375rem;
+      color: $c-turquoise;
+    }
+  }
+
+  .nativePrice {
+    padding-right: 0.75rem;
+    border-right: 1px solid $c-turquoise;
+  }
+}
+
+@include lg-breakpoint {
+  .gasInfo {
+    display: flex;
+    position: absolute;
+    right: 1.5rem;
+    top: 0.875rem;
+
+    .nativePrice {
+      padding-top: 0;
+      padding-bottom: 0;
+      border-bottom: 0;
+      border-right: 1px solid $c-turquoise;
+    }
+
+    .gasPrice {
+      padding-top: 0;
+    }
+  }
+}

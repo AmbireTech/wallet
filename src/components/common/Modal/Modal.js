@@ -1,35 +1,50 @@
-import './Modal.scss'
-
-import { useModals } from 'hooks'
+/* eslint-disable import/no-cycle */
 import cn from 'classnames'
 
+import { useModals } from 'hooks'
+
 import { ReactComponent as CloseIcon } from 'resources/icons/close.svg'
+import { ReactComponent as BackIcon } from 'resources/icons/back.svg'
 
-const Modal = ({ children, id, title, buttons, isCloseBtnShown = true, onClose, topRight, className }) => {
-    const { onHideModal } = useModals()
+import styles from './Modal.module.scss'
 
-    const onCloseModal = () => {
-        onHideModal()
-        onClose && onClose()
-    }
+const Modal = ({
+  children,
+  title,
+  buttons,
+  size,
+  isCloseBtnShown = true,
+  onClose,
+  isBackBtnShown,
+  onBack,
+  className,
+  buttonsClassName,
+  contentClassName
+}) => {
+  const { onHideModal } = useModals()
 
-    return (
-        <div id={id} className={cn('modal', className || '', { buttons: !!buttons })}>
-            <div className="heading">
-                <div className="title-wrapper">
-                    <div className={cn('title', { centered: !isCloseBtnShown })} style={topRight ? { maxWidth: '360px' } : {}}>{ title }</div>
-                    {topRight && <div>{ topRight }</div>}
-                </div>
-                {isCloseBtnShown ? (<div className="close" onClick={onCloseModal}>
-                    <CloseIcon />
-                </div>) : <></>}
-            </div>
-            <div className="content">{ children }</div>
-            { buttons ? 
-                <div className="buttons">{ buttons }</div>
-            : null}
+  const onCloseModal = () => {
+    onHideModal()
+    onClose && onClose()
+  }
+
+  return (
+    <div className={cn(styles.wrapper, className, styles[size || ''])}>
+      {title || isCloseBtnShown || isBackBtnShown ? (
+        <div className={styles.heading}>
+          {isBackBtnShown && <BackIcon className={styles.headingIcon} onClick={onBack} />}
+          <h2
+            className={cn(styles.title, { [styles.centered]: !isCloseBtnShown && !isBackBtnShown })}
+          >
+            {title}
+          </h2>
+          {isCloseBtnShown && <CloseIcon className={styles.headingIcon} onClick={onCloseModal} />}
         </div>
-    )
+      ) : null}
+      <div className={cn(styles.content, contentClassName)}>{children}</div>
+      {buttons && <div className={cn(styles.buttons, buttonsClassName)}>{buttons}</div>}
+    </div>
+  )
 }
 
 export default Modal

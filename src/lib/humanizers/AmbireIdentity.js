@@ -8,19 +8,34 @@ const iface = new Interface(require('adex-protocol-eth/abi/Identity5.2'))
 const IdentityMapping = (humanizerInfo) => {
   return {
     [iface.getSighash('setAddrPrivilege')]: (txn, network) => {
-      const [ addr, privLevel ] = iface.parseTransaction(txn).args
-      const name = getName(humanizerInfo, addr)
+      const [addr, privLevel] = iface.parseTransaction(txn).args
       const isQuickAccManager = addr.toLowerCase() === accountPresets.quickAccManager.toLowerCase()
+
       if (privLevel === privilegesOptions.false) {
-        if (isQuickAccManager) return [`Revoke email/password access`]
-        else return [`Revoke access for signer ${name}`]
-      } else if (privLevel === privilegesOptions.true) {
-        if (isQuickAccManager) return [`INVALID PROCEDURE - DO NOT SIGN`]
-        return [`Authorize signer ${name}`]
-      } else {
-        if (isQuickAccManager) return [`Add a new email/password signer`]
-        return [`Set special authorization for ${name}`]
+        if (isQuickAccManager) return [['Revoke email/password access']]
+        return [
+          [
+            'Revoke access for signer',
+            { type: 'address', address: addr, name: getName(humanizerInfo, addr) }
+          ]
+        ]
       }
+      if (privLevel === privilegesOptions.true) {
+        if (isQuickAccManager) return ['INVALID PROCEDURE - DO NOT SIGN']
+        return [
+          [
+            'Authorize signer',
+            { type: 'address', address: addr, name: getName(humanizerInfo, addr) }
+          ]
+        ]
+      }
+      if (isQuickAccManager) return ['Add a new email/password signer']
+      return [
+        [
+          'Set special authorization for',
+          { type: 'address', address: addr, name: getName(humanizerInfo, addr) }
+        ]
+      ]
     }
   }
 }

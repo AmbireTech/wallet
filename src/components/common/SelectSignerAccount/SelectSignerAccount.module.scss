@@ -1,61 +1,61 @@
 @import 'variables.scss';
 
 .wrapper {
+  display: flex;
+  height: 100%;
+  flex-direction: column;
+
+  .title {
+    color: $c-scampi;
+    font-size: 1.125rem;
+    font-weight: 500;
+    text-align: center;
+    padding-bottom: 1.5625rem;
+  }
+
+  .intro {
+    color: $text-container-color;
+  }
+
+  .signers {
     display: flex;
     flex-direction: column;
+    gap: 0.625rem;
 
-    .title {
-        font-size: 22px;
-    }
+    .signer {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 1.25rem;
+      cursor: pointer;
+      background: $c-mirage;
+      border-radius: $border-radius;
+      border: 1px solid transparent;
+      transition: border-color 0.3s ease;
 
-    .content {
-        overflow: visible !important;
-    }
-
-    .intro {
-        color: $text-container-color;
-    }
-
-    .signers {
-        background: transparent;
-    }
-
-    ul {
-        padding: 0;
-        line-height: 2.5em !important;
+      .link {
         display: flex;
-        flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
 
-        .oddRow {
-            background: $c-ebony-clay;
+        svg {
+          width: 1rem;
+          height: 1rem;
         }
+      }
 
-        li {
-            display: flex;
-            padding: 0 20px;
-            cursor: pointer;
-
-            .indexRow {
-                width: 25px;
-            }
-
-            svg {
-                margin-bottom: -5px;
-            }
-        }
+      &:hover {
+        border: 1px solid $c-turquoise;
+      }
     }
+  }
 
-    .pages {
-        text-align: center;
-        padding-top: 20px;
-    }
+  .info {
+    margin-top: auto;
+    margin-bottom: 1.25rem;
+  }
 
-    .buttons {
-        position: inherit;
-
-        button {
-            flex: 0 1 50% !important;
-        }
-    }
+  .pagination {
+    margin-bottom: 1.875rem;
+    display: flex;
+    justify-content: flex-end;
+  }
 }

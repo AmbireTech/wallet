@@ -1,48 +1,81 @@
 @import 'variables.scss';
 
 .wrapper {
-    .content {
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+
+    .token {
+      display: flex;
+      background-color: $c-mirage;
+      border-radius: $border-radius;
+      padding: 0.5rem 1.25rem;
+
+      p {
+        opacity: 0.9;
+        font-weight: 300;
+        margin: 0;
+        font-size: 0.875rem;
+      }
+
+      .iconAndName {
         display: flex;
-        flex-direction: column;
-        
-        .row {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-            text-align: center;
-            height: 60px;
-            
-            &:nth-child(odd) {
-                background-color: rgba(255, 255, 255, 0.02);
-            }
+        flex: 2 0 0;
+        gap: 0.625rem;
+        align-items: center;
 
-            &:first-child {
-                border-radius: 12px 12px 0 0;
-            }
-            &:last-child {
-                border-radius: 0 0 12px 12px;
-            }
-            
-            .item {
-                flex: 2 0 0;
-            }
+        .icon {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 2.125rem;
+          height: 2.125rem;
+          border-radius: $border-radius;
+          background-color: rgba($c-titan-white, 0.05);
 
-            .logo {
-                flex: 1 0 0;
-                
-                img {
-                    border-radius: 50%;
-                }
-            }
-
-            .balance {
-                flex: 4 0 0;
-            }
+          img {
+            width: 1.125rem;
+            height: 1.125rem;
+          }
         }
-    }
+      }
+      .amountAndValue {
+        display: flex;
+        align-items: center;
+        flex: 3 0 0;
 
-    :global(.buttons button) {
-        flex: 0 1 100% !important;
-        height: 100%;
+        .amount {
+          flex: 4;
+          text-align: left;
+        }
+
+        .value {
+          flex: 2;
+          text-align: right;
+        }
+      }
     }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .content {
+      .token {
+        align-items: flex-start;
+        justify-content: space-between;
+
+        .iconAndName {
+          flex: unset;
+        }
+        .amountAndValue {
+          flex: unset;
+          gap: 0.3125rem;
+          flex-direction: column;
+          align-items: flex-end;
+        }
+      }
+    }
+  }
 }

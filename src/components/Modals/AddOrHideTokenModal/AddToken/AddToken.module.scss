@@ -1,0 +1,45 @@
+@import 'variables';
+
+.wrapper {
+  .addressInput {
+    margin-bottom: 1.25rem;
+
+    label {
+      margin-left: 1.25rem;
+      font-weight: 400;
+      font-size: 0.875rem;
+    }
+  }
+  .addButton {
+    width: 100%;
+    font-weight: 400;
+    margin-bottom: 1.25rem;
+  }
+
+  // Token balance
+  .balanceWrapper {
+    .balance {
+      color: $c-turquoise;
+    }
+    .symbol {
+      opacity: 0.8;
+    }
+  }
+
+  .extraTokensList {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+
+    .token {
+      margin-bottom: 0;
+      background-color: $c-mirage;
+      padding: 0.625rem;
+      border-radius: $border-radius;
+      flex-direction: row;
+      width: 100%;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}

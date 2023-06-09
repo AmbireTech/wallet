@@ -1,0 +1,103 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 1.875rem;
+
+    &.loading {
+      .swapIcon {
+        margin-bottom: 1.875rem;
+      }
+    }
+
+    .selectInput {
+      .selectIcon {
+        position: relative;
+        width: 1.25rem;
+        height: 1.25rem;
+        margin: 0 0.625rem;
+      }
+
+      &::before {
+        position: absolute;
+        top: 0.625rem;
+        left: 1.25rem;
+        width: 2.5rem;
+        height: 2.5rem;
+        content: '';
+        background-color: $c-titan-white;
+        opacity: 0.05;
+        border-radius: $border-radius;
+      }
+    }
+
+    .amountLabel {
+      margin: 0;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+
+      span {
+        opacity: 0.8;
+      }
+    }
+
+    .fromSection {
+      margin-bottom: 1.25rem;
+
+      .inputs {
+        gap: 2.5rem;
+      }
+    }
+
+    .swapIcon {
+      min-width: 3rem;
+      min-height: 3rem;
+      align-self: center;
+      flex: 1;
+      background-color: rgba($c-titan-white, 0.05);
+      border-radius: $border-radius;
+      transform: rotate(90deg);
+    }
+  }
+
+  .button {
+    flex: 0 0 auto;
+    max-width: 25rem;
+    width: 100%;
+    margin: 0 auto;
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .body {
+      .swapIcon {
+        min-width: 2.5rem;
+        min-height: 2.5rem;
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+
+      .selectInput {
+        padding: 0 0.625rem;
+        font-size: 0.875rem;
+
+        .selectIcon {
+          margin-left: 0.625rem;
+        }
+
+        &::before {
+          left: 0.625rem;
+        }
+      }
+    }
+  }
+}

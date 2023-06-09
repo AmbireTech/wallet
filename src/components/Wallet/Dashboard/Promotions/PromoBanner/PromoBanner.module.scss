@@ -1,0 +1,233 @@
+@import 'variables.scss';
+
+@mixin GetBannerStyle($background, $color) {
+  background-color: $background;
+  border-left-color: $color;
+
+  .iconWrapper {
+    background-color: rgba($color, 0.05);
+    border-color: $color;
+  }
+
+  .minimizeIconWrapper {
+    background-color: rgba($color, 0.16);
+    color: $color;
+  }
+
+  .body {
+    .text {
+      .link {
+        color: mix($color, $c-mirage, 90%);
+      }
+    }
+  }
+
+  @include md-breakpoint {
+    border-left-color: transparent;
+    border-top-color: $color;
+  }
+}
+
+.wrapper {
+  position: relative;
+  width: 100%;
+
+  .bannerWrapper {
+    overflow: hidden;
+    position: relative;
+    z-index: 2;
+    border-radius: $border-radius;
+    transition: 0.1s ease-out transform;
+  }
+
+  &::after {
+    content: '';
+    transition: none;
+    position: absolute;
+    left: 50%;
+    z-index: 1;
+    bottom: 0;
+    width: 99%;
+    height: 2.5rem;
+    transform: translateX(-50%);
+    background: rgba($c-mirage, 0.8);
+    mix-blend-mode: multiply;
+    border-radius: 0.625rem;
+    filter: blur(0.3125rem);
+    transition: 0.3s ease-out opacity;
+  }
+
+  .bellIcon {
+    position: absolute;
+    transition: 0.1s ease-out transform;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%) scale(1);
+
+    &:not(.visible) {
+      transform: translate(-50%, -50%) scale(0);
+    }
+  }
+
+  &.minimized {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 3.125rem;
+    height: 3.125rem;
+    border-radius: $border-radius;
+    background-color: $c-mirage;
+    cursor: pointer;
+
+    svg {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    &::after {
+      opacity: 0;
+    }
+
+    .bannerWrapper {
+      transform: scale(0);
+      opacity: 0;
+    }
+  }
+
+  .banner {
+    z-index: 2;
+    position: relative;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.25rem;
+    padding: 0.8125rem 1.25rem;
+    padding-left: 0.8125rem;
+    color: $c-martinique-light;
+    border-left: 0.4375rem solid;
+
+    &.success {
+      @include GetBannerStyle($success-background-color, $success-color);
+    }
+
+    &.warning {
+      @include GetBannerStyle($warning-background-color, $warning-color);
+    }
+
+    &.danger {
+      @include GetBannerStyle($danger-background-color, $danger-color);
+    }
+
+    &.info,
+    &.degenTip {
+      @include GetBannerStyle($info-background-color, $ambire-dark-blue);
+    }
+
+    .iconWrapper,
+    .minimizeIconWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 2.125rem;
+      height: 2.125rem;
+      border-radius: $border-radius;
+    }
+
+    .iconAndBody {
+      display: flex;
+      align-items: center;
+      gap: 0.9375rem;
+      flex: 1;
+
+      .iconWrapper {
+        font-size: 1.25rem;
+        border-width: 0.0625rem;
+        border-style: solid;
+      }
+
+      .body {
+        flex: 1;
+
+        .title {
+          margin: 0;
+          font-size: 1.25rem;
+        }
+
+        .text {
+          margin: 0;
+          font-size: 1rem;
+          text-align: left;
+        }
+      }
+    }
+  }
+
+  .minimizeIconWrapper {
+    cursor: pointer;
+
+    .minimizeIcon {
+      width: 0.75rem;
+      height: 0.5625rem;
+    }
+  }
+}
+
+@include md-breakpoint {
+  .wrapper {
+    .banner {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: 1.25rem;
+      border-left: none;
+      border-top: 0.4375rem solid;
+
+      .iconAndBody {
+        align-self: flex-start;
+
+        .body {
+          .title {
+            font-size: 1.125rem;
+            margin-bottom: 0.625rem;
+          }
+          .text {
+            font-size: 0.875rem;
+          }
+        }
+      }
+    }
+
+    .minimizeIconWrapper {
+      position: absolute;
+      bottom: 1.25rem;
+      right: 1.25rem;
+    }
+  }
+}
+
+@include xs-breakpoint {
+  .wrapper {
+    text-align: center;
+
+    .banner {
+      align-items: center;
+
+      .iconAndBody {
+        flex-direction: column;
+
+        .body {
+          .text {
+            text-align: center;
+          }
+        }
+      }
+    }
+
+    .minimizeIconWrapper {
+      position: static;
+      top: unset;
+      right: unset;
+      align-self: flex-end;
+    }
+  }
+}

@@ -1,22 +1,22 @@
-@import "variables";
+@import 'variables';
 
 .wrapper {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .fee {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 20px 22px;
-  background-color: $c-mirage;
-  border-radius: 12px;
-  color: $c-titan-white;
+  padding: 1.25rem 1.375rem;
+  background-color: theme(background-primary);
+  border-radius: $border-radius;
+  color: theme(text-primary);
 
   &.discount {
-    color: $c-turquoise;
+    color: theme(highlight-secondary);
   }
 
   &.warning {
@@ -30,10 +30,10 @@
   }
 }
 
-@media (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .fee {
     flex-direction: column;
     text-align: center;
-    gap: 15px;
+    gap: 0.9375rem;
   }
 }

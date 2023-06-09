@@ -1,0 +1,104 @@
+@import 'variables';
+
+@mixin Icon($width, $height) {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: $width;
+  height: $height;
+  border-radius: $border-radius;
+  background-color: rgba($c-titan-white, 0.05);
+}
+
+.wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+
+  .swapIcon {
+    width: 1.875rem;
+    height: 1.875rem;
+    // We stop it from shrinking
+    min-width: 1.875rem;
+    min-height: 1.875rem;
+  }
+
+  .token {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    flex: 1;
+
+    .tokenBody {
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+    }
+
+    .tokenText {
+      font-size: 0.875rem;
+      max-width: 7.5rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .iconWrapper {
+      @include Icon(1.75rem, 1.75rem);
+
+      .icon {
+        width: 1.125rem;
+        height: 1.125rem;
+      }
+    }
+
+    &.toToken {
+      justify-content: flex-end;
+    }
+  }
+}
+// Mobile
+@include lg-breakpoint {
+  .wrapper {
+    justify-content: unset;
+    gap: 0.9375rem;
+
+    .token {
+      flex-direction: column-reverse;
+      align-items: flex-start;
+      flex: 1;
+
+      &.toToken {
+        align-items: flex-end;
+
+        .tokenBody {
+          flex-direction: row-reverse;
+        }
+      }
+      .tokenText {
+        font-size: 0.75rem;
+
+        max-width: unset;
+        flex: 1;
+      }
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    align-items: flex-start;
+    flex-wrap: wrap;
+
+    .swapIcon {
+      display: none;
+    }
+
+    .token {
+      .tokenText {
+        max-width: 7.5rem;
+      }
+    }
+  }
+}

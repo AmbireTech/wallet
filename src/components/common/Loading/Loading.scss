@@ -1,197 +1,207 @@
 @import 'variables.scss';
 
 .loading {
-    height: 100%;
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-    .icon {
-        svg {
-            animation: spin 1s ease-in-out infinite;
-        }
+  .icon {
+    svg {
+      width: 2.1875rem;
+      height: 2.1875rem;
+      animation: spin 1s ease-in-out infinite;
     }
+  }
 }
 
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
+  from {
+    transform: rotate(0deg);
+  }
 
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 .progress-bar {
-    height: 6px;
-    background: linear-gradient(90deg, $ambire-purple 0%, $ambire-dark-blue 30%, $ambire-dark-blue 70%, $ambire-purple 100%);
-    width: 100%;
-    overflow: hidden;
+  height: 0.375rem;
+  background: linear-gradient(
+    90deg,
+    $ambire-purple 0%,
+    $ambire-dark-blue 30%,
+    $ambire-dark-blue 70%,
+    $ambire-purple 100%
+  );
+  width: 100%;
+  overflow: hidden;
 
-    .inner {
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, #ffffff00 0%, #ffffffff 30%, #ffffffff 70%, #ffffff00);
-        animation: infinite-progress 1.5s infinite ease-in-out;
-        transform-origin: 0% 50%;
-    }
+  .inner {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, #ffffff00 0%, #ffffffff 30%, #ffffffff 70%, #ffffff00);
+    animation: infinite-progress 1.5s infinite ease-in-out;
+    transform-origin: 0% 50%;
+  }
 }
 
 @keyframes infinite-progress {
-    0% {
-        transform: translateX(0) scaleX(0);
-    }
+  0% {
+    transform: translateX(0) scaleX(0);
+  }
 
-    40% {
-        transform: translateX(0) scaleX(0.4);
-    }
+  40% {
+    transform: translateX(0) scaleX(0.4);
+  }
 
-    100% {
-        transform: translateX(100%) scaleX(0.5);
-    }
+  100% {
+    transform: translateX(100%) scaleX(0.5);
+  }
 }
 
 .Skeleton {
-    width: 100%;
-    flex-grow: 1;
-    background: $c-ebony-clay;
-    border-radius: 12px;
-    @include flex-center-center;
-    font-size: 2rem;
+  width: 100%;
+  flex-grow: 1;
+  background: $c-ebony-clay;
+  border-radius: $border-radius;
+  @include flex-center-center;
+  font-size: 2rem;
 }
 
 @keyframes pulse {
-    0% {
-        opacity: 1;
-      }
-      50% {
-        opacity: 0.4;
-      }
-      100% {
-        opacity: 1;
-      }
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 .loading-dots {
-    span {
-        animation-name: pulse;
-        animation-duration: 1.5s;
-        animation-iteration-count: infinite;
-        animation-fill-mode: both;
+  span {
+    animation-name: pulse;
+    animation-duration: 1.5s;
+    animation-iteration-count: infinite;
+    animation-fill-mode: both;
 
-        &:nth-child(2) {
-            animation-delay: 0.3s;
-        }
-        &:nth-child(3) {
-            animation-delay: 0.6s;
-        }
+    &:nth-child(2) {
+      animation-delay: 0.3s;
     }
+    &:nth-child(3) {
+      animation-delay: 0.6s;
+    }
+  }
 }
 
 .ambire-loading-animation-128 {
-    width: 128px;
-    height: 128px;
-    background: url('/resources/ambire-loader-animation-sprite-160.png') left center;
-    animation: ambire-160 1s steps(29) infinite;
-    filter: drop-shadow(0px 0px 10px $ambire-dark-blue);
+  width: 128px; // Leave these values as px, since the animation won't work in rems/ems
+  height: 128px; // Leave these values as px, since the animation won't work in rems/ems
+  background: url('/resources/ambire-loader-animation-sprite-160.png') left center;
+  animation: ambire-160 1s steps(29) infinite;
+  filter: drop-shadow(
+    0 0 10px $ambire-dark-blue
+  ); // Leave these values as px, since the animation won't work in rems/ems
 }
 
 @keyframes ambire-160 {
-    100% {
-        background-position: -4640px;
-    }
+  100% {
+    background-position: -4640px; // Leave these values as px, since the animation won't work in rems/ems
+  }
 }
 
 .loading-borders {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    border-radius: 12px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: $border-radius;
 }
 
 .loading-borders span:nth-child(1) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(to right, #1c1e24, $ambire-dark-blue);
-    animation: animate1 2s linear infinite;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to right, #1c1e24, $ambire-dark-blue);
+  animation: animate1 2s linear infinite;
 }
 
 @keyframes animate1 {
-    0% {
-        transform: translateX(-100%);
-    }
+  0% {
+    transform: translateX(-100%);
+  }
 
-    100% {
-        transform: translateX(100%);
-    }
+  100% {
+    transform: translateX(100%);
+  }
 }
 
 .loading-borders span:nth-child(2) {
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(to bottom, #1c1e24, $ambire-dark-blue);
-    animation: animate2 2s linear infinite;
-    animation-delay: 1s;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to bottom, #1c1e24, $ambire-dark-blue);
+  animation: animate2 2s linear infinite;
+  animation-delay: 1s;
 }
 
 @keyframes animate2 {
-    0% {
-        transform: translateY(-100%);
-    }
+  0% {
+    transform: translateY(-100%);
+  }
 
-    100% {
-        transform: translateY(100%);
-    }
+  100% {
+    transform: translateY(100%);
+  }
 }
 
 .loading-borders span:nth-child(3) {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    height: 1px;
-    background: linear-gradient(to left, #1c1e24, $ambire-dark-blue);
-    animation: animate3 2s linear infinite;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(to left, #1c1e24, $ambire-dark-blue);
+  animation: animate3 2s linear infinite;
 }
 
 @keyframes animate3 {
-    0% {
-        transform: translateX(100%);
-    }
+  0% {
+    transform: translateX(100%);
+  }
 
-    100% {
-        transform: translateX(-100%);
-    }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 
 .loading-borders span:nth-child(4) {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(to top, #1c1e24, $ambire-dark-blue);
-    animation: animate4 2s linear infinite;
-    animation-delay: 1s;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 100%;
+  background: linear-gradient(to top, #1c1e24, $ambire-dark-blue);
+  animation: animate4 2s linear infinite;
+  animation-delay: 1s;
 }
 
 @keyframes animate4 {
-    0% {
-        transform: translateY(100%);
-    }
+  0% {
+    transform: translateY(100%);
+  }
 
-    100% {
-        transform: translateY(-100%);
-    }
+  100% {
+    transform: translateY(-100%);
+  }
 }

@@ -1,0 +1,13 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.9375rem 1.875rem;
+  padding: 0 1.25rem;
+
+  a.explorerUrl {
+    color: $c-heliotrope;
+    text-decoration: underline;
+  }
+}

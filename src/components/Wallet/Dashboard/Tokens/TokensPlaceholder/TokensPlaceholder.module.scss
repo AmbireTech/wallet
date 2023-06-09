@@ -1,0 +1,59 @@
+@import 'variables.scss';
+
+.blur {
+  filter: blur(0.9375rem);
+}
+
+.placeholderOverlay {
+  font-size: 1.125rem;
+  color: $c-titan-white;
+  z-index: 4;
+  @include absolute-full-size;
+  @include flex-center-center;
+  flex-direction: column;
+  text-align: center;
+  gap: 1.25rem;
+
+  svg {
+    g {
+      opacity: 1;
+    }
+  }
+
+  h2 {
+    font-size: 1rem;
+    margin: 0;
+    margin-bottom: 0.625rem;
+    font-weight: 400;
+  }
+}
+
+.addToken {
+  @include flex-center-center;
+  flex-direction: column;
+  gap: 0.625rem;
+
+  &Button {
+    font-weight: 400;
+  }
+
+  svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  p {
+    font-size: 0.875rem;
+
+    &.clickable {
+      cursor: pointer;
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .placeholderOverlay {
+    width: 100%;
+    padding: 0.625rem;
+  }
+}

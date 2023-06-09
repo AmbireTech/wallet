@@ -1,9 +1,13 @@
 @import 'variables.scss';
 
 .checkboxLabel {
-  color: $c-titan-white;
-  
+  color: theme(text-primary);
+
   a {
-    color: $c-heliotrope;
+    color: theme(highlight-primary);
   }
+}
+
+.button {
+  width: 100%;
 }

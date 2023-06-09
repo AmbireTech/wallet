@@ -1,0 +1,44 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+
+  .network {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .networkIconWrapper {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 64px;
+      height: 64px;
+      padding: 8px;
+      margin-bottom: 10px;
+      border-radius: $border-radius;
+      background-color: $c-white;
+
+      .networkIcon {
+        width: 100%;
+      }
+    }
+
+    .networkName {
+      font-size: 16px;
+      font-weight: 400;
+      margin: 0;
+      text-align: center;
+    }
+  }
+
+  .swapIcon {
+    width: 28px;
+    height: 28px;
+    // To center it vertically
+    margin-top: 32px;
+    transform: translateY(-50%);
+  }
+}

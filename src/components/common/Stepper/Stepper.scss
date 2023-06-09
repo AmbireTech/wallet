@@ -2,9 +2,8 @@
 
 .stepper {
   display: flex;
-  //background: $c-mirage;
-  padding: 16px;
-  margin-bottom: 16px;
+  padding: 1rem;
+  margin-bottom: 1rem;
 
   .step {
     flex-grow: 1;
@@ -13,14 +12,42 @@
     justify-content: center;
     position: relative;
 
+    // Specific style for inner steps of the stepper line
+    &:not(:first-child):not(:last-child) {
+      // Inner steps items (name and status) should be centered.
+      // Otherwise the step name and status are positioned/aligned closer to the previous step,
+      // instead of having an equal margin from the prev and next steps.
+      align-items: center;
+
+      &.stepCurrent {
+        // Active progress bar width should end on the status position.
+        // Having in mind that we centered the name and status on the above line,
+        // the progress bar should also ends in the middle of the step.
+        // The other half of the progress bar will have the inactive color.
+        .stepBar {
+          background: linear-gradient(
+            90deg,
+            $c-turquoise 50%,
+            mix($c-turquoise, $c-mirage, 50%) 50%
+          );
+        }
+      }
+    }
+
+    &:nth-last-child(1) {
+      .stepStatus {
+        margin-left: auto;
+      }
+      .stepName {
+        text-align: end;
+      }
+    }
     .stepStatus {
-      //font-size: 16px;
-      margin: auto;
       display: block;
-      width: 10px;
-      height: 10px;
+      width: 0.625rem;
+      height: 0.625rem;
       text-align: center;
-      border-radius: 50px;
+      border-radius: 3.125rem;
       z-index: 2;
       border: 2px solid transparent;
     }
@@ -32,10 +59,10 @@
       }
 
       .stepBarPrev {
-        background: $c-turquoise
+        background: $c-turquoise;
       }
       .stepBarNext {
-        background: $c-turquoise
+        background: $c-turquoise;
       }
     }
 
@@ -69,26 +96,25 @@
 
     .stepBar {
       position: absolute;
-      height: 2px;
+      height: 0.125rem;
       z-index: 1;
-      top: 4px;
+      top: 0.25rem;
 
       &.stepBarPrev {
-        width: 50%;
-        left:0;
+        width: 100%;
+        left: 0;
       }
 
       &.stepBarNext {
-        width: 50%;
-        right:0;
+        width: 100%;
+        right: 0;
       }
     }
 
     .stepName {
-      padding-top: 4px;
-      text-align: center;
+      padding-top: 0.25rem;
       font-weight: normal;
-      font-size: 12px;
+      font-size: 0.75rem;
     }
   }
 }

@@ -1,25 +1,35 @@
-import useSignMessage from "ambire-common/src/hooks/useSignMessage"
-import supportedDApps from "ambire-common/src/constants/supportedDApps"
+import { useState, useEffect, useRef } from 'react'
+import * as blockies from 'blockies-ts'
+import { toUtf8String, isHexString } from 'ethers/lib/utils'
+import supportedDApps from 'ambire-common/src/constants/supportedDApps'
+import cn from 'classnames'
 
-import styles from "./SignMessage.module.scss"
+import { useSignMessage } from 'hooks'
+import {
+  Button,
+  Loading,
+  TextInput,
+  ToolTip,
+  DAppIncompatibilityWarningMsg,
+  Panel
+} from 'components/common'
+import AccountAndNetwork from 'components/common/AccountAndNetwork/AccountAndNetwork'
 
-import { MdBrokenImage, MdCheck, MdClose, MdInfoOutline } from "react-icons/md"
-import { toUtf8String, isHexString } from "ethers/lib/utils"
-import * as blockies from "blockies-ts"
-import { getWallet } from "lib/getWallet"
-import { useToasts } from "hooks/toasts"
-import { useState, useEffect, useRef } from "react"
-import { Button, Loading, TextInput, ToolTip, DAppIncompatibilityWarningMsg, Panel } from "components/common"
-import { networkIconsById } from 'consts/networks'
-import cn from "classnames"
+import { MdBrokenImage, MdInfoOutline } from 'react-icons/md'
 
-import useLocalStorage from 'hooks/useLocalStorage'
+import styles from './SignMessage.module.scss'
 
 const CONF_CODE_LENGTH = 6
 
-export default function SignMessage({ everythingToSign, resolve, account, relayerURL, totalRequests }) {
-  const defaultState = () => ({ codeRequired: false, passphrase: "" })
-  const { addToast } = useToasts()
+export default function SignMessage({
+  everythingToSign,
+  resolve,
+  account,
+  relayerURL,
+  totalRequests,
+  useStorage
+}) {
+  const defaultState = () => ({ codeRequired: false, passphrase: '' })
   const [signingState, setSigningState] = useState(defaultState())
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
@@ -28,35 +38,18 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     const confCode = await new Promise((resolve) => {
       setPromiseResolve(() => resolve)
     })
-    if (!confCode) throw new Error("You must enter a confirmation code")
+    if (!confCode) throw new Error('You must enter a confirmation code')
     await approveQuickAcc({
       password: signingState.passphrase,
       code: confCode
     })
-
-    return
-  }
-
-  const getHardwareWallet = () => {
-    // if quick account, wallet = await fromEncryptedBackup
-    // and just pass the signature as secondSig to signMsgHash
-    const wallet = getWallet(
-      {
-        signer: account.signer,
-        signerExtra: account.signerExtra,
-        chainId: 1 // does not matter
-      }
-    )
-
-    return wallet
   }
 
   const {
     approve,
-    toSign,
+    msgToSign,
     isLoading,
     hasPrivileges,
-    hasProviderError,
     typeDataErr,
     isDeployed,
     dataV4,
@@ -66,36 +59,29 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     confirmationType,
     dApp
   } = useSignMessage({
-    fetch,
     account,
-    everythingToSign,
+    messagesToSign: everythingToSign,
     relayerURL,
-    addToast,
     resolve,
     onConfirmationCodeRequired,
-    getHardwareWallet,
-    useStorage: useLocalStorage,
+    useStorage
   })
 
-  const isDAppSupported = dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(dApp.url+'/'))
+  const isDAppSupported =
+    dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
 
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()
   }, [confirmationType])
 
-  if (!toSign || !account) return <></>
+  if (!msgToSign || !account) return <></>
 
   // should not happen unless chainId is dropped for some reason in addRequests
   if (!requestedNetwork) {
     return (
       <div className={styles.wrapper}>
-        <h3 className='error'>
-          Inexistant network for chainId : {requestedChainId}
-        </h3>
-        <Button
-          className={styles.reject}
-          onClick={() => resolve({ message: "signature denied" })}
-        >
+        <h3 className="error">Unexistent network for chainId : {requestedChainId}</h3>
+        <Button className={styles.reject} onClick={() => resolve({ message: 'signature denied' })}>
           Reject
         </Button>
       </div>
@@ -105,11 +91,8 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
   if (typeDataErr)
     return (
       <div className={styles.wrapper}>
-        <h3 className='error'>Invalid signing request: {typeDataErr}</h3>
-        <Button
-          className={styles.reject}
-          onClick={() => resolve({ message: "signature denied" })}
-        >
+        <h3 className="error">Invalid signing request: {typeDataErr}</h3>
+        <Button className={styles.reject} onClick={() => resolve({ message: 'signature denied' })}>
           Reject
         </Button>
       </div>
@@ -126,29 +109,20 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
     })
   }
 
-  const requestedNetworkIcon = networkIconsById[requestedNetwork.id]
-
   return (
     <div className={styles.wrapper}>
-      <Panel title={'Signing with account'} className={styles.panel}>
-        <div className={styles.signingAccountContent}>
-          <div className={styles.signingAccountAccount}>
-            <img
-              className={styles.icon}
-              src={blockies.create({ seed: account.id }).toDataURL()}
-              alt='Account Icon'
-            />
-            {account.id}
-          </div>
-          <div className={styles.signingAccountNetwork}>
-            on
-            <div
-              className={styles.icon}
-              style={{ backgroundImage: `url(${requestedNetworkIcon})` }}
-            />
-            <div className='address'>{requestedNetwork.name}</div>
-          </div>
-        </div>
+      <Panel
+        title="Signing with account"
+        titleClassName={styles.panelTitle}
+        className={styles.panel}
+      >
+        <AccountAndNetwork
+          address={account.id}
+          networkName={requestedNetwork.name}
+          networkId={requestedNetwork.id}
+          avatar={blockies.create({ seed: account.id }).toDataURL()}
+          maxAddressLength={30}
+        />
       </Panel>
       <Panel className={styles.panel}>
         <div className={cn(styles.title, styles.signMessageTitle)}>
@@ -157,12 +131,11 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
             <ToolTip
               label={`${
                 isTypedData
-                  ? "An EIP-712 typed data signature has been requested"
-                  : "An ethSign ethereum signature type has been requested"
+                  ? 'An EIP-712 typed data signature has been requested'
+                  : 'An ethSign ethereum signature type has been requested'
               }`}
             >
-              <MdInfoOutline />{" "}
-              <span>{isTypedData ? "EIP-712 type" : "standard type"}</span>
+              <MdInfoOutline /> <span>{isTypedData ? 'EIP-712 type' : 'standard type'}</span>
             </ToolTip>
           </span>
         </div>
@@ -170,12 +143,7 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
         <div className={styles.requestMessage}>
           <div className={styles.dappMessage}>
             {dApp ? (
-              <a
-                className={styles.dapp}
-                href={dApp.url}
-                target='_blank'
-                rel='noreferrer'
-              >
+              <a className={styles.dapp} href={dApp.url} target="_blank" rel="noreferrer">
                 <div
                   className={styles.icon}
                   style={{ backgroundImage: `url(${dApp.icons ? dApp.icons[0] : 'none'})` }}
@@ -185,128 +153,96 @@ export default function SignMessage({ everythingToSign, resolve, account, relaye
                 {dApp.name}
               </a>
             ) : (
-              "A dApp "
+              'A dApp '
             )}
             is requesting your signature.
           </div>
-          <span>
-            {totalRequests > 1
-              ? `You have ${totalRequests - 1} more pending requests.`
-              : ""}
-          </span>
+          {totalRequests > 1 ? (
+            <span>You have {totalRequests - 1} more pending requests.</span>
+          ) : null}
           {!isDAppSupported && <DAppIncompatibilityWarningMsg />}
         </div>
 
         <textarea
           className={styles.signMessage}
-          type='text'
+          type="text"
           value={
             dataV4
-              ? JSON.stringify(dataV4, "\n", " ")
-              : toSign.txn !== "0x"
-              ? getMessageAsText(toSign.txn)
-              : "(Empty message)"
+              ? JSON.stringify(dataV4, '\n', ' ')
+              : msgToSign.txn !== '0x'
+              ? getMessageAsText(msgToSign.txn)
+              : '(Empty message)'
           }
-          readOnly={true}
+          readOnly
         />
 
         <div className={styles.actions}>
           <form onSubmit={handleSubmit}>
-            {account.signer.quickAccManager && isDeployed && (
+            {account.signer.quickAccManager && isDeployed !== null && (
               <>
                 <TextInput
                   password
                   required
                   minLength={3}
-                  placeholder='Account password'
+                  placeholder="Account password"
                   value={signingState.passphrase}
-                  onChange={(value) =>
-                    setSigningState({ ...signingState, passphrase: value })
-                  }
-                ></TextInput>
-                <input type='submit' hidden />
+                  onChange={(value) => setSigningState({ ...signingState, passphrase: value })}
+                />
+                <input type="submit" hidden />
               </>
             )}
 
             {confirmationType && (
               <>
-                {confirmationType === "email" && (
+                {confirmationType === 'email' && (
                   <span>
-                    A confirmation code has been sent to your email, it is valid
-                    for 3 minutes.
+                    A confirmation code has been sent to your email, it is valid for 3 minutes.
                   </span>
                 )}
-                {confirmationType === "otp" && (
-                  <span>Please enter your OTP code</span>
-                )}
+                {confirmationType === 'otp' && <span>Please enter your OTP code</span>}
                 <TextInput
                   ref={inputSecretRef}
                   placeholder={
-                    confirmationType === "otp"
-                      ? "Authenticator OTP code"
-                      : "Confirmation code"
+                    confirmationType === 'otp' ? 'Authenticator OTP code' : 'Confirmation code'
                   }
                   onInput={(value) => handleInputConfCode(value)}
                 />
               </>
             )}
 
-            {isDeployed === null && !hasProviderError && (
+            {isDeployed === null && (
               <div>
                 <Loading />
               </div>
             )}
 
-            {isDeployed === false && (
+            {isDeployed && hasPrivileges === false && (
               <div>
-                <h3 className='error'>You can't sign this message yet.</h3>
-                <h3 className='error'>
-                  You need to complete your first transaction on{" "}
-                  {requestedNetwork.name} network in order to be able to sign
-                  messages.
-                </h3>
-              </div>
-            )}
-
-            {hasPrivileges === false && (
-              <div>
-                <h3 className='error'>
-                  The currently used signer is not authorized to control this account and therefore you cannot sign messages.
-                </h3>
-              </div>
-            )}
-
-            {hasProviderError && (
-              <div>
-                <h3 className='error'>
-                  There was an issue with the network provider:{" "}
-                  {hasProviderError}
+                <h3 className="error">
+                  The currently used signer is not authorized to control this account and therefore
+                  you cannot sign messages.
                 </h3>
               </div>
             )}
 
             <div className={styles.buttons}>
               <Button
-                type='button'
-                danger
-                icon={<MdClose />}
-                className={styles.reject}
-                onClick={() => resolve({ message: "signature denied" })}
+                className={styles.button}
+                type="button"
+                variant="danger"
+                onClick={() => resolve({ message: 'signature denied' })}
               >
                 Reject
               </Button>
-              {isDeployed !== null && isDeployed && hasPrivileges && (
-                <Button type='submit' disabled={isLoading}>
-                  {isLoading ? (
-                    <>
-                      <Loading />
-                      Signing...
-                    </>
-                  ) : (
-                    <>
-                      <MdCheck /> Sign
-                    </>
-                  )}
+              {((isDeployed && hasPrivileges) || isDeployed === false) && (
+                <Button
+                  type="submit"
+                  variant="primaryGradient"
+                  className={styles.button}
+                  loading={isLoading}
+                  loadingText="Signing..."
+                >
+                  Sign
                 </Button>
               )}
             </div>
@@ -325,5 +261,5 @@ function getMessageAsText(msg) {
       return msg
     }
   }
-  return msg?.toString ? msg.toString() : msg + "" //what if dapp sends it as object? force string to avoid app crashing
+  return msg?.toString ? msg.toString() : `${msg}` // what if dapp sends it as object? force string to avoid app crashing
 }

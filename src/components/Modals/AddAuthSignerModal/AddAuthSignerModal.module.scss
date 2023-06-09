@@ -1,79 +1,122 @@
 @import 'variables';
 
-.button {
-  flex: 0 1 100%!important;
-}
-
 .wrapper {
   width: 100%;
-  max-width: 1000px;
-  padding-bottom: 100px!important;
+  height: 100%;
+}
 
-  .signerAddress {
-    margin: 20px 0;
-  }
+.subtitle {
+  margin: 0;
+  color: $c-scampi;
+  font-size: 1.125rem;
+  font-weight: 500;
+  text-align: center;
+  padding: 1.5625rem 0;
+}
 
-  :global(.buttons) {
-    padding: 30px 40px;
-    padding-top: 10px;
-    height: 100px;
-  }
+.chooseSignerSubtitle {
+  padding-top: 0;
+  margin: 0;
 }
 
 .signers {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-around;
-  align-items: stretch;
-  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  gap: 1.25rem;
+  box-sizing: border-box;
 
   .signer {
     position: relative;
     top: 0;
-    padding: 50px 10px;
+    flex: calc(50% - 1.25rem);
+    height: 10rem;
+    padding: 1.25rem;
     background: $c-mirage;
     border: 1px solid $c-scampi;
-    border-radius: 12px;
+    border-radius: $border-radius;
     display: flex;
     justify-content: center;
     align-items: center;
-    transition: .3s ease-out all;
+    transition: 0.3s ease-out all;
     cursor: pointer;
 
     svg {
       color: $c-scampi;
-      width: 170px;
-      transition: .3s ease-out all;
+      transition: 0.3s ease-out all;
+      width: 100%;
+
+      &.trezor,
+      &.ledger {
+        max-width: 10.75rem;
+      }
+
+      &.metamask {
+        max-width: 4.375rem;
+      }
+
+      &.gridplus {
+        max-width: 7.9375rem;
+      }
     }
 
     &:hover {
       border-color: $c-turquoise;
-      top: -4px;
+      top: -0.25rem;
       color: $c-white;
+
       svg {
         color: $c-white;
-      }
 
-      svg.email {
-        color: $c-turquoise;
-      }
-      svg.metamask {
-        color: #EF801B;
-
-        :global(#decoration) {
-            color: $c-white;
+        &.email {
+          color: $c-turquoise;
         }
-      }
 
-      svg.gridplus {
-        color: $c-white;
-        :global(#logo) {
+        &.metamask {
+          color: #ef801b;
+
+          :global(#decoration) {
             color: $c-white;
+          }
         }
-        :global(#decoration) {
+
+        &.gridplus {
+          color: $c-white;
+
+          :global(#logo) {
+            color: $c-white;
+          }
+          :global(#decoration) {
             color: $c-picton-blue;
+          }
         }
       }
     }
+  }
+}
+
+.manualSigner {
+  padding: 1.25rem;
+  margin-bottom: 1.875rem;
+  background: $c-mirage;
+  border: 1px solid $c-scampi;
+  border-radius: $border-radius;
+
+  .signerAddress {
+    margin: 0 0 1.25rem;
+
+    input {
+      background: $c-ebony-clay;
+    }
+  }
+
+  .errorMessage {
+    color: $danger-color;
+    margin: 0 0 1.25rem;
+  }
+
+  .button {
+    width: 100%;
   }
 }

@@ -1,58 +1,70 @@
 @import 'variables';
 
-.tabs {
+.panel {
+  padding: 0;
+
+  .tab {
+    position: relative;
+    flex: 1;
+    overflow-y: auto;
+  }
+}
+
+.buttons {
   display: flex;
+  position: relative;
+
+  .shadow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    background: transparent linear-gradient(180deg, #1e2033 0%, #24263d 100%);
+    height: 5.9375rem;
+    width: 100%;
+    transform: translateY(100%);
+  }
 
   .button {
     font-family: 'Poppins', sans-serif;
     flex: 1;
-    padding: 15px;
-    font-size: 25px;
+    padding: 0.9375rem;
+    font-size: 1.5625rem;
     color: $c-scampi;
     background-color: transparent;
     border: none;
     font-weight: 400;
     border-bottom: 2px solid $c-fiord;
     cursor: pointer;
-    
+    transition: 0.3s ease-in-out all;
+
     &:first-child {
-      border-radius: 12px 0 0 0;
-      border-right: 3px solid $c-mirage;
+      border-radius: $border-radius 0 0 0;
     }
-    
-    &:last-child {
-      border-radius: 0 12px 0 0;
-      border-left: 3px solid $c-mirage;
+
+    &:nth-child(2) {
+      border-radius: 0 $border-radius 0 0;
     }
-    transition: .3s ease-in-out all;
-    
+
     &.active {
       color: $c-titan-white;
       border-bottom-color: $c-turquoise;
+
       &:first-child {
-          border-right: 1px solid rgba($c-scampi, .4);
+        border-right: 1px solid rgba($c-scampi, 0.4);
       }
 
-      &:last-child {
-          border-left: 1px solid rgba($c-scampi, .4);
+      &:nth-child(2) {
+        border-left: 1px solid rgba($c-scampi, 0.4);
       }
     }
-  }
-}
+    &:not(.active) {
+      &:first-child {
+        border-right: 3px solid $c-mirage;
+      }
 
-@media screen and (max-width: 1400px) {
-  .tabs {
-    .button {
-      font-size: 22px;
-    }
-  }
-}
-
-// Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-  .tabs {
-    .button {
-      font-size: 16px;
+      &:nth-child(2) {
+        border-left: 3px solid $c-mirage;
+      }
     }
   }
 }

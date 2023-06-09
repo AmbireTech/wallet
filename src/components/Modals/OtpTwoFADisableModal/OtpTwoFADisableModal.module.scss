@@ -1,59 +1,47 @@
 @import 'variables.scss';
 
-.button { 
-    flex: 0 1 100%!important;
-    width: 100%;
-}
-
 .wrapper {
-    max-width: 600px;
+  h4 {
+    font-weight: 400;
+    margin: 0;
+    margin-bottom: 0.9375rem;
+  }
 
-    h4 {
-        font-weight: 400;
-    }
-    
-    .timer {
-        justify-content: center;
-        margin-bottom: 20px;
-    }
-    .timerResetMsg {
-        text-align: center;
-        margin: 35px 0;
-        font-size: 20px;
-        color: $danger-color;
-    }
+  .timer {
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+  .timerResetMsg {
+    text-align: center;
+    margin: 2.1875rem 0;
+    font-size: 1.25rem;
+    color: $danger-color;
+  }
 
-    form {
-        display: flex;
-        flex-direction: column;
-        height: 425px;
-        
-        div {
-            width: 100%;
-        }
-        
+  form {
+    display: flex;
+    flex-direction: column;
+    height: 26.5625rem;
+
+    div {
+      width: 100%;
     }
+  }
 }
 
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
+  .wrapper {
+    min-height: unset;
+    height: auto;
+
+    .input {
+      input {
+        height: 3.125rem;
+      }
+    }
+
     .button {
-        height: 50px!important;
+      height: 3.125rem !important;
     }
-
-    .wrapper {
-        min-height: unset;
-        height: auto;
-        padding-bottom: 70px!important;
-        :global(.buttons) {
-            height: 70px;
-            padding: 20px 24px;
-            padding-top: 0;
-        }
-
-        .input {
-            input {
-                height: 50px;
-            }
-        }
-    }
+  }
 }

@@ -1,0 +1,68 @@
+@import 'variables.scss';
+
+.wrapper {
+  .input {
+    width: 100%;
+
+    input {
+      padding-right: 3.125rem;
+    }
+  }
+
+  .formContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5625rem;
+
+    .inputWrapper {
+      display: flex;
+
+      .udomainsLogo {
+        position: absolute;
+        top: 3.125rem;
+        right: 3.4375rem;
+        height: 1.5625rem;
+        width: 1.5625rem;
+        background-image: url('/resources/ud-logo-inactive.png');
+        z-index: 1;
+
+        &.active {
+          background-image: url('/resources/ud-logo-active.png');
+        }
+      }
+
+      .ensLogo {
+        position: absolute;
+        top: 3.125rem;
+        right: 1.25rem;
+        height: 1.5625rem;
+        width: 1.5625rem;
+        background-image: url('/resources/ens-logo-inactive.png');
+
+        &.active {
+          background-image: url('/resources/ens-logo-active.png');
+        }
+      }
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .udomainsLogo {
+      position: absolute;
+      top: 4.6875rem;
+      right: 5.3125rem;
+      height: 1.5625rem;
+      width: 1.5625rem;
+    }
+
+    .ensLogo {
+      position: absolute;
+      top: 4.6875rem;
+      right: 3.125rem;
+      height: 1.5625rem;
+      width: 1.5625rem;
+    }
+  }
+}

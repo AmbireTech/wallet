@@ -1,0 +1,110 @@
+@import 'variables.scss';
+
+$modal-text-color: mix($c-titan-white, $c-ebony-clay, 70%);
+$thead-background-color: darken($c-ebony-clay, 2%);
+
+.wrapper {
+  p {
+    margin: 0;
+  }
+
+  .date {
+    font-size: 0.75rem;
+    color: $c-scampi;
+    margin-bottom: 1.0625rem;
+  }
+
+  .speedRow {
+    display: flex;
+    gap: 0.6875rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.75rem;
+
+    .speedBlock {
+      text-align: center;
+      flex: 1;
+      color: $c-titan-white;
+      background: $c-mirage;
+      padding: 0.75rem;
+      border: 2px solid transparent;
+      border-radius: $border-radius;
+      min-width: 6.25rem;
+
+      &.selected {
+        border-color: $c-heliotrope;
+        color: $c-heliotrope;
+      }
+
+      .speedName {
+        font-size: 1rem;
+        margin-bottom: 0.4375rem;
+        text-transform: capitalize;
+      }
+
+      .speedPrice {
+        font-size: 0.875rem;
+        opacity: 0.7;
+        font-weight: 300;
+      }
+    }
+  }
+
+  .tableTitle {
+    font-weight: normal;
+    color: $c-titan-white;
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+  }
+
+  .tableWrapper {
+    border-radius: $border-radius;
+    overflow-y: hidden;
+    // overflow-x: auto;
+    margin-bottom: 1.875rem;
+
+    .gasActionCosts {
+      width: 100%;
+      border-spacing: 0;
+      color: $c-titan-white;
+
+      thead {
+        background: $c-mirage;
+        font-weight: normal;
+
+        th {
+          text-transform: capitalize;
+          padding: 1rem 1.25rem;
+          font-size: 0.875rem;
+          text-align: center;
+          font-weight: 500;
+        }
+
+        th:first-child {
+          text-align: left;
+        }
+      }
+
+      tbody {
+        background: $c-martinique;
+      }
+
+      td:first-child {
+        text-align: left;
+      }
+
+      td {
+        padding: 1rem;
+        font-size: 0.8em;
+        text-align: center;
+      }
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .tableTitle {
+      text-align: center;
+    }
+  }
+}

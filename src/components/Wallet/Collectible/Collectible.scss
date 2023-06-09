@@ -1,201 +1,199 @@
 @import 'variables.scss';
 
 #collectible {
-    display: flex;
-    gap: 30px;
+  display: flex;
+  gap: 1.875rem;
 
-    .address {
-        font-family: 'Ubuntu Mono';
-    }
+  .address {
+    font-family: 'Ubuntu Mono';
+  }
 
-    .panel {
-        min-width: 0;
-        flex: 0 1 50%;
+  .panel {
+    min-width: 0;
+    flex: 0 1 50%;
 
-        .heading {
-            .title {
-                display: block;
-                overflow: hidden;
-                white-space: nowrap;
-                text-overflow: ellipsis;
-            }
-
-            .contract {
-                font-size: 15px;
-                font-weight: 500;
-                opacity: 0.6;
-                overflow: hidden;
-                text-overflow: ellipsis;
-            }
-        }
-
-        .content {
-            height: 100%;
-
-            .separator {
-                flex-grow: 1;
-            }
-        }
-    }
-
-    .metadata {
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
+    .heading {
+      .title {
+        display: block;
         overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
 
-        .collection {
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        .image {
-            z-index: 47;
-            height: 250px;
-            width: 250px;
-            @include flex-center-center;
-            font-size: 40px;
-            color: rgba(255, 255, 255, 0.5);
-            background-size: contain;
-            background-position: center center;
-            background-repeat: no-repeat;
-            background-color: rgba(255, 255, 255, 0.1);
-        }
-        
-        .info {
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-
-            .name {
-                font-size: 18px;
-                font-weight: bold;
-                color: $c-titan-white;
-            }
-
-            .description {
-                font-size: 15px;
-                font-weight: 500;
-                color: $c-titan-white;
-                opacity: 0.6;
-            }
-        }
-
-        .owner {
-            display: flex;
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 5px;
-            margin-top: 10px;
-            font-size: 15px;
-            font-weight: 500;
-            opacity: 0.6;
-            overflow: hidden;
-            white-space: nowrap;
-
-            .address {
-                display: flex;
-                align-items: center;
-                gap: 8px;
-
-                .icon {
-                    height: 14px;
-                    width: 14px;
-                    border-radius: 100%;
-                }
-            }
-        }
+      .contract {
+        font-size: 0.9375rem;
+        font-weight: 500;
+        opacity: 0.6;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
     }
 
-    #recipient-address {
-        position: relative;
+    .content {
+      height: 100%;
+
+      .separator {
+        flex-grow: 1;
+      }
+    }
+  }
+
+  .metadata {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    overflow: hidden;
+
+    .collection {
+      font-size: 0.9375rem;
+      font-weight: bold;
+    }
+
+    .image {
+      z-index: 47;
+      height: 15.625rem;
+      width: 15.625rem;
+      @include flex-center-center;
+      font-size: 2.5rem;
+      color: rgba(255, 255, 255, 0.5);
+      background-size: contain;
+      background-position: center center;
+      background-repeat: no-repeat;
+      background-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.125rem;
+
+      .name {
+        font-size: 1.125rem;
+        font-weight: bold;
+        color: $c-titan-white;
+      }
+
+      .description {
+        font-size: 0.9375rem;
+        font-weight: 500;
+        color: $c-titan-white;
+        opacity: 0.6;
+      }
+    }
+
+    .owner {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.3125rem;
+      margin-top: 0.625rem;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      opacity: 0.6;
+      overflow: hidden;
+      white-space: nowrap;
+
+      .address {
         display: flex;
+        align-items: center;
+        gap: 0.5rem;
 
-        .recipient-input {
-            width: 100%;
-
-            input {
-                border-radius: 12px 0 0 12px;
-                padding-right: 280px;
-            }
+        .icon {
+          height: 0.875rem;
+          width: 0.875rem;
+          border-radius: 100%;
         }
-
-        #udomains-logo {
-            position: absolute;
-            top: 18px;
-            right: 275px;
-            height: 25px;
-            width: 25px;
-            background-image: url('/resources/ud-logo-inactive.png');
-        }
-
-        .ud-logo-active {
-            background-image: url('/resources/ud-logo-active.png') !important;  
-        }
-
-        #ens-logo {
-            position: absolute;
-            top: 18px;
-            right: 240px;
-            height: 25px;
-            width: 25px;
-            background-image: url('/resources/ens-logo-inactive.png');
-        }
-
-        .ens-logo-active {
-            background-image: url('/resources/ens-logo-active.png') !important;  
-        }
-        
-        .address-book {
-            position: absolute !important;
-            right: 0;
-        }
+      }
     }
-}
+  }
 
-@media screen and (max-width: 1300px) {
-    #collectible {
-        flex-direction: column;
-        gap: 15px;
+  #recipient-address {
+    position: relative;
+    display: flex;
+
+    .recipient-input {
+      width: 100%;
+
+      input {
+        border-radius: $border-radius 0 0 $border-radius;
+        padding-right: 17.5rem;
+      }
     }
+
+    #udomains-logo {
+      position: absolute;
+      top: 1.125rem;
+      right: 17.1875rem;
+      height: 1.5625rem;
+      width: 1.5625rem;
+      background-image: url('/resources/ud-logo-inactive.png');
+      background-size: cover;
+    }
+
+    .ud-logo-active {
+      background-image: url('/resources/ud-logo-active.png') !important;
+    }
+
+    #ens-logo {
+      position: absolute;
+      top: 1.125rem;
+      right: 15rem;
+      height: 1.5625rem;
+      width: 1.5625rem;
+      background-image: url('/resources/ens-logo-inactive.png');
+      background-size: cover;
+    }
+
+    .ens-logo-active {
+      background-image: url('/resources/ens-logo-active.png') !important;
+    }
+
+    .address-book {
+      position: absolute !important;
+      right: 0;
+    }
+  }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-    #collectible {
-        #recipient-address {
-            flex-direction: column;
-            gap: 10px;
+@include lg-breakpoint {
+  #collectible {
+    flex-direction: column;
+    gap: 0.9375rem;
 
-            .recipient-input {
-                input {
-                    padding-right: 50px;
-                }
-            }
-            
-            #udomains-logo {
-                position: absolute;
-                top: 18px;
-                right: 50px;
-                height: 25px;
-                width: 25px;
-            }
+    #recipient-address {
+      flex-direction: column;
+      gap: 0.625rem;
 
-            #ens-logo {
-                position: absolute;
-                top: 18px;
-                right: 15px;
-                height: 25px;
-                width: 25px;
-            }
-
-            .address-book {
-                position: relative !important;
-            }
-
-            .dropdown {
-                position: relative !important;
-            }
+      .recipient-input {
+        input {
+          padding-right: 3.125rem;
         }
+      }
+
+      #udomains-logo {
+        position: absolute;
+        top: 1.125rem;
+        right: 3.125rem;
+        height: 1.5625rem;
+        width: 1.5625rem;
+      }
+
+      #ens-logo {
+        position: absolute;
+        top: 1.125rem;
+        right: 0.9375rem;
+        height: 1.5625rem;
+        width: 1.5625rem;
+      }
+
+      .address-book {
+        position: relative !important;
+      }
+
+      .dropdown {
+        position: relative !important;
+      }
     }
+  }
 }

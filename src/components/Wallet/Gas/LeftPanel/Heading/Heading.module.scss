@@ -1,0 +1,151 @@
+@import 'variables';
+
+.wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 1.25rem 0;
+  margin-bottom: 2.5rem;
+
+  .allNetworksAndToggle {
+    display: flex;
+    justify-content: space-between;
+    gap: 1.25rem 0.625rem;
+    flex: 1;
+
+    .toggleWrapper {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.625rem;
+      margin: 0 auto;
+
+      .toggleLabel {
+        font-size: 0.875rem;
+        color: $c-scampi;
+      }
+    }
+  }
+
+  .box {
+    display: flex;
+    flex-direction: column;
+    padding: 0.4375rem 0.625rem;
+    align-items: center;
+    color: $c-scampi;
+    justify-content: space-around;
+
+    border-radius: $border-radius;
+    background: $c-ebony-clay;
+    box-shadow: $box-shadow;
+    border: 0.0625rem solid $c-heliotrope;
+
+    .balanceAllNetworks {
+      color: $c-titan-white;
+      margin-bottom: 0.3125rem;
+      font-size: 0.75rem;
+
+      svg {
+        color: $c-heliotrope;
+      }
+    }
+
+    .bigText {
+      margin: 0;
+      font-size: 1.875rem;
+      font-weight: 400;
+      color: $c-titan-white;
+      text-align: center;
+
+      &.small {
+        font-size: 1.375rem;
+
+        span {
+          font-size: 0.75rem;
+        }
+      }
+
+      span {
+        font-size: 1.875rem;
+        color: $c-turquoise;
+      }
+    }
+
+    .footer {
+      font-size: 0.75rem;
+      color: $c-scampi;
+      margin: 0;
+      text-align: center;
+    }
+
+    &.totalSave {
+      border-color: $c-scampi;
+      align-items: flex-start;
+      padding: 0.9375rem 0.625rem;
+      padding-bottom: 0.75rem;
+      box-shadow: none;
+      max-width: 12.5rem;
+
+      .smallText {
+        display: flex;
+        justify-content: space-between;
+        font-size: 0.75rem;
+        width: 100%;
+        align-items: center;
+        margin-bottom: 0.3125rem;
+
+        .label {
+          font-size: 0.75rem;
+          font-weight: 300;
+          color: $c-heliotrope;
+          max-width: 60%;
+          margin: 0;
+
+          &.green {
+            color: $c-turquoise;
+          }
+        }
+
+        .amount {
+          margin: 0;
+          text-align: end;
+          font-size: 1rem;
+          color: $c-titan-white;
+
+          span {
+            color: $c-turquoise;
+          }
+        }
+      }
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    margin-bottom: 0.625rem;
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    flex-direction: column;
+    gap: 1.25rem;
+
+    .allNetworksAndToggle {
+      flex-direction: column-reverse;
+
+      .toggleWrapper {
+        margin: 0;
+        flex-direction: row-reverse;
+        align-self: flex-end;
+      }
+    }
+
+    .box.totalSave {
+      max-width: unset;
+    }
+  }
+}

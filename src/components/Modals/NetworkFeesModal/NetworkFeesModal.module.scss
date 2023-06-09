@@ -1,0 +1,36 @@
+@import 'variables';
+
+.wrapper {
+  width: 100%;
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3125rem;
+    text-align: left;
+    font-size: 1rem;
+    color: $c-titan-white;
+    user-select: none;
+    overflow-x: auto;
+
+    .feesInfo {
+      margin: 0;
+      margin-bottom: 0.75rem;
+    }
+
+    .error {
+      color: $danger-color;
+    }
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .content {
+      .feesInfo {
+        font-size: 0.875rem;
+        text-align: center;
+      }
+    }
+  }
+}

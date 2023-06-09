@@ -1,91 +1,97 @@
 @import 'variables.scss';
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem !important;
+
+  .provider {
     display: flex;
-    flex-direction: column;
-    gap: 20px!important;
+    justify-content: flex-start;
+    align-items: flex-start;
+    padding: 1rem 2.1875rem 1rem 3.3125rem;
+    height: 10rem;
+    border-radius: $border-radius;
+    background-color: $c-ebony-clay;
+    border: 1px solid transparent;
+    box-shadow: $box-shadow;
+    cursor: pointer;
+    transition: all 0.3s ease-out;
+    gap: 3.5625rem !important;
 
-    .provider {
-        display: flex;
-        justify-content: flex-start;
-        align-items: center;
-        padding: 16px 35px 16px 53px;
-        border-radius: 12px;
-        background-color: $c-ebony-clay;
-        border: 1px solid transparent;
-        box-shadow: $box-shadow;
-        cursor: pointer;
-        transition: all 0.3s ease-out;
-        gap: 57px!important;
+    .logo {
+      display: block;
+      max-width: 30%;
+      min-width: 10rem;
+      align-self: center;
 
-        .logo {
-            display: block;
-        }
-
-        .details {
-            flex: 1;
-            text-align: left;
-
-            .type {
-                margin-bottom: 8px;
-                font-size: 12px;
-            }
-            .fees,
-            .limits,
-            .currencies {
-                color: $c-blue-bell;
-                font-size: 12px;
-            }
-        }
-
-        &:not(.disabled):hover {
-            background: $c-ebony-clay-light;
-            border: 1px solid $c-fiord;
-
-            .logo {
-                opacity: 1;
-            }
-        }
-
-        &.disabled {
-            opacity: 0.3;
-            pointer-events: none;
-            cursor: default;
-        }
+      img,
+      svg {
+        width: 100%;
+      }
     }
 
-    .networkWarning {
-        display: flex;
-        align-items: center;
-        gap: 10px;
+    .details {
+      flex: 1;
+      text-align: left;
 
-        svg {
-            width: 20px;
-            height: 20px;
-        }
-
-        label {
-            font-size: 12px;
-            opacity: 0.8;
-            text-align: left;
-        }
+      .type {
+        margin-bottom: 0.5rem;
+        font-size: 0.75rem;
+      }
+      .fees,
+      .limits,
+      .currencies {
+        color: $c-blue-bell;
+        font-size: 0.75rem;
+      }
     }
+
+    &:not(.disabled):hover {
+      background: $c-ebony-clay-light;
+      border: 1px solid $c-fiord;
+
+      .logo {
+        opacity: 1;
+      }
+    }
+
+    &.disabled {
+      opacity: 0.3;
+      pointer-events: none;
+      cursor: default;
+    }
+  }
+
+  .info {
+    label {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+  }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-    .wrapper {
-        .provider {
-            flex-direction: column;
-            gap: 20px!important;
-            padding: 30px;
-            .details {
-                text-align: center;
+@include lg-breakpoint {
+  .wrapper {
+    .provider {
+      flex-direction: column;
+      gap: 1.25rem !important;
+      padding: 1.875rem;
+      height: auto;
+      align-items: center;
 
-                .type {
-                    margin-bottom: 0.25em;
-                }
-            }
+      .logo {
+        max-width: 80%;
+      }
+
+      .details {
+        text-align: center;
+
+        .type {
+          margin-bottom: 0.25em;
         }
+      }
     }
+  }
 }

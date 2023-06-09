@@ -1,13 +1,8 @@
-import { Alert, ToolTip } from "components/common"
+import { Alert, ToolTip } from 'components/common'
 
 const FailingTxn = ({ message, tooltip = '' }) => (
   <ToolTip label={tooltip}>
-    <Alert
-      type="danger"
-      title="Warning"
-      text={message}
-      iconNextToTitle={true}
-    />
+    <Alert size="small" type="danger" title="Warning" text={message} iconNextToTitle />
   </ToolTip>
 )
 

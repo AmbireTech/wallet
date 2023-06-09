@@ -6,48 +6,57 @@
   align-items: stretch;
   flex-wrap: wrap;
   width: 100%;
-  gap: 21px;
+  gap: 1.3125rem;
 
   .addSigner {
     display: flex;
     justify-content: center;
     align-items: center;
     border: 1px dashed $c-scampi;
-    border-radius: 12px;
-    max-width: 240px;
-    min-height: 320px;
+    border-radius: $border-radius;
+    max-width: 15rem;
+    min-height: 20rem;
     width: 100%;
     cursor: pointer;
-    transition: .3s ease-in-out all;
+    transition: 0.3s ease-in-out all;
     user-select: none;
-  
+
     &Body {
       display: flex;
       flex-direction: column;
       align-items: center;
-      transition: .3s ease-in-out all;
+      transition: 0.3s ease-in-out all;
       color: $c-scampi;
-      
+
+      svg {
+        width: 2rem;
+        height: 2rem;
+      }
+
       label {
         cursor: pointer;
-        margin-top: 10px;
-        font-size: 20px;
+        margin-top: 0.625rem;
+        font-size: 1.25rem;
       }
     }
 
     &:hover {
-      border-color: $c-turquoise;
-
-      .addSignerBody {
-        color: $c-turquoise;
-      }
+      background-color: $c-mirage;
     }
   }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
+@include lg-breakpoint {
   .wrapper {
     justify-content: center;
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    .addSigner {
+      max-width: 17.5rem;
+    }
   }
 }

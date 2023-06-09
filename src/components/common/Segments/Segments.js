@@ -1,35 +1,38 @@
 import { useCallback, useEffect, useState } from 'react'
-import './Segments.scss'
+import cn from 'classnames'
 
-const Segments = ({ small, defaultValue, segments, onChange, hidePrivateValue }) => {
-    const [value, setValue] = useState(defaultValue);
+import styles from './Segments.module.scss'
 
-    const setSegment = useCallback(value => {
-        setValue(value)
-        onChange(value)
-    }, [onChange])
+const Segments = ({ small, defaultValue, segments, onChange }) => {
+  const [value, setValue] = useState(defaultValue)
 
-    useEffect(() => {
-        setSegment(defaultValue)
-    }, [defaultValue, setSegment])
+  const setSegment = useCallback(
+    (newValue) => {
+      setValue(newValue)
+      onChange(newValue)
+    },
+    [onChange]
+  )
 
-    return (
-        <div className={`segments ${small ? 'small': ''}`}>
-            {
-                segments.map(segment => (
-                    <div className={`segment ${segment.value === value ? 'active' : ''}`} key={segment.value} onClick={() => setSegment(segment.value)}>
-                        {
-                            segment.icon ?
-                                <div className="icon">{ segment.icon }</div>
-                                :
-                                null
-                        }
-                        { segment.value }
-                    </div>
-                ))
-            }
-        </div>
-    )
+  useEffect(() => {
+    setSegment(defaultValue)
+  }, [defaultValue, setSegment])
+
+  return (
+    <div className={cn(styles.segments, { [styles.small]: small })}>
+      {segments.map((segment) => (
+        <button
+          type="button"
+          className={cn(styles.segment, { [styles.active]: segment.value === value })}
+          key={segment.value}
+          onClick={() => setSegment(segment.value)}
+        >
+          {segment.icon ? <div className={styles.icon}>{segment.icon}</div> : null}
+          {segment.value}
+        </button>
+      ))}
+    </div>
+  )
 }
 
 export default Segments

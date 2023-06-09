@@ -1,0 +1,25 @@
+@import 'variables';
+
+.wrapper {
+  .loading {
+    div {
+      margin: 0 auto;
+    }
+  }
+
+  .title {
+    font-size: 1.125rem;
+    text-align: center;
+    font-weight: 400;
+    margin: 0;
+    margin-bottom: 1.875rem;
+  }
+}
+
+@include lg-breakpoint {
+  .wrapper {
+    .title {
+      font-size: 0.875rem;
+    }
+  }
+}

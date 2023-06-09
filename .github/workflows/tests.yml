@@ -1,0 +1,30 @@
+name: Tests (Component and Unit)
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+jobs:
+  tests-run:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up Node version️
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Install NPM packages
+        run: npm ci
+
+      - name: Build project # just to make sure the build and linting works correctly
+        run: npm run build
+
+      - name: Run tests
+        run: npm run test

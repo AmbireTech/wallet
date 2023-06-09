@@ -1,63 +1,58 @@
 @import 'variables.scss';
-$arrow-size: 15px;
+$arrow-size: 0.9375rem;
 
 .tooltip {
-    display: contents;
+  display: contents;
 
+  .tooltipLabel {
+    z-index: 50;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    max-width: 18.75rem;
+    padding: 0.9375rem;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    color: theme(background-terniary); // temporary use of background color as text color
+    background-color: theme(text-primary); // Temporary use of text color as background color
+    box-shadow: $box-shadow;
+    border-radius: $border-radius;
+    white-space: normal;
+    opacity: 0;
+    overflow: visible;
+    transition: opacity 0.3s ease-in-out;
+    pointer-events: none;
+
+    .icon {
+      min-width: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .icon {
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .label {
+      margin: 0;
+      flex: 1;
+      font-size: 0.875rem;
+    }
+  }
+
+  &:hover,
+  &:active,
+  &:focus {
     .tooltipLabel {
-        z-index: 50;
-        position: fixed;
-        max-width: 300px;
-        padding: 15px 20px;
-        font-size: 15px;
-        font-weight: 500;
-        color: $c-titan-white;
-        background-color: $c-mirage;
-        box-shadow: $box-shadow;
-        border-radius: 12px;
-        white-space: normal;
-        opacity: 0;
-        overflow: visible;
-        transition: opacity 0.1s ease-in-out;
-        pointer-events: none;
-
-        .arrow {
-            position: absolute;
-            width: 0;
-            &.top {
-                top: -$arrow-size + 1; // +1, because of the border-radius of its parent. Otherwise there's a little space between the arrow and the label.
-                border-bottom: $arrow-size solid $c-mirage;
-            }
-
-            &.bottom {
-                bottom: -$arrow-size;
-                border-top: $arrow-size solid $c-mirage;
-            }
-
-            &.right {
-                right: $arrow-size / 2;
-                border-left: $arrow-size solid transparent;
-                border-right: 0 solid transparent;
-            }
-
-            &.left {
-                left: $arrow-size / 2;
-                border-left: 0 solid transparent;
-                border-right: $arrow-size solid transparent;
-            }
-        }
+      opacity: 1;
     }
+  }
 
-    &:hover {
-        .tooltipLabel {
-            opacity: 1;
-        }
+  @include lg-breakpoint {
+    .tooltipLabel {
+      transition-delay: 400ms;
     }
-
-    @media screen and (max-width: $mobile-breakpoint-max-width) {
-        .tooltipLabel {
-            transition-delay: 400ms;
-        }
-    }
-
+  }
 }

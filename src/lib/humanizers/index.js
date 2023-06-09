@@ -1,4 +1,4 @@
-import UniRouters from './UniRouters'
+import UniRouters from './UniRouters/UniRouters'
 import ERC20 from './ERC20'
 import AaveLendingPoolV2 from './AaveLendingPoolV2'
 import ERC721 from './ERC721'
@@ -13,23 +13,25 @@ import AmbireBatcher from './AmbireBatcher'
 import WALLETStakingPool from './WALLETStakingPool'
 import AaveWethGatewayV2 from './AaveWethGatewayV2'
 import OneInch from './OneInch'
+import UniswapV3Pool from './UniswapV3Pool'
 
-const all = ({humanizerInfo, tokenList}) => ({
-	...UniRouters(humanizerInfo),
-	...AaveLendingPoolV2(humanizerInfo),
-	...AaveWethGatewayV2(humanizerInfo.abis),
-	...ERC20(humanizerInfo),
-	...ERC721(humanizerInfo, tokenList),
-	...WETH(humanizerInfo.abis),
-	...AmbireIdentity(humanizerInfo),
-	...AmbireFactory(),
-	...YearnTesseractVault(humanizerInfo),
-	...Movr(humanizerInfo),
-	...OpenSea(humanizerInfo),
-	...WALLETSupplyController(),
-	...AmbireBatcher(humanizerInfo, tokenList),
-	...WALLETStakingPool(humanizerInfo),
-	...OneInch(humanizerInfo)
+const all = ({ humanizerInfo, tokenList }) => ({
+  ...UniRouters(humanizerInfo),
+  ...AaveLendingPoolV2(humanizerInfo),
+  ...AaveWethGatewayV2(humanizerInfo.abis),
+  ...ERC20(humanizerInfo),
+  ...ERC721(humanizerInfo, tokenList),
+  ...WETH(humanizerInfo.abis),
+  ...AmbireIdentity(humanizerInfo),
+  ...AmbireFactory(),
+  ...YearnTesseractVault(humanizerInfo),
+  ...Movr(humanizerInfo),
+  ...OpenSea(humanizerInfo),
+  ...WALLETSupplyController(),
+  ...AmbireBatcher(humanizerInfo, tokenList),
+  ...WALLETStakingPool(humanizerInfo),
+  ...OneInch(humanizerInfo),
+  ...UniswapV3Pool(humanizerInfo)
 })
 
 export default all

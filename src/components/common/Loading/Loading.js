@@ -1,15 +1,16 @@
-import './Loading.scss';
+import cn from 'classnames'
+import './Loading.scss'
 
-import { AiOutlineLoading } from 'react-icons/ai';
+import { AiOutlineLoading } from 'react-icons/ai'
 
-const Loading = () => {
-    return (
-        <div className="loading">
-            <div className="icon">
-                <AiOutlineLoading size={35}/>
-            </div>
-        </div>
-    );
-};
+const Loading = ({ size = 35, className }) => {
+  return (
+    <div className={cn('loading', className)}>
+      <div className="icon">
+        <AiOutlineLoading size={size} />
+      </div>
+    </div>
+  )
+}
 
-export default Loading;
+export default Loading

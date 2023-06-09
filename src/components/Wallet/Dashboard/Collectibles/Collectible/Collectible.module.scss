@@ -1,0 +1,117 @@
+@import 'variables';
+
+$collectible-size: 12.75rem;
+$details-size: 3.75rem;
+
+.wrapper {
+  position: relative;
+  height: 16.5rem;
+  width: $collectible-size;
+  border-radius: $border-radius;
+  overflow: hidden;
+  transition: all 0.1s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+
+  .purpleHighlight {
+    color: $c-heliotrope;
+  }
+
+  .artworkWrapper {
+    max-height: $collectible-size;
+    height: 100%;
+    .artwork {
+      width: 100%;
+      max-height: $collectible-size;
+
+      &.fallbackImage {
+        background-color: $c-mirage;
+        padding: 25%;
+      }
+    }
+  }
+
+  .info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0.3125rem;
+    padding: 0.625rem;
+    height: $details-size;
+    background-color: $c-mirage;
+
+    .collection {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 0.625rem;
+      font-size: 0.75rem;
+      font-weight: 500;
+
+      .collectionIcon {
+        flex: 0 0 auto;
+        height: 1.125rem;
+        width: 1.125rem;
+        border-radius: 100%;
+        background-color: rgba($c-titan-white, 0.04);
+
+        &.fallbackImage {
+          padding: 0.125rem;
+        }
+      }
+
+      .collectionName {
+        font-size: 0.75rem;
+        margin: 0;
+        font-weight: 300;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+    }
+
+    .details {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.625rem;
+
+      .name {
+        flex: 0 1 auto;
+        margin: 0;
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        font-size: 0.875rem;
+        font-weight: 300;
+        color: $c-titan-white;
+      }
+
+      .value {
+        flex: 0 0 auto;
+        font-size: 0.75rem;
+        margin: 0;
+        font-weight: 300;
+      }
+    }
+  }
+
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: $box-shadow;
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    width: 11rem;
+    height: 14.5rem;
+
+    .info {
+      height: 4rem;
+    }
+  }
+}

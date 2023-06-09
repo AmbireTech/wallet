@@ -1,12 +1,11 @@
-import './Loading.scss';
+import './Loading.scss'
 
 const InfiniteProgressBar = () => {
-    return (
-        <div className="progress-bar">
-            <div className="inner">
-            </div>
-        </div>
-    );
-};
+  return (
+    <div className="progress-bar">
+      <div className="inner" />
+    </div>
+  )
+}
 
-export default InfiniteProgressBar;
+export default InfiniteProgressBar

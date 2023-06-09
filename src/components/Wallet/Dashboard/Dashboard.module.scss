@@ -1,96 +1,151 @@
 @import 'variables.scss';
 
 .wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 1.0625rem;
+
+  .panel {
+    flex: 0 1 50%;
+
+    .panelTitle {
+      font-size: 1.5625rem;
+      font-weight: 400;
+      color: $c-titan-white;
+      margin-bottom: 1.25rem;
+    }
+  }
+
+  .tab {
+    font-size: 1.25rem;
+  }
+
+  .topPanels {
+    padding: 0.9375rem 3.125rem;
+    gap: 0;
+    overflow: hidden;
+  }
+
+  .overview {
     display: flex;
-    flex-direction: column;
-    gap: 17px;
+    justify-content: space-between;
+    gap: 1.0625rem;
+    max-height: 18.75rem;
+  }
 
+  .footer {
+    margin-top: 0.9375rem;
+    margin-bottom: 2.5rem;
+
+    .missingTokenNotice {
+      font-size: 0.9375rem;
+      color: $c-titan-white;
+
+      .footerButton,
+      a {
+        color: $c-heliotrope;
+      }
+
+      .footerButton {
+        background-color: transparent;
+        border: none;
+        font-family: inherit;
+        display: inline;
+        cursor: pointer;
+        padding: 0;
+        font-size: inherit;
+      }
+    }
+
+    .powered {
+      text-align: right;
+      font-size: 0.75rem;
+      padding: 0 0.625rem;
+      opacity: 0.5;
+    }
+  }
+}
+
+@include xxl-breakpoint {
+  .wrapper {
     .panel {
-        flex: 0 1 50%;
-
-        .panelTitle {
-            font-size: 25px;
-            font-weight: 400;
-            color: $c-titan-white;
-            margin-bottom: 20px;
-        }
+      .panelTitle {
+        font-size: 1.25rem;
+        margin-bottom: 1.4375rem;
+      }
     }
-
     .topPanels {
-        padding: 15px 50px;
-        gap: 0;
-        overflow: hidden;
+      padding: 0.9375rem 1.875rem;
     }
-    
-    .overview {
-        display: flex;
-        justify-content: space-between;
-        gap: 17px;
-    }
-
-    .footer {
-        .missingTokenNotice {
-            font-size: 15px;
-            color: $c-titan-white;
-
-            a {
-                color: $c-heliotrope;
-            }
-        }
-
-        .powered {
-            text-align: right;
-            font-size: 12px;
-            padding: 0 10px;
-            opacity: 0.5;
-        }
-    }
-}
-
-@media screen and (max-width: 1800px) {
-    .wrapper {
-        .panel {
-            .panelTitle {
-                font-size: 20px;
-                margin-bottom: 23px;
-            }
-        }
-        .topPanels {
-            padding: 15px 30px;
-        }
-    }
-}
-
-@media screen and (max-width: 1200px) {
-    .overview {
-        flex-direction: column;
-    }
+  }
 }
 
 // Mobile
-@media screen and (max-width: $mobile-breakpoint-max-width) {
-    .wrapper {
-        gap: 15px;
+@include lg-breakpoint {
+  .wrapper {
+    gap: 1.875rem;
+    padding: 1.25rem;
 
-        .overview {
-            gap: 15px;
-        }
+    .panel {
+      background-color: transparent;
+      border: none;
 
-        .chart {
-            flex-direction: column;
-        }
-
-        .topPanels {
-            overflow-y: auto;
-            max-height: 500px;
-        }
-
-        .footer {
-            flex-direction: column;
-
-            .missingTokenNotice {
-                align-items: flex-start;
-            }
-        }
+      .panelTitle {
+        margin-left: 1.25rem;
+        margin-bottom: 0.9375rem;
+      }
     }
+
+    .topPanels {
+      max-height: unset;
+      padding: 0;
+    }
+
+    .overview {
+      gap: 1.875rem;
+      max-height: unset;
+      flex-direction: column;
+    }
+
+    .chart {
+      flex-direction: column;
+    }
+
+    .assetsPanel {
+      background-color: transparent;
+      border: none;
+    }
+
+    .tabsShadow {
+      display: none;
+    }
+
+    .tab {
+      border-left: none !important;
+      border-right: none !important;
+
+      &:first-child {
+        margin-right: 0.625rem;
+      }
+
+      &:nth-child(2) {
+        margin-left: 0.625rem;
+      }
+    }
+
+    .footer {
+      flex-direction: column;
+
+      .missingTokenNotice {
+        align-items: flex-start;
+        font-weight: 300;
+      }
+    }
+  }
+}
+
+@include sm-breakpoint {
+  .wrapper {
+    padding: 0;
+  }
 }
