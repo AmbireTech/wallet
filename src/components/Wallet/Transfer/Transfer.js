@@ -1,6 +1,5 @@
-import { useLocation } from 'react-router-dom'
+import { useLocation, withRouter, useParams } from 'react-router-dom'
 import { useState } from 'react'
-import { withRouter, useParams } from 'react-router'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { isValidAddress } from 'ambire-common/src/services/address'
 import cn from 'classnames'
@@ -27,7 +26,7 @@ const Transfer = (props) => {
   const [gasTankDetails] = useState(state || null)
   const [address, setAddress] = useState(gasTankDetails ? accountPresets.feeCollector : '')
 
-  const selectedAsset = portfolio?.tokens.find(({ address }) => address === asset)
+  const selectedAsset = portfolio?.tokens.find(({ address: tAddress }) => tAddress === asset)
 
   return (
     <div className={styles.wrapper}>
@@ -84,7 +83,7 @@ const Transfer = (props) => {
           addresses={addresses}
           addAddress={addAddress}
           removeAddress={removeAddress}
-          onSelectAddress={(address) => setAddress(address)}
+          onSelectAddress={(selectedAddress) => setAddress(selectedAddress)}
         />
       )}
     </div>

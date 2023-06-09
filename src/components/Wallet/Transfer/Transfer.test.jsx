@@ -1,9 +1,19 @@
-import { screen, render, waitFor } from '@testing-library/react'
+import { screen, render } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { BrowserRouter } from 'react-router-dom'
 import ToastProvider from 'context/ToastProvider/ToastProvider'
 import ModalProvider from 'context/ModalProvider/ModalProvider'
+import { ConstantsContext } from 'context/ConstantsProvider/ConstantsProvider'
 import Transfer from './Transfer'
+
+const humanizerInfo = {
+  names: {
+    '0x0c2de78e008020500c38e76e2956ae4a81c5124c': 'Swappin'
+  },
+  tokens: {
+    '0xc2132d05d31c914a87c6611c10748aeb04b58e8f': ['USDT', 6]
+  }
+}
 
 // Utilities
 const renderWithRouter = (ui, { route = '/' } = {}) => {
@@ -12,9 +22,11 @@ const renderWithRouter = (ui, { route = '/' } = {}) => {
   return {
     user: userEvent.setup(),
     ...render(
-      <ToastProvider>
-        <ModalProvider>{ui}</ModalProvider>
-      </ToastProvider>,
+      <ConstantsContext.Provider value={{ constants: { humanizerInfo } }}>
+        <ToastProvider>
+          <ModalProvider>{ui}</ModalProvider>
+        </ToastProvider>
+      </ConstantsContext.Provider>,
       { wrapper: BrowserRouter }
     )
   }
@@ -51,6 +63,8 @@ const selectedNetwork = {
   chainId: 137
 }
 const userAddress = '0x9a8b505305d8499e4D4393f8677169b9a4c9fa67'
+
+const usdtTokenContract = '0xc2132d05d31c914a87c6611c10748aeb04b58e8f'
 
 test('it should not be allowed to send tokens to your own address', async () => {
   const { user } = renderWithRouter(
@@ -113,4 +127,32 @@ test('can send token', async () => {
       }
     })
   )
+})
+
+test('it should not be allowed to send tokens to known token or contract', async () => {
+  const { user } = renderWithRouter(
+    <Transfer
+      portfolio={portfolio}
+      selectedNetwork={selectedNetwork}
+      addressBook={addressBook}
+      selectedAcc={userAddress}
+    />
+  )
+  const button = screen.getByText('MAX')
+  await user.click(button)
+
+  const addressInput = screen.getByTestId('recipient')
+  await user.type(addressInput, usdtTokenContract)
+
+  const confirm = screen.getByTestId('unknownAddressWarning')
+  await user.click(confirm)
+
+  const confirmBinance = screen.getByText(/I confirm this address is not a/i)
+  await user.click(confirmBinance)
+
+  const error = await screen.findByText(
+    /You are trying to send tokens to a smart contract. Doing so would burn them/i
+  )
+
+  expect(error).toBeVisible()
 })
