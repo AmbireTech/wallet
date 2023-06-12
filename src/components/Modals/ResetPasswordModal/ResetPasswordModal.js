@@ -310,6 +310,7 @@ const ResetPassword = ({ account, selectedNetwork, relayerURL, onAddAccount, sho
               onBlur={(e) => onFocusOrUnfocus(e, setIsFocused, false)}
             />
             <PasswordStrength
+              className={styles.passwordStrength}
               passwordStrength={passwordStrength}
               hasPassword={newPassword?.length > 0}
               isFocused={isFocused}
