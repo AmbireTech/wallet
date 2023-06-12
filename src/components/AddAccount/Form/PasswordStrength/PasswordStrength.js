@@ -5,9 +5,13 @@ import { ReactComponent as CheckIcon } from 'resources/icons/check.svg'
 
 import styles from './PasswordStrength.module.scss'
 
-const PasswordStrength = ({ passwordStrength, hasPassword, isFocused }) => {
+const PasswordStrength = ({ passwordStrength, hasPassword, isFocused, className }) => {
   return (
-    <div className={cn(styles.passwordStrength, { [styles.visible]: hasPassword && isFocused })}>
+    <div
+      className={cn(styles.passwordStrength, className, {
+        [styles.visible]: hasPassword && isFocused
+      })}
+    >
       {passwordStrength.checks.map((check) => (
         <div key={check.id} className={styles.check}>
           {check.satisfied ? (
