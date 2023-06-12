@@ -78,7 +78,7 @@ function AppInner() {
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
   const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
   const { addToast } = useToasts()
-  const dappsCatalog = useDapps({ useStorage: useLocalStorage, fetch })
+  const dappsCatalog = useDapps({ useStorage: useLocalStorage, fetch, applicationType: 'web' })
   const wcUri = useOneTimeQueryParam('uri')
   const utmTracking = useUtmTracking({ useStorage: useLocalStorage })
 
@@ -250,15 +250,13 @@ function AppInner() {
       { url: `${network.explorerUrl}/tx/${hash}`, timeout: 15000 }
     )
   }
-  const confirmSentTx = txHash => setSentTxn(sentTxn => {
-    const tx = sentTxn.find(tx => tx.hash === txHash)
-    tx.confirmed = true
-    requestPendingState.current = false
-    return [
-      ...sentTxn.filter(tx => tx.hash !== txHash),
-      tx
-    ]
-  })
+  const confirmSentTx = (txHash) =>
+    setSentTxn((sentTxn) => {
+      const tx = sentTxn.find((tx) => tx.hash === txHash)
+      tx.confirmed = true
+      requestPendingState.current = false
+      return [...sentTxn.filter((tx) => tx.hash !== txHash), tx]
+    })
 
   // Portfolio: this hook actively updates the balances/assets of the currently selected user
   const portfolio = usePortfolio({

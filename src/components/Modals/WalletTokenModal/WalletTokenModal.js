@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import cn from 'classnames'
 import useStakedWalletToken from 'ambire-common/src/hooks/useStakedWalletToken'
+import { rpcProviders } from 'config/providers'
 
 import { formatFloatTokenAmount } from 'lib/formatters'
 
@@ -16,7 +17,8 @@ const MIN_CLAIMABLE_ADX_USD = 1000
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
-  const { stakedAmount, isLoading } = useStakedWalletToken({ accountId })
+  const provider = rpcProviders['ethereum-ambire-earn']
+  const { stakedAmount, isLoading } = useStakedWalletToken({ accountId, provider })
 
   const hideUnbondModal = () => setIsUnbondModalVisible(false)
 
