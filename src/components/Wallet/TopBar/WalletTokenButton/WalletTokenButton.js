@@ -5,6 +5,7 @@ import { useLocalStorage } from 'hooks'
 import useDynamicModal from 'hooks/useDynamicModals'
 import { Button, ToolTip, Loading } from 'components/common'
 import { WalletTokenModal, CongratsRewardsModal } from 'components/Modals'
+import { useOfflineStatus } from 'context/OfflineContext/OfflineContext'
 
 import styles from './WalletTokenButton.module.scss'
 
@@ -37,6 +38,7 @@ const WalletTokenButton = ({
   relayerURL,
   useRelayerData
 }) => {
+  const isOffline = useOfflineStatus()
   const {
     isLoading: rewardsIsLoading,
     errMsg: rewardsErrMsg,
@@ -175,10 +177,11 @@ const WalletTokenButton = ({
       disabled={
         (currentClaimStatus.loading && !currentClaimStatus.lastUpdated) ||
         (rewardsIsLoading && !rewardsLastUpdated) ||
-        !(rewardsData?.rewards?.accountAddr?.toLowerCase() === accountId.toLowerCase())
+        !(rewardsData?.rewards?.accountAddr?.toLowerCase() === accountId.toLowerCase()) ||
+        isOffline
       }
     >
-      {renderRewardsButtonText()}
+      {!isOffline ?renderRewardsButtonText(): 'You are offline'}
     </Button>
   )
 }

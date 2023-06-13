@@ -753,28 +753,24 @@ const uniUniversalRouter = (humanizerInfo) => {
                   deadlineText(deadline, opts.mined)
                 )
           )
-        } else if (command === COMMANDS.PERMIT2_PERMIT) {
+        } else if (command === COMMANDS.WRAP_ETH) {
+					const { inputsDetails } = COMMANDS_DESCRIPTIONS.WRAP_ETH
+					const params = extractParams(inputsDetails, inputs[index])
+
+					parsed.push(!opts.extended
+						? [`Wrap ${nativeToken(network, params.amountMin)}`]
+						: toExtendedUnwrap('Wrap', network, params.amountMin)
+					)
+				} else if (command === COMMANDS.PERMIT2_PERMIT) {
           const humanizerMsg = 'Approved Uniswap to use the following token via signed message.'
           parsed.push(!opts.extended ? [humanizerMsg] : [[humanizerMsg]])
         } else if (command === COMMANDS.UNWRAP_WETH) {
           const { inputsDetails } = COMMANDS_DESCRIPTIONS.UNWRAP_WETH
           const params = extractParams(inputsDetails, inputs[index])
-
-          parsed.push(
-            !opts.extended
-              ? [
-                  `Unwrap at least ${nativeToken(network, params.amountMin)}${recipientText(
-                    humanizerInfo,
-                    params.recipient,
-                    txn.from
-                  )}`
-                ]
-              : toExtendedUnwrap(
-                  'Unwrap at least',
-                  network,
-                  params.amountMin,
-                  recipientText(humanizerInfo, params.recipient, txn.from, true)
-                )
+          
+          parsed.push(!opts.extended 
+            ? [`Unwrap at least ${nativeToken(network, params.amountMin)}`]
+            : toExtendedUnwrap('Unwrap at least', network, params.amountMin)
           )
         } else parsed.push(['Unknown Uni V3 interaction'])
       })

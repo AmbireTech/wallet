@@ -11,8 +11,8 @@ const Gas = ({
   selectedAccount,
   gasTankState,
   setGasTankState
-}) =>
-  selectedNetwork.isGasTankAvailable ? (
+}) => {
+  return selectedNetwork.isGasTankAvailable ? (
     <section className={styles.wrapper}>
       <LeftPanel
         network={selectedNetwork}
@@ -43,5 +43,6 @@ const Gas = ({
       />
     </div>
   )
+}
 
 export default Gas

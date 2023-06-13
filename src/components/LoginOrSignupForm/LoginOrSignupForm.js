@@ -1,18 +1,28 @@
 import { useState, useRef } from 'react'
-import accountPresets from 'ambire-common/src/constants/accountPresets'
-import { Checkbox, Button } from 'components/common'
-import styles from './LoginOrSignupForm.module.scss'
+
+import { useModals } from 'hooks'
+import { WeakPasswordModal } from 'components/Modals'
+import { checkHaveIbeenPwned } from 'components/AddAccount/passwordChecks'
+import AddAccountForm from 'components/AddAccount/Form/Form'
+import { Button } from 'components/common'
+import useCheckPasswordStrength from 'hooks/useCheckPasswordStrength'
 
 export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
+  const { showModal } = useModals()
+
   const passConfirmInput = useRef(null)
+  const passInput = useRef(null)
   const [state, setState] = useState({
     email: '',
     passphrase: '',
     passphraseConfirm: '',
     action
   })
-  const onSubmit = (e) => {
-    e.preventDefault()
+  const { passwordStrength, arePasswordsMatching } = useCheckPasswordStrength(state)
+
+  const isSignup = state.action === 'SIGNUP'
+
+  const handleRegister = () => {
     onAccRequest({
       action: state.action,
       accType: 'QUICK',
@@ -21,77 +31,42 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       backupOptout: state.backupOptout
     })
   }
+
+  const onSubmit = async (e) => {
+    e.preventDefault()
+
+    const breached = await checkHaveIbeenPwned(state.passphrase)
+
+    if (breached) {
+      showModal(<WeakPasswordModal onContinueAnyway={handleRegister} />)
+      return
+    }
+
+    handleRegister()
+  }
+
   const onUpdate = (updates) => {
     const newState = { ...state, ...updates }
     setState(newState)
     const shouldValidate = newState.action === 'SIGNUP'
-    const invalid = shouldValidate && newState.passphrase !== newState.passphraseConfirm
-    // @TODO translation string
-    if (passConfirmInput.current) {
-      passConfirmInput.current.setCustomValidity(invalid ? 'Passwords must match' : '')
+    // @Todo: Split logic and markup for Login and Add Account
+    if (shouldValidate) {
+      const invalid = newState.passphrase !== newState.passphraseConfirm
+
+      // If the password is invalid, set a custom validity message
+      if (!passwordStrength.satisfied) {
+        passInput.current.setCustomValidity(
+          'Make sure that your password is at least 8 characters long and contains at least one number and one letter.'
+        )
+      }
+      passInput.current.setCustomValidity('')
+
+      // @TODO translation string
+      if (passConfirmInput.current) {
+        passConfirmInput.current.setCustomValidity(invalid ? 'Passwords must match' : '')
+      }
     }
   }
-  const minPwdLen = 8
-  const isSignup = state.action === 'SIGNUP'
-  const days = Math.ceil(accountPresets.quickAccTimelock / 86400)
-  const noBackupDisclaimer = `In case you forget your password or lose your backup, you will have to wait ${days} days and pay the recovery fee to restore access to your account.`
-  const additionalOnSignup = state.backupOptout ? (
-    <Checkbox label={noBackupDisclaimer} required />
-  ) : null
-  const Link = ({ href, children }) => (
-    <a href={href} target="_blank" rel="noreferrer" onClick={(e) => e.stopPropagation()}>
-      {children}
-    </a>
-  )
-  const additionalInputs = isSignup ? (
-    <>
-      <input
-        type="password"
-        required
-        minLength={minPwdLen}
-        placeholder="Password"
-        value={state.passphrase}
-        onChange={(e) => onUpdate({ passphrase: e.target.value })}
-      />
-      <input
-        ref={passConfirmInput}
-        required
-        minLength={minPwdLen}
-        type="password"
-        placeholder="Confirm password"
-        value={state.passphraseConfirm}
-        onChange={(e) => onUpdate({ passphraseConfirm: e.target.value })}
-      />
-      <Checkbox
-        labelClassName={styles.checkboxLabel}
-        label={
-          <>
-            I agree to the{' '}
-            <Link href="https://www.ambire.com/Ambire%20ToS%20and%20PP%20(26%20November%202021).pdf">
-              Terms of Service and Privacy policy
-            </Link>
-            .
-          </>
-        }
-        required
-      />
-      <Checkbox
-        labelClassName={styles.checkboxLabel}
-        label={
-          <>
-            Backup on{' '}
-            <Link href="https://help.ambire.com/hc/en-us/articles/4410892186002-What-is-Ambire-Cloud-">
-              Ambire Cloud
-            </Link>
-            .
-          </>
-        }
-        checked={!state.backupOptout}
-        onChange={(e) => onUpdate({ backupOptout: !e.target.checked })}
-      />
-      {additionalOnSignup}
-    </>
-  ) : null
 
   return (
     <form onSubmit={onSubmit}>
@@ -104,15 +79,28 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
       />
       {
         // Trick the password manager into putting in the email
-        !isSignup ? <input type="password" style={{ display: 'none' }} /> : null
+        !isSignup ? (
+          <input type="password" style={{ display: 'none' }} />
+        ) : (
+          <AddAccountForm
+            state={state}
+            onUpdate={onUpdate}
+            passInput={passInput}
+            passConfirmInput={passConfirmInput}
+            passwordStrength={passwordStrength}
+            arePasswordsMatching={arePasswordsMatching}
+          />
+        )
       }
-      {additionalInputs}
       <Button
-        className={styles.button}
-        variant="primaryGradient"
         type="submit"
+        variant="primaryGradient"
         loading={inProgress}
-        loadingText={isSignup ? 'Signing up...' : 'Logging in...'}
+        loadingText={isSignup ? 'Signing Up...' : 'Logging In...'}
+        disabled={
+          !state.email?.length ||
+          (isSignup && (!arePasswordsMatching || !passwordStrength.satisfied))
+        }
       >
         {isSignup ? 'Sign Up' : 'Log In'}
       </Button>

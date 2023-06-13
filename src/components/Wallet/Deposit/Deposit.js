@@ -3,7 +3,6 @@ import { useCallback, useEffect, useState } from 'react'
 import { Panel } from 'components/common'
 import QRCode from 'qrcode'
 import TextInput from 'components/common/TextInput/TextInput'
-
 import networks from 'consts/networks'
 
 import AssetsMigrationBanner from 'components/common/AssetsMigrationBanner/AssetsMigrationBanner'

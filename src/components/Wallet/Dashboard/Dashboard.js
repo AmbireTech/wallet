@@ -55,7 +55,6 @@ export default function Dashboard({
   showSendTxns
 }) {
   const { tabId } = useParams()
-
   const balance = useMemo(() => portfolio.balance, [portfolio.balance])
   const tokens = useMemo(() => portfolio.tokens, [portfolio.tokens])
   const [chartTokensData, setChartTokensData] = useState([])

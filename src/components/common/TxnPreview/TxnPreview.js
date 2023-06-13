@@ -20,6 +20,8 @@ import ExtendedSummaryItem from './ExtendedSummaryItem/ExtendedSummaryItem'
 
 import styles from './TxnPreview.module.scss'
 
+const SIG_HASH_NFT_APPROVAL_FOR_ALL = '0xa22cb465'
+
 function getNetworkSymbol(networkId) {
   const network = networks.find((x) => x.id === networkId)
   return network ? network.nativeAssetSymbol : 'UNKNW'
@@ -36,7 +38,8 @@ export default function TxnPreview({
   disableDismiss,
   disableDismissLabel,
   addressLabel = null,
-  feeAssets
+  feeAssets,
+  meta = null
 }) {
   const {
     constants: { tokenList, humanizerInfo }
@@ -44,11 +47,15 @@ export default function TxnPreview({
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(humanizerInfo, txn[0])
   const isUnknown = !isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account)
-
+  const isNFTApprovalForAll = (txn.length && !!txn[2])
+    ? txn[2].slice(0, 10) === SIG_HASH_NFT_APPROVAL_FOR_ALL
+    : null
+  
   const networkDetails = networks.find(({ id }) => id === network)
   const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, {
     mined,
-    extended: true
+    extended: true,
+    meta
   })
 
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
@@ -113,6 +120,11 @@ export default function TxnPreview({
           {isUnknown && (
             <p className={styles.warning}>
               Warning: interacting with an unknown contract or address.
+            </p>
+          )}
+          {isNFTApprovalForAll && (
+            <p className={styles.warning}>
+              Warning: Be careful while approving this permission, as it will allow access to all NFTs on the contract, including those that you may own in the future. The recipient of this permission can transfer NFTs from your wallet without seeking your permission until you withdraw this authorization. Proceed with caution and stay safe!
             </p>
           )}
         </button>

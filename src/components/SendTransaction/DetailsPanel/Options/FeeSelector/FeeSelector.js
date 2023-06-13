@@ -22,7 +22,7 @@ import styles from './FeeSelector.module.scss'
 
 const SPEEDS = ['slow', 'medium', 'fast', 'ape']
 const walletDiscountBlogpost =
-  'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-save-30-on-fees-35dca1002697'
+  'https://blog.ambire.com/move-crypto-with-ambire-pay-gas-with-wallet-and-jump-on-the-exclusive-promo-2/'
 // NOTE: Order matters for for secondary fort after the one by discount
 const DISCOUNT_TOKENS_SYMBOLS = ['xWALLET', 'WALLET-STAKING', 'WALLET']
 

@@ -14,6 +14,7 @@ import useDragAndDrop from './dragAndDrop'
 import useCheckMobileScreen from './checkMobileScreen'
 import useUtmTracking from './utmTracking'
 import useSignMessage from './useSignMessage'
+import useCheckPasswordStrength from './useCheckPasswordStrength'
 
 export {
   useAccounts,
@@ -31,5 +32,6 @@ export {
   useDragAndDrop,
   useCheckMobileScreen,
   useUtmTracking,
-  useSignMessage
+  useSignMessage,
+  useCheckPasswordStrength
 }

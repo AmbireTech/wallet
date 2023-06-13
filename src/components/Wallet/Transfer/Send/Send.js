@@ -1,7 +1,8 @@
 import { BsXLg } from 'react-icons/bs'
-import { useEffect, useMemo, useState, useRef } from 'react'
+import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
+import ERC20_ABI from 'adex-protocol-eth/abi/ERC20'
 import { useToasts } from 'hooks/toasts'
 import {
   NumberInput,
@@ -25,11 +26,12 @@ import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 import { useRelayerData } from 'hooks'
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
 import { MdInfo } from 'react-icons/md'
+import useConstants from 'hooks/useConstants'
 import RecipientInput from './RecipientInput/RecipientInput'
 
 import styles from './Send.module.scss'
 
-const ERC20 = new Interface(require('adex-protocol-eth/abi/ERC20'))
+const ERC20 = new Interface(ERC20_ABI)
 
 const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
 
@@ -50,6 +52,9 @@ const Send = ({
   selectedAsset,
   title
 }) => {
+  const {
+    constants: { humanizerInfo }
+  } = useConstants()
   const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
   const { feeAssetsRes } = useGasTankData({
     relayerURL,
@@ -74,6 +79,7 @@ const Send = ({
   const [addressConfirmed, setAddressConfirmed] = useState(false)
   const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
   const [newAddress, setNewAddress] = useState('')
+  const [warning, setWarning] = useState(false)
   const [validationFormMgs, setValidationFormMgs] = useState({
     success: {
       amount: false,
@@ -96,11 +102,11 @@ const Send = ({
   } else eligibleFeeTokens = portfolio.tokens
 
   const assetsItems = eligibleFeeTokens.map(
-    ({ label, symbol, address, img, tokenImageUrl, network }) => ({
+    ({ label, symbol, address: assetAddress, img, tokenImageUrl, network }) => ({
       label: label || symbol,
-      value: address,
+      value: assetAddress,
       icon: img || tokenImageUrl,
-      fallbackIcon: getTokenIcon(network, address)
+      fallbackIcon: getTokenIcon(network, assetAddress)
     })
   )
 
@@ -124,8 +130,6 @@ const Send = ({
     [gasTankDetails, tokenAddress, selectedNetwork.id]
   )
 
-  const setMaxAmount = () => onAmountChange(maxAmount)
-
   const onAmountChange = (value) => {
     if (value) {
       const { decimals } = selectedAsset
@@ -135,6 +139,8 @@ const Send = ({
 
     setAmount(value)
   }
+
+  const setMaxAmount = () => onAmountChange(maxAmount)
 
   const sendTx = () => {
     const recipientAddress = uDAddress || ensAddress || address
@@ -187,6 +193,20 @@ const Send = ({
       addToast(`Error: ${e.message || e}`, { error: true })
     }
   }
+
+  const isKnownTokenOrContract = useCallback(
+    (addr) => {
+      if (!humanizerInfo) return
+      const addressToLowerCase = addr.toLowerCase()
+      const tokensAddresses = Object.keys(humanizerInfo.tokens)
+      const contractsAddresses = Object.keys(humanizerInfo.names)
+      return (
+        tokensAddresses.includes(addressToLowerCase) ||
+        contractsAddresses.includes(addressToLowerCase)
+      )
+    },
+    [humanizerInfo]
+  )
 
   useEffect(() => {
     // check gasTank topUp with token for convertion
@@ -247,9 +267,13 @@ const Send = ({
         }
       })
 
+      const isKnownTokenOrContractValue = isKnownTokenOrContract(address)
+
+      setWarning(isKnownTokenOrContractValue)
       setDisabled(
         !isValidRecipientAddress.success ||
           !isValidSendTransferAmount.success ||
+          isKnownTokenOrContractValue ||
           (showSWAddressWarning && !sWAddressConfirmed)
       )
     } else {
@@ -321,7 +345,8 @@ const Send = ({
     addAddress,
     uDAddress,
     disabled,
-    ensAddress
+    ensAddress,
+    isKnownTokenOrContract
   ])
 
   const amountLabel = (
@@ -358,9 +383,7 @@ const Send = ({
           <p className={styles.gasTankConvertMsg}>
             <AlertIcon /> {feeBaseTokenWarning}
           </p>
-        ) : (
-          <></>
-        )}
+        ) : null}
         <NumberInput
           label={amountLabel}
           value={amount}
@@ -430,6 +453,12 @@ const Send = ({
             />
           ) : null}
         </div>
+        {warning && (
+          <div className={styles.validationError}>
+            <BsXLg size={12} />
+            &nbsp;You are trying to send tokens to a smart contract. Doing so would burn them.
+          </div>
+        )}
         {validationFormMgs.messages.address && (
           <div className={styles.validationError}>
             <BsXLg size={12} />

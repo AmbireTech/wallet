@@ -49,16 +49,16 @@ const msToDaysHours = (ms) => {
   return days < 1 ? `${hours} hours` : `${days} days`
 }
 
-const attachMetaIfNeeded = (req, shareValue, rewardsData) => {
-  let meta
-  const shouldAttachMeta = [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(
-    req.txn.to.toLowerCase()
-  )
-  if (shouldAttachMeta) {
-    const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
-    meta = { xWallet: { APY, shareValue, walletTokenUsdPrice } }
-  }
-  return !meta ? req : { ...req, meta: { ...(req.meta && req.meta), ...meta } }
+const attachMetaIfNeeded = (req, shareValue, rewardsData, leaveLog = null) => {
+    let meta
+    const shouldAttachMeta = [WALLET_TOKEN_ADDRESS, WALLET_STAKING_ADDRESS].includes(req.txn.to.toLowerCase())
+    if (shouldAttachMeta) {
+        const { walletUsdPrice: walletTokenUsdPrice, xWALLETAPY: APY } = rewardsData.rewards
+        let walletValue = null
+        if (leaveLog && leaveLog.walletValue) walletValue = leaveLog.walletValue
+        meta = { xWallet: { APY, shareValue, walletTokenUsdPrice, walletValue } }
+    }
+    return !meta ? req : { ...req, meta: { ...req.meta && req.meta, ...meta }}
 }
 
 const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addRequest }) => {
@@ -103,12 +103,13 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
           extraGas
         },
         shareValue,
-        rewardsData
+        rewardsData,
+        leaveLog
       )
 
       addRequest(request)
     },
-    [networkDetails.chainId, accountId, shareValue, rewardsData, addRequest]
+    [networkDetails.chainId, accountId, shareValue, rewardsData, addRequest, leaveLog]
   )
 
   const { xWALLETAPYPercentage } = rewardsData.rewards
