@@ -194,16 +194,12 @@ const Send = ({
     }
   }
 
-  const isKnownTokenOrContract = useCallback(
+  const isKnownToken = useCallback(
     (addr) => {
       if (!humanizerInfo) return
       const addressToLowerCase = addr.toLowerCase()
       const tokensAddresses = Object.keys(humanizerInfo.tokens)
-      const contractsAddresses = Object.keys(humanizerInfo.names)
-      return (
-        tokensAddresses.includes(addressToLowerCase) ||
-        contractsAddresses.includes(addressToLowerCase)
-      )
+      return tokensAddresses.includes(addressToLowerCase)
     },
     [humanizerInfo]
   )
@@ -267,13 +263,13 @@ const Send = ({
         }
       })
 
-      const isKnownTokenOrContractValue = isKnownTokenOrContract(address)
+      const isKnownTokenValue = isKnownToken(address)
 
-      setWarning(isKnownTokenOrContractValue)
+      setWarning(isKnownTokenValue)
       setDisabled(
         !isValidRecipientAddress.success ||
           !isValidSendTransferAmount.success ||
-          isKnownTokenOrContractValue ||
+          isKnownTokenValue ||
           (showSWAddressWarning && !sWAddressConfirmed)
       )
     } else {
@@ -346,7 +342,7 @@ const Send = ({
     uDAddress,
     disabled,
     ensAddress,
-    isKnownTokenOrContract
+    isKnownToken
   ])
 
   const amountLabel = (
