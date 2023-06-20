@@ -14,6 +14,11 @@ jobs:
   deploy-preview:
     runs-on: ubuntu-latest
     steps:
+      - name: Add SSH key to chekout a private repo
+        uses: webfactory/ssh-agent@v0.5.4
+        with:
+          ssh-private-key: ${{ secrets.DEPLOY_KEY }}
+
       - name: Checkout
         uses: actions/checkout@v3
 
