@@ -13,7 +13,6 @@ import styles from './WalletTokenModal.module.scss'
 
 const MIN_ELIGIBLE_USD = 1000
 const MIN_CLAIMABLE_WALLET = 1000
-const MIN_CLAIMABLE_ADX_USD = 1000
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
@@ -207,37 +206,6 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
             </div>
             <div className={cn(styles.amount, styles.apy)}>
               {walletTokenAPYPercentage} <span>APY</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className={styles.item}>
-        <div className={styles.details}>
-          <label>
-            <ToolTip
-              label={
-                rewards.balance.balanceFromADX >= MIN_CLAIMABLE_ADX_USD
-                  ? '$ADX Staking bonus is active'
-                  : `You need to stake $${MIN_CLAIMABLE_ADX_USD} in $ADX to receive the $ADX staking bonus`
-              }
-            >
-              <div className={styles.activationBadge}>
-                ADX staking bonus (Total){' '}
-                <span
-                  className={cn(styles.badgeAdx, {
-                    [styles.badgeAdxActive]: rewards.balance.balanceFromADX >= MIN_CLAIMABLE_ADX_USD
-                  })}
-                />
-              </div>
-            </ToolTip>
-          </label>
-          <div className={styles.balance}>
-            <div className={styles.amount}>
-              <span>{formatAmount(rewards['adx-rewards'])}</span>
-            </div>
-            <div className={cn(styles.amount, styles.apy)}>
-              {adxTokenAPYPercentage} <span>APY</span>
             </div>
           </div>
         </div>

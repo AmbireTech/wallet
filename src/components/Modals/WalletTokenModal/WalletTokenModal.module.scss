@@ -124,23 +124,6 @@
     flex-direction: column;
     background: $c-mirage;
 
-    .activationBadge {
-      display: flex;
-      align-items: center;
-    }
-
-    .badgeAdx {
-      width: 2rem;
-      height: 2rem;
-      background: url('../../../resources/rewards/adx-staking-inactive.svg') no-repeat 50% 50%;
-      background-size: contain;
-      margin-left: 0.3125rem;
-    }
-
-    .badgeAdxActive {
-      background-image: url('../../../resources/rewards/adx-staking-active.svg');
-    }
-
     .details {
       display: flex;
       justify-content: space-between;
