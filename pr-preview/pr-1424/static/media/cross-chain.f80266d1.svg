@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <g id="Cross-Chain_icon" data-name="Cross-Chain icon" opacity="0.5">
-    <rect id="Boundary" width="32" height="32" transform="translate(0 32) rotate(-90)" fill="none"/>
-    <g id="Shape" transform="translate(4.077 29.636) rotate(-90)">
-      <path id="Path_37" data-name="Path 37" d="M1.322,13.152A1.322,1.322,0,0,1,.387,10.9L8.629,2.653l-5.916.008h0a1.322,1.322,0,0,1,0-2.644L15.022,0,2.257,12.765A1.318,1.318,0,0,1,1.322,13.152Z" transform="translate(9.3 0) rotate(45)" fill="currentColor"/>
-      <path id="Path_39" data-name="Path 39" d="M1.322,13.152A1.322,1.322,0,0,1,.387,10.9L8.629,2.654l-5.916.008a1.322,1.322,0,0,1,0-2.644L15.022,0,2.257,12.765A1.318,1.318,0,0,1,1.322,13.152Z" transform="translate(18.549 23.889) rotate(-135)" fill="currentColor"/>
-    </g>
-  </g>
-</svg>
