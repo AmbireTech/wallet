@@ -164,7 +164,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
       <div className={styles.item}>
         <div className={styles.details}>
-          <label>Claimable now (Early users + ADX Staking bonus)</label>
+          <label>Claimable now</label>
           <div className={styles.balance}>
             <div className={styles.amount}>
               <span>{formatFloatTokenAmount(Math.floor(claimableNow), true, 0)}</span>
@@ -199,7 +199,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
       <div className={styles.item}>
         <div className={styles.details}>
-          <label>Early users Incentive (Total)</label>
+          <label>Early users Incentive total (Early users + ADX Staking bonus)</label>
           <div className={styles.balance}>
             <div className={styles.amount}>
               <span>{formatAmount(rewards['balance-rewards'])}</span>
