@@ -6,7 +6,6 @@ import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
 
 import {
   UNISWAP_PERMIT_EXCEPTIONS,
-  DEFAULT_EIP155_METHODS,
   DEFAULT_EIP155_EVENTS,
   WC2_SUPPORTED_METHODS
 } from 'hooks/walletConnect/wcConsts'
@@ -268,7 +267,7 @@ export default function useWalletConnectV2({
             relayProtocol: relays[0].protocol,
             namespaces: requiredNamespaces
           })
-          .then((approveResult) => {
+          .then(async (approveResult) => {
             if (WC2_VERBOSE) console.log('WC2 Approve result', approveResult)
             setIsConnecting(false)
             dispatch({
@@ -301,12 +300,12 @@ export default function useWalletConnectV2({
       const namespacedChainId = (params.chainId || `eip155:${stateRef.current.chainId}`).split(':')
 
       const namespace = namespacedChainId[0]
-      const chainId = namespacedChainId[1] * 1
+      const requestChainId = parseInt(namespacedChainId[1], 16)
 
-      const supportedNetwork = allNetworks.find((a) => a.chainId === chainId)
+      const supportedNetwork = allNetworks.find((a) => a.chainId === requestChainId)
 
-      if (supportedNetwork) {
-        setNetwork(chainId)
+      if (supportedNetwork && chainId !== requestChainId) {
+        setNetwork(supportedNetwork.chainId)
       }
 
       if (namespace !== 'eip155') {
@@ -425,7 +424,7 @@ export default function useWalletConnectV2({
         })
       }
     },
-    [client, addToast, getConnectionFromSessionTopic, setRequests, allNetworks, setNetwork]
+    [client, addToast, getConnectionFromSessionTopic, setRequests, allNetworks, setNetwork, chainId]
   )
 
   const onSessionDelete = useCallback(
@@ -468,47 +467,27 @@ export default function useWalletConnectV2({
         if (WC2_VERBOSE) console.log('WC2 updating session', session)
         const connection = state.connections.find((c) => c.sessionTopics.includes(session.topic))
         if (connection) {
+          // console.log(session, )
           // We need to emit chainChanged event to update the chainId in the dapp
-          await client.emit({
+          const payload = {
             topic: session.topic,
             event: {
               name: 'chainChanged',
-              data: account ? [account] : []
+              data: [chainId]
             },
             chainId: `eip155:${chainId}`
-          })
+          }
+
+          await client.emit(payload)
 
           // We need to emit accountsChanged event to update the account in the dapp
           await client.emit({
-            topic: session.topic,
+            ...payload,
             event: {
               name: 'accountsChanged',
               data: account ? [account] : []
-            },
-            chainId: `eip155:${chainId}`
-          })
-
-          const namespaces = {
-            eip155: {
-              chains: connection.requiredNamespaces.eip155.chains,
-              // restricting chainIds to WC pairing chainIds, or WC will throw
-              accounts:
-                connection.requiredNamespaces.eip155.chains.map((cid) => `${cid}:${account}`) || [],
-              methods: DEFAULT_EIP155_METHODS,
-              events: DEFAULT_EIP155_EVENTS
             }
-          }
-          client
-            .update({
-              topic: session.topic,
-              namespaces
-            })
-            .then((updateResult) => {
-              if (WC2_VERBOSE) console.log('WC2 Updated ', updateResult)
-            })
-            .catch((err) => {
-              console.log(`WC2 Update Error: ${err.message}`, session)
-            })
+          })
         } else if (WC2_VERBOSE)
           console.log(`WC2 : session topic not found in connections ${session.topic}`)
       })
