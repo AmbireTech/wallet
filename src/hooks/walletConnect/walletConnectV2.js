@@ -18,7 +18,14 @@ const WC2_VERBOSE = process.env.REACT_APP_WC2_VERBOSE || 0
 
 const getDefaultState = () => ({ connections: [], requests: [] })
 
-export default function useWalletConnectV2({ account, chainId, clearWcClipboard, setRequests }) {
+export default function useWalletConnectV2({
+  account,
+  chainId,
+  clearWcClipboard,
+  setRequests,
+  setNetwork,
+  allNetworks
+}) {
   // This is needed cause of the WalletConnect event handlers
   const stateRef = useRef()
   stateRef.current = { account, chainId }
@@ -87,7 +94,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
               session: action.session,
               pairingTopic: action.pairingTopic,
               sessionTopics: [action.sessionTopic],
-              namespacedChainIds: action.namespacedChainIds,
+              requiredNamespaces: action.requiredNamespaces,
               proposerPublicKey: action.proposerPublicKey
             }
           ]
@@ -229,33 +236,20 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
     async (proposal) => {
       // Get required proposal data
       const { id, params } = proposal
-      const { proposer, requiredNamespaces, relays } = params
+      const { proposer, relays } = params
 
       const supportedChains = []
-      const usedChains = []
+
       networks.forEach((n) => {
         if (!supportedChains.includes(n.chainId)) {
           supportedChains.push(`eip155:${n.chainId}`)
         }
       })
-      const unsupportedChains = []
-      requiredNamespaces.eip155?.chains.forEach((chainId) => {
-        if (supportedChains.includes(chainId)) {
-          usedChains.push(chainId)
-        } else {
-          unsupportedChains.push(chainId)
-        }
-      })
-      if (unsupportedChains.length) {
-        addToast(`Chains not supported ${unsupportedChains.join(',')}`, { error: true })
-        if (WC2_VERBOSE) console.log('WC2 : Proposal rejected')
-        return client.reject({ proposal })
-      }
 
-      const namespaces = {
+      const requiredNamespaces = {
         eip155: {
           chains: supportedChains,
-          accounts: usedChains.map((a) => `${a}:${account}`),
+          accounts: supportedChains.map((a) => `${a}:${account}`),
           methods: WC2_SUPPORTED_METHODS,
           events: DEFAULT_EIP155_EVENTS
         }
@@ -267,12 +261,12 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
 
       clearWcClipboard()
       if (!existingClientSession) {
-        if (WC2_VERBOSE) console.log('WC2 Approving client', namespaces)
+        if (WC2_VERBOSE) console.log('WC2 Approving client', requiredNamespaces)
         client
           .approve({
             id,
             relayProtocol: relays[0].protocol,
-            namespaces
+            namespaces: requiredNamespaces
           })
           .then((approveResult) => {
             if (WC2_VERBOSE) console.log('WC2 Approve result', approveResult)
@@ -283,7 +277,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
               sessionTopic: approveResult.topic,
               proposerPublicKey: params.proposer.publicKey,
               session: { peerMeta: proposer.metadata },
-              namespacedChainIds: usedChains,
+              requiredNamespaces,
               proposal
             })
           })
@@ -308,6 +302,12 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
 
       const namespace = namespacedChainId[0]
       const chainId = namespacedChainId[1] * 1
+
+      const supportedNetwork = allNetworks.find((a) => a.chainId === chainId)
+
+      if (supportedNetwork) {
+        setNetwork(chainId)
+      }
 
       if (namespace !== 'eip155') {
         const err = `Namespace "${namespace}" not compatible`
@@ -425,7 +425,7 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
         })
       }
     },
-    [client, addToast, getConnectionFromSessionTopic, setRequests]
+    [client, addToast, getConnectionFromSessionTopic, setRequests, allNetworks, setNetwork]
   )
 
   const onSessionDelete = useCallback(
@@ -464,14 +464,36 @@ export default function useWalletConnectV2({ account, chainId, clearWcClipboard,
 
     if (client) {
       // updating active connections
-      client.session.values.forEach((session) => {
+      client.session.values.forEach(async (session) => {
         if (WC2_VERBOSE) console.log('WC2 updating session', session)
         const connection = state.connections.find((c) => c.sessionTopics.includes(session.topic))
         if (connection) {
+          // We need to emit chainChanged event to update the chainId in the dapp
+          await client.emit({
+            topic: session.topic,
+            event: {
+              name: 'chainChanged',
+              data: account ? [account] : []
+            },
+            chainId: `eip155:${chainId}`
+          })
+
+          // We need to emit accountsChanged event to update the account in the dapp
+          await client.emit({
+            topic: session.topic,
+            event: {
+              name: 'accountsChanged',
+              data: account ? [account] : []
+            },
+            chainId: `eip155:${chainId}`
+          })
+
           const namespaces = {
             eip155: {
+              chains: connection.requiredNamespaces.eip155.chains,
               // restricting chainIds to WC pairing chainIds, or WC will throw
-              accounts: connection.namespacedChainIds?.map((cid) => `${cid}:${account}`) || [],
+              accounts:
+                connection.requiredNamespaces.eip155.chains.map((cid) => `${cid}:${account}`) || [],
               methods: DEFAULT_EIP155_METHODS,
               events: DEFAULT_EIP155_EVENTS
             }

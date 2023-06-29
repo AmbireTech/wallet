@@ -84,7 +84,9 @@ export default function useWalletConnect({
     clearWcClipboard,
     getClipboardText,
     chainId,
-    setRequests
+    setRequests,
+    setNetwork,
+    allNetworks
   })
 
   const requests = useMemo(
