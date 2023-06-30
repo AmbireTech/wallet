@@ -300,7 +300,7 @@ export default function useWalletConnectV2({
       const namespacedChainId = (params.chainId || `eip155:${stateRef.current.chainId}`).split(':')
 
       const namespace = namespacedChainId[0]
-      const requestChainId = parseInt(namespacedChainId[1], 16)
+      const requestChainId = namespacedChainId[1] * 1
 
       const supportedNetwork = allNetworks.find((a) => a.chainId === requestChainId)
 
@@ -394,7 +394,7 @@ export default function useWalletConnectV2({
               dateAdded: new Date().valueOf(),
               connectionId: connection.pairingTopic,
               txn,
-              chainId,
+              chainId: requestChainId,
               topic,
               account: ethers.utils.getAddress(requestAccount),
               notification: true,
