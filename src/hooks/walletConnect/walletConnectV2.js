@@ -478,8 +478,8 @@ export default function useWalletConnectV2({
             eip155: {
               chains: supportedChains,
               accounts: supportedChains.map((a) => `${a}:${account}`),
-              methods: session.optionalNamespaces?.eip155?.methods || WC2_SUPPORTED_METHODS,
-              events: session.optionalNamespaces?.eip155?.events || DEFAULT_EIP155_EVENTS
+              methods: session.namespaces?.eip155?.methods || WC2_SUPPORTED_METHODS,
+              events: session.namespaces?.eip155?.events || DEFAULT_EIP155_EVENTS
             }
           }
 
