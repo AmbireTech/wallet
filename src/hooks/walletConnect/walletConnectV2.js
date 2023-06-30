@@ -93,7 +93,7 @@ export default function useWalletConnectV2({
               session: action.session,
               pairingTopic: action.pairingTopic,
               sessionTopics: [action.sessionTopic],
-              requiredNamespaces: action.requiredNamespaces,
+              namespaces: action.namespaces,
               proposerPublicKey: action.proposerPublicKey
             }
           ]
@@ -235,7 +235,7 @@ export default function useWalletConnectV2({
     async (proposal) => {
       // Get required proposal data
       const { id, params } = proposal
-      const { proposer, relays } = params
+      const { proposer, relays, requiredNamespaces } = params
 
       const supportedChains = []
 
@@ -245,12 +245,12 @@ export default function useWalletConnectV2({
         }
       })
 
-      const requiredNamespaces = {
+      const namespaces = {
         eip155: {
           chains: supportedChains,
           accounts: supportedChains.map((a) => `${a}:${account}`),
-          methods: WC2_SUPPORTED_METHODS,
-          events: DEFAULT_EIP155_EVENTS
+          methods: requiredNamespaces.eip155.methods,
+          events: requiredNamespaces.eip155.events
         }
       }
 
@@ -260,12 +260,12 @@ export default function useWalletConnectV2({
 
       clearWcClipboard()
       if (!existingClientSession) {
-        if (WC2_VERBOSE) console.log('WC2 Approving client', requiredNamespaces)
+        if (WC2_VERBOSE) console.log('WC2 Approving client', namespaces)
         client
           .approve({
             id,
             relayProtocol: relays[0].protocol,
-            namespaces: requiredNamespaces
+            namespaces
           })
           .then(async (approveResult) => {
             if (WC2_VERBOSE) console.log('WC2 Approve result', approveResult)
@@ -276,7 +276,7 @@ export default function useWalletConnectV2({
               sessionTopic: approveResult.topic,
               proposerPublicKey: params.proposer.publicKey,
               session: { peerMeta: proposer.metadata },
-              requiredNamespaces,
+              namespaces,
               proposal
             })
           })
@@ -467,7 +467,33 @@ export default function useWalletConnectV2({
         if (WC2_VERBOSE) console.log('WC2 updating session', session)
         const connection = state.connections.find((c) => c.sessionTopics.includes(session.topic))
         if (connection) {
-          // console.log(session, )
+          const supportedChains = []
+
+          networks.forEach((n) => {
+            if (!supportedChains.includes(n.chainId)) {
+              supportedChains.push(`eip155:${n.chainId}`)
+            }
+          })
+
+          const namespaces = {
+            eip155: {
+              chains: supportedChains,
+              accounts: supportedChains.map((a) => `${a}:${account}`),
+              methods: session.requiredNamespaces?.eip155?.methods || WC2_SUPPORTED_METHODS,
+              events: session.requiredNamespaces?.eip155?.events || DEFAULT_EIP155_EVENTS
+            }
+          }
+
+          // We need to update the session with the new namespaces before emitting events
+          try {
+            await client.update({
+              topic: session.topic,
+              namespaces
+            })
+          } catch (err) {
+            console.error('WC2 : could not update session', err)
+          }
+
           // We need to emit chainChanged event to update the chainId in the dapp
           const payload = {
             topic: session.topic,
