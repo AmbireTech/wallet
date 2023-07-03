@@ -60,7 +60,7 @@ const Tokens = ({
       return sorted
     }
     const decreasing = b.balanceUSD - a.balanceUSD
-    if (decreasing === 0) return a.symbol.localeCompare(b.symbol)
+    if (decreasing === 0 && a.symbol && b.symbol) return a.symbol.localeCompare(b.symbol)
     return decreasing
   })
 
