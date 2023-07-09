@@ -84,7 +84,9 @@ export default function useWalletConnect({
     clearWcClipboard,
     getClipboardText,
     chainId,
-    setRequests
+    setRequests,
+    setNetwork,
+    allNetworks
   })
 
   const requests = useMemo(
@@ -133,12 +135,16 @@ export default function useWalletConnect({
       if (connectorOpts.uri.match(/^wc:([a-f0-9]+)@2/)) {
         connectV2(connectorOpts)
       } else if (connectorOpts.uri.match(/^wc:([a-f0-9-]+)@1/)) {
-        connectLegacy(connectorOpts)
+        // @TODO: remove all WC1 related code
+        addToast(
+          'You are trying to connect to a dApp that uses WC1, which is outdated. Please inform them about this.',
+          { error: true }
+        )
       } else {
         addToast('Invalid WalletConnect uri', { error: true })
       }
     },
-    [connectV2, connectLegacy, addToast]
+    [connectV2, addToast]
   )
 
   const disconnect = useCallback(
