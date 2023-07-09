@@ -38,7 +38,7 @@ export default function useWalletConnectV2({
   const onInitialize = useCallback(async () => {
     try {
       SignClient.init({
-        projectId: 'f19f5c8e2b1ea7fbd382583761c167b3', // TODO
+        projectId: 'bef1db6c71e4c022d5cfa260f8e95e58',
         relayUrl: 'wss://relay.walletconnect.com',
         metadata: {
           name: 'Ambire Wallet',
