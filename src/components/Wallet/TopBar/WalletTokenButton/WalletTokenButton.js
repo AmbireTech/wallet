@@ -97,11 +97,7 @@ const WalletTokenButton = ({
       return `${hidePrivateValue(pendingTokensTotal)} $WALLET`
     }
 
-    if (
-      currentClaimStatus.claimed === null ||
-      currentClaimStatus.mintableVesting === null ||
-      currentClaimStatus.claimedInitial === null
-    ) {
+    if (currentClaimStatus.claimed === null || currentClaimStatus.claimedInitial === null) {
       return (
         <span>
           <Loading />
@@ -115,7 +111,6 @@ const WalletTokenButton = ({
     currentClaimStatus.claimedInitial,
     currentClaimStatus.error,
     currentClaimStatus.lastUpdated,
-    currentClaimStatus.mintableVesting,
     hidePrivateValue,
     isCurrentClaimStatusDataLoading,
     pendingTokensTotal,
@@ -181,7 +176,7 @@ const WalletTokenButton = ({
         isOffline
       }
     >
-      {!isOffline ?renderRewardsButtonText(): 'You are offline'}
+      {!isOffline ? renderRewardsButtonText() : 'You are offline'}
     </Button>
   )
 }
