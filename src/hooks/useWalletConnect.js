@@ -137,11 +137,9 @@ export default function useWalletConnect({
 
     tryReadClipboard()
     document.addEventListener('visibilitychange', tryReadClipboard)
-    document.addEventListener('focus', tryReadClipboard)
 
     return () => {
       document.removeEventListener('visibilitychange', tryReadClipboard)
-      document.removeEventListener('focus', tryReadClipboard)
     }
   }, [connect, account, addToast])
 
