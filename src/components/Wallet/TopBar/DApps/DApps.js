@@ -74,7 +74,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
             size="sm"
             className={styles.buttonClass}
             icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />}
-            disabled={isClipboardGranted || isWcConnecting}
+            disabled={isWcConnecting}
             onClick={readClipboard}
             testId="connect-btn"
           >
