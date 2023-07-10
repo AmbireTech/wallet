@@ -95,8 +95,8 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
         ) : null}
       </div>
       <div className={styles.dappList}>
-        {connections.map(({ session, connectionId, isOffline, wcVersion }, index) => (
-          <DropDownItem className={styles.dappsItem} key={index}>
+        {connections.map(({ session, isOffline, topic }) => (
+          <DropDownItem className={styles.dappsItem} key={topic}>
             <div className={styles.icon}>
               <div
                 className={styles.iconOverlay}
@@ -130,7 +130,12 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
               </div>
             </span>
             <DropDownItemSeparator />
-            <button type="button" onClick={() => disconnect(connectionId, wcVersion)}>
+            <button
+              type="button"
+              onClick={() => {
+                disconnect(topic)
+              }}
+            >
               Disconnect
             </button>
           </DropDownItem>
