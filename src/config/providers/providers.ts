@@ -5,29 +5,29 @@ import { providers } from 'ethers'
 export const rpcUrls = {
   // Ankr RPCs for tests
   ethereum:
-    'https://rpc.ankr.com/eth/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/eth/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   polygon:
-    'https://rpc.ankr.com/polygon/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/polygon/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   fantom:
-    'https://rpc.ankr.com/fantom/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/fantom/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   'binance-smart-chain':
-    'https://rpc.ankr.com/bsc/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/bsc/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   avalanche:
-    'https://rpc.ankr.com/avalanche/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/avalanche/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   arbitrum:
-    'https://rpc.ankr.com/arbitrum/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/arbitrum/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   andromeda:
-    'https://rpc.ankr.com/metis/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/metis/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   moonbeam:
-    'https://rpc.ankr.com/moonbeam/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/moonbeam/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   gnosis:
-    'https://rpc.ankr.com/gnosis/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/gnosis/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   optimism:
-    'https://rpc.ankr.com/optimism/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/optimism/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   mumbai:
-    'https://rpc.ankr.com/polygon_mumbai/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/polygon_mumbai/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   sepolia:
-    'https://rpc.ankr.com/eth_sepolia/5eab0eb2ce05138695963ae1853b2ed0de083e1132f204704b6e7c32f7ea8a73',
+    'https://rpc.ankr.com/eth_sepolia/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
   moonriver: 'https://rpc.api.moonriver.moonbeam.network',
   kucoin: 'https://rpc-mainnet.kcc.network',
   rinkeby: 'https://rinkeby.infura.io/v3/4409badb714444b299066870e0f7b631',
