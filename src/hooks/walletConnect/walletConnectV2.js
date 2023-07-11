@@ -468,7 +468,6 @@ export default function useWalletConnectV2({
     localStorage[STORAGE_KEY] = JSON.stringify(state)
 
     if (web3wallet) {
-      // console.log('WC2 active sessions', web3wallet.core.pairing.getPairings())
       // updating active connections
       Object.keys(web3wallet.getActiveSessions()).map(async (topic) => {
         const session = web3wallet.getActiveSessions()[topic]
