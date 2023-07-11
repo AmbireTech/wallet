@@ -1,4 +1,4 @@
-import { Interface } from 'ethers/lib/utils'
+import { Interface } from 'ethers/lib/utils' 
 import { token } from 'lib/humanReadableTransactions'
 
 const vaultNames = { ethereum: 'Yearn', polygon: 'Tesseract' }
@@ -45,6 +45,7 @@ const toExtended = (action, word, network, amount, address) => [
 
 const YearnTesseractMapping = (humanizerInfo) => {
   const { abis, yearnVaults, tesseractVaults } = humanizerInfo
+  const yearnWETHVaultAddress = "0xa258C4606Ca8206D8aA700cE2143D7db854D168c"
   const iface = new Interface(abis.YearnVault)
   const getVaultInfo = ({ to }) =>
     yearnVaults.find((x) => x.addr === to) || tesseractVaults.find((x) => x.addr === to)
@@ -77,7 +78,7 @@ const YearnTesseractMapping = (humanizerInfo) => {
         ? [`Withdraw ${amount} units from ${vaultNames[network.id]}`]
         : toExtended('Withdraw', 'from', network, amount, txn.to)
     },
-    [iface.getSighash('withdraw(uint256)')]: (txn, network, { extended = false }) => {
+    [iface.getSighash('withdraw(uint256)') + `:${yearnWETHVaultAddress}`]: (txn, network, { extended = false }) => {
       const [maxShares] = iface.parseTransaction(txn).args
       
       const vaultInfo = getVaultInfo(txn)
