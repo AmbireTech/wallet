@@ -12,7 +12,7 @@ const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList, onCo
   const [advancedMode, setAdvancedMode] = useState(false)
 
   const handleCancel = () => {
-    connections.map(({ uri }) => disconnect(uri))
+    connections.map(({ topic }) => disconnect(topic))
     hideModal()
   }
 
