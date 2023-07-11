@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom'
 import { checkClipboardPermission } from 'lib/permissions'
 import { canOpenInIframe } from 'lib/dappsUtils'
 
+import { useToasts } from 'hooks/toasts'
 import { DropDown, ToolTip, Button, Loading, Icon } from 'components/common'
 import DropDownItem from 'components/common/DropDown/DropDownItem/DropDownItem'
 import DropDownItemSeparator from 'components/common/DropDown/DropDownItem/DropDownItemSeparator'
@@ -18,6 +19,7 @@ import styles from './DApps.module.scss'
 
 const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
   const history = useHistory()
+  const { addToast } = useToasts()
   const [isClipboardGranted, setClipboardGranted] = useState(false)
 
   const checkPermission = async () => {
@@ -30,11 +32,17 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
     if (isClipboardGranted) {
       const content = await navigator.clipboard.readText()
       if (content.startsWith('wc:')) connect({ uri: content })
+      else {
+        addToast('Invalid WalletConnect URI', { error: true })
+      }
     } else {
       const uri = prompt('Enter WalletConnect URI')
       if (uri) connect({ uri })
+      else {
+        addToast('Invalid WalletConnect URI', { error: true })
+      }
     }
-  }, [connect, isClipboardGranted])
+  }, [connect, isClipboardGranted, addToast])
 
   const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
 
