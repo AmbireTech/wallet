@@ -1,4 +1,4 @@
-import { Interface } from 'ethers/lib/utils' 
+import { Interface } from 'ethers/lib/utils'
 import { token } from 'lib/humanReadableTransactions'
 
 const vaultNames = { ethereum: 'Yearn', polygon: 'Tesseract' }
