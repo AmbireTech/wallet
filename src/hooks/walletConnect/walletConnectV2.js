@@ -69,11 +69,11 @@ export default function useWalletConnectV2({
       if (action.type === 'updateConnections') return { ...state, connections: action.connections }
       if (action.type === 'connectedNewSession') {
         const existingConnection = state.connections.find(
-          (c) => c.pairingTopic === action.pairingTopic
+          (c) => c.connectionId === action.connectionId
         )
         if (existingConnection) {
           const updatedConnections = state.connections.map((c) => {
-            if (c.pairingTopic === action.pairingTopic) {
+            if (c.connectionId === action.connectionId) {
               return {
                 ...c,
                 topic: action.topic
@@ -92,7 +92,7 @@ export default function useWalletConnectV2({
           connections: [
             ...state.connections,
             {
-              connectionId: action.pairingTopic, // rename URI of wc 1
+              connectionId: action.connectionId, // rename URI of wc 1 (same as pairingTopic)
               session: action.session,
               topic: action.topic
             }
@@ -162,7 +162,7 @@ export default function useWalletConnectV2({
         const activeSession = getConnectionFromSessionTopic(topic)
 
         if (e.toString().includes('Pairing already exists') && !activeSession) {
-          addToast('This URL has expired, please get a new one from the dApp', { error: true })
+          addToast('This URI has expired, please get a new one from the dApp', { error: true })
         } else {
           addToast(e.message, { error: true })
         }
@@ -187,7 +187,6 @@ export default function useWalletConnectV2({
       if (topic) {
         if (WC2_VERBOSE) console.log('WC2 disconnect (topic)', topic)
         try {
-          console.log('before disconnect', web3wallet.getActiveSessions())
           await web3wallet.disconnectSession({
             topic,
             reason: getSdkError('USER_DISCONNECTED')
@@ -262,7 +261,7 @@ export default function useWalletConnectV2({
 
       clearWcClipboard()
       if (!existingClientSession) {
-        if (WC2_VERBOSE) console.log('WC2 Approving client', namespaces)
+        if (WC2_VERBOSE) console.log('WC2 Approving', namespaces)
 
         try {
           const session = await web3wallet.approveSession({
@@ -275,7 +274,7 @@ export default function useWalletConnectV2({
           setIsConnecting(false)
           dispatch({
             type: 'connectedNewSession',
-            pairingTopic: params.pairingTopic,
+            connectionId: params.pairingTopic,
             topic: session.topic,
             session: { peerMeta: proposer.metadata }
           })
@@ -310,8 +309,8 @@ export default function useWalletConnectV2({
       if (namespace !== 'eip155') {
         const err = `Namespace "${namespace}" not compatible`
         addToast(err, { error: true })
-        await client
-          .respond({
+        await web3wallet
+          .respondSessionRequest({
             topic: requestEvent.topic,
             response: formatJsonRpcError(requestEvent.id, err)
           })
@@ -397,7 +396,7 @@ export default function useWalletConnectV2({
               id,
               type: method,
               dateAdded: new Date().valueOf(),
-              connectionId: connection.pairingTopic,
+              connectionId: connection.connectionId,
               txn,
               chainId: requestChainId,
               topic,
@@ -531,6 +530,7 @@ export default function useWalletConnectV2({
   }, [web3wallet, state, account, chainId])
 
   const onSessionEvent = useCallback((event) => {
+    // @TODO: handle events
     console.log('event', event)
   }, [])
 
