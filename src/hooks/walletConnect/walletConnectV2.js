@@ -469,7 +469,11 @@ export default function useWalletConnectV2({
 
     if (web3wallet) {
       // updating active connections
-      Object.keys(web3wallet.getActiveSessions()).map(async (topic) => {
+      const sessions = web3wallet.getActiveSessions()
+
+      if (!sessions || (sessions && Object.keys(sessions).length === 0)) return
+
+      Object.keys(sessions).map(async (topic) => {
         const session = web3wallet.getActiveSessions()[topic]
 
         if (WC2_VERBOSE) console.log('WC2 updating session', session)
