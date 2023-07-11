@@ -74,7 +74,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
             size="sm"
             className={styles.buttonClass}
             icon={isWcConnecting ? <Loading size={16} /> : <ConnectIcon />}
-            disabled={isWcConnecting}
+            loading={isWcConnecting}
             onClick={readClipboard}
             testId="connect-btn"
           >
@@ -90,7 +90,7 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
         </div>
         {isClipboardGranted ? (
           <label>
-            Automatic connection enabled, just copy a WalletConnect URL and come back to this tab.
+            Automatic connection enabled, just copy a WalletConnect URL and click this button.
           </label>
         ) : null}
       </div>
