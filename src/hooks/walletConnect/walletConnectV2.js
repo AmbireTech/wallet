@@ -138,7 +138,7 @@ export default function useWalletConnectV2({
 
   const getConnectionFromSessionTopic = useCallback(
     (topic) => {
-      return state.connections.find((c) => c.topic === topic)
+      return state.connections.find((c) => c.connectionId === topic || c.topic === topic)
     },
     [state]
   )
@@ -156,30 +156,47 @@ export default function useWalletConnectV2({
         setIsConnecting(false)
         if (WC2_VERBOSE) console.log('pairing result', res)
       } catch (e) {
-        addToast(e.message, { error: true })
+        console.log('WC2: Pairing error (code)', e)
+
+        const topic = connectorOpts.uri.match(/:.+@/)[0].replace(/[:@]/g, '')
+        const activeSession = getConnectionFromSessionTopic(topic)
+
+        if (e.toString().includes('Pairing already exists') && !activeSession) {
+          addToast('This URL has expired, please get a new one from the dApp', { error: true })
+        } else {
+          addToast(e.message, { error: true })
+        }
         setIsConnecting(false)
       }
     },
-    [web3wallet, addToast, setIsConnecting]
+    [web3wallet, addToast, setIsConnecting, getConnectionFromSessionTopic]
   )
 
   const disconnect = useCallback(
-    (topic) => {
+    async (topic) => {
+      setIsConnecting(true)
       // connector might not be there, either cause we disconnected before,
       // or cause we failed to connect in the first place
       if (!web3wallet) {
         if (WC2_VERBOSE) console.log('WC2 disconnect: Web3Wallet not initialized')
         dispatch({ type: 'disconnected', topic })
+        setIsConnecting(false)
         return
       }
 
       if (topic) {
         if (WC2_VERBOSE) console.log('WC2 disconnect (topic)', topic)
-        web3wallet.disconnectSession({
-          topic,
-          reason: getSdkError('USER_DISCONNECTED')
-        })
-        dispatch({ type: 'disconnected', topic })
+        try {
+          console.log('before disconnect', web3wallet.getActiveSessions())
+          await web3wallet.disconnectSession({
+            topic,
+            reason: getSdkError('USER_DISCONNECTED')
+          })
+          dispatch({ type: 'disconnected', topic })
+        } catch (e) {
+          console.log('WC2 disconnect error', e)
+        }
+        setIsConnecting(false)
       }
     },
     [web3wallet]
@@ -222,6 +239,8 @@ export default function useWalletConnectV2({
       // Get required proposal data
       const { id, params } = proposal
       const { proposer, relays, optionalNamespaces } = params
+
+      setIsConnecting(true)
 
       const supportedChains = []
       networks.forEach((n) => {
@@ -367,7 +386,7 @@ export default function useWalletConnectV2({
               return
             }
           } else if (method === 'wallet_addEthereumChain') {
-            const incomingChainId = wcRequest.params.chainId.split(':')[1]
+            const incomingChainId = wcRequest.params[0]
 
             // TODO: setNetwork with the incoming chainId
             console.log(incomingChainId, networks)
@@ -423,9 +442,22 @@ export default function useWalletConnectV2({
 
   const onSessionDelete = useCallback(
     (deletion) => {
-      disconnect(deletion.topic)
+      setIsConnecting(true)
+      /* 
+      We don't need to disconnect, because it happens internally-
+      https://github.com/WalletConnect/walletconnect-monorepo/issues/1983#issuecomment-1431252320
+      We only need to update the state on our side. 
+    */
+      const connection = getConnectionFromSessionTopic(deletion.topic)
+
+      if (connection) {
+        addToast(`Session with ${connection.session.peerMeta.name} ended from the dApp`)
+      }
+
+      dispatch({ type: 'disconnected', topic: deletion.topic })
+      setIsConnecting(false)
     },
-    [disconnect]
+    [getConnectionFromSessionTopic, addToast]
   )
 
   /// /////////////////////
@@ -437,7 +469,7 @@ export default function useWalletConnectV2({
     localStorage[STORAGE_KEY] = JSON.stringify(state)
 
     if (web3wallet) {
-      console.log('WC2 active sessions', web3wallet.getActiveSessions())
+      // console.log('WC2 active sessions', web3wallet.core.pairing.getPairings())
       // updating active connections
       Object.keys(web3wallet.getActiveSessions()).map(async (topic) => {
         const session = web3wallet.getActiveSessions()[topic]
