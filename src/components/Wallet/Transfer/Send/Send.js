@@ -241,6 +241,10 @@ const Send = ({
 
   useEffect(() => {
     const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset)
+    // When topping up with gas tank, the validation related to the humanizerInfo
+    // that checks if user is trying to send tokens to a smart contract is not needed.
+    // So to avoid this check, pass `null` to the humanizerInfoIfNeeded.
+    const humanizerInfoIfNeeded = gasTankDetails?.isTopUp ? null : humanizerInfo
 
     if (address.startsWith('0x') && address.indexOf('.') === -1) {
       if (uDAddress !== '') setUDAddress('')
@@ -249,7 +253,8 @@ const Send = ({
         address,
         selectedAcc,
         addressConfirmed,
-        isKnownAddress
+        isKnownAddress,
+        humanizerInfoIfNeeded
       )
 
       setValidationFormMgs({
@@ -298,6 +303,7 @@ const Send = ({
           selectedAcc,
           addressConfirmed,
           isKnownAddress,
+          humanizerInfoIfNeeded,
           isUDAddress,
           isEnsAddress
         )

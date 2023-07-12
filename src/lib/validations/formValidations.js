@@ -39,6 +39,7 @@ const validateSendTransferAddress = (
   selectedAcc,
   addressConfirmed,
   isKnownAddress,
+  humanizerInfo,
   isUDAddress,
   isEnsAddress
 ) => {
@@ -58,7 +59,7 @@ const validateSendTransferAddress = (
     }
   }
 
-  if (address && isKnownTokenOrContract(address)) {
+  if (address && isKnownTokenOrContract(humanizerInfo, address)) {
     return {
       success: false,
       message: 'You are trying to send tokens to a smart contract. Doing so would burn them.'
@@ -129,14 +130,16 @@ const validateSendNftAddress = (
   metadata,
   selectedNetwork,
   network,
+  humanizerInfo,
   isUDAddress,
-  isEnsAddress
+  isEnsAddress,
 ) => {
   const isValidAddr = validateSendTransferAddress(
     address,
     selectedAcc,
     addressConfirmed,
     isKnownAddress,
+    humanizerInfo,
     isUDAddress,
     isEnsAddress
   )
