@@ -150,10 +150,9 @@ export default function useWalletConnectV2({
         return
       }
 
-      setIsConnecting(true)
       try {
         const res = await web3wallet.core.pairing.pair({ uri: connectorOpts.uri })
-        setIsConnecting(false)
+
         if (WC2_VERBOSE) console.log('pairing result', res)
       } catch (e) {
         console.log('WC2: Pairing error (code)', e)
@@ -166,10 +165,9 @@ export default function useWalletConnectV2({
         } else {
           addToast(e.message, { error: true })
         }
-        setIsConnecting(false)
       }
     },
-    [web3wallet, addToast, setIsConnecting, getConnectionFromSessionTopic]
+    [web3wallet, addToast, getConnectionFromSessionTopic]
   )
 
   const disconnect = useCallback(
@@ -237,23 +235,27 @@ export default function useWalletConnectV2({
     async (proposal) => {
       // Get required proposal data
       const { id, params } = proposal
-      const { proposer, relays, optionalNamespaces } = params
+      const { proposer, relays, optionalNamespaces, requiredNamespaces } = params
 
       setIsConnecting(true)
-
       const supportedChains = []
+
       networks.forEach((n) => {
         if (!supportedChains.includes(n.chainId)) {
           supportedChains.push(`eip155:${n.chainId}`)
         }
       })
 
+      const incomingNamespaces = optionalNamespaces
+        ? optionalNamespaces.eip155
+        : requiredNamespaces.eip155
+
       const namespaces = {
         eip155: {
           chains: supportedChains,
           accounts: supportedChains.map((a) => `${a}:${account}`),
-          methods: optionalNamespaces.eip155.methods,
-          events: optionalNamespaces.eip155.events
+          methods: incomingNamespaces.methods,
+          events: incomingNamespaces.events
         }
       }
 
