@@ -246,7 +246,8 @@ export default function useWalletConnectV2({
         }
       })
 
-      const incomingNamespaces = optionalNamespaces
+      // NOTE: looks like optionalNamespaces can empty object {} and requiredNamespaces to have the eip155
+      const incomingNamespaces = optionalNamespaces?.eip155
         ? optionalNamespaces.eip155
         : requiredNamespaces.eip155
 
