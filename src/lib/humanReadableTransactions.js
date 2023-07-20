@@ -71,7 +71,15 @@ export function getTransactionSummary(
         ]
 
     const sigHash = data.slice(0, 10)
-    const humanizer = humanizers({ humanizerInfo, tokenList })[sigHash]
+    // NOTE: If case of duplicate sigHashes of different contracts we concat the sigHash and the txn.to address
+    const sigHashWithAddress = Object.keys(humanizers({ humanizerInfo, tokenList }))
+      .filter((sig) => sig.length > 10)
+      .find((item) => item === `${sigHash}:${to}`)
+
+    const humanizer = !!sigHashWithAddress
+      ? humanizers({ humanizerInfo, tokenList })[sigHashWithAddress]
+      : humanizers({ humanizerInfo, tokenList })[sigHash]
+
     if (humanizer) {
       try {
         const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)

@@ -1,7 +1,6 @@
-import { useMemo, useEffect, useCallback } from 'react'
+import { useEffect, useCallback } from 'react'
 import { useToasts } from 'hooks/toasts'
 import useWalletConnectV2 from 'hooks/walletConnect/walletConnectV2'
-import useWalletConnectLegacy from 'hooks/walletConnect/walletConnectLegacy'
 import { isFirefox } from 'lib/isFirefox'
 
 const decodeWalletConnectUri = (uri) => {
@@ -29,7 +28,6 @@ export default function useWalletConnect({
   initialWcURI,
   allNetworks,
   setNetwork,
-  useStorage,
   setRequests
 }) {
   const { addToast } = useToasts()
@@ -55,30 +53,12 @@ export default function useWalletConnect({
   }, [getClipboardText])
 
   const {
-    connections: connectionsLegacy,
-    connect: connectLegacy,
-    disconnect: disconnectLegacy,
-    isConnecting: isConnectingLegacy,
-    requests: requestsLegacy,
-    resolveMany: resolveManyLegacy
-  } = useWalletConnectLegacy({
-    account,
-    clearWcClipboard,
-    getClipboardText,
-    chainId,
-    allNetworks,
-    setNetwork,
-    useStorage,
-    setRequests
-  })
-
-  const {
-    connections: connectionsV2,
+    connections,
     connect: connectV2,
-    disconnect: disconnectV2,
-    isConnecting: isConnectingV2,
-    requests: requestsV2,
-    resolveMany: resolveManyV2
+    disconnect,
+    isConnecting,
+    requests,
+    resolveMany
   } = useWalletConnectV2({
     account,
     clearWcClipboard,
@@ -88,47 +68,6 @@ export default function useWalletConnect({
     setNetwork,
     allNetworks
   })
-
-  const requests = useMemo(
-    () => [
-      ...requestsLegacy.map((r) => {
-        return {
-          ...r,
-          wcVersion: 1
-        }
-      }),
-      ...requestsV2.map((r) => {
-        return {
-          ...r,
-          wcVersion: 2
-        }
-      })
-    ],
-    [requestsLegacy, requestsV2]
-  )
-
-  const connections = useMemo(
-    () => [
-      ...connectionsLegacy.map((c) => {
-        return {
-          ...c,
-          wcVersion: 1
-        }
-      }),
-      ...connectionsV2.map((c) => {
-        return {
-          ...c,
-          wcVersion: 2
-        }
-      })
-    ],
-    [connectionsLegacy, connectionsV2]
-  )
-
-  const resolveMany = (ids, resolution) => {
-    resolveManyLegacy(ids, resolution)
-    resolveManyV2(ids, resolution)
-  }
 
   const connect = useCallback(
     (connectorOpts) => {
@@ -145,17 +84,6 @@ export default function useWalletConnect({
       }
     },
     [connectV2, addToast]
-  )
-
-  const disconnect = useCallback(
-    (connectionId, wcVersion) => {
-      if (wcVersion === 2) {
-        disconnectV2(connectionId)
-      } else if (wcVersion === 1) {
-        disconnectLegacy(connectionId)
-      }
-    },
-    [disconnectV2, disconnectLegacy]
   )
 
   // clipboard stuff
@@ -192,7 +120,6 @@ export default function useWalletConnect({
     // window.wcConnect = uri => connect({ uri })
 
     // @TODO on focus and on user action
-    const clipboardError = (e) => console.log('non-fatal clipboard/walletconnect err:', e.message)
     const tryReadClipboard = async () => {
       if (!account) return
       if (isFirefox()) return
@@ -204,7 +131,7 @@ export default function useWalletConnect({
           connect({ uri: clipboard })
         }
       } catch (e) {
-        clipboardError(e)
+        console.log('non-fatal clipboard/walletconnect err:', e.message)
       }
     }
 
@@ -218,7 +145,7 @@ export default function useWalletConnect({
 
   return {
     connections,
-    isConnecting: isConnectingLegacy || isConnectingV2,
+    isConnecting,
     requests,
     resolveMany,
     connect,

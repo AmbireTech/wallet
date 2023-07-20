@@ -32,6 +32,8 @@ const getCoingeckoPrices = (addresses) =>
 const getCoingeckoPriceByContract = (id, addresses) =>
   fetchGet(`${COINGECKO_API_URL}/coins/${id}/contract/${addresses}`)
 
+const getCoingeckoCoin = (id) => fetchGet(`${COINGECKO_API_URL}/coins/${id}`)
+
 export default function usePortfolio({
   currentNetwork,
   account,
@@ -77,6 +79,7 @@ export default function usePortfolio({
     getBalances,
     getCoingeckoPrices,
     getCoingeckoPriceByContract,
+    getCoingeckoCoin,
     relayerURL,
     useRelayerData,
     eligibleRequests,
