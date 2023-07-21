@@ -191,6 +191,10 @@ export default function useWalletConnectV2({
           })
           dispatch({ type: 'disconnected', topic })
         } catch (e) {
+          if (e && e.toString().includes("pairing topic doesn't exist")) {
+            dispatch({ type: 'disconnected', topic })
+            return console.log('WC2 disconnected without session', e)
+          }
           console.log('WC2 disconnect error', e)
         }
         setIsConnecting(false)
