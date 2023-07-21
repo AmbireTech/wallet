@@ -172,6 +172,8 @@ export default function useWalletConnectV2({
 
   const disconnect = useCallback(
     async (topic) => {
+      if (!topic) return console.log('WC2 disconnect error: no topic')
+
       setIsConnecting(true)
       // connector might not be there, either cause we disconnected before,
       // or cause we failed to connect in the first place
@@ -182,23 +184,21 @@ export default function useWalletConnectV2({
         return
       }
 
-      if (topic) {
-        if (WC2_VERBOSE) console.log('WC2 disconnect (topic)', topic)
-        try {
-          await web3wallet.disconnectSession({
-            topic,
-            reason: getSdkError('USER_DISCONNECTED')
-          })
+      if (WC2_VERBOSE) console.log('WC2 disconnect (topic)', topic)
+      try {
+        await web3wallet.disconnectSession({
+          topic,
+          reason: getSdkError('USER_DISCONNECTED')
+        })
+        dispatch({ type: 'disconnected', topic })
+      } catch (e) {
+        if (e && e.toString().includes("pairing topic doesn't exist")) {
           dispatch({ type: 'disconnected', topic })
-        } catch (e) {
-          if (e && e.toString().includes("pairing topic doesn't exist")) {
-            dispatch({ type: 'disconnected', topic })
-            return console.log('WC2 disconnected without session', e)
-          }
-          console.log('WC2 disconnect error', e)
+          return console.log('WC2 disconnected without session', e)
         }
-        setIsConnecting(false)
+        console.log('WC2 disconnect error', e)
       }
+      setIsConnecting(false)
     },
     [web3wallet]
   )
