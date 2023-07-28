@@ -148,7 +148,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
   }
 
   useEffect(() => {
-    // if (!name || isAppAlreadyExists) return console.log('returned')
+    if (!name || isAppAlreadyExists) return
 
     setInputValidation(
       url
