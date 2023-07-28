@@ -160,7 +160,7 @@ export function nativeToken(network, amount, extended = false) {
         }
   }
   return !extended
-    ? `${!amount ? '' : formatUnits(amount, 18)} unknown native token`
+    ? `${!amount ? 'unknown' : formatUnits(amount, 18)} unknown native token`
     : {
         ...extendedNativeToken,
         amount: !amount ? null : formatUnits(amount, 18)
