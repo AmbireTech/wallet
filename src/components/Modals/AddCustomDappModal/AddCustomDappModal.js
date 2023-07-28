@@ -27,7 +27,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
   const [iconUrl, setIconUrl] = useState(null)
   const [connectionType, setConnectionType] = useState('')
   const [loading, setLoading] = useState(false)
-  const [urlErr, setUrlErr] = useState(null)
+  const [urlErr, setUrlErr] = useState('Please enter a valid dApp URL')
   const [urlInfo, setUrlInfo] = useState(null)
   const [iconUrlInfo, setIconUrlInfo] = useState(null)
   const [networksInfo, setNetworksInfo] = useState(null)
@@ -72,6 +72,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
 
   const onUrlInput = useCallback(
     async (urlInputStr = '') => {
+      setLoading(true)
       const normalizedDappUrl = getNormalizedUrl(urlInputStr)
       setUrl(normalizedDappUrl)
       setName('')
@@ -93,9 +94,9 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
       const isInCatalog = isDappInCatalog(normalizedDappUrl)
       setIsAppAlreadyExists(isInCatalog)
 
-      const manifest = await getManifestFromDappUrl(fetch, normalizedDappUrl)
+      try {
+        const manifest = await getManifestFromDappUrl(fetch, normalizedDappUrl)
 
-      if (manifest) {
         setName(manifest.name)
         setDescription(manifest.description)
         setIconUrl(manifest.iconUrl)
@@ -107,33 +108,18 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
             ? 'Supported networks not detected! Please select manually.'
             : ''
         )
-      } else {
-        setUrlInfo("Can't find dApp data — make sure it supports Gnosis Safe apps or WalletConnect")
-      }
+        setLoading(false)
+      } catch (e) {
+        setLoading(false)
 
-      setLoading(false)
+        if (e?.cause && e?.message) {
+          setUrlErr(e.message)
+          return
+        }
+        addToast('Error while fetching dApp data', { error: true })
+      }
     },
-    [isDappInCatalog]
-  )
-
-  const onRadioChange = useCallback((value) => {
-    setConnectionType(value)
-  }, [])
-
-  const radios = useMemo(
-    () => [
-      {
-        label: 'Gnosis Safe App',
-        value: 'gnosis',
-        disabled: !url || urlErr
-      },
-      {
-        label: 'WalletConnect',
-        value: 'walletconnect',
-        disabled: !url || urlErr
-      }
-    ],
-    [url, urlErr]
+    [isDappInCatalog, addToast]
   )
 
   useEffect(() => {
@@ -158,6 +144,8 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
   }
 
   useEffect(() => {
+    if (!name || isAppAlreadyExists) return
+
     setInputValidation(
       url
         ? isValidCustomDappData({
@@ -171,7 +159,17 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
           })
         : {}
     )
-  }, [connectionType, description, iconUrl, iconUrlInfo, name, networks, url])
+  }, [
+    connectionType,
+    description,
+    iconUrl,
+    iconUrlInfo,
+    name,
+    networks,
+    url,
+    loading,
+    isAppAlreadyExists
+  ])
 
   return (
     <Modal
@@ -206,7 +204,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
       <div>
         <TextInput
           value={url}
-          label="URL"
+          label="URL*"
           onInput={(value) => onUrlInput(value)}
           className={styles.dappInput}
           inputContainerClass={styles.textInputContainer}
@@ -215,88 +213,88 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
         <div className={styles.inputErr}>{urlErr || inputValidation?.errors?.url || urlInfo}</div>
       </div>
 
-      <div>
-        <TextInput
-          small
-          label="Name"
-          value={name}
-          onInput={(value) => setName(value)}
-          className={styles.dappInput}
-          inputContainerClass={styles.textInputContainer}
-        />
-        <div className={styles.inputErr}>{inputValidation?.errors?.name}</div>
-      </div>
-      <div>
-        <TextInput
-          small
-          label="Description"
-          value={description}
-          onInput={(value) => setDescription(value)}
-          className={styles.dappInput}
-          inputContainerClass={styles.textInputContainer}
-        />
-      </div>
-
-      <div>
-        <div className={styles.iconInput}>
+      <div
+        className={cn(styles.data, {
+          [styles.emptyUrl]: connectionType !== 'gnosis' || isAppAlreadyExists
+        })}
+      >
+        <div>
           <TextInput
             small
-            label="Icon URL"
-            value={iconUrl}
-            onInput={(value) => {
-              setIconUrl(value)
-              setIconUrlInfo('')
-            }}
+            label="Name"
+            value={name}
+            onInput={(value) => setName(value)}
             className={styles.dappInput}
             inputContainerClass={styles.textInputContainer}
           />
-          <div className={styles.iconWrapper}>
-            {iconUrl && !iconUrlInfo ? (
-              <img
-                width={46}
-                height={46}
-                src={iconUrl || DAPPS_ICON}
-                alt={`${name || 'no'} logo`}
-                onError={() => {
-                  setIconUrlInfo(
-                    'Invalid icon URL, please update it or default dApp icon will be displayed'
-                  )
-                }}
-              />
-            ) : iconUrlInfo ? (
-              <MdErrorOutline size={40} />
-            ) : (
-              <MdImage size={40} />
-            )}
-          </div>
+          <div className={styles.inputErr}>{inputValidation?.errors?.name}</div>
         </div>
-        <div className={styles.inputErr}>{inputValidation?.errors?.iconUrl || iconUrlInfo}</div>
-      </div>
-
-      <div>
-        <div className={styles.connectionRadios}>
-          <div>Connection Type</div>
-          <Radios radios={radios} value={connectionType} onChange={onRadioChange} row />
+        <div>
+          <TextInput
+            small
+            label="Description"
+            value={description}
+            onInput={(value) => setDescription(value)}
+            className={styles.dappInput}
+            inputContainerClass={styles.textInputContainer}
+          />
         </div>
-        <div className={styles.inputErr}>{inputValidation?.errors?.connectionType}</div>
-      </div>
 
-      <div className={styles.networks}>
-        <div>Supported networks ({networks.length} selected)</div>
-        <div className={styles.networksContainer}>
-          {NETWORKS.map((n) => {
-            return (
-              <ToolTip label={n.name} key={n.id}>
-                <span
-                  className={cn(styles.networkTag, { [styles.selected]: networks.includes(n.id) })}
-                  style={{ backgroundImage: `url(${n.icon})` }}
-                  onClick={() => onNetworkClick(n.id)}
+        <div>
+          <div className={styles.iconInput}>
+            <TextInput
+              small
+              label="Icon URL"
+              value={iconUrl}
+              onInput={(value) => {
+                setIconUrl(value)
+                setIconUrlInfo('')
+              }}
+              className={styles.dappInput}
+              inputContainerClass={styles.textInputContainer}
+            />
+            <div className={styles.iconWrapper}>
+              {iconUrl && !iconUrlInfo ? (
+                <img
+                  width={46}
+                  height={46}
+                  src={iconUrl || DAPPS_ICON}
+                  alt={`${name || 'no'} logo`}
+                  onError={() => {
+                    setIconUrlInfo(
+                      'Invalid icon URL, please update it or default dApp icon will be displayed'
+                    )
+                  }}
                 />
-              </ToolTip>
-            )
-          })}
+              ) : iconUrlInfo ? (
+                <MdErrorOutline size={40} />
+              ) : (
+                <MdImage size={40} />
+              )}
+            </div>
+          </div>
+          <div className={styles.inputErr}>{inputValidation?.errors?.iconUrl || iconUrlInfo}</div>
         </div>
-        <div className={styles.inputErr}>{networksInfo || inputValidation?.errors?.networks}</div>
+
+        <div className={styles.networks}>
+          <div>Supported networks ({networks.length} selected)</div>
+          <div className={styles.networksContainer}>
+            {NETWORKS.map((n) => {
+              return (
+                <ToolTip label={n.name} key={n.id}>
+                  <span
+                    className={cn(styles.networkTag, {
+                      [styles.selected]: networks.includes(n.id)
+                    })}
+                    style={{ backgroundImage: `url(${n.icon})` }}
+                    onClick={() => onNetworkClick(n.id)}
+                  />
+                </ToolTip>
+              )
+            })}
+          </div>
+          <div className={styles.inputErr}>{networksInfo || inputValidation?.errors?.networks}</div>
+        </div>
       </div>
     </Modal>
   )
