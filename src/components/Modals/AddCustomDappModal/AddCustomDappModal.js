@@ -82,7 +82,6 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
       setUrlInfo('')
       setIconUrlInfo('')
       setNetworksInfo('')
-      setLoading(true)
       const isValidUrlInput = isValidUrl(normalizedDappUrl)
 
       if (!isValidUrlInput) {
@@ -93,6 +92,11 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
       setUrlErr(null)
       const isInCatalog = isDappInCatalog(normalizedDappUrl)
       setIsAppAlreadyExists(isInCatalog)
+
+      if (isInCatalog) {
+        setLoading(false)
+        return
+      }
 
       try {
         const manifest = await getManifestFromDappUrl(fetch, normalizedDappUrl)
@@ -144,7 +148,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
   }
 
   useEffect(() => {
-    if (!name || isAppAlreadyExists) return
+    // if (!name || isAppAlreadyExists) return console.log('returned')
 
     setInputValidation(
       url
