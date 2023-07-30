@@ -172,7 +172,13 @@ export default function useWalletConnectV2({
 
   const disconnect = useCallback(
     async (topic) => {
-      if (!topic) return console.log('WC2 disconnect error: no topic')
+      if (!topic) {
+        addToast(
+          "Failed to disconnect. If this issue persists, please clear your browser's local storage.",
+          { error: true }
+        )
+        return
+      }
 
       setIsConnecting(true)
       // connector might not be there, either cause we disconnected before,
