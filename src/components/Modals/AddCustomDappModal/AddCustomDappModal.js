@@ -16,6 +16,16 @@ import DAPPS_ICON from 'resources/dapps.svg'
 
 import styles from './AddCustomDappModal.module.scss'
 
+function addProtocolToUrl(incomingUrl) {
+  let url = incomingUrl
+  // Check if "https://" is missing and add it if necessary
+  if (!url.startsWith('https://')) {
+    url = `https://${url}`
+  }
+
+  return url
+}
+
 const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
   const { addToast } = useToasts()
   const { hideModal } = useModals()
@@ -35,6 +45,66 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
   const [inputValidation, setInputValidation] = useState({})
   const [isAppAlreadyExists, setIsAppAlreadyExists] = useState(false)
 
+  useEffect(() => {
+    const fetchManifest = async (isInCatalog, urlWithProtocol) => {
+      try {
+        const manifest = await getManifestFromDappUrl(fetch, urlWithProtocol)
+
+        setName(manifest.name)
+        setDescription(manifest.description)
+        setIconUrl(manifest.iconUrl)
+        setConnectionType(manifest.connectionType)
+        setNetworks(manifest.networks || [])
+        setUrlInfo(isInCatalog ? `${urlWithProtocol} is already in your wallet catalog` : '')
+        setNetworksInfo(
+          !manifest?.networks?.length
+            ? 'Supported networks not detected! Please select manually.'
+            : ''
+        )
+        setLoading(false)
+      } catch (e) {
+        setLoading(false)
+
+        if (e?.cause && e?.message) {
+          setUrlErr(e.message)
+          return
+        }
+        addToast('Error while fetching dApp data', { error: true })
+      }
+    }
+    const timeout = setTimeout(() => {
+      setLoading(true)
+      const urlWithProtocol = addProtocolToUrl(url)
+      setName('')
+      setDescription('')
+      setIconUrl('')
+      setConnectionType('')
+      setUrlInfo('')
+      setIconUrlInfo('')
+      setNetworksInfo('')
+      const isValidUrlInput = isValidUrl(urlWithProtocol)
+
+      if (!isValidUrlInput) {
+        setUrlErr(url ? 'Invalid Url' : null)
+        setLoading(false)
+        return
+      }
+      setUrlErr(null)
+      const isInCatalog = isDappInCatalog(urlWithProtocol)
+      setIsAppAlreadyExists(isInCatalog)
+
+      if (isInCatalog) {
+        setLoading(false)
+        setUrlErr('This dApp is already in your dApp catalog.')
+        return
+      }
+      fetchManifest(isInCatalog, urlWithProtocol)
+    }, 1000)
+
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [url, addToast, isDappInCatalog])
   const disabled = useMemo(
     () => !inputValidation.success || isAppAlreadyExists || loading,
     [inputValidation.success, isAppAlreadyExists, loading]
@@ -70,61 +140,10 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     url
   ])
 
-  const onUrlInput = useCallback(
-    async (urlInputStr = '') => {
-      setLoading(true)
-      const normalizedDappUrl = getNormalizedUrl(urlInputStr)
-      setUrl(normalizedDappUrl)
-      setName('')
-      setDescription('')
-      setIconUrl('')
-      setConnectionType('')
-      setUrlInfo('')
-      setIconUrlInfo('')
-      setNetworksInfo('')
-      const isValidUrlInput = isValidUrl(normalizedDappUrl)
-
-      if (!isValidUrlInput) {
-        setUrlErr(normalizedDappUrl ? 'Invalid Url' : null)
-        setLoading(false)
-        return
-      }
-      setUrlErr(null)
-      const isInCatalog = isDappInCatalog(normalizedDappUrl)
-      setIsAppAlreadyExists(isInCatalog)
-
-      if (isInCatalog) {
-        setLoading(false)
-        return
-      }
-
-      try {
-        const manifest = await getManifestFromDappUrl(fetch, normalizedDappUrl)
-
-        setName(manifest.name)
-        setDescription(manifest.description)
-        setIconUrl(manifest.iconUrl)
-        setConnectionType(manifest.connectionType)
-        setNetworks(manifest.networks || [])
-        setUrlInfo(isInCatalog ? `${normalizedDappUrl} is already in your wallet catalog` : '')
-        setNetworksInfo(
-          !manifest?.networks?.length
-            ? 'Supported networks not detected! Please select manually.'
-            : ''
-        )
-        setLoading(false)
-      } catch (e) {
-        setLoading(false)
-
-        if (e?.cause && e?.message) {
-          setUrlErr(e.message)
-          return
-        }
-        addToast('Error while fetching dApp data', { error: true })
-      }
-    },
-    [isDappInCatalog, addToast]
-  )
+  const onUrlInput = useCallback((urlInputStr) => {
+    const normalizedDappUrl = getNormalizedUrl(urlInputStr)
+    setUrl(normalizedDappUrl)
+  }, [])
 
   useEffect(() => {
     if (dappUrl) {
