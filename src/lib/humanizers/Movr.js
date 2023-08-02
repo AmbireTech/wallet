@@ -1,5 +1,5 @@
 import { Interface } from 'ethers/lib/utils'
-import { formatNativeTokenAddress, token } from 'lib/humanReadableTransactions'
+import { formatNativeTokenAddress, token, nativeToken } from 'lib/humanReadableTransactions'
 import networks from 'consts/networks'
 
 const getNetwork = (chainId, extended = false) => {
@@ -28,6 +28,12 @@ const toExtended = (fromToken, network, toToken) => {
     ]
   ]
 }
+
+const ZERO_ADDRESS = `0x${'0'.repeat(40)}`
+const getTokenDetails = (humInfo, network, tokenAddress, amount, extended = false) =>
+  tokenAddress === ZERO_ADDRESS
+    ? nativeToken(network, amount, extended)
+    : token(humInfo, tokenAddress, amount, extended)
 
 const MovrMapping = (humanizerInfo) => {
   const MovrAnyswapInterface = new Interface(humanizerInfo.abis.MovrAnyswap)
@@ -64,20 +70,34 @@ const MovrMapping = (humanizerInfo) => {
       const { inputToken: outputToken } = bridgeRequest
       return !extended
         ? [
-            `Transfer ${token(
+            `Transfer ${getTokenDetails(
               humanizerInfo,
+              network,
               formatNativeTokenAddress(inputToken),
               amount
-            )} to ${getNetwork(toChainId)} for ${token(
+            )} to ${getNetwork(toChainId)} for ${getTokenDetails(
               humanizerInfo,
+              network,
               formatNativeTokenAddress(outputToken),
               null
             )}`
           ]
         : toExtended(
-            token(humanizerInfo, formatNativeTokenAddress(inputToken), amount, true),
+            getTokenDetails(
+              humanizerInfo,
+              network,
+              formatNativeTokenAddress(inputToken),
+              amount,
+              true
+            ),
             getNetwork(toChainId, true),
-            token(humanizerInfo, formatNativeTokenAddress(outputToken), null, true)
+            getTokenDetails(
+              humanizerInfo,
+              network,
+              formatNativeTokenAddress(outputToken),
+              null,
+              true
+            )
           )
     }
   }

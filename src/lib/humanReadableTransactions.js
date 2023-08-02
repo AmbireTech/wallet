@@ -160,18 +160,18 @@ export function nativeToken(network, amount, extended = false) {
   // All EVM chains use a 18 decimal native asset
   if (network) {
     return !extended
-      ? `${formatUnits(amount, 18)} ${network.nativeAssetSymbol}`
+      ? `${!amount ? 'unknown' : formatUnits(amount, 18)} ${network.nativeAssetSymbol}`
       : {
           ...extendedNativeToken,
           symbol: network.nativeAssetSymbol,
-          amount: formatUnits(amount, 18)
+          amount: !amount ? null : formatUnits(amount, 18)
         }
   }
   return !extended
-    ? `${formatUnits(amount, 18)} unknown native token`
+    ? `${!amount ? 'unknown' : formatUnits(amount, 18)} unknown native token`
     : {
         ...extendedNativeToken,
-        amount: formatUnits(amount, 18)
+        amount: !amount ? null : formatUnits(amount, 18)
       }
 }
 
