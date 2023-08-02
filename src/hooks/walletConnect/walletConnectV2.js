@@ -124,10 +124,30 @@ export default function useWalletConnectV2({
       const json = localStorage[STORAGE_KEY]
 
       if (!json) return getDefaultState()
+
+      const parsedJson = JSON.parse(json)
+
+      if (parsedJson?.connections?.length) {
+        parsedJson.connections = parsedJson.connections.filter((c) => {
+          if (!c.topic) {
+            addToast(
+              `Connection with ${
+                c?.session?.peerMeta?.name || 'Unknown dApp'
+              } has expired. Connect to the dApp again to continue using it.`,
+              {
+                error: true
+              }
+            )
+          }
+
+          return !!c.topic
+        })
+      }
+
       try {
         return {
           ...getDefaultState(),
-          ...JSON.parse(json)
+          ...parsedJson
         }
       } catch (e) {
         console.error(e)
@@ -172,13 +192,7 @@ export default function useWalletConnectV2({
 
   const disconnect = useCallback(
     async (topic) => {
-      if (!topic) {
-        addToast(
-          "Failed to disconnect. If this issue persists, please clear your browser's local storage.",
-          { error: true }
-        )
-        return
-      }
+      if (!topic) return
 
       setIsConnecting(true)
       // connector might not be there, either cause we disconnected before,
