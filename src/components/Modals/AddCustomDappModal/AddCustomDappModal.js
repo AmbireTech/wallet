@@ -116,7 +116,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
     addCustomDapp({
       id: getDappId(name),
       name,
-      url,
+      url: addProtocolToUrl(url),
       description,
       iconUrl: iconUrlInfo ? '' : iconUrl,
       connectionType,
