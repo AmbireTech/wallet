@@ -171,7 +171,7 @@ export default function useWalletConnectV2({
             // We want to remove the stale URI from the URL. For some reason using
             // useHistory from react-router-dom doesn't work so we have to use window.location.
             addToast(
-              'Your Web WalletConnect connection has expired. Please wait for the page to refresh.',
+              'Your WalletConnect Web connection has expired. Please wait for the page to refresh.',
               { error: true }
             )
             setTimeout(() => {
