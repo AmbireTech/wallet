@@ -124,7 +124,7 @@ export default function useWalletConnect({
         addToast(e.message, { error: true })
         return
       }
-      addToast('Invalid WalletConnect URI.', { error: true })
+      addToast('Invalid WalletConnect URI. Please enter a valid URI.', { error: true })
     }
   }, [account, initialWcURI, connect, addToast])
 

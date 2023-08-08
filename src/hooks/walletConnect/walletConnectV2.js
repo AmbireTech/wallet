@@ -153,6 +153,12 @@ export default function useWalletConnectV2({
       try {
         const res = await web3wallet.core.pairing.pair({ uri: connectorOpts.uri })
 
+        // We show the toast only if the user has connected from a
+        // url parameter, because then he can't see the connections changing
+        if (isFromUrl) {
+          addToast('WalletConnect connection successful.')
+        }
+
         if (WC2_VERBOSE) console.log('pairing result', res)
       } catch (e) {
         console.log('WC2: Pairing error (code)', e)
