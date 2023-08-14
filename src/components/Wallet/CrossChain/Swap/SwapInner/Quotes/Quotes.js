@@ -30,7 +30,7 @@ const Quotes = ({
   const { approvalBuildTx, sendBuildTx } = useMovr()
 
   const { toAsset } = quotes
-  const fromAsset = fromTokensItems.find(({ value }) => value === quotes.fromAsset.address)
+  const fromAsset = fromTokensItems.find(({ value }) => value.toLowerCase() === quotes.fromAsset.address.toLowerCase())
   const fromNetwork = getNetwork(quotes.fromAsset.chainId)
   const toNetwork = getNetwork(toAsset.chainId)
   const [selectedRoute, setSelectedRoute] = useState(null)
