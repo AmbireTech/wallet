@@ -124,10 +124,30 @@ export default function useWalletConnectV2({
       const json = localStorage[STORAGE_KEY]
 
       if (!json) return getDefaultState()
+
+      const parsedJson = JSON.parse(json)
+
+      if (parsedJson?.connections?.length) {
+        parsedJson.connections = parsedJson.connections.filter((c) => {
+          if (!c.topic) {
+            addToast(
+              `Connection with ${
+                c?.session?.peerMeta?.name || 'Unknown dApp'
+              } has expired. Connect to the dApp again to continue using it.`,
+              {
+                error: true
+              }
+            )
+          }
+
+          return !!c.topic
+        })
+      }
+
       try {
         return {
           ...getDefaultState(),
-          ...JSON.parse(json)
+          ...parsedJson
         }
       } catch (e) {
         console.error(e)
@@ -150,10 +170,9 @@ export default function useWalletConnectV2({
         return
       }
 
-      setIsConnecting(true)
       try {
         const res = await web3wallet.core.pairing.pair({ uri: connectorOpts.uri })
-        setIsConnecting(false)
+
         if (WC2_VERBOSE) console.log('pairing result', res)
       } catch (e) {
         console.log('WC2: Pairing error (code)', e)
@@ -166,14 +185,15 @@ export default function useWalletConnectV2({
         } else {
           addToast(e.message, { error: true })
         }
-        setIsConnecting(false)
       }
     },
-    [web3wallet, addToast, setIsConnecting, getConnectionFromSessionTopic]
+    [web3wallet, addToast, getConnectionFromSessionTopic]
   )
 
   const disconnect = useCallback(
     async (topic) => {
+      if (!topic) return
+
       setIsConnecting(true)
       // connector might not be there, either cause we disconnected before,
       // or cause we failed to connect in the first place
@@ -184,19 +204,21 @@ export default function useWalletConnectV2({
         return
       }
 
-      if (topic) {
-        if (WC2_VERBOSE) console.log('WC2 disconnect (topic)', topic)
-        try {
-          await web3wallet.disconnectSession({
-            topic,
-            reason: getSdkError('USER_DISCONNECTED')
-          })
+      if (WC2_VERBOSE) console.log('WC2 disconnect (topic)', topic)
+      try {
+        await web3wallet.disconnectSession({
+          topic,
+          reason: getSdkError('USER_DISCONNECTED')
+        })
+        dispatch({ type: 'disconnected', topic })
+      } catch (e) {
+        if (e && e.toString().includes("pairing topic doesn't exist")) {
           dispatch({ type: 'disconnected', topic })
-        } catch (e) {
-          console.log('WC2 disconnect error', e)
+          return console.log('WC2 disconnected without session', e)
         }
-        setIsConnecting(false)
+        console.log('WC2 disconnect error', e)
       }
+      setIsConnecting(false)
     },
     [web3wallet]
   )
@@ -237,23 +259,29 @@ export default function useWalletConnectV2({
     async (proposal) => {
       // Get required proposal data
       const { id, params } = proposal
-      const { proposer, relays, optionalNamespaces } = params
+      const { proposer, relays, optionalNamespaces, requiredNamespaces } = params
 
       setIsConnecting(true)
-
       const supportedChains = []
+
       networks.forEach((n) => {
         if (!supportedChains.includes(n.chainId)) {
           supportedChains.push(`eip155:${n.chainId}`)
         }
       })
 
+      // NOTE: looks like optionalNamespaces can empty object {} and requiredNamespaces to have the eip155
+      const incomingNamespaces = {
+        ...(optionalNamespaces?.eip155 || {}),
+        ...(requiredNamespaces?.eip155 || {})
+      }
+
       const namespaces = {
         eip155: {
           chains: supportedChains,
           accounts: supportedChains.map((a) => `${a}:${account}`),
-          methods: optionalNamespaces.eip155.methods,
-          events: optionalNamespaces.eip155.events
+          methods: incomingNamespaces.methods,
+          events: incomingNamespaces.events
         }
       }
 
