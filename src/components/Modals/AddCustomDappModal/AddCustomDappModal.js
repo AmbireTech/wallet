@@ -18,8 +18,11 @@ import styles from './AddCustomDappModal.module.scss'
 
 function addProtocolToUrl(incomingUrl) {
   let url = incomingUrl
-  // Check if "https://" is missing and add it if necessary
-  if (!url.startsWith('https://')) {
+
+  // Add https:// if not present
+  if (url.startsWith('http://')) {
+    url = url.replace('http://', 'https://')
+  } else if (!url.startsWith('https://')) {
     url = `https://${url}`
   }
 
@@ -85,7 +88,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
       const isValidUrlInput = isValidUrl(urlWithProtocol)
 
       if (!isValidUrlInput) {
-        setUrlErr(url ? 'Invalid Url' : null)
+        setUrlErr(urlWithProtocol ? 'Invalid Url' : null)
         setLoading(false)
         return
       }
@@ -174,7 +177,7 @@ const AddCustomDappModal = ({ dappsCatalog, dappUrl = '' }) => {
         ? isValidCustomDappData({
             id: getDappId(name || ''),
             name,
-            url,
+            url: addProtocolToUrl(url),
             description,
             iconUrl: iconUrlInfo ? '' : iconUrl,
             connectionType,
