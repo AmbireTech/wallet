@@ -124,10 +124,30 @@ export default function useWalletConnectV2({
       const json = localStorage[STORAGE_KEY]
 
       if (!json) return getDefaultState()
+
+      const parsedJson = JSON.parse(json)
+
+      if (parsedJson?.connections?.length) {
+        parsedJson.connections = parsedJson.connections.filter((c) => {
+          if (!c.topic) {
+            addToast(
+              `Connection with ${
+                c?.session?.peerMeta?.name || 'Unknown dApp'
+              } has expired. Connect to the dApp again to continue using it.`,
+              {
+                error: true
+              }
+            )
+          }
+
+          return !!c.topic
+        })
+      }
+
       try {
         return {
           ...getDefaultState(),
-          ...JSON.parse(json)
+          ...parsedJson
         }
       } catch (e) {
         console.error(e)
@@ -201,6 +221,8 @@ export default function useWalletConnectV2({
 
   const disconnect = useCallback(
     async (topic) => {
+      if (!topic) return
+
       setIsConnecting(true)
       // connector might not be there, either cause we disconnected before,
       // or cause we failed to connect in the first place
@@ -222,8 +244,8 @@ export default function useWalletConnectV2({
           console.log('WC2 disconnect error', e)
         }
         dispatch({ type: 'disconnected', topic })
-        setIsConnecting(false)
       }
+      setIsConnecting(false)
     },
     [web3wallet]
   )
