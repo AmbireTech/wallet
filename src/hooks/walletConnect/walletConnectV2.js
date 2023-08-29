@@ -155,8 +155,12 @@ export default function useWalletConnectV2({
 
         // We show the toast only if the user has connected from a
         // url parameter, because then he can't see the connections changing
+        // when the WalletConnect dropdown is closed.
         if (isFromUrl) {
           addToast('WalletConnect connection successful.')
+          // We want to remove the uri parameter from the url without refreshing the page.
+          // We remove the parameter to prevent additional connection attempts.
+          window.history.replaceState(null, '', `${window.location.pathname}#/wallet/dashboard`)
         }
 
         if (WC2_VERBOSE) console.log('pairing result', res)
@@ -174,15 +178,13 @@ export default function useWalletConnectV2({
             return
           }
           if (!activeSession && isFromUrl) {
-            // We want to remove the stale URI from the URL. For some reason using
-            // useHistory from react-router-dom doesn't work so we have to use window.location.
             addToast(
-              'Your WalletConnect Web connection has expired. Please wait for the page to refresh.',
+              'Your WalletConnect Web connection has expired. Please connect to the dApp again with a new uri.',
               { error: true }
             )
-            setTimeout(() => {
-              window.location.search = ''
-            }, 6000)
+            // We want to remove the uri parameter from the url without refreshing the page.
+            // We remove the parameter to prevent additional connection attempts.
+            window.history.replaceState(null, '', `${window.location.pathname}#/wallet/dashboard`)
           }
           // If we got the WC URI from the uri param we don't want to show an error toast,
           // because the param is still the same and there will be an error when trying to connect.
@@ -216,10 +218,10 @@ export default function useWalletConnectV2({
             topic,
             reason: getSdkError('USER_DISCONNECTED')
           })
-          dispatch({ type: 'disconnected', topic })
         } catch (e) {
           console.log('WC2 disconnect error', e)
         }
+        dispatch({ type: 'disconnected', topic })
         setIsConnecting(false)
       }
     },
