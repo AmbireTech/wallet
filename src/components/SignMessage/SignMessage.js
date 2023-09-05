@@ -83,7 +83,8 @@ export default function SignMessage({
 
     if (!textArea) return
 
-    setHasScrolledToBottom(textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1)
+    // Initial run. Important for the case when the textarea doesn't have a scrollbar
+    onScroll(textArea)
 
     textArea.addEventListener('scroll', () => onScroll(textArea))
 
