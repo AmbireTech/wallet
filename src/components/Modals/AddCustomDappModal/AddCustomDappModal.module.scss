@@ -25,6 +25,33 @@
     flex-direction: column;
     gap: 0.875rem;
   }
+  .data {
+    position: relative;
+    padding: .9375rem;
+    border: 1px solid $c-heliotrope;
+    border-radius: $border-radius;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+
+    &.emptyUrl {
+      border-color: $danger-color;
+
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        border-radius: $border-radius;
+        background-color: $c-ebony-clay-light;
+        opacity: .5;
+        z-index: 2;
+        cursor: not-allowed;
+      }
+    }
+  }
 
   .dappInput {
     flex: 1;
