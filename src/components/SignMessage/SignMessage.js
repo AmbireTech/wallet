@@ -83,6 +83,8 @@ export default function SignMessage({
 
     if (!textArea) return
 
+    setHasScrolledToBottom(textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1)
+
     textArea.addEventListener('scroll', () => onScroll(textArea))
 
     return () => {
