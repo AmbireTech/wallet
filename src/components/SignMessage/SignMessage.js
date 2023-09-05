@@ -30,9 +30,11 @@ export default function SignMessage({
   useStorage
 }) {
   const defaultState = () => ({ codeRequired: false, passphrase: '' })
+  const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false)
   const [signingState, setSigningState] = useState(defaultState())
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
+  const textAreaRef = useRef(null)
 
   const onConfirmationCodeRequired = async (confCodeRequired, approveQuickAcc) => {
     const confCode = await new Promise((resolve) => {
@@ -70,6 +72,24 @@ export default function SignMessage({
   const isDAppSupported =
     dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
 
+  const onScroll = (textArea) => {
+    if (textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1) {
+      setHasScrolledToBottom(true)
+    }
+  }
+
+  useEffect(() => {
+    const textArea = textAreaRef?.current
+
+    if (!textArea) return
+
+    textArea.addEventListener('scroll', () => onScroll(textArea))
+
+    return () => {
+      textArea.removeEventListener('scroll', () => onScroll(textArea))
+    }
+  }, [])
+
   useEffect(() => {
     if (confirmationType) inputSecretRef.current.focus()
   }, [confirmationType])
@@ -87,16 +107,6 @@ export default function SignMessage({
       </div>
     )
   }
-
-  if (typeDataErr)
-    return (
-      <div className={styles.wrapper}>
-        <h3 className="error">Invalid signing request: {typeDataErr}</h3>
-        <Button className={styles.reject} onClick={() => resolve({ message: 'signature denied' })}>
-          Reject
-        </Button>
-      </div>
-    )
 
   const handleInputConfCode = (e) => {
     if (e.length === CONF_CODE_LENGTH) promiseResolve(e)
@@ -161,11 +171,15 @@ export default function SignMessage({
             <span>You have {totalRequests - 1} more pending requests.</span>
           ) : null}
           {!isDAppSupported && <DAppIncompatibilityWarningMsg />}
+          {!!typeDataErr && (
+            <DAppIncompatibilityWarningMsg title="Unable to sign" msg={typeDataErr} />
+          )}
         </div>
 
         <textarea
           className={styles.signMessage}
           type="text"
+          ref={textAreaRef}
           value={
             dataV4
               ? JSON.stringify(dataV4, '\n', ' ')
@@ -224,6 +238,11 @@ export default function SignMessage({
                 </h3>
               </div>
             )}
+            {!hasScrolledToBottom && !typeDataErr && (
+              <div>
+                <h3 className="error">Please read the message before signing.</h3>
+              </div>
+            )}
 
             <div className={styles.buttons}>
               <Button
@@ -240,6 +259,7 @@ export default function SignMessage({
                   variant="primaryGradient"
                   className={styles.button}
                   loading={isLoading}
+                  disabled={!hasScrolledToBottom || typeDataErr}
                   loadingText="Signing..."
                 >
                   Sign
