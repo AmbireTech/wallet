@@ -70,50 +70,61 @@ export default function useWalletConnect({
   })
 
   const connect = useCallback(
-    (connectorOpts) => {
+    (connectorOpts, { isClipboardGranted = false, isFromUrl = false }) => {
       if (connectorOpts.uri.match(/^wc:([a-f0-9]+)@2/)) {
-        connectV2(connectorOpts)
-      } else if (connectorOpts.uri.match(/^wc:([a-f0-9-]+)@1/)) {
-        // @TODO: remove all WC1 related code
+        connectV2(connectorOpts, isFromUrl)
+        return
+      }
+
+      if (connectorOpts.uri.match(/^wc:([a-f0-9-]+)@1/)) {
         addToast(
           'You are trying to connect to a dApp that uses WC1, which is outdated. Please inform them about this.',
           { error: true }
         )
-      } else {
-        addToast('Invalid WalletConnect uri', { error: true })
+        return
       }
+
+      if (isClipboardGranted) {
+        addToast(
+          'Clipboard content not recognized as a valid WalletConnect URI. Please copy a valid URI and try again.',
+          { error: true }
+        )
+        return
+      }
+
+      addToast('Invalid WalletConnect URI. Please enter a valid URI.', {
+        error: true
+      })
     },
     [connectV2, addToast]
   )
 
-  // clipboard stuff
+  // Get URI from query string and connect
   useEffect(() => {
-    if (initialWcURI) {
-      if (account) connect({ uri: initialWcURI })
-      else
-        addToast(
-          'WalletConnect dApp connection request detected, please create an account and you will be connected to the dApp.',
-          { timeout: 15000 }
-        )
-    }
-
     if (typeof window === 'undefined' || !window.location.href.includes('?uri=')) return
 
     try {
-      const wcUri = decodeWalletConnectUri(window.location.href)
+      if (!account)
+        throw new Error(
+          "Can't connect to a dApp without an account. Please add an account and try again."
+        )
 
-      if (!wcUri.includes('key') && !wcUri.includes('symKey'))
-        throw new Error('Wallet Connect URI is missing key')
+      const uri = decodeWalletConnectUri(window.location.href)
 
-      connect({ uri: wcUri })
+      if (!uri.includes('key') && !uri.includes('symKey'))
+        throw new Error(
+          'WalletConnect URI is malformed(missing key or symKey). Please try again with a valid URI.'
+        )
+      connect({ uri }, { isFromUrl: true })
     } catch (e) {
+      window.history.replaceState(null, '', `${window.location.pathname}#/wallet/dashboard`)
       if (e.message) {
         addToast(e.message, { error: true })
         return
       }
-      addToast('Invalid WalletConnect uri', { error: true })
+      addToast('Invalid WalletConnect URI. Please enter a valid URI.', { error: true })
     }
-  }, [account, initialWcURI, connect, addToast])
+  }, [connect, account, addToast])
 
   useEffect(() => {
     // hax TODO: ask why? seems working without
