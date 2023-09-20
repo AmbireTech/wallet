@@ -3,7 +3,7 @@
 ### About
 Ambire Wallet is a self-custodial crypto wallet designed with power and ease of use in mind. Unlike most crypto wallets, Ambire focuses on user experience and human-friendliness, while not compromising on features. Ambire is unopinionated, it can be connected to any dApp and it supports most of the popular EVM networks. Ambire is also a Web3 superapp: you can swap, lend, borrow, perform cross-chain transfers, deposit FIAT, all without the app.
 
-It's built on smart contract wallet technology, enabling powerful features such as transaction batching, account recovery, multisigs, key rotation and paying for transactions in stablecoins (account abstraction).
+It's built on smart contract wallet technology, enabling powerful features such as transaction batching, account recovery, multisigs, key rotation and paying for transactions in stablecoins (account abstraction & ERC-4337).
 
 ### WARNING
 #### This repo is in maintenance mode while we're working on Ambire v2 (browser extension)
@@ -460,7 +460,7 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Change Dashboard text to trigger Add token modal - If you don't see a specific token that you own, please add it manually.
 
 ### v0.6.2
-- 4337 implementation in Identity.sol
+- ERC-4337 implementation in Identity.sol
 - Fixed an issue where approvals didn't succeed in the official UI of Uniswap
 - improvement / tnxs preview for mobile devices
 - improvement / Add or Remove Token button if user don't have any assets on current chain.
