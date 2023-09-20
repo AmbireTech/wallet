@@ -8,7 +8,8 @@ It's built on smart contract wallet technology, enabling powerful features such 
 ### All documentation
 
 * Smart contract documentation, originally intended for CodeArena: https://github.com/AmbireTech/code4rena
-	* Latest smart contract source code: https://github.com/AmbireTech/adex-protocol-eth/tree/codearena-fixes
+	* Smart contract source code, in production: https://github.com/AmbireTech/adex-protocol-eth/tree/codearena-fixes
+    * Latest smart contract code: https://github.com/AmbireTech/wallet/tree/main/contracts
 * Security model: https://gist.github.com/Ivshti/fe86f13c3adff3404a1f5ce1e364304c
 * Deck: https://docsend.com/view/hqp9xkr2krj6wt8w
 * FAQs: https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet
@@ -177,7 +178,7 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * WALLET token: 0x88800092ff476844f74dc2fc427974bbee2794ae
 * xWALLET staking: 0x47Cd7E91C3CBaAF266369fe8518345fc4FC12935
 * xWALLETSpendable: 0x0b62eC5F3b445d2CDd024E736c3f4f1f92be43fd
-* SupplyController: 0x6FDb43bca2D8fe6284242d92620156205d4fA028
+* SupplyController: 0xDDDFf33B83C704AB91953DD4A7De441650B9f0b0
 * adexStakingSpendable: 0x2685DdE658fAA0465130bC1672904d32c42cecb7
 
 Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) are deployed cross-chain on the same addresses across Ethereum, Polygon, BSC, Fantom, Avalanche, Arbitrum, Moonbeam, Moonriver, Cronos, Metis, Gnosis Chain (formerly xDAI), NEAR Aurora
