@@ -106,7 +106,7 @@ const DappsCatalog = ({ network, dappsCatalog, selectedAcc, gnosisConnect, gnosi
       gnosisDisconnect() // disconnect the previous dapp
       loadCurrentDappData(null) // reset current dapp data
       if (
-        (item.connectionType === 'gnosis' && !item.custom) ||
+        item.connectionType === 'gnosis' ||
         item.forceInternal ||
         (await canOpenInIframe(fetch, item.url))
       ) {

@@ -472,3 +472,6 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 - Improve wallet responsiveness.
 - UX optimization for 4k.
 - Optimizations of visual elements.
+
+### v0.7.1
+- WALLETSupplyController: include the staking pool in the leaf hash
