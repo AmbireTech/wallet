@@ -107,36 +107,29 @@ const SwappinMapping = (humanizerInfo) => {
 
       const tokenAddr = `0x${firstTxData.data.slice(730, 770)}`
       const isNativeToken = tokenAddr === `0x${'0'.repeat(40)}`
+      const tokenItem = isNativeToken
+        ? nativeToken(network, 0, opts.extended)
+        : token(humanizerInfo, tokenAddr, 0, opts.extended)
 
       if (swappinNFTMintSigHash === sigHash) {
-        return toExtended(
-          'Swap',
-          'for a Swappin.gifts AGIFT gift card',
-          isNativeToken
-            ? nativeToken(network, 0, opts.extended)
-            : token(humanizerInfo, tokenAddr, 0, opts.extended)
-        )
+        return !opts.extended
+          ? [`Swap ${tokenItem} for a Swappin.gifts AGIFT gift card`]
+          : toExtended('Swap', 'for a Swappin.gifts AGIFT gift card', tokenItem)
       }
 
       if (swappinNFTRedeemSigHash === sigHash) {
-        return toExtended(
-          'Swap',
-          'and your Swappin.gift AGIFT gift card for a new gift card',
-          isNativeToken
-            ? nativeToken(network, 0, opts.extended)
-            : token(humanizerInfo, tokenAddr, 0, opts.extended)
-        )
+        return !opts.extended
+          ? [`Swap ${tokenItem} and your Swappin.gift AGIFT gift card for a new gift card`]
+          : toExtended(
+              'Swap',
+              'and your Swappin.gift AGIFT gift card for a new gift card',
+              tokenItem
+            )
       }
 
       return !opts.extended
-        ? ['Pay for a gift card']
-        : toExtended(
-            'Swap',
-            'for a gift card on Swappin.gifts',
-            isNativeToken
-              ? nativeToken(network, 0, opts.extended)
-              : token(humanizerInfo, tokenAddr, 0, opts.extended)
-          )
+        ? [`Swap ${tokenItem} for a gift card on Swappin.gifts`]
+        : toExtended('Swap', 'for a gift card on Swappin.gifts', tokenItem)
     },
     [SwappinInterface.getSighash('payWithAnyToken')]: (txn, network, opts) => {
       const { swapInfo } = SwappinInterface.parseTransaction(txn).args
@@ -147,12 +140,12 @@ const SwappinMapping = (humanizerInfo) => {
         const isNativeToken = tokenFrom === `0x${'0'.repeat(40)}`
 
         tokenFromItem = isNativeToken
-          ? nativeToken(network, 0, opts.extended)
+          ? nativeToken(network, amountFrom, opts.extended)
           : token(humanizerInfo, tokenFrom, amountFrom, opts.extended)
       }
 
       return !opts.extended
-        ? [`Pay with ${tokenFromItem} for a gift card`]
+        ? [`Swap ${tokenFromItem} for a gift card on Swappin.gifts`]
         : toExtended('Swap', 'for a gift card on Swappin.gifts', tokenFromItem)
     }
   }
