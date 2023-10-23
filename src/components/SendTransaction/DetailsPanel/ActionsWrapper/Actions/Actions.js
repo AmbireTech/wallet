@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Wallet, ethers } from 'ethers'
-import { Interface } from 'ethers/lib/utils'
+import { AbiCoder, Interface } from 'ethers/lib/utils'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Bundle } from 'adex-protocol-eth/js'
 import cn from 'classnames'
@@ -238,14 +238,28 @@ const Actions = ({
         value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate
       }
 
+      const lastTxn = bundle.txns[bundle.txns.length - 1]
+      const abiCoder = new AbiCoder();
+      const gasTankValue = ethers.utils
+        .parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals)
+        .toString()
+
+      try {
+        // if the decode works, it means we have already added
+        // the gas tank transaction to the array. If it does not work,
+        // we add the gas tank transaction
+        abiCoder.decode(['string', 'uint256', 'string'], lastTxn[2])
+      } catch (e) {
+        // add the gas tank transaction
+        // since it calls the relayer, it consumes only an extra 295 gas
+        // the data is the encoded gas tank parameters
+        bundle.txns.push(
+          [accountPresets.feeCollector, '0', abiCoder.encode(['string', 'uint256', 'string'], ['gasTank', gasTankValue, feeToken.id])]
+        )
+      }
+
       return new Bundle({
         ...bundle,
-        gasTankFee: {
-          assetId: feeToken.id,
-          value: ethers.utils
-            .parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals)
-            .toString()
-        },
         txns: [...bundle.txns],
         gasLimit,
         nonce

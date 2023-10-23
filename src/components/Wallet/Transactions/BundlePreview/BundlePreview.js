@@ -7,6 +7,7 @@ import { TxnPreview } from 'components/common'
 import Details from './Details/Details'
 
 import styles from './BundlePreview.module.scss'
+import { isGasTankCommitment } from 'lib/isGasTankCommitment'
 
 const TO_GAS_TANK = 'to Gas Tank'
 
@@ -26,8 +27,9 @@ const BundlePreview = ({ bundle, mined = false, feeAssets }) => {
     bundle.network,
     bundle.identity
   )
+  // lastTxn
   const hasFeeMatch = bundle.txns.length > 1 && lastTxnSummary.match(new RegExp(TO_GAS_TANK, 'i'))
-  const txns = hasFeeMatch && !bundle.gasTankFee ? bundle.txns.slice(0, -1) : bundle.txns
+  const txns = (hasFeeMatch && !bundle.gasTankFee) || isGasTankCommitment(lastTxn) ? bundle.txns.slice(0, -1) : bundle.txns
 
   return (
     <div className={styles.wrapper} key={bundle._id}>
