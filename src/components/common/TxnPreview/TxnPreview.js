@@ -117,11 +117,11 @@ export default function TxnPreview({
           {isFirstFailing && (
             <p className={styles.warning}>This is the first failing transaction.</p>
           )}
-          {isUnknown && (
+          {/* {isUnknown && (
             <p className={styles.warning}>
               Warning: interacting with an unknown contract or address.
             </p>
-          )}
+          )} */}
           {isNFTApprovalForAll && (
             <p className={styles.warning}>
               Warning: Be careful while approving this permission, as it will allow access to all NFTs on the contract, including those that you may own in the future. The recipient of this permission can transfer NFTs from your wallet without seeking your permission until you withdraw this authorization. Proceed with caution and stay safe!

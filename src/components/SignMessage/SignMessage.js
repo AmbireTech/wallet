@@ -69,8 +69,8 @@ export default function SignMessage({
     useStorage
   })
 
-  const isDAppSupported =
-    dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
+  const isDAppSupported = true
+    // dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
 
   const onScroll = (textArea) => {
     if (textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1) {
