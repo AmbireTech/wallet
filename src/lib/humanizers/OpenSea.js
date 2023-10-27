@@ -82,18 +82,7 @@ const OpenSeaMapping = (humanizerInfo) => {
 
       return !extended
         ? [`Mint ${quantity} NFT${quantity > 1 ? 's' : ''} on ${network}`]
-        : [
-            [
-              'Mint',
-              `${quantity} NFT${quantity > 1 ? 's' : ''}`,
-              'from',
-              {
-                type: 'address',
-                address: nftContract
-              },
-              'on OpenSea'
-            ]
-          ]
+        : [['Mint', `${quantity} NFT${quantity > 1 ? 's' : ''}`, 'on OpenSea']]
     }
   }
 }
