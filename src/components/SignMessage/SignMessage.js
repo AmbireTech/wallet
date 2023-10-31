@@ -70,10 +70,7 @@ export default function SignMessage({
   })
 
   const isDAppSupported =
-    dApp &&
-    (dApp.url.includes('opensea.io') ||
-      supportedDApps.includes(dApp.url) ||
-      supportedDApps.includes(`${dApp.url}/`))
+    dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
 
   const onScroll = (textArea) => {
     if (textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1) {
