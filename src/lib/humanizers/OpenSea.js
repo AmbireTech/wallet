@@ -1,8 +1,23 @@
 import { Interface } from 'ethers/lib/utils'
 import { nativeToken, token } from 'lib/humanReadableTransactions'
 
+const partialOpenSeaAbi = [
+  {
+    inputs: [
+      { internalType: 'address', name: 'nftContract', type: 'address' },
+      { internalType: 'address', name: 'feeRecipient', type: 'address' },
+      { internalType: 'address', name: 'minterIfNotPayer', type: 'address' },
+      { internalType: 'uint256', name: 'quantity', type: 'uint256' }
+    ],
+    name: 'mintPublic',
+    outputs: [],
+    stateMutability: 'payable',
+    type: 'function'
+  }
+]
 const OpenSeaMapping = (humanizerInfo) => {
   const WyvernExchange = new Interface(humanizerInfo.abis.WyvernExchange)
+  const OpenSeaInterface = new Interface(partialOpenSeaAbi)
 
   return {
     [WyvernExchange.getSighash('atomicMatch_')]: (txn, network, { extended = false }) => {
@@ -60,6 +75,14 @@ const OpenSeaMapping = (humanizerInfo) => {
               'on OpenSea'
             ]
           ]
+    },
+    [OpenSeaInterface.getSighash('mintPublic')]: (txn, network, { extended = false }) => {
+      const { nftContract, feeRecipient, minterIfNotPayer, quantity } =
+        OpenSeaInterface.parseTransaction(txn).args
+
+      return !extended
+        ? [`Mint ${quantity} NFT${quantity > 1 ? 's' : ''} on ${network}`]
+        : [['Mint', `${quantity} NFT${quantity > 1 ? 's' : ''}`, 'on OpenSea']]
     }
   }
 }

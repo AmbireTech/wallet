@@ -3,7 +3,10 @@
 ### About
 Ambire Wallet is a self-custodial crypto wallet designed with power and ease of use in mind. Unlike most crypto wallets, Ambire focuses on user experience and human-friendliness, while not compromising on features. Ambire is unopinionated, it can be connected to any dApp and it supports most of the popular EVM networks. Ambire is also a Web3 superapp: you can swap, lend, borrow, perform cross-chain transfers, deposit FIAT, all without the app.
 
-It's built on smart contract wallet technology, enabling powerful features such as transaction batching, account recovery, multisigs, key rotation and paying for transactions in stablecoins (gas abstractions).
+It's built on smart contract wallet technology, enabling powerful features such as transaction batching, account recovery, multisigs, key rotation and paying for transactions in stablecoins (account abstraction & ERC-4337).
+
+### WARNING
+#### This repo is in maintenance mode while we're working on Ambire v2 (browser extension)
 
 ### All documentation
 
@@ -178,7 +181,7 @@ Additionally, there's an ongoing [Immunefi bug bounty](https://immunefi.com/boun
 * WALLET token: 0x88800092ff476844f74dc2fc427974bbee2794ae
 * xWALLET staking: 0x47Cd7E91C3CBaAF266369fe8518345fc4FC12935
 * xWALLETSpendable: 0x0b62eC5F3b445d2CDd024E736c3f4f1f92be43fd
-* SupplyController: 0xDDDFf33B83C704AB91953DD4A7De441650B9f0b0
+* SupplyController: 0xA69B8074CE03A33B13057B1e9D37DCDE0024Aaff
 * adexStakingSpendable: 0x2685DdE658fAA0465130bC1672904d32c42cecb7
 
 Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) are deployed cross-chain on the same addresses across Ethereum, Polygon, BSC, Fantom, Avalanche, Arbitrum, Moonbeam, Moonriver, Cronos, Metis, Gnosis Chain (formerly xDAI), NEAR Aurora
@@ -457,7 +460,7 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 * Change Dashboard text to trigger Add token modal - If you don't see a specific token that you own, please add it manually.
 
 ### v0.6.2
-- 4337 implementation in Identity.sol
+- ERC-4337 implementation in Identity.sol
 - Fixed an issue where approvals didn't succeed in the official UI of Uniswap
 - improvement / tnxs preview for mobile devices
 - improvement / Add or Remove Token button if user don't have any assets on current chain.

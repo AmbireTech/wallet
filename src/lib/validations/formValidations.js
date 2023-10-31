@@ -69,7 +69,7 @@ const validateSendTransferAddress = (
     return {
       success: false,
       message:
-        "You're trying to send to an unknown address. If you're really sure, confirm using the checkbox below."
+        "You're trying to send to an unknown address. If you're really sure, confirm using the checkbox above."
     }
   }
 
@@ -77,7 +77,7 @@ const validateSendTransferAddress = (
     const name = isUDAddress ? 'Unstoppable domain' : 'Ethereum Name Service'
     return {
       success: false,
-      message: `You're trying to send to an ${name}. If you really trust to the person who gave you, confirm using the checkbox below.`
+      message: `You're trying to send to an ${name}. If you really trust to the person who gave you, confirm using the checkbox above.`
     }
   }
 
