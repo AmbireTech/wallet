@@ -44,7 +44,7 @@ const Security = ({
   // Also, we are sorting it via `a[0].localeCompare(b[0])` in order to keep the same sorting order,
   // as it was in the privileges object before that (returned by Relayer).
   const privilegesList = useMemo(
-    () => Object.entries(privileges).sort((a, b) => a[0].localeCompare(b[0])),
+    () => Object.entries(privileges).sort((a, b) => a[0].localeCompare(b[0])).filter(p => p[1] !== false),
     [privileges]
   )
   const recoveryLock = data && data.recoveryLock
