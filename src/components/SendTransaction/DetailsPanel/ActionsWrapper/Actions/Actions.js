@@ -239,7 +239,7 @@ const Actions = ({
       }
 
       const lastTxn = bundle.txns[bundle.txns.length - 1]
-      const abiCoder = new AbiCoder();
+      const abiCoder = new AbiCoder()
       const gasTankValue = ethers.utils
         .parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals)
         .toString()
@@ -253,9 +253,11 @@ const Actions = ({
         // add the gas tank transaction
         // since it calls the relayer, it consumes only an extra 295 gas
         // the data is the encoded gas tank parameters
-        bundle.txns.push(
-          [accountPresets.feeCollector, '0', abiCoder.encode(['string', 'uint256', 'string'], ['gasTank', gasTankValue, feeToken.id])]
-        )
+        bundle.txns.push([
+          accountPresets.feeCollector,
+          '0',
+          abiCoder.encode(['string', 'uint256', 'string'], ['gasTank', gasTankValue, feeToken.id])
+        ])
       }
 
       return new Bundle({
@@ -390,6 +392,9 @@ const Actions = ({
           className={styles.quickAccSigningForm}
           onSubmit={(e) => {
             e.preventDefault()
+
+            if (!form.current.checkValidity()) return
+            approveTxn({ quickAccCredentials })
           }}
         >
           {signingStatus.confCodeRequired === 'notRequired' && (
@@ -441,6 +446,7 @@ const Actions = ({
               disabled={signingStatus?.inProgress}
               className={cn(styles.button, styles.danger)}
               onClick={cancelSigning}
+              type="button"
             >
               Cancel
             </Button>
@@ -448,11 +454,8 @@ const Actions = ({
               variant="primaryGradient"
               className={cn(styles.button, styles.confirm)}
               loading={signingStatus?.inProgress}
-              onClick={() => {
-                if (!form.current.checkValidity()) return
-                approveTxn({ quickAccCredentials })
-              }}
               testId="confirmSigning"
+              type="submit"
             >
               Confirm
             </Button>
