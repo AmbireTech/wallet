@@ -245,20 +245,22 @@ const Actions = ({
         .toString()
 
       try {
-        // if the decode works, it means we have already added
-        // the gas tank transaction to the array. If it does not work,
-        // we add the gas tank transaction
+        // if the decode works, it means it is the gas tank txn
+        // If so, delete it
         abiCoder.decode(['string', 'uint256', 'string'], lastTxn[2])
+        bundle.txns.pop()
       } catch (e) {
-        // add the gas tank transaction
-        // since it calls the relayer, it consumes only an extra 295 gas
-        // the data is the encoded gas tank parameters
-        bundle.txns.push([
-          accountPresets.feeCollector,
-          '0',
-          abiCoder.encode(['string', 'uint256', 'string'], ['gasTank', gasTankValue, feeToken.id])
-        ])
+        // all's good
       }
+
+      // add the gas tank transaction
+      // since it calls the relayer, it consumes only an extra 295 gas
+      // the data is the encoded gas tank parameters
+      bundle.txns.push([
+        accountPresets.feeCollector,
+        '0',
+        abiCoder.encode(['string', 'uint256', 'string'], ['gasTank', gasTankValue, feeToken.id])
+      ])
 
       return new Bundle({
         ...bundle,
