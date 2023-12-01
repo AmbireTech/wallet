@@ -249,7 +249,6 @@ const Actions = ({
         // If so, delete it
         abiCoder.decode(['string', 'uint256', 'string'], lastTxn[2])
         bundle.txns.pop()
-        console.log('popin')
       } catch (e) {
         // all's good
       }
