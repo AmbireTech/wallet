@@ -262,8 +262,6 @@ const Actions = ({
         abiCoder.encode(['string', 'uint256', 'string'], ['gasTank', gasTankValue, feeToken.id])
       ])
 
-      console.log(bundle)
-
       return new Bundle({
         ...bundle,
         txns: [...bundle.txns],
