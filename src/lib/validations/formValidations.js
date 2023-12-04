@@ -132,7 +132,7 @@ const validateSendNftAddress = (
   network,
   humanizerInfo,
   isUDAddress,
-  isEnsAddress,
+  isEnsAddress
 ) => {
   const isValidAddr = validateSendTransferAddress(
     address,
