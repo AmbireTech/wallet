@@ -90,7 +90,7 @@ export default function useWalletConnectV2({
   const getConnectionFromSessionTopic = useCallback(
     (topic) => {
       const connections = Object.values(web3wallet.getActiveSessions() || {})
-      return connections.find((c) => c.pairingTopic === topic)
+      return connections.find((c) => c.topic === topic || c.pairingTopic === topic)
     },
     [web3wallet]
   )
@@ -401,6 +401,8 @@ export default function useWalletConnectV2({
               request
             })
           }
+        } else {
+          addToast('Request error. Please reconnect the dApp and try again.', { error: true })
         }
       } else {
         const err = `Method "${wcRequest.method}" not supported`
