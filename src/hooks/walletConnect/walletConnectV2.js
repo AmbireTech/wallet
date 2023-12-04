@@ -432,7 +432,7 @@ export default function useWalletConnectV2({
     */
       if (WC2_VERBOSE) console.log('WC2 session_delete', deletion)
 
-      addToast('WalletConnect session ended from dApp.')
+      addToast('WalletConnect session ended from the dApp.')
 
       setIsConnecting(false)
     },
