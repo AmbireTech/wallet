@@ -146,7 +146,10 @@ export const getDefaultFeeToken = (
   estimation,
   currentAccGasTankState
 ) => {
-  const WALLET_TOKEN_SYMBOLS = ['xWALLET', 'WALLET']
+  // Disabling prioritization of $WALLET tokens
+  const WALLET_TOKEN_SYMBOLS = [
+    //'xWALLET', 'WALLET'
+  ]
 
   if (!remainingFeeTokenBalances?.length) {
     return {

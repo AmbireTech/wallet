@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Wallet, ethers } from 'ethers'
-import { Interface } from 'ethers/lib/utils'
+import { AbiCoder, Interface } from 'ethers/lib/utils'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { Bundle } from 'adex-protocol-eth/js'
 import cn from 'classnames'
@@ -238,14 +238,32 @@ const Actions = ({
         value = fToken && estimation.feeInNative[feeSpeed] * fToken.nativeRate
       }
 
+      const lastTxn = bundle.txns[bundle.txns.length - 1]
+      const abiCoder = new AbiCoder()
+      const gasTankValue = ethers.utils
+        .parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals)
+        .toString()
+
+      try {
+        // if the decode works, it means it is the gas tank txn
+        // If so, delete it
+        abiCoder.decode(['string', 'uint256', 'string'], lastTxn[2])
+        bundle.txns.pop()
+      } catch (e) {
+        // all's good
+      }
+
+      // add the gas tank transaction
+      // since it calls the relayer, it consumes only an extra 295 gas
+      // the data is the encoded gas tank parameters
+      bundle.txns.push([
+        accountPresets.feeCollector,
+        '0',
+        abiCoder.encode(['string', 'uint256', 'string'], ['gasTank', gasTankValue, feeToken.id])
+      ])
+
       return new Bundle({
         ...bundle,
-        gasTankFee: {
-          assetId: feeToken.id,
-          value: ethers.utils
-            .parseUnits(value.toFixed(feeToken.decimals), feeToken.decimals)
-            .toString()
-        },
         txns: [...bundle.txns],
         gasLimit,
         nonce
@@ -376,6 +394,9 @@ const Actions = ({
           className={styles.quickAccSigningForm}
           onSubmit={(e) => {
             e.preventDefault()
+
+            if (!form.current.checkValidity()) return
+            approveTxn({ quickAccCredentials })
           }}
         >
           {signingStatus.confCodeRequired === 'notRequired' && (
@@ -427,6 +448,7 @@ const Actions = ({
               disabled={signingStatus?.inProgress}
               className={cn(styles.button, styles.danger)}
               onClick={cancelSigning}
+              type="button"
             >
               Cancel
             </Button>
@@ -434,11 +456,8 @@ const Actions = ({
               variant="primaryGradient"
               className={cn(styles.button, styles.confirm)}
               loading={signingStatus?.inProgress}
-              onClick={() => {
-                if (!form.current.checkValidity()) return
-                approveTxn({ quickAccCredentials })
-              }}
               testId="confirmSigning"
+              type="submit"
             >
               Confirm
             </Button>

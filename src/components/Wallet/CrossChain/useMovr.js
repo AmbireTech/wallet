@@ -19,11 +19,15 @@ const useMovr = () => {
   }, [])
 
   const fetchFromTokens = useCallback(async (from, to) => {
-    return fetchSocket(`/token-lists/from-token-list?fromChainId=${from}&toChainId=${to}`)
+    return fetchSocket(
+      `/token-lists/from-token-list?fromChainId=${from}&toChainId=${to}&isShortList=true`
+    )
   }, [])
 
   const fetchToTokens = useCallback(async (from, to) => {
-    return fetchSocket(`/token-lists/to-token-list?fromChainId=${from}&toChainId=${to}`)
+    return fetchSocket(
+      `/token-lists/to-token-list?fromChainId=${from}&toChainId=${to}&isShortList=true`
+    )
   }, [])
 
   const fetchQuotes = useCallback(

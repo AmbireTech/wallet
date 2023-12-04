@@ -24,9 +24,12 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
       )
     return (
       <div className={styles.token}>
-        {item.amount > 0 ? (
+        {item.amount && item.amount > 0 ? (
           <span>{formatFloatTokenAmount(item.amount, true, item.decimals)}</span>
         ) : null}
+
+        {item.amount && (!item.symbol || !item.decimals) ? 'unknown units of ' : null}
+
         {item.decimals !== null && item.symbol ? (
           <>
             {item.address ? (
@@ -38,10 +41,9 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
             ) : null}
             {item.symbol}
           </>
-        ) : null}
-        {!(item.decimals !== null && item.symbol) && item.amount > 0
-          ? 'units of unknown token'
-          : null}
+        ) : (
+          'unknown token'
+        )}
       </div>
     )
   }
@@ -63,10 +65,7 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
         <ToolTip disabled={!item.address} label={item.address}>
           <span className={styles.toAddress}>{item.name ? item.name : item.address}</span>
           <span className={cn(styles.toAddress, styles.short)}>
-            {item.name 
-              ? item.name 
-              : (item.address.length > 14 ? shortenedAddress : item.address)
-            }
+            {item.name ? item.name : item.address.length > 14 ? shortenedAddress : item.address}
           </span>
           {item.address ? <ExternalLinkIcon className={styles.externalLink} /> : null}
         </ToolTip>

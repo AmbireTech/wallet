@@ -4,6 +4,7 @@ import { Panel, Alert } from 'components/common'
 import TxnPreview from 'components/common/TxnPreview/TxnPreview'
 
 import styles from './TransactionPanel.module.scss'
+import { isGasTankCommitment } from 'lib/isGasTankCommitment'
 
 const TransactionPanel = ({
   bundle,
@@ -14,18 +15,24 @@ const TransactionPanel = ({
   panelClassName,
   panelTitleClassName
 }) => {
+  // Note<Bobby>: remove the gasTank transaction to the feeCollector
+  // the feeCollector is an EOA so normal req to it should not have
+  // data (txn[2]). If they have, it probably means this is the
+  // gasTank transaction which we do not show in the preview
+  const filteredTxn = bundle.txns.filter(txn => !isGasTankCommitment(txn))
+
   return (
     <Panel className={cn(panelClassName, styles.wrapper)}>
       <div className={styles.panelBody}>
         <h2 className={cn(panelTitleClassName, styles.title)}>
-          {bundle.txns.length} Transaction{bundle.txns.length > 1 ? 's' : ''} Waiting
+          {filteredTxn.length} Transaction{filteredTxn.length > 1 ? 's' : ''} Waiting
         </h2>
         <div
           className={cn(styles.listOfTransactions, {
             [styles.frozen]: !bundle.requestIds
           })}
         >
-          {bundle.txns.map((txn, i) => {
+          {filteredTxn.map((txn, i) => {
             const isFirstFailing =
               estimation && !estimation.success && estimation.firstFailing === i
             // we need to re-render twice per minute cause of DEX deadlines

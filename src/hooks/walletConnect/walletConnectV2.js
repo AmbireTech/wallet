@@ -124,10 +124,30 @@ export default function useWalletConnectV2({
       const json = localStorage[STORAGE_KEY]
 
       if (!json) return getDefaultState()
+
+      const parsedJson = JSON.parse(json)
+
+      if (parsedJson?.connections?.length) {
+        parsedJson.connections = parsedJson.connections.filter((c) => {
+          if (!c.topic) {
+            addToast(
+              `Connection with ${
+                c?.session?.peerMeta?.name || 'Unknown dApp'
+              } has expired. Connect to the dApp again to continue using it.`,
+              {
+                error: true
+              }
+            )
+          }
+
+          return !!c.topic
+        })
+      }
+
       try {
         return {
           ...getDefaultState(),
-          ...JSON.parse(json)
+          ...parsedJson
         }
       } catch (e) {
         console.error(e)
@@ -144,16 +164,25 @@ export default function useWalletConnectV2({
   )
 
   const connect = useCallback(
-    async (connectorOpts) => {
+    async (connectorOpts, isFromUrl) => {
       if (!web3wallet) {
         if (WC2_VERBOSE) console.log('WC2: Web3Wallet not initialized')
         return
       }
 
-      setIsConnecting(true)
       try {
         const res = await web3wallet.core.pairing.pair({ uri: connectorOpts.uri })
-        setIsConnecting(false)
+
+        // We show the toast only if the user has connected from a
+        // url parameter, because then he can't see the connections changing
+        // when the WalletConnect dropdown is closed.
+        if (isFromUrl) {
+          addToast('WalletConnect connection successful.')
+          // We want to remove the uri parameter from the url without refreshing the page.
+          // We remove the parameter to prevent additional connection attempts.
+          window.history.replaceState(null, '', `${window.location.pathname}#/wallet/dashboard`)
+        }
+
         if (WC2_VERBOSE) console.log('pairing result', res)
       } catch (e) {
         console.log('WC2: Pairing error (code)', e)
@@ -161,19 +190,39 @@ export default function useWalletConnectV2({
         const topic = connectorOpts.uri.match(/:.+@/)[0].replace(/[:@]/g, '')
         const activeSession = getConnectionFromSessionTopic(topic)
 
-        if (e.toString().includes('Pairing already exists') && !activeSession) {
-          addToast('This URI has expired, please get a new one from the dApp', { error: true })
-        } else {
+        if (e.toString().includes('Pairing already exists')) {
+          // The user has disconnected from the dApp and then tries to connect to the same URI, which
+          // is now expired.
+          if (!activeSession && !isFromUrl) {
+            addToast('This URI has expired, please get a new one from the dApp.', { error: true })
+            return
+          }
+          if (!activeSession && isFromUrl) {
+            addToast(
+              'Your WalletConnect Web connection has expired. Please connect to the dApp again with a new uri.',
+              { error: true }
+            )
+            // We want to remove the uri parameter from the url without refreshing the page.
+            // We remove the parameter to prevent additional connection attempts.
+            window.history.replaceState(null, '', `${window.location.pathname}#/wallet/dashboard`)
+          }
+          // If we got the WC URI from the uri param we don't want to show an error toast,
+          // because the param is still the same and there will be an error when trying to connect.
+          if (isFromUrl) return
+
           addToast(e.message, { error: true })
         }
-        setIsConnecting(false)
+
+        addToast(e.message, { error: true })
       }
     },
-    [web3wallet, addToast, setIsConnecting, getConnectionFromSessionTopic]
+    [web3wallet, addToast, getConnectionFromSessionTopic]
   )
 
   const disconnect = useCallback(
     async (topic) => {
+      if (!topic) return
+
       setIsConnecting(true)
       // connector might not be there, either cause we disconnected before,
       // or cause we failed to connect in the first place
@@ -191,12 +240,12 @@ export default function useWalletConnectV2({
             topic,
             reason: getSdkError('USER_DISCONNECTED')
           })
-          dispatch({ type: 'disconnected', topic })
         } catch (e) {
           console.log('WC2 disconnect error', e)
         }
-        setIsConnecting(false)
+        dispatch({ type: 'disconnected', topic })
       }
+      setIsConnecting(false)
     },
     [web3wallet]
   )
@@ -237,23 +286,29 @@ export default function useWalletConnectV2({
     async (proposal) => {
       // Get required proposal data
       const { id, params } = proposal
-      const { proposer, relays, optionalNamespaces } = params
+      const { proposer, relays, optionalNamespaces, requiredNamespaces } = params
 
       setIsConnecting(true)
-
       const supportedChains = []
+
       networks.forEach((n) => {
         if (!supportedChains.includes(n.chainId)) {
           supportedChains.push(`eip155:${n.chainId}`)
         }
       })
 
+      // NOTE: looks like optionalNamespaces can empty object {} and requiredNamespaces to have the eip155
+      const incomingNamespaces = {
+        ...(optionalNamespaces?.eip155 || {}),
+        ...(requiredNamespaces?.eip155 || {})
+      }
+
       const namespaces = {
         eip155: {
           chains: supportedChains,
           accounts: supportedChains.map((a) => `${a}:${account}`),
-          methods: optionalNamespaces.eip155.methods,
-          events: optionalNamespaces.eip155.events
+          methods: incomingNamespaces.methods,
+          events: incomingNamespaces.events
         }
       }
 
@@ -379,7 +434,7 @@ export default function useWalletConnectV2({
 
                 return
               }
-              addToast('dApp tried to sign a token permit which does not support Smart Wallets', {
+              addToast('dApp tried to sign a token permit which does not support Smart Wallets.', {
                 error: true
               })
               return
@@ -450,7 +505,7 @@ export default function useWalletConnectV2({
       const connection = getConnectionFromSessionTopic(deletion.topic)
 
       if (connection) {
-        addToast(`Session with ${connection.session.peerMeta.name} ended from the dApp`)
+        addToast(`Session with ${connection.session.peerMeta.name} ended from the dApp.`)
       }
 
       dispatch({ type: 'disconnected', topic: deletion.topic })

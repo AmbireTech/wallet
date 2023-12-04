@@ -8,7 +8,7 @@ import Transfer from './Transfer'
 
 const humanizerInfo = {
   names: {
-    '0x0c2de78e008020500c38e76e2956ae4a81c5124c': 'Swappin'
+    '0x0F545C6178830e249117B5162120378735FDD635': 'SwappinGatewayV2'
   },
   tokens: {
     '0xc2132d05d31c914a87c6611c10748aeb04b58e8f': ['USDT', 6]

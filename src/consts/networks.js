@@ -21,6 +21,7 @@ export const networkIconsById = {
   gnosis: '/resources/networks/redesign/gnosis.svg',
   kucoin: '/resources/networks/redesign/kucoin.svg',
   optimism: '/resources/networks/redesign/optimism.svg',
+  base: '/resources/networks/redesign/base.svg',
   andromeda: '/resources/networks/redesign/andromeda.svg',
   rinkeby: '/resources/networks/redesign/rinkeby.svg',
   cronos: '/resources/networks/redesign/cronos.png',

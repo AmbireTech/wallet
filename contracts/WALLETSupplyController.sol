@@ -138,7 +138,7 @@ contract WALLETSupplyController {
 		require(lastRoot != bytes32(0), "EMPTY_ROOT");
 
 		// Check the merkle proof
-		bytes32 leaf = keccak256(abi.encode(address(this), recipient, totalRewardInTree));
+		bytes32 leaf = keccak256(abi.encode(address(this), recipient, totalRewardInTree, address(stakingPool)));
 		require(MerkleProof.isContained(leaf, proof, lastRoot), "LEAF_NOT_FOUND");
 
 		uint toClaim = totalRewardInTree - claimed[recipient];
