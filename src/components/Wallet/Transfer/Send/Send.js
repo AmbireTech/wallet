@@ -79,7 +79,6 @@ const Send = ({
   const [addressConfirmed, setAddressConfirmed] = useState(false)
   const [sWAddressConfirmed, setSWAddressConfirmed] = useState(false)
   const [newAddress, setNewAddress] = useState('')
-  const [warning, setWarning] = useState(false)
   const [validationFormMgs, setValidationFormMgs] = useState({
     success: {
       amount: false,
@@ -194,16 +193,6 @@ const Send = ({
     }
   }
 
-  const isKnownToken = useCallback(
-    (addr) => {
-      if (!humanizerInfo) return
-      const addressToLowerCase = addr.toLowerCase()
-      const tokensAddresses = Object.keys(humanizerInfo.tokens)
-      return tokensAddresses.includes(addressToLowerCase)
-    },
-    [humanizerInfo]
-  )
-
   useEffect(() => {
     // check gasTank topUp with token for convertion
     setFeeBaseTokenWarning('')
@@ -241,6 +230,10 @@ const Send = ({
 
   useEffect(() => {
     const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset)
+    // When topping up with gas tank, the validation related to the humanizerInfo
+    // that checks if user is trying to send tokens to a smart contract is not needed.
+    // So to avoid this check, pass `null` to the humanizerInfoIfNeeded.
+    const humanizerInfoIfNeeded = gasTankDetails?.isTopUp ? null : humanizerInfo
 
     if (address.startsWith('0x') && address.indexOf('.') === -1) {
       if (uDAddress !== '') setUDAddress('')
@@ -249,7 +242,8 @@ const Send = ({
         address,
         selectedAcc,
         addressConfirmed,
-        isKnownAddress
+        isKnownAddress,
+        humanizerInfoIfNeeded
       )
 
       setValidationFormMgs({
@@ -263,13 +257,9 @@ const Send = ({
         }
       })
 
-      const isKnownTokenValue = isKnownToken(address)
-
-      setWarning(isKnownTokenValue)
       setDisabled(
         !isValidRecipientAddress.success ||
           !isValidSendTransferAmount.success ||
-          isKnownTokenValue ||
           (showSWAddressWarning && !sWAddressConfirmed)
       )
     } else {
@@ -298,6 +288,7 @@ const Send = ({
           selectedAcc,
           addressConfirmed,
           isKnownAddress,
+          humanizerInfoIfNeeded,
           isUDAddress,
           isEnsAddress
         )
@@ -342,7 +333,6 @@ const Send = ({
     uDAddress,
     disabled,
     ensAddress,
-    isKnownToken
   ])
 
   const amountLabel = (
@@ -449,12 +439,6 @@ const Send = ({
             />
           ) : null}
         </div>
-        {warning && (
-          <div className={styles.validationError}>
-            <BsXLg size={12} />
-            &nbsp;You are trying to send tokens to a smart contract. Doing so would burn them.
-          </div>
-        )}
         {validationFormMgs.messages.address && (
           <div className={styles.validationError}>
             <BsXLg size={12} />
