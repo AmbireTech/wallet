@@ -102,6 +102,14 @@ const ExtendedSummaryItem = ({ item, i, networkDetails, feeAssets }) => {
       </a>
     )
   }
+  if (item.type === 'link')
+    return (
+      <div>
+        <a href={item.link} target="_blank" rel="noreferrer">
+          {item.text}
+        </a>
+      </div>
+    )
 
   return null
 }
