@@ -490,3 +490,7 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 - fix / check if tokens or NFTs are about to be sent to a known smart contract address
 - fix / submit sign form on enter
 - fix / always add the latest gas tank commitment
+
+### v0.7.4
+- update / ambire.common - v1.0.1
+- bug / walletConnect two sources of truth for connections (localStorage and WC)
