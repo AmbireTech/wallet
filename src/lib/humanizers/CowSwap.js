@@ -9,8 +9,7 @@ const CowSwap = (humanizerInfo) => {
 
   return {
     [iface.getSighash('setPreSignature')]: (txn, network, { extended }) => {
-      const [orderUid, signed] = iface.parseTransaction(txn).args
-      console.log(`${orderUid}`)
+      const [orderUid, _signed] = iface.parseTransaction(txn).args
       if (extended)
         return [
           [
