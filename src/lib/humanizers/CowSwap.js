@@ -21,7 +21,7 @@ const CowSwap = (humanizerInfo) => {
             }
           ]
         ]
-      return [`Order ${orderUid}`]
+      return [`Cowswap order ${orderUid}`]
     }
   }
 }

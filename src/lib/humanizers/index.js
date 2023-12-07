@@ -16,6 +16,7 @@ import OneInch from './OneInch'
 import UniswapV3Pool from './UniswapV3Pool'
 import Bungee from './Bungee'
 import CowSwap from './CowSwap'
+import MeanFinance from './MeanFinance'
 
 const all = ({ humanizerInfo, tokenList }) => ({
   ...UniRouters(humanizerInfo),
@@ -35,7 +36,8 @@ const all = ({ humanizerInfo, tokenList }) => ({
   ...OneInch(humanizerInfo),
   ...UniswapV3Pool(humanizerInfo),
   ...Bungee(humanizerInfo),
-  ...CowSwap(humanizerInfo)
+  ...CowSwap(humanizerInfo),
+  ...MeanFinance(humanizerInfo)
 })
 
 export default all
