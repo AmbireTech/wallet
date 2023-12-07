@@ -17,7 +17,7 @@ const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList, onCo
   }
 
   const handleContinue = () => {
-    onContinue([...advancedModeList, ...connections.map(({ session }) => session.peerMeta.url)])
+    onContinue([...advancedModeList, ...connections.map(({ peer }) => peer.metadata.url)])
     hideModal()
   }
 
@@ -48,21 +48,21 @@ const UnsupportedDAppsModal = ({ connections, disconnect, advancedModeList, onCo
       </div>
 
       <div className={styles.dappsList}>
-        {connections.map(({ session }, i) => (
+        {connections.map(({ peer }, i) => (
           <a
             className={styles.dapp}
             key={`dapp-${i}`}
-            href={session.peerMeta.url}
+            href={peer.metadata.url}
             target="_blank"
             rel="noreferrer"
           >
             <div
               className={styles.icon}
-              style={{ backgroundImage: `url(${session.peerMeta.icons[0]})` }}
+              style={{ backgroundImage: `url(${peer.metadata.icons[0]})` }}
             >
               <MdBrokenImage />
             </div>
-            <div className={styles.name}>{session.peerMeta.name}</div>
+            <div className={styles.name}>{peer.metadata.name}</div>
           </a>
         ))}
       </div>

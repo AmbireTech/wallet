@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react'
 import { useToasts } from 'hooks/toasts'
 
@@ -14,10 +15,9 @@ import {
 import networks from 'consts/networks'
 import { ethers } from 'ethers'
 
-const STORAGE_KEY = 'wc2_state'
-const WC2_VERBOSE = process.env.REACT_APP_WC2_VERBOSE || 0
+const STORAGE_KEY = 'wc2_requests'
 
-const getDefaultState = () => ({ connections: [], requests: [] })
+const WC2_VERBOSE = process.env.REACT_APP_WC2_VERBOSE || 0
 
 const metadata = {
   name: 'Ambire Wallet',
@@ -30,7 +30,7 @@ export default function useWalletConnectV2({
   account,
   chainId,
   clearWcClipboard,
-  setRequests,
+  setRequests: setWalletRequests,
   setNetwork,
   allNetworks
 }) {
@@ -64,103 +64,35 @@ export default function useWalletConnectV2({
     initialize()
   }, [initialized, initialize])
 
-  const [state, dispatch] = useReducer(
-    (state, action) => {
-      if (action.type === 'updateConnections') return { ...state, connections: action.connections }
-      if (action.type === 'connectedNewSession') {
-        const existingConnection = state.connections.find(
-          (c) => c.connectionId === action.connectionId
-        )
-        if (existingConnection) {
-          const updatedConnections = state.connections.map((c) => {
-            if (c.connectionId === action.connectionId) {
-              return {
-                ...c,
-                topic: action.topic
-              }
-            }
-            return c
-          })
-
-          return {
-            ...state,
-            connections: [...updatedConnections]
-          }
-        }
-        return {
-          ...state,
-          connections: [
-            ...state.connections,
-            {
-              connectionId: action.connectionId, // rename URI of wc 1 (same as pairingTopic)
-              session: action.session,
-              topic: action.topic
-            }
-          ]
-        }
-      }
-      if (action.type === 'disconnected') {
-        const filteredConnections = state.connections.filter((x) => action.topic !== x.topic)
-
-        return {
-          ...state,
-          connections: filteredConnections
-        }
-      }
+  const [requests, dispatch] = useReducer(
+    (prevRequests, action) => {
       if (action.type === 'requestAdded') {
-        if (state.requests.find(({ id }) => id === action.request.id)) return { ...state }
-        return { ...state, requests: [...state.requests, action.request] }
+        if (prevRequests.find(({ id }) => id === action.id)) return prevRequests
+        return [...prevRequests, action.request]
       }
       if (action.type === 'requestsResolved') {
-        return {
-          ...state,
-          requests: state.requests.filter((x) => !action.ids.includes(x.id))
-        }
+        return prevRequests.filter((x) => !action.ids.includes(x.id))
       }
-      return { ...state }
+      return prevRequests
     },
     null,
     () => {
-      const json = localStorage[STORAGE_KEY]
+      const rawRequests = localStorage[STORAGE_KEY]
 
-      if (!json) return getDefaultState()
+      if (!rawRequests) return []
 
-      const parsedJson = JSON.parse(json)
+      const parsedRequests = JSON.parse(rawRequests) || []
 
-      if (parsedJson?.connections?.length) {
-        parsedJson.connections = parsedJson.connections.filter((c) => {
-          if (!c.topic) {
-            addToast(
-              `Connection with ${
-                c?.session?.peerMeta?.name || 'Unknown dApp'
-              } has expired. Connect to the dApp again to continue using it.`,
-              {
-                error: true
-              }
-            )
-          }
-
-          return !!c.topic
-        })
-      }
-
-      try {
-        return {
-          ...getDefaultState(),
-          ...parsedJson
-        }
-      } catch (e) {
-        console.error(e)
-        return getDefaultState()
-      }
+      return parsedRequests
     }
   )
 
   const getConnectionFromSessionTopic = useCallback(
     (topic) => {
-      return state.connections.find((c) => c.connectionId === topic || c.topic === topic)
+      const connections = Object.values(web3wallet.getActiveSessions() || {})
+      return connections.find((c) => c.topic === topic || c.pairingTopic === topic)
     },
-    [state]
+    [web3wallet]
   )
 
   const connect = useCallback(
@@ -208,12 +140,17 @@ export default function useWalletConnectV2({
           }
           // If we got the WC URI from the uri param we don't want to show an error toast,
           // because the param is still the same and there will be an error when trying to connect.
-          if (isFromUrl) return
+          if (isFromUrl) {
+            window.history.replaceState(null, '', `${window.location.pathname}#/wallet/dashboard`)
+            return
+          }
 
           addToast(e.message, { error: true })
         }
 
         addToast(e.message, { error: true })
+      } finally {
+        setIsConnecting(false)
       }
     },
     [web3wallet, addToast, getConnectionFromSessionTopic]
@@ -228,7 +165,6 @@ export default function useWalletConnectV2({
       // or cause we failed to connect in the first place
       if (!web3wallet) {
         if (WC2_VERBOSE) console.log('WC2 disconnect: Web3Wallet not initialized')
-        dispatch({ type: 'disconnected', topic })
         setIsConnecting(false)
         return
       }
@@ -243,7 +179,6 @@ export default function useWalletConnectV2({
         } catch (e) {
           console.log('WC2 disconnect error', e)
         }
-        dispatch({ type: 'disconnected', topic })
       }
       setIsConnecting(false)
     },
@@ -251,7 +186,7 @@ export default function useWalletConnectV2({
   )
 
   const resolveMany = (ids, resolution) => {
-    state.requests.forEach(({ id, topic }) => {
+    requests.forEach(({ id, topic }) => {
       if (ids.includes(id)) {
         if (resolution.success) {
           const response = formatJsonRpcResult(id, resolution.result)
@@ -286,7 +221,7 @@ export default function useWalletConnectV2({
     async (proposal) => {
       // Get required proposal data
       const { id, params } = proposal
-      const { proposer, relays, optionalNamespaces, requiredNamespaces } = params
+      const { relays, optionalNamespaces, requiredNamespaces } = params
 
       setIsConnecting(true)
       const supportedChains = []
@@ -327,12 +262,6 @@ export default function useWalletConnectV2({
 
           if (WC2_VERBOSE) console.log('WC2 Approve result', session)
           setIsConnecting(false)
-          dispatch({
-            type: 'connectedNewSession',
-            connectionId: params.pairingTopic,
-            topic: session.topic,
-            session: { peerMeta: proposer.metadata }
-          })
         } catch (err) {
           setIsConnecting(false)
           console.error('WC2 Error : ', err.message)
@@ -369,8 +298,8 @@ export default function useWalletConnectV2({
             topic: requestEvent.topic,
             response: formatJsonRpcError(requestEvent.id, err)
           })
-          .catch((err) => {
-            addToast(err.message, { error: true })
+          .catch((error) => {
+            addToast(error.message, { error: true })
           })
         return
       }
@@ -384,7 +313,7 @@ export default function useWalletConnectV2({
         const connection = getConnectionFromSessionTopic(topic)
 
         if (connection) {
-          const dappName = connection.session?.peerMeta?.name || ''
+          const dappName = connection.session?.peer.metadata?.name || ''
           if (method === 'personal_sign' || wcRequest.method === 'eth_sign') {
             txn = wcRequest.params[wcRequest.method === 'personal_sign' ? 0 : 1]
             requestAccount = wcRequest.params[wcRequest.method === 'personal_sign' ? 1 : 0]
@@ -451,28 +380,29 @@ export default function useWalletConnectV2({
               id,
               type: method,
               dateAdded: new Date().valueOf(),
-              connectionId: connection.connectionId,
               txn,
               chainId: requestChainId,
               topic,
               account: ethers.utils.getAddress(requestAccount),
               notification: true,
-              dapp: connection.session?.peerMeta
+              dapp: connection.peer.metadata
                 ? {
-                    name: connection.session.peerMeta.name,
-                    description: connection.session.peerMeta.description,
-                    icons: connection.session.peerMeta.icons,
-                    url: connection.session.peerMeta.url
+                    name: connection.peer.metadata.name,
+                    description: connection.peer.metadata.description,
+                    icons: connection.peer.metadata.icons,
+                    url: connection.peer.metadata.url
                   }
                 : null
             }
-            setRequests((prev) => [...prev, request])
+            setWalletRequests((prev) => [...prev, request])
             if (WC2_VERBOSE) console.log('WC2 request added :', request)
             dispatch({
               type: 'requestAdded',
               request
             })
           }
+        } else {
+          addToast('Request error. Please reconnect the dApp and try again.', { error: true })
         }
       } else {
         const err = `Method "${wcRequest.method}" not supported`
@@ -487,7 +417,7 @@ export default function useWalletConnectV2({
       web3wallet,
       addToast,
       getConnectionFromSessionTopic,
-      setRequests,
+      setWalletRequests,
       allNetworks,
       setNetwork,
       chainId
@@ -502,16 +432,13 @@ export default function useWalletConnectV2({
       https://github.com/WalletConnect/walletconnect-monorepo/issues/1983#issuecomment-1431252320
       We only need to update the state on our side. 
     */
-      const connection = getConnectionFromSessionTopic(deletion.topic)
+      if (WC2_VERBOSE) console.log('WC2 session_delete', deletion)
 
-      if (connection) {
-        addToast(`Session with ${connection.session.peerMeta.name} ended from the dApp.`)
-      }
+      addToast('WalletConnect session ended from the dApp.')
 
-      dispatch({ type: 'disconnected', topic: deletion.topic })
       setIsConnecting(false)
     },
-    [getConnectionFromSessionTopic, addToast]
+    [addToast]
   )
 
   /// /////////////////////
@@ -520,7 +447,7 @@ export default function useWalletConnectV2({
 
   // rerun for every state change
   useEffect(() => {
-    localStorage[STORAGE_KEY] = JSON.stringify(state)
+    localStorage[STORAGE_KEY] = JSON.stringify(requests)
 
     if (web3wallet) {
       // updating active connections
@@ -529,11 +456,10 @@ export default function useWalletConnectV2({
       if (!sessions || (sessions && Object.keys(sessions).length === 0)) return
 
       Object.keys(sessions).map(async (topic) => {
-        const session = web3wallet.getActiveSessions()[topic]
+        const session = sessions[topic]
 
         if (WC2_VERBOSE) console.log('WC2 updating session', session)
-        const connection = state.connections.find((c) => c.topic === session.topic)
-        if (connection) {
+        if (session) {
           const supportedChains = []
 
           networks.forEach((n) => {
@@ -585,7 +511,7 @@ export default function useWalletConnectV2({
           console.log(`WC2 : session topic not found in connections ${session.topic}`)
       })
     }
-  }, [web3wallet, state, account, chainId])
+  }, [web3wallet, account, chainId, requests])
 
   const onSessionEvent = useCallback((event) => {
     // @TODO: handle events
@@ -613,14 +539,13 @@ export default function useWalletConnectV2({
     onSessionProposal,
     onSessionRequest,
     onSessionDelete,
-    dispatch,
     onSessionEvent,
     account
   ])
 
   return {
-    connections: state.connections,
-    requests: state.requests,
+    connections: web3wallet ? Object.values(web3wallet?.getActiveSessions() || {}) : [],
+    requests,
     isConnecting,
     resolveMany,
     connect,
