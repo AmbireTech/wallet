@@ -12,8 +12,7 @@ const GMX = (humanizerInfo) => {
       if (extended)
         return [
           [
-            'Open',
-            'GMX position',
+            'Open GMX position',
             'from',
             { type: 'token', ...token(humanizerInfo, tokens[tokens.length - 1], -1, true) },
             'to',

@@ -148,7 +148,7 @@ const UniswapV3Pool = (humanizerInfo) => {
         ? [`Create order for ${token(humanizerInfo, addresses[4], -1)}`]
         : [
             [
-              'Create order',
+              `Open ${isLong ? 'long' : 'short'} position`,
               'for',
               { type: 'token', ...token(humanizerInfo, addresses[4], -1, true) }
             ]
