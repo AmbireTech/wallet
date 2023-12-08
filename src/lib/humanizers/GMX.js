@@ -1,0 +1,28 @@
+import { Interface } from 'ethers/lib/utils'
+import { token, getName } from 'lib/humanReadableTransactions'
+
+const GMX = (humanizerInfo) => {
+  const orderHandler = new Interface(humanizerInfo.abis.GMXOrderHandler)
+
+  return {
+    [orderHandler.getSighash('executeOrder')]: (txn, network, { extended }) => {
+      const { key, oracleParams } = orderHandler.parseTransaction(txn).args
+      const tokens = oracleParams.realtimeFeedTokens
+      const data = oracleParams.realtimeFeedData
+      if (extended)
+        return [
+          [
+            'Open',
+            'GMX position',
+            'from',
+            { type: 'token', ...token(humanizerInfo, tokens[tokens.length - 1], -1, true) },
+            'to',
+            { type: 'token', ...token(humanizerInfo, tokens[0], -1, true) }
+          ]
+        ]
+      return ['GMX order']
+    }
+  }
+}
+
+export default GMX

@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import UniRouters from './UniRouters/UniRouters'
 import ERC20 from './ERC20'
 import AaveLendingPoolV2 from './AaveLendingPoolV2'
@@ -17,6 +18,7 @@ import UniswapV3Pool from './UniswapV3Pool'
 import Bungee from './Bungee'
 import CowSwap from './CowSwap'
 import MeanFinance from './MeanFinance'
+import GMX from './GMX'
 
 const all = ({ humanizerInfo, tokenList }) => ({
   ...UniRouters(humanizerInfo),
@@ -37,7 +39,8 @@ const all = ({ humanizerInfo, tokenList }) => ({
   ...UniswapV3Pool(humanizerInfo),
   ...Bungee(humanizerInfo),
   ...CowSwap(humanizerInfo),
-  ...MeanFinance(humanizerInfo)
+  ...MeanFinance(humanizerInfo),
+  ...GMX(humanizerInfo)
 })
 
 export default all

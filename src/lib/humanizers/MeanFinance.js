@@ -18,7 +18,7 @@ function getAddress(humanizerInfo, address) {
 }
 
 const MeanFinance = (humanizerInfo) => {
-  const iface = new Interface(humanizerInfo.abis.DCAHub)
+  const iface = new Interface(humanizerInfo.abis.MeanFinance)
 
   return {
     [iface.getSighash(
