@@ -47,6 +47,7 @@ const toExtended = (action, word, fromToken, toToken, recipient = [], expires = 
 
 const UniswapV3Pool = (humanizerInfo) => {
   const ifaceV3 = new Interface(humanizerInfo.abis.UniswapV3Pool)
+  const exchangeRouter = new Interface(humanizerInfo.abis.ExchangeRouter)
 
   return {
     [ifaceV3.getSighash('multicall')]: (txn, network) => {
@@ -83,6 +84,75 @@ const UniswapV3Pool = (humanizerInfo) => {
             token(humanizerInfo, params.token1, params.amount1Desired, true),
             recipientText(humanizerInfo, params.recipient, txn.from, true)
           )
+    },
+    [exchangeRouter.getSighash('sendWnt')]: (txn, network, opts = { extended: true }) => {
+      const args = exchangeRouter.parseTransaction(txn).args
+      return !opts.extended
+        ? [
+            [
+              `Wrap and send ${nativeToken(network, args.amount)} to ${getName(
+                humanizerInfo,
+                args.receiver
+              )}`
+            ]
+          ]
+        : [
+            [
+              'Wrap and send',
+              { type: 'token', ...nativeToken(network, args.amount, true) },
+              'to',
+              {
+                type: 'address',
+                address: args.receiver,
+                name: getName(humanizerInfo, args.receiver)
+              }
+            ]
+          ]
+    },
+    [exchangeRouter.getSighash('sendTokens')]: (txn, network, opts = { extended: true }) => {
+      const args = exchangeRouter.parseTransaction(txn).args
+      return !opts.extended
+        ? [
+            [
+              `Send ${token(humanizerInfo, args.token, args.amount)} to ${getName(
+                humanizerInfo,
+                args.receiver
+              )}`
+            ]
+          ]
+        : [
+            [
+              'Send',
+              { type: 'token', ...token(humanizerInfo, args.token, args.amount, true) },
+              'to',
+              {
+                type: 'address',
+                address: args.receiver,
+                name: getName(humanizerInfo, args.receiver)
+              }
+            ]
+          ]
+    },
+    [exchangeRouter.getSighash('createOrder')]: (txn, network, opts = { extended: true }) => {
+      const { params } = exchangeRouter.parseTransaction(txn).args
+      const [
+        addresses,
+        numbers,
+        orderType,
+        decreasePositionSwapType,
+        isLong,
+        shouldUnwrapNativeToken,
+        referralCode
+      ] = params
+      return !opts.extended
+        ? [`Create order for ${token(humanizerInfo, addresses[4], -1)}`]
+        : [
+            [
+              'Create order',
+              'for',
+              { type: 'token', ...token(humanizerInfo, addresses[4], -1, true) }
+            ]
+          ]
     },
     [ifaceV3.getSighash('unwrapWETH9')]: (txn, network, opts = { extended: true }) => {
       const [amountMinimum, recipient] = ifaceV3.parseTransaction(txn).args
