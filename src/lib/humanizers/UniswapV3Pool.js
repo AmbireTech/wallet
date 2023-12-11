@@ -48,7 +48,8 @@ const toExtended = (action, word, fromToken, toToken, recipient = [], expires = 
 const UniswapV3Pool = (humanizerInfo) => {
   const ifaceV3 = new Interface(humanizerInfo.abis.UniswapV3Pool)
   const exchangeRouter = new Interface(humanizerInfo.abis.ExchangeRouter)
-
+  // DCAhub comes from mean finance
+  const DCAHubCompanion = new Interface(humanizerInfo.abis.DCAHubCompanion)
   return {
     [ifaceV3.getSighash('multicall')]: (txn, network) => {
       const args = ifaceV3.parseTransaction(txn).args
@@ -159,6 +160,71 @@ const UniswapV3Pool = (humanizerInfo) => {
               // { type: 'token', ...nativeToken(network, numbers[3], true) },
               'with collateral',
               { type: 'token', ...token(humanizerInfo, addresses[4], -1, true) }
+            ]
+          ]
+    },
+    // DCAHub companion can be moved to mean finance and exported to be applied also here
+    [DCAHubCompanion.getSighash('terminate')]: (txn, network, opts = { extended: true }) => {
+      const { _hub, _positionId, _recipientUnswapped, _recipientSwapped } =
+        DCAHubCompanion.parseTransaction(txn).args
+      return !opts.extended
+        ? [`Terminate position ${_positionId} on ${getName(humanizerInfo, _hub)}`]
+        : [
+            [
+              'Terminate position',
+              `${_positionId}`,
+              'on',
+              { type: 'address', address: _hub, name: getName(humanizerInfo, _hub) }
+            ]
+          ]
+    },
+    [DCAHubCompanion.getSighash('runSwap')]: (txn, network, opts = { extended: true }) => {
+      console.log('runSwap')
+      const { _allowanceToken, _value, _swapData, _tokenOut, _minTokenOut } =
+        DCAHubCompanion.parseTransaction(txn).args
+      const tokenA =
+        Number(_allowanceToken) === 0
+          ? nativeToken(network, _value, opts.extended)
+          : token(humanizerInfo, _allowanceToken, _value, opts.extended)
+      const tokenB =
+        Number(_tokenOut) === 0
+          ? nativeToken(network, _minTokenOut, opts.extended)
+          : token(humanizerInfo, _tokenOut, _minTokenOut, opts.extended)
+      return !opts.extended
+        ? [`Swap ${tokenA}} for ${tokenB}`]
+        : [['Swap', { type: 'token', ...tokenA }, 'for', { type: 'token', ...tokenB }]]
+    },
+    [DCAHubCompanion.getSighash('sendBalanceOnContractToRecipient')]: (
+      txn,
+      network,
+      opts = { extended: true }
+    ) => {
+      const { _token, _recipient } = DCAHubCompanion.parseTransaction(txn).args
+      const displayableToken =
+        Number(_token) === 0
+          ? nativeToken(network, txn.value, opts.extended)
+          : token(humanizerInfo, _token, 0, opts.extended)
+      if (_recipient !== txn.from)
+        return !opts.extended
+          ? [`Pull ${displayableToken}  from ${getName(txn.to)}to ${getName(_recipient)}`]
+          : [
+              [
+                'Pull all',
+                { type: 'token', ...displayableToken },
+                'from',
+                { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) },
+                'to',
+                { type: 'address', address: _recipient, name: getName(humanizerInfo, _recipient) }
+              ]
+            ]
+      return !opts.extended
+        ? [`Withdraw all ${displayableToken}  from ${getName(txn.to)}`]
+        : [
+            [
+              'Withdraw all',
+              { type: 'token', ...displayableToken },
+              'from',
+              { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
             ]
           ]
     },
