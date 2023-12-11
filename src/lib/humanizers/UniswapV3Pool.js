@@ -145,11 +145,19 @@ const UniswapV3Pool = (humanizerInfo) => {
         referralCode
       ] = params
       return !opts.extended
-        ? [`Create order for ${token(humanizerInfo, addresses[4], -1)}`]
+        ? [
+            `Open ${isLong ? 'long' : 'short'} position with collateral ${token(
+              humanizerInfo,
+              addresses[4],
+              -1
+            )}`
+          ]
         : [
             [
               `Open ${isLong ? 'long' : 'short'} position`,
-              'for',
+              // 'for',
+              // { type: 'token', ...nativeToken(network, numbers[3], true) },
+              'with collateral',
               { type: 'token', ...token(humanizerInfo, addresses[4], -1, true) }
             ]
           ]
