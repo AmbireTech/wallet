@@ -156,8 +156,6 @@ const UniswapV3Pool = (humanizerInfo) => {
         : [
             [
               `Open ${isLong ? 'long' : 'short'} position`,
-              // 'for',
-              // { type: 'token', ...nativeToken(network, numbers[3], true) },
               'with collateral',
               { type: 'token', ...token(humanizerInfo, addresses[4], -1, true) }
             ]

@@ -1,5 +1,4 @@
 import { Interface } from 'ethers/lib/utils'
-// import { nativeToken, token } from 'lib/humanReadableTransactions'
 import networks from 'consts/networks'
 
 const getNetwork = (chainId, extended = false) => {
@@ -62,7 +61,6 @@ const Bungee = (humanizerInfo) => {
         'swapAndBridge(uint32,address,uint256,bytes32,bytes)',
         parsedCallData
       )
-      // console.log({ _number, recipient, chainId, _bytes, _moreData })
       return !extended
         ? [`Bridge tokens on Bungee to ${getNetwork(chainId)}`]
         : [['Bridge', 'tokens on Bungee to', getNetwork(chainId, true)]]
