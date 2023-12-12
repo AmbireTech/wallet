@@ -73,12 +73,12 @@ export default function SignMessage({
     dApp &&
     (supportedDApps.includes(dApp.url) ||
       supportedDApps.includes(`${dApp.url}/`) ||
-      // @TODO add to ambire-coomon and remove from here
       [
         'https://app.gmx.io/#/trade',
         'https://mean.finance/create',
         'https://swap.cow.fi/#/1/swap/WETH',
-        'https://www.bungee.exchange/'
+        'https://www.bungee.exchange/',
+        'https://layer3.xyz/'
       ].some((url) => url.includes(dApp.url)))
 
   const onScroll = (textArea) => {
