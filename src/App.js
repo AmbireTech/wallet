@@ -21,6 +21,7 @@ import useAccounts from './hooks/accounts'
 import useWalletConnect from './hooks/useWalletConnect'
 import useGnosisSafe from './hooks/useGnosisSafe'
 import useNotifications from './hooks/notifications'
+import useConstants from './hooks/useConstants'
 import {
   useAttentionGrabber,
   usePortfolio,
@@ -74,7 +75,10 @@ function AppInner() {
   const [pluginData, setPluginData] = useState(null)
   const { accounts, selectedAcc, onSelectAcc, onAddAccount, onRemoveAccount, setPluginUrl } =
     useAccounts(useLocalStorage, pluginData?.url)
-  const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage })
+  const {
+    constants: { humanizerInfo }
+  } = useConstants()
+  const addressBook = useAddressBook({ accounts, useStorage: useLocalStorage, humanizerInfo })
   const { network, setNetwork } = useNetwork({ useStorage: useLocalStorage })
   const { gasTankState, setGasTankState } = useGasTank({ selectedAcc, useStorage: useLocalStorage })
   const { addToast } = useToasts()

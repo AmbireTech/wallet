@@ -1,6 +1,7 @@
 /* eslint-disable import/no-cycle */
 import { MdOutlineAdd } from 'react-icons/md'
 import { Checkbox } from 'components/common'
+import useConstants from 'hooks/useConstants'
 import { useEffect, useMemo, useState } from 'react'
 import { isValidAddress, isKnownTokenOrContract } from 'ambire-common/src/services/address'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
@@ -15,13 +16,19 @@ const AddressWarning = ({
   uDAddress,
   ensAddress
 }) => {
+  const {
+    constants: { humanizerInfo }
+  } = useConstants()
   const [confirmed, setConfirmed] = useState(false)
   const parsedAddr = uDAddress || ensAddress || address
   const unknownWarning = useMemo(
     () => isValidAddress(parsedAddr) && !isKnownAddress(parsedAddr),
     [parsedAddr, isKnownAddress]
   )
-  const smartContractWarning = useMemo(() => isKnownTokenOrContract(parsedAddr), [parsedAddr])
+  const smartContractWarning = useMemo(
+    () => isKnownTokenOrContract(humanizerInfo, parsedAddr),
+    [parsedAddr, humanizerInfo]
+  )
 
   useEffect(() => {
     if (onChange) onChange(confirmed)
