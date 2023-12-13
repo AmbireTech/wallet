@@ -50,6 +50,12 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
     claimEarlyRewards(true)
     hideModal()
   }
+
+  const claimWithVesting = () => {
+    claimVesting()
+    hideModal()
+  }
+
   const eligibilityLeft = MIN_ELIGIBLE_USD - rewards.balance.balanceInUSD
   const isEligible = eligibilityLeft <= 0
   const accumulatedWallets = rewards['balance-rewards'] + rewards['adx-rewards']
@@ -247,7 +253,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
               <Button
                 variant="primaryGradient"
                 className={styles.fullWidthButton}
-                onClick={claimVesting}
+                onClick={claimWithVesting}
                 disabled={!!disabledReason}
               >
                 Claim
