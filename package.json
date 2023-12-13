@@ -52,7 +52,6 @@
     "react-scripts": "4.0.3",
     "react-transition-group": "^4.4.2",
     "rewire": "^6.0.0",
-    "trezor-connect": "^8.2.12",
     "url": "^0.11.0",
     "validator": "^13.7.0",
     "walletconnect-legacy-client": "npm:@walletconnect/client@^1.7.1",
