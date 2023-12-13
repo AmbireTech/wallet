@@ -20,6 +20,7 @@ import CowSwap from './CowSwap'
 import MeanFinance from './MeanFinance'
 import GMX from './GMX'
 import Lido from './Lido'
+import Joe from './Joe'
 
 const all = ({ humanizerInfo, tokenList }) => ({
   ...UniRouters(humanizerInfo),
@@ -42,7 +43,8 @@ const all = ({ humanizerInfo, tokenList }) => ({
   ...CowSwap(humanizerInfo),
   ...MeanFinance(humanizerInfo),
   ...GMX(humanizerInfo),
-  ...Lido(humanizerInfo)
+  ...Lido(humanizerInfo),
+  ...Joe(humanizerInfo)
 })
 
 export default all
