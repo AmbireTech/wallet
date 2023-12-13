@@ -179,7 +179,6 @@ const UniswapV3Pool = (humanizerInfo) => {
           ]
     },
     [DCAHubCompanion.getSighash('runSwap')]: (txn, network, opts = { extended: true }) => {
-      console.log('runSwap')
       const { _allowanceToken, _value, _swapData, _tokenOut, _minTokenOut } =
         DCAHubCompanion.parseTransaction(txn).args
       const tokenA =

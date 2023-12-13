@@ -1,3 +1,4 @@
+import networks from 'consts/networks'
 import { Interface } from 'ethers/lib/utils'
 import { token, getName } from 'lib/humanReadableTransactions'
 import { MdDesktopAccessDisabled } from 'react-icons/md'
@@ -7,7 +8,7 @@ function getInterval(seconds) {
   if (seconds <= 60 * 60) return `${seconds / 60} minutes`
   if (seconds <= 60 * 60 * 24) return `${seconds / 60 / 60} hours`
   if (seconds <= 60 * 60 * 24 * 7) return `${seconds / 60 / 60 / 24} days`
-  if (seconds <= 60 * 60 * 24 * 30) return `${seconds / 60 / 60 / 24 / 7} weeks`
+  return `${seconds / 60 / 60 / 24 / 7} weeks`
 }
 function getAddress(humanizerInfo, address) {
   return {
@@ -64,7 +65,15 @@ const MeanFinance = (humanizerInfo) => {
         iface.parseTransaction(txn).args
       if (extended)
         return [
-          ['Terminate', `position ${_positionId}`],
+          [
+            `Terminate position ${_positionId}`,
+            {
+              type: 'link',
+              // the param after 'position' is the version of the order
+              link: `https://mean.finance/${network.chainId}/positions/4/${_positionId}`,
+              text: 'more info here'
+            }
+          ],
           txn.from !== _recipientUnswapped
             ? ['Send', 'unswapped tokens to', getAddress(humanizerInfo, _recipientUnswapped)]
             : ['Withdraw', 'unswapped tokens'],
