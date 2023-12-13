@@ -17,7 +17,7 @@
     "@ledgerhq/hw-transport-webhid": "^6.11.2",
     "@ramp-network/ramp-instant-sdk": "^4.0.4",
     "@transak/transak-sdk": "^1.0.31",
-    "@trezor/connect-web": "^9.0.2",
+    "@trezor/connect-web": "^9.1.6",
     "@unstoppabledomains/resolution": "^7.1.4",
     "@walletconnect/core": "^2.9.0",
     "@walletconnect/types": "^2.8.6",
