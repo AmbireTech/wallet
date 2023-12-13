@@ -6,6 +6,7 @@ import { rpcProviders } from 'config/providers'
 import { formatFloatTokenAmount } from 'lib/formatters'
 
 import { Button, Modal, ToolTip, RemoteLottie, Loading } from 'components/common'
+import { useModals } from 'hooks'
 import MultiplierBadges from './MultiplierBadges/MultiplierBadges'
 import UnbondModal from './UnbondModal/UnbondModal'
 
@@ -18,6 +19,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
   const provider = rpcProviders['ethereum-ambire-earn']
   const { stakedAmount, isLoading } = useStakedWalletToken({ accountId, provider })
+  const { hideModal } = useModals()
 
   const hideUnbondModal = () => setIsUnbondModalVisible(false)
 
@@ -38,8 +40,16 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
 
   const { walletTokenAPYPercentage, adxTokenAPYPercentage, xWALLETAPYPercentage } = rewards
 
-  const claimWithBurn = () => claimEarlyRewards(false)
+  const claimWithBurn = () => {
+    claimEarlyRewards(false)
+    hideUnbondModal()
+    hideModal()
+  }
 
+  const claimEarly = () => {
+    claimEarlyRewards(true)
+    hideModal()
+  }
   const eligibilityLeft = MIN_ELIGIBLE_USD - rewards.balance.balanceInUSD
   const isEligible = eligibilityLeft <= 0
   const accumulatedWallets = rewards['balance-rewards'] + rewards['adx-rewards']
@@ -188,7 +198,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
             <Button
               className={styles.fullWidthButton}
               variant="terniaryGradient"
-              onClick={claimEarlyRewards}
+              onClick={claimEarly}
               disabled={!!(claimDisabledReason || disabledReason)}
             >
               CLAIM IN xWALLET
