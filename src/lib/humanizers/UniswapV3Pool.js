@@ -151,13 +151,15 @@ const UniswapV3Pool = (humanizerInfo) => {
               humanizerInfo,
               addresses[4],
               -1
-            )}`
+            )} in ${getName(txn.to)}`
           ]
         : [
             [
               `Open ${isLong ? 'long' : 'short'} position`,
               'with collateral',
-              { type: 'token', ...token(humanizerInfo, addresses[4], -1, true) }
+              { type: 'token', ...token(humanizerInfo, addresses[4], -1, true) },
+              'in',
+              { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
             ]
           ]
     },
