@@ -8,7 +8,7 @@ const getNetwork = (chainId, extended = false) => {
 }
 
 // bungee runs some of its calls through falllback that serves as router to unverified contracts,
-// that why we can't fetch data from block explorers in ambire constants
+// thats why we can't fetch data from block explorers in ambire constants
 const Bungee = (humanizerInfo) => {
   const iface = new Interface([
     {
@@ -78,8 +78,8 @@ const Bungee = (humanizerInfo) => {
   ]
 )
   return {
-    // some bungee bridge txn start with bytes32 number and the next 4 bytes are the sigHash
-    // uses fallback router
+    // some bungee bridge txn start with 4 bytes number and the next 4 bytes are a sigHash
+    // bungee uses fallback and later redirects to address based on the first 4 bytes 
     '0x00000005:0x3a23F943181408EAC424116Af7b7790c94Cb97a5': (
       txn,
       network,

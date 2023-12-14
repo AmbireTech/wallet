@@ -71,13 +71,6 @@ export default function SignMessage({
 
   const isDAppSupported =
     dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
-  // [
-  //   'https://app.gmx.io/#/trade',
-  //   'https://mean.finance/create',
-  //   'https://swap.cow.fi/#/1/swap/WETH',
-  //   'https://www.bungee.exchange/',
-  //   'https://layer3.xyz/'
-  // ].some((url) => url.includes(dApp.url))
 
   const onScroll = (textArea) => {
     if (textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1) {
