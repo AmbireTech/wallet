@@ -19,7 +19,13 @@ const GMX = (humanizerInfo) => {
             { type: 'token', ...token(humanizerInfo, tokens[0], -1, true) }
           ]
         ]
-      return ['GMX order']
+      return [
+        `Open GMX position from ${token(humanizerInfo, tokens[tokens.length - 1], -1)} to ${token(
+          humanizerInfo,
+          tokens[0],
+          -1
+        )}`
+      ]
     }
   }
 }

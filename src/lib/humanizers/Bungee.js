@@ -50,36 +50,35 @@ const Bungee = (humanizerInfo) => {
       stateMutability: 'payable'
     },
     {
-        "constant": false,
-        "inputs": [
-            {
-                "name": "_amount",
-                "type": "uint256"
-            },
-            {
-                "name": "_destinationChainId",
-                "type": "bytes32"
-            },
-            {
-                "name": "_recipient",
-                "type": "address"
-            },
-            {
-                "name": "_fee",
-                "type": "uint256"
-            }
-        ],
-        "name": "bridgeNativeTo",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
+      constant: false,
+      inputs: [
+        {
+          name: '_amount',
+          type: 'uint256'
+        },
+        {
+          name: '_destinationChainId',
+          type: 'bytes32'
+        },
+        {
+          name: '_recipient',
+          type: 'address'
+        },
+        {
+          name: '_fee',
+          type: 'uint256'
+        }
+      ],
+      name: 'bridgeNativeTo',
+      outputs: [],
+      payable: false,
+      stateMutability: 'nonpayable',
+      type: 'function'
     }
-  ]
-)
+  ])
   return {
     // some bungee bridge txn start with 4 bytes number and the next 4 bytes are a sigHash
-    // bungee uses fallback and later redirects to address based on the first 4 bytes 
+    // bungee uses fallback and later redirects to address based on the first 4 bytes
     '0x00000005:0x3a23F943181408EAC424116Af7b7790c94Cb97a5': (
       txn,
       network,
@@ -114,24 +113,34 @@ const Bungee = (humanizerInfo) => {
       { extended = false }
     ) => {
       const parsedCallData = `0x${txn.data.slice(10)}`
-      const [amountnNative,bytes32,recipient ,destinationNetwork] = iface.decodeFunctionData(
+      const [amountnNative, bytes32, recipient, destinationNetwork] = iface.decodeFunctionData(
         'bridgeNativeTo(uint256,bytes32,address,uint256)',
         parsedCallData
       )
 
       return !extended
-        ? [`Bridge ${nativeToken(network, amountnNative)} to ${getNetwork(destinationNetwork)} ${recipient!==txn.from
-          ? `and send to ${getName(humanizerInfo, recipient)}`:''}`]
-        : [['Bridge',{
-          type: 'token',
-          ...nativeToken(network, amountnNative, true)
-        },
-        'to',
-        getNetwork(destinationNetwork,true),
-        ...( recipient!==txn.from
-          ?['and send to',{ type: 'address', address: recipient, name: getName(humanizerInfo, recipient) }]
-          :[] )
-      ]]
+        ? [
+            `Bridge ${nativeToken(network, amountnNative)} to ${getNetwork(destinationNetwork)} ${
+              recipient !== txn.from ? `and send to ${getName(humanizerInfo, recipient)}` : ''
+            }`
+          ]
+        : [
+            [
+              'Bridge',
+              {
+                type: 'token',
+                ...nativeToken(network, amountnNative, true)
+              },
+              'to',
+              getNetwork(destinationNetwork, true),
+              ...(recipient !== txn.from
+                ? [
+                    'and send to',
+                    { type: 'address', address: recipient, name: getName(humanizerInfo, recipient) }
+                  ]
+                : [])
+            ]
+          ]
     }
   }
 }
