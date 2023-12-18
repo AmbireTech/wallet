@@ -95,8 +95,7 @@
     "static/media/wallet-connect.baafeacf.svg": "./static/media/wallet-connect.baafeacf.svg",
     "static/media/wallet-token-congrats.605883fc.png": "./static/media/wallet-token-congrats.605883fc.png",
     "static/media/warning.3d8c50bf.svg": "./static/media/warning.3d8c50bf.svg",
-    "static/media/x.6c9a4ba7.svg": "./static/media/x.6c9a4ba7.svg",
-    "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
+    "static/media/x.6c9a4ba7.svg": "./static/media/x.6c9a4ba7.svg"
   },
   "entrypoints": [
     "static/css/main.css",
