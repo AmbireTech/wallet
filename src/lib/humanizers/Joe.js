@@ -1009,7 +1009,6 @@ const Joe = (humanizerInfo) => {
       { extended }
     ) => {
       const { to, amountOutMin, path, deadline } = iface.parseTransaction(txn).args
-      console.log(JSON.stringify(iface.parseTransaction(txn).args))
       if (extended)
         return [
           [
