@@ -169,6 +169,10 @@ export default function useGnosisSafe({
           result = await provider.estimateGas(callTx).catch((err) => {
             throw err
           })
+        } else if (method === 'eth_gasPrice') {
+          result = await provider.getGasPrice().catch((err) => {
+            throw err
+          })
         } else {
           throw new Error(`Method not found: ${method}`)
         }
