@@ -1025,11 +1025,11 @@ const Joe = (humanizerInfo) => {
           ]
         ]
       return [
-        `Swap ${token(humanizerInfo, path[0], amountIn)} for at least ${token(
+        `Swap ${nativeToken(network, txn.value)} for at least ${token(
           humanizerInfo,
           path[path.length - 1],
           amountOutMin
-        )} ${txn.from !== to ? `and send swapped to ${getName(humanizerInfo, to)}` : ''}`
+        )} ${txn.from !== to ? ` and send swapped to ${getName(humanizerInfo, to)}` : ''}`
       ]
     }
   }
