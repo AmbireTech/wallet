@@ -498,4 +498,4 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 ### v0.7.5
 - removed embeded Yearn Tesseract card from Earn section
 - update the @trezor/connect-web lib to latest from v9
-- implement eth_gasPrice rpcCall method for gnosisSafe
+- implement `eth_gasPrice` rpcCall method for gnosisSafe
