@@ -3,7 +3,7 @@ import { Interface } from 'ethers/lib/utils'
 import { token, getName } from 'lib/humanReadableTransactions'
 import { MdDesktopAccessDisabled } from 'react-icons/md'
 
-function getInterval(seconds) {
+export function getInterval(seconds) {
   if (seconds <= 60) return `${seconds} seconds`
   if (seconds <= 60 * 60) return `${seconds / 60} minutes`
   if (seconds <= 60 * 60 * 24) return `${seconds / 60 / 60} hours`

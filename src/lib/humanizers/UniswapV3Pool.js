@@ -1,5 +1,9 @@
+/* eslint-disable @typescript-eslint/naming-convention */
+/* eslint-disable no-nested-ternary */
+/* eslint-disable import/no-cycle */
 import { Interface } from 'ethers/lib/utils'
 import { nativeToken, token, getName } from 'lib/humanReadableTransactions'
+import { getInterval } from './MeanFinance'
 
 const recipientText = (humanizerInfo, recipient, txnFrom, extended = false) =>
   recipient.toLowerCase() === txnFrom.toLowerCase()
@@ -224,6 +228,48 @@ const UniswapV3Pool = (humanizerInfo) => {
               { type: 'token', ...displayableToken },
               'from',
               { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+            ]
+          ]
+    },
+    [DCAHubCompanion.getSighash('depositWithBalanceOnContract')]: (
+      txn,
+      network,
+      opts = { extended: true }
+    ) => {
+      const {
+        _hub,
+        _from,
+        _to,
+        _amountOfSwaps,
+        _swapInterval,
+        _owner,
+        _permissions,
+        _miscellaneous
+      } = DCAHubCompanion.parseTransaction(txn).args
+      return !opts.extended
+        ? ['watafak']
+        : [
+            [
+              'and swap',
+              'the resulting amount of',
+              {
+                type: 'token',
+                ...token(humanizerInfo, _from, 0, true)
+              },
+              'for',
+              {
+                type: 'token',
+                ...token(humanizerInfo, _to, 0, true)
+              },
+              `Split into ${_amountOfSwaps} swaps over ${getInterval(
+                _swapInterval * _amountOfSwaps
+              )}`,
+              'via',
+              {
+                type: 'address',
+                address: txn.to,
+                name: getName(humanizerInfo, _hub)
+              }
             ]
           ]
     },
