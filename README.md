@@ -499,3 +499,6 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 - removed embeded Yearn Tesseract card from Earn section
 - update the @trezor/connect-web lib to latest from v9
 - implement `eth_gasPrice` rpcCall method for gnosisSafe
+
+### v0.7.6
+- ambire-commonv1.0.2 - Hide OKX, Moonbeam, Moonriver, KCC Networks
