@@ -60,6 +60,44 @@ const MeanFinance = (humanizerInfo) => {
         )} via ${txn.to}`
       ]
     },
+    [iface.getSighash(
+      'deposit(address,address,uint256,uint32,uint32,address,(address,uint8[])[],bytes)'
+    )]: (txn, network, { extended }) => {
+      const { _from, _to, _amountOfSwaps, _swapInterval, _owner, _permissions, _amount } =
+        iface.parseTransaction(txn).args
+      if (extended)
+        return [
+          [
+            'Swap',
+            {
+              type: 'token',
+              ...token(humanizerInfo, _from, _amount, true)
+            },
+            'for',
+            {
+              type: 'token',
+              ...token(humanizerInfo, _to, -1, true)
+            },
+            `Split into ${_amountOfSwaps} swaps over ${getInterval(
+              _swapInterval * _amountOfSwaps
+            )}`,
+            'via',
+            {
+              type: 'address',
+              address: txn.to,
+              name: getName(humanizerInfo, txn.to)
+            }
+          ]
+        ]
+      return [
+        `Swap ${token(humanizerInfo, _from, _amount)} for ${getName(
+          humanizerInfo,
+          _to
+        )} Split into ${_amountOfSwaps} swaps over ${getInterval(
+          _swapInterval * _amountOfSwaps
+        )} via ${txn.to}`
+      ]
+    },
     [iface.getSighash('terminate')]: (txn, network, { extended }) => {
       const { _positionId, _recipientUnswapped, _recipientSwapped } =
         iface.parseTransaction(txn).args
