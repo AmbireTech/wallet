@@ -16,7 +16,7 @@ const accountType = ({ email, signerExtra }) => {
 }
 const toIcon = (seed) => blockies.create({ seed }).toDataURL()
 
-const useAddressBook = ({ accounts, useStorage }) => {
+const useAddressBook = ({ accounts, useStorage, humanizerInfo }) => {
   const { addToast } = useToasts()
   const [storageAddresses, setStorageAddresses] = useStorage({ key: 'addresses', defaultValue: [] })
 
@@ -93,7 +93,7 @@ const useAddressBook = ({ accounts, useStorage }) => {
             error: true
           })
         if (!isValidAddress(address)) throw new Error('Address Book: invalid address format')
-        if (isKnownTokenOrContract(address))
+        if (isKnownTokenOrContract(humanizerInfo, address))
           return addToast("The address you're trying to add is a smart contract.", { error: true })
       }
 

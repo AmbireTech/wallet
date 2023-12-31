@@ -276,11 +276,11 @@ export default function Wallet(props) {
 
   useEffect(() => {
     const unsupported = props.connections.filter(
-      ({ session }) =>
-        session &&
-        session.peerMeta &&
-        unsupportedDApps.includes(session.peerMeta.url) &&
-        !advancedModeList.includes(session.peerMeta.url)
+      ({ peer }) =>
+        peer &&
+        peer.metadata &&
+        unsupportedDApps.includes(peer.metadata.url) &&
+        !advancedModeList.includes(peer.metadata.url)
     )
 
     if (unsupported.length)

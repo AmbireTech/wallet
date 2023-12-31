@@ -25,6 +25,7 @@ import { VELCRO_API_ENDPOINT } from 'config'
 import { fetchGet } from 'lib/fetch'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
+import useConstants from 'hooks/useConstants'
 
 const ERC721 = new Interface(ERC721Abi)
 
@@ -45,6 +46,9 @@ const handleUri = (uri) => {
 }
 
 const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) => {
+  const {
+    constants: { humanizerInfo }
+  } = useConstants()
   const { addresses, addAddress, removeAddress, isKnownAddress } = addressBook
 
   const { addToast } = useToasts()
@@ -127,7 +131,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
         isKnownAddress,
         metadata,
         selectedNetwork,
-        network
+        network,
+        humanizerInfo
       )
 
       setTransferDisabled(!isAddressValid.success)
@@ -165,6 +170,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
           metadata,
           selectedNetwork,
           network,
+          humanizerInfo,
           isUDAddress,
           isEnsAddress
         )
@@ -195,7 +201,8 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     selectedAcc,
     network,
     addressConfirmed,
-    isKnownAddress
+    isKnownAddress,
+    humanizerInfo
   ])
 
   const fetchMetadata = useCallback(async () => {

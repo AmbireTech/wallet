@@ -478,3 +478,27 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 
 ### v0.7.1
 - WALLETSupplyController: include the staking pool in the leaf hash
+
+### v0.7.2
+- fix / confirm unknown address checkbox location
+- change / socket to return short token lists
+- update / ambire.common - v0.22.29
+- fix / opensea warnings on sign message
+- fix / added filter to privilegesList
+
+### v0.7.3
+- fix / check if tokens or NFTs are about to be sent to a known smart contract address
+- fix / submit sign form on enter
+- fix / always add the latest gas tank commitment
+
+### v0.7.4
+- update / ambire.common - v1.0.1
+- bug / walletConnect two sources of truth for connections (localStorage and WC)
+
+### v0.7.5
+- removed embeded Yearn Tesseract card from Earn section
+- update the @trezor/connect-web lib to latest from v9
+- implement `eth_gasPrice` rpcCall method for gnosisSafe
+
+### v0.7.6
+- ambire-commonv1.0.2 - Hide OKX, Moonbeam, Moonriver, KCC Networks

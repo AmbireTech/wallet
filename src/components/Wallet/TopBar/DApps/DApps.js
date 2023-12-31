@@ -4,13 +4,12 @@ import { useHistory } from 'react-router-dom'
 import { checkClipboardPermission } from 'lib/permissions'
 import { canOpenInIframe } from 'lib/dappsUtils'
 
-import { DropDown, ToolTip, Button, Loading, Icon } from 'components/common'
+import { DropDown, Button, Loading, Icon } from 'components/common'
 import DropDownItem from 'components/common/DropDown/DropDownItem/DropDownItem'
 import DropDownItemSeparator from 'components/common/DropDown/DropDownItem/DropDownItemSeparator'
 
-import { MdOutlineWarning, MdBrokenImage } from 'react-icons/md'
+import { MdBrokenImage } from 'react-icons/md'
 import { FiHelpCircle } from 'react-icons/fi'
-import { AiOutlineDisconnect } from 'react-icons/ai'
 import { ReactComponent as WalletConnect } from 'resources/icons/wallet-connect.svg'
 import { ReactComponent as ConnectIcon } from './images/connect.svg'
 
@@ -41,8 +40,6 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
       }
     )
   }, [connect, isClipboardGranted])
-
-  const isLegacyWC = ({ bridge }) => /https:\/\/bridge.walletconnect.org/g.test(bridge)
 
   const onConnectionClick = useCallback(
     async (url) => {
@@ -101,38 +98,22 @@ const DApps = ({ connections, connect, disconnect, isWcConnecting }) => {
         ) : null}
       </div>
       <div className={styles.dappList}>
-        {connections.map(({ session, isOffline, topic }) => (
+        {connections.map(({ topic, peer }) => (
           <DropDownItem className={styles.dappsItem} key={topic}>
             <div className={styles.icon}>
               <div
                 className={styles.iconOverlay}
                 style={{
                   backgroundImage: `url(${
-                    session.peerMeta.icons.filter((x) => !x.endsWith('favicon.ico'))[0]
+                    peer.metadata.icons.filter((x) => !x.endsWith('favicon.ico'))[0]
                   })`
                 }}
               />
               <MdBrokenImage />
             </div>
-            <span onClick={() => onConnectionClick(session.peerMeta.url)}>
+            <span onClick={() => onConnectionClick(peer.metadata.url)}>
               <div className={styles.details}>
-                {isLegacyWC(session) ? (
-                  <ToolTip
-                    className={styles.sessionWarning}
-                    label="dApp uses legacy WalletConnect bridge which is unreliable and often doesn't work. Please tell the dApp to update to the latest WalletConnect version."
-                  >
-                    <MdOutlineWarning />
-                  </ToolTip>
-                ) : null}
-                {isOffline ? (
-                  <ToolTip
-                    className={styles.sessionError}
-                    label="WalletConnect connection may be offline. Check again later. If this warning persist try to disconnect and connect WalletConnect."
-                  >
-                    <AiOutlineDisconnect />
-                  </ToolTip>
-                ) : null}
-                <div className={styles.name}>{session.peerMeta.name || 'Untitled dApp'}</div>
+                <div className={styles.name}>{peer.metadata.name || 'Untitled dApp'}</div>
               </div>
             </span>
             <DropDownItemSeparator />
