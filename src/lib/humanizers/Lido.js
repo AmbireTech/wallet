@@ -1,19 +1,17 @@
 import { Interface } from 'ethers/lib/utils'
 import { token, getName, nativeToken } from 'lib/humanReadableTransactions'
-import { MdDesktopAccessDisabled } from 'react-icons/md'
 
+function getAddress(humanizerInfo, address) {
+  return {
+    type: 'address',
+    address,
+    name: getName(humanizerInfo, address)
+  }
+}
 const MATIC_ON_ETH_ADDRESS = '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0'
 const Lido = (humanizerInfo) => {
   const ifaceETH = new Interface(humanizerInfo.abis.LidoStETH)
   const ifaceMATIC = new Interface(humanizerInfo.abis.LidoStMATIC)
-  function getAddress(humanizerInfo, address) {
-    return {
-      type: 'address',
-      address,
-      name: getName(humanizerInfo, address)
-    }
-  }
-  // 0x7c9f4c87d911613fe9ca58b579f737911aad2d43
   return {
     [ifaceETH.getSighash('submit')]: (txn, network, { extended }) => {
       const { _positionId, _recipient } = ifaceETH.parseTransaction(txn).args

@@ -1,7 +1,5 @@
-import networks from 'consts/networks'
 import { Interface } from 'ethers/lib/utils'
 import { token, getName } from 'lib/humanReadableTransactions'
-import { MdDesktopAccessDisabled } from 'react-icons/md'
 
 export function getInterval(seconds) {
   if (seconds <= 60) return `${seconds} seconds`
