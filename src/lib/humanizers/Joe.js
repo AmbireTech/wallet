@@ -2,7 +2,6 @@ import { Interface } from 'ethers/lib/utils'
 import { token, getName, nativeToken } from 'lib/humanReadableTransactions'
 
 const Joe = (humanizerInfo) => {
-  // const iface = new Interface(humanizerInfo.abis.JoeRouter)
   const iface = new Interface(humanizerInfo.abis.JoeRouter)
 
   return {

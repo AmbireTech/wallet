@@ -97,6 +97,8 @@ const MeanFinance = (humanizerInfo) => {
       ]
     },
     [iface.getSighash('terminate')]: (txn, network, { extended }) => {
+      // used for the url, mean finance makes sense of the versions internaly
+      const ORDER_VERSION = 4
       const { _positionId, _recipientUnswapped, _recipientSwapped } =
         iface.parseTransaction(txn).args
       if (extended)
@@ -105,8 +107,7 @@ const MeanFinance = (humanizerInfo) => {
             `Terminate position ${_positionId}`,
             {
               type: 'link',
-              // the param after 'position' is the version of the order
-              link: `https://mean.finance/${network.chainId}/positions/4/${_positionId}`,
+              link: `https://mean.finance/${network.chainId}/positions/${ORDER_VERSION}/${_positionId}`,
               text: 'more info here'
             }
           ],
