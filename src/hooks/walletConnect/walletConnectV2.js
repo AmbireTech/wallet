@@ -189,9 +189,11 @@ export default function useWalletConnectV2({
                   error: true
                 }
               )
+              console.log('WC2 disconnect error', e)
             }
+          } else {
+            console.log('WC2 disconnect error', e)
           }
-          console.log('WC2 disconnect error', e)
         }
       }
       setIsConnecting(false)
