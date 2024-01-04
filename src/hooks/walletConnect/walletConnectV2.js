@@ -177,6 +177,11 @@ export default function useWalletConnectV2({
             reason: getSdkError('USER_DISCONNECTED')
           })
         } catch (e) {
+          // Should happen in extremely rare cases in which the user's
+          // storage is corrupted and the keychain is not found.
+          if (e?.message?.includes('No matching key. keychain')) {
+            web3wallet.engine.signClient.session.delete(topic, 'USER_DISCONNECTED')
+          }
           console.log('WC2 disconnect error', e)
         }
       }
