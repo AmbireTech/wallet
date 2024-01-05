@@ -10,72 +10,7 @@ const getNetwork = (chainId, extended = false) => {
 // bungee runs some of its calls through falllback that serves as router to unverified contracts,
 // thats why we can't fetch data from block explorers in ambire constants
 const Bungee = (humanizerInfo) => {
-  const iface = new Interface([
-    {
-      type: 'function',
-      name: 'swapAndBridge',
-      inputs: [
-        { name: '_param1', type: 'uint32' },
-        { name: '_param2', type: 'address' },
-        { name: '_param3', type: 'uint256' },
-        { name: '_param4', type: 'bytes32' },
-        { name: '_param5', type: 'bytes' }
-      ],
-      outputs: [{ name: '', type: 'uint256' }],
-      stateMutability: 'payable'
-    },
-    {
-      type: 'function',
-      name: 'swapAndBridge',
-      inputs: [
-        { name: '_param1', type: 'uint32' },
-        { name: '_param2', type: 'bytes' },
-        {
-          name: '_param3',
-          type: 'tuple',
-          components: [
-            { name: '_address1', type: 'address' },
-            { name: '_address2', type: 'address' },
-            { name: '_uint1', type: 'uint256' },
-            { name: '_uint2', type: 'uint256' },
-            { name: '_uint3', type: 'uint256' },
-            { name: '_uint4', type: 'uint256' },
-            { name: '_uint5', type: 'uint256' },
-            { name: '_uint6', type: 'uint256' },
-            { name: '_bytes32', type: 'bytes32' }
-          ]
-        }
-      ],
-      outputs: [{ name: '', type: 'uint256' }],
-      stateMutability: 'payable'
-    },
-    {
-      constant: false,
-      inputs: [
-        {
-          name: '_amount',
-          type: 'uint256'
-        },
-        {
-          name: '_destinationChainId',
-          type: 'bytes32'
-        },
-        {
-          name: '_recipient',
-          type: 'address'
-        },
-        {
-          name: '_fee',
-          type: 'uint256'
-        }
-      ],
-      name: 'bridgeNativeTo',
-      outputs: [],
-      payable: false,
-      stateMutability: 'nonpayable',
-      type: 'function'
-    }
-  ])
+  const iface = new Interface(humanizerInfo.abis.StargateImplL2V2)
   return {
     // some bungee bridge txn start with 4 bytes number and the next 4 bytes are a sigHash
     // bungee uses fallback and later redirects to address based on the first 4 bytes
