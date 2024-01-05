@@ -126,11 +126,6 @@ const ToastProvider = ({ children }) => {
                         {badge ? <div className="badge">{badge}</div> : null}
                         {content}
                       </div>
-                      {sticky ? (
-                        <div className="close" onClick={() => removeToast(id)}>
-                          <MdOutlineClose />
-                        </div>
-                      ) : null}
                     </div>
                   </CSSTransition>
                 )
