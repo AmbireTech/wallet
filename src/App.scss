@@ -49,6 +49,12 @@ body {
   color: theme(text-primary);
 }
 
+// Fixes this bug in DEV mode:
+// https://stackoverflow.com/questions/70499543/create-react-app-creates-this-iframe-that-prevents-me-from-clicking-or-editing
+body > iframe {
+  pointer-events: none;
+}
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', 'Ubuntu Mono';
 }
