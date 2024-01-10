@@ -1,7 +1,7 @@
 import { useCallback } from 'react'
 import { fetchGet, fetchPost } from 'lib/fetch'
 
-const SOCKET_KEY = '70cd11c0-30ae-41e8-8e7d-6f25077bb74a'
+const SOCKET_KEY = 'edf93074-4aae-4181-b311-a6a18566d3d0'
 const baseURL = 'https://api.socket.tech/v2'
 
 async function fetchSocket(path, body, type = 'get') {
