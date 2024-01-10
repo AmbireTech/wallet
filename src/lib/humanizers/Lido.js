@@ -12,6 +12,8 @@ const MATIC_ON_ETH_ADDRESS = '0x7d1afa7b718fb893db30a3abc0cfc608aacfebb0'
 const Lido = (humanizerInfo) => {
   const ifaceETH = new Interface(humanizerInfo.abis.LidoStETH)
   const ifaceMATIC = new Interface(humanizerInfo.abis.LidoStMATIC)
+  const unstIfaceETH = new Interface(humanizerInfo.abis.unstETH)
+
   return {
     [ifaceETH.getSighash('submit')]: (txn, network, { extended }) => {
       const { _positionId, _recipient } = ifaceETH.parseTransaction(txn).args
@@ -42,6 +44,33 @@ const Lido = (humanizerInfo) => {
           ['Stake', { type: 'token', ...token(humanizerInfo, MATIC_ON_ETH_ADDRESS, _amount, true) }]
         ]
       return [[`Stake ${token(humanizerInfo, MATIC_ON_ETH_ADDRESS, _amount)}`]]
+    },
+    [unstIfaceETH.getSighash('requestWithdrawals(uint256[],address)')]: (
+      txn,
+      network,
+      { extended }
+    ) => {
+      const { _amounts, _owner } = ifaceETH.parseTransaction(txn).args
+      if (extended) {
+        return _owner === txn.from || _owner === '0x0000000000000000000000000000000000000000'
+          ? [
+              'Request',
+              'withdrawal from',
+              { type: 'address', address: txn.to, name: getName(txn.to) }
+            ]
+          : [
+              'Request',
+              'withdrawal from',
+              { type: 'address', address: txn.to, name: getName(txn.to) },
+              'for',
+              { type: 'address', address: _owner, name: getName(_owner) }
+            ]
+      }
+      return [
+        _owner === txn.from || _owner === ethers.constants.AddressZero
+          ? [`Request withdrawal from ${getName(txn.to)}`]
+          : [`Request withdrawal from ${getName(txn.to)} for ${_owner}`]
+      ]
     }
   }
 }
