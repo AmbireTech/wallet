@@ -15,7 +15,14 @@ export const rpcUrls = {
   'optimism': 'https://invictus.ambire.com/optimism',
   'base': 'https://invictus.ambire.com/base',
   'mumbai': 'https://invictus.ambire.com/mumbai',
-  'sepolia': 'https://invictus.ambire.com/sepolia'
+  'sepolia': 'https://invictus.ambire.com/sepolia',
+  'moonriver': 'https://rpc.api.moonriver.moonbeam.network',
+  'kucoin': 'https://rpc-mainnet.kcc.network',
+  'rinkeby': 'https://rinkeby.infura.io/v3/4409badb714444b299066870e0f7b631',
+  'cronos': 'https://evm-cronos.crypto.org',
+  'aurora': 'https://mainnet.aurora.dev',
+  'ethereum-pow': 'https://mainnet.ethereumpow.org',
+  'okc': 'https://exchainrpc.okex.org'
 
   // ethereum:
   //   'https://rpc.ankr.com/eth/0e066bd7837ff1978d6aa30b9f29407deb0276d74f46393e474c2530916c8943',
