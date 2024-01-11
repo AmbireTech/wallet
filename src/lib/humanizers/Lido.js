@@ -50,7 +50,7 @@ const Lido = (humanizerInfo) => {
       network,
       { extended }
     ) => {
-      const { _amounts, _owner } = ifaceETH.parseTransaction(txn).args
+      const { _amounts, _owner } = unstIfaceETH.parseTransaction(txn).args
       if (extended) {
         return _owner === txn.from || _owner === '0x0000000000000000000000000000000000000000'
           ? [
