@@ -245,10 +245,12 @@ const Actions = ({
         .toString()
 
       try {
-        // if the decode works, it means it is the gas tank txn
-        // If so, delete it
-        abiCoder.decode(['string', 'uint256', 'string'], lastTxn[2])
-        bundle.txns.pop()
+        // if the decode works and the first value is gasTank,
+        // it means it is the gas tank txn. If so, delete it
+        const result = abiCoder.decode(['string', 'uint256', 'string'], lastTxn[2])
+        if (result[0] === 'gasTank') {
+          bundle.txns.pop()
+        }
       } catch (e) {
         // all's good
       }
