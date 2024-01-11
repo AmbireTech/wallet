@@ -137,7 +137,7 @@ const setProvider = (_id: NetworkId) => {
   // eslint-disable-next-line no-underscore-dangle
   const url = rpcUrls[_id]
   const network = networks.find(({ id }) => id === _id)
-  if (!network) return null
+  if (!network || !url) return null
 
   const { id: name, chainId, ensName } = network as NetworkType
   let provider
