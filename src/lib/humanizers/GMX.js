@@ -43,7 +43,7 @@ const GMX = (humanizerInfo) => {
           humanizerInfo,
           tokens[tokens.length - 1],
           0
-        )} to ${token(humanizerInfo, tokens[0], -1)}`
+        )} to ${token(humanizerInfo, tokens[0], 0)}`
       ]
     }
   }
