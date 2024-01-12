@@ -31,19 +31,19 @@ const GMX = (humanizerInfo) => {
       if (extended)
         return [
           [
-            'Open GMX position',
+            'Interact with GMX position',
             'from',
-            { type: 'token', ...token(humanizerInfo, tokens[tokens.length - 2], -1, true) },
+            { type: 'token', ...token(humanizerInfo, tokens[tokens.length - 2], 0, true) },
             'to',
-            { type: 'token', ...token(humanizerInfo, tokens[0], -1, true) }
+            { type: 'token', ...token(humanizerInfo, tokens[0], 0, true) }
           ]
         ]
       return [
-        `Open GMX position from ${token(humanizerInfo, tokens[tokens.length - 1], -1)} to ${token(
+        `Interact with GMX position from ${token(
           humanizerInfo,
-          tokens[0],
-          -1
-        )}`
+          tokens[tokens.length - 1],
+          0
+        )} to ${token(humanizerInfo, tokens[0], -1)}`
       ]
     }
   }
