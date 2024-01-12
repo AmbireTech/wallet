@@ -69,6 +69,18 @@ const Lido = (humanizerInfo) => {
           ? [`Request withdrawal from ${getName(humanizerInfo, txn.to)}`]
           : [`Request withdrawal from ${getName(humanizerInfo, txn.to)} for ${_owner}`]
       ]
+    },
+    [ifaceMATIC.getSighash('requestWithdraw')]: (txn, network, { extended }) => {
+      const { _amount } = ifaceMATIC.parseTransaction(txn).args
+      if (extended) {
+        return [
+          [
+            'Withdraw',
+            { type: 'token', ...token(humanizerInfo, MATIC_ON_ETH_ADDRESS, _amount, true) }
+          ]
+        ]
+      }
+      return [[`Withdraw  ${token(humanizerInfo, MATIC_ON_ETH_ADDRESS, _amount)}`]]
     }
   }
 }
