@@ -149,6 +149,25 @@ const UniswapV3Pool = (humanizerInfo) => {
         shouldUnwrapNativeToken,
         referralCode
       ] = params
+      if (orderType === 4) {
+        return !opts.extended
+          ? [
+              `Close ${isLong ? 'long' : 'short'} position with ${token(
+                humanizerInfo,
+                addresses[4],
+                -1
+              )} in ${getName(txn.to)}`
+            ]
+          : [
+              [
+                `Close ${isLong ? 'long' : 'short'} position`,
+                'with',
+                { type: 'token', ...token(humanizerInfo, addresses[4], 0, true) },
+                'in',
+                { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+              ]
+            ]
+      }
       return !opts.extended
         ? [
             `Open ${isLong ? 'long' : 'short'} position with collateral ${token(
