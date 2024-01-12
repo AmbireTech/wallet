@@ -53,24 +53,34 @@ const Lido = (humanizerInfo) => {
       const { _amounts, _owner } = unstIfaceETH.parseTransaction(txn).args
       if (extended) {
         return _owner === txn.from || _owner === '0x0000000000000000000000000000000000000000'
-          ? [
-              'Request',
-              'withdrawal from',
-              { type: 'address', address: txn.to, name: getName(txn.to) }
-            ]
+          ? [['Request', 'withdrawal from', getAddress(humanizerInfo, txn.to)]]
           : [
-              'Request',
-              'withdrawal from',
-              { type: 'address', address: txn.to, name: getName(txn.to) },
-              'for',
-              { type: 'address', address: _owner, name: getName(_owner) }
+              [
+                'Request',
+                'withdrawal from',
+                getAddress(humanizerInfo, txn.to),
+                'for',
+                getAddress(humanizerInfo, _owner)
+              ]
             ]
       }
       return [
-        _owner === txn.from || _owner === ethers.constants.AddressZero
-          ? [`Request withdrawal from ${getName(txn.to)}`]
-          : [`Request withdrawal from ${getName(txn.to)} for ${_owner}`]
+        _owner === txn.from || _owner === '0x0000000000000000000000000000000000000000'
+          ? [`Request withdrawal from ${getName(humanizerInfo, txn.to)}`]
+          : [`Request withdrawal from ${getName(humanizerInfo, txn.to)} for ${_owner}`]
       ]
+    },
+    [ifaceMATIC.getSighash('requestWithdraw')]: (txn, network, { extended }) => {
+      const { _amount } = ifaceMATIC.parseTransaction(txn).args
+      if (extended) {
+        return [
+          [
+            'Withdraw',
+            { type: 'token', ...token(humanizerInfo, MATIC_ON_ETH_ADDRESS, _amount, true) }
+          ]
+        ]
+      }
+      return [[`Withdraw  ${token(humanizerInfo, MATIC_ON_ETH_ADDRESS, _amount)}`]]
     }
   }
 }
