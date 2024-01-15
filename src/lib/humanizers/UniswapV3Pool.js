@@ -216,6 +216,35 @@ const UniswapV3Pool = (humanizerInfo) => {
         ? [`Swap ${tokenA} for ${tokenB}`]
         : [['Swap', { type: 'token', ...tokenA }, 'for', { type: 'token', ...tokenB }]]
     },
+    [DCAHubCompanion.getSighash('permitTakeFromCaller')]: (
+      txn,
+      network,
+      opts = { extended: true }
+    ) => {
+      const { _token, _amount } = DCAHubCompanion.parseTransaction(txn).args
+      return !opts.extended
+        ? [
+            `Send ${token(humanizerInfo, _token, _amount)} ${
+              txn.value === '0x' || txn.value === '0x0'
+                ? ''
+                : `and ${nativeToken(network, txn.value)}`
+            } to ${getName(humanizerInfo, txn.to)}`
+          ]
+        : [
+            [
+              'Send',
+              {
+                type: 'token',
+                ...token(humanizerInfo, _token, _amount, true)
+              },
+              ...(txn.value === '0x' || txn.value === '0x0'
+                ? []
+                : ['and', { type: 'token', ...nativeToken(network, txn.value, true) }]),
+              'to',
+              { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+            ]
+          ]
+    },
     [DCAHubCompanion.getSighash('sendBalanceOnContractToRecipient')]: (
       txn,
       network,
