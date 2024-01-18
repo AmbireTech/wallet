@@ -391,6 +391,12 @@ export default function useWalletConnectV2({
 
                 return
               }
+              // Regular Permit (EIP-2612) is not supported by SCWs, because it requires a signature from the wallet
+              // and ERC-20 token contracts don't implement EIP-1271.
+              addToast('dApp tried to sign a token permit which does not support Smart Wallets.', {
+                error: true
+              })
+              return
             }
           } else if (method === 'wallet_addEthereumChain') {
             const incomingChainId = wcRequest.params[0]
