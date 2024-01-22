@@ -502,3 +502,8 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 
 ### v0.7.6
 - ambire-commonv1.0.2 - Hide OKX, Moonbeam, Moonriver, KCC Networks
+
+### v0.7.7
+- Update humanizer with more dapps
+- New ambire-common version 1.0.3
+- Changed the RPCs endpoints to Ambire RPC proxy
