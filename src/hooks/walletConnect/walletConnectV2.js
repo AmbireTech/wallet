@@ -384,11 +384,42 @@ export default function useWalletConnectV2({
               })
               return
             }
-          } else if (method === 'wallet_addEthereumChain') {
-            const incomingChainId = wcRequest.params[0]
+          } else if (
+            method === 'wallet_switchEthereumChain' ||
+            method === 'wallet_addEthereumChain'
+          ) {
+            const { chainId: incomingChainId } = wcRequest.params[0] || {}
 
-            // TODO: setNetwork with the incoming chainId
-            console.log(incomingChainId, networks)
+            if (!incomingChainId) {
+              addToast('dApp tried to switch to an invalid network.', { error: true })
+              web3wallet.respondSessionRequest({
+                topic,
+                response: formatJsonRpcError(id, {
+                  message: `Invalid Network ${incomingChainId}`,
+                  code: -32602
+                })
+              })
+              return
+            }
+
+            const incomingChainIdNum = parseInt(incomingChainId, 16)
+
+            if (!networks.find((n) => n.chainId === incomingChainIdNum)) {
+              addToast(
+                `dApp tried to switch to an unsupported network (chainId: ${incomingChainIdNum}).`,
+                { error: true }
+              )
+              web3wallet.respondSessionRequest({
+                topic,
+                response: formatJsonRpcError(id, {
+                  message: `Unsupported chain id ${incomingChainIdNum}`,
+                  code: -32602
+                })
+              })
+              return
+            }
+
+            setNetwork(incomingChainIdNum)
           }
 
           if (txn && ethers.utils.isAddress(requestAccount)) {
