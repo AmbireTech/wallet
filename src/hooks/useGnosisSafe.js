@@ -1,7 +1,7 @@
 import { useCallback, useRef, useMemo } from 'react'
 import { useToasts } from 'hooks/toasts'
 
-import { Methods } from '@gnosis.pm/safe-apps-sdk'
+import { Methods } from '@safe-global/safe-apps-sdk'
 import { GnosisConnector } from 'lib/GnosisConnector'
 import { getProvider } from 'ambire-common/src/services/provider'
 
@@ -12,7 +12,7 @@ const STORAGE_KEY = 'gnosis_safe_state'
 export default function useGnosisSafe({
   selectedAccount,
   network,
-  verbose = 0,
+  verbose = process.env?.REACT_APP_VISUAL_ENV === 'dev' ? 1 : 0,
   useStorage,
   setRequests
 }) {
@@ -162,7 +162,7 @@ export default function useGnosisSafe({
             throw err
           })
         } else if (method === 'personal_sign') {
-          result = await handlePersonalSign(msg).catch((err) => {
+          result = await handleSignMessage(msg).catch((err) => {
             throw err
           })
         } else if (method === 'eth_estimateGas') {
@@ -228,7 +228,7 @@ export default function useGnosisSafe({
         }
       }
 
-      const handlePersonalSign = (msg) => {
+      const handleSignMessage = (msg, isSignTypedData) => {
         verbose > 0 && console.log('DApp requested signMessage', msg)
 
         const data = msg?.data
@@ -238,10 +238,19 @@ export default function useGnosisSafe({
         }
 
         const id = `gs_${data.id}`
-        const message = data?.params?.message
+        const message = isSignTypedData ? data?.params?.typedData : data?.params?.message
         if (!message) {
           console.error('GS: no message in received payload')
           return
+        }
+        if (message && message.primaryType === 'Permit') {
+          addToast(
+            'Please, change the approval type to "Transaction" from the dApp, as the currently selected method doesn\'t support Smart Wallets.',
+            { error: true, timeout: 12000 }
+          )
+          throw new Error(
+            'Please, change the approval type to "Transaction" from the dApp, as the currently selected method doesn\'t support Smart Wallets.'
+          )
         }
 
         const currentAppData = connector.current.app
@@ -250,9 +259,8 @@ export default function useGnosisSafe({
           id,
           dateAdded: new Date().valueOf(),
           forwardId: msg.data.id,
-          type:
-            message.signType === 'eth_signTypedData_v4' ? 'eth_signTypedData_v4' : 'personal_sign',
-          txn: message.signType === 'eth_signTypedData_v4' ? JSON.parse(message.message) : message,
+          type: isSignTypedData ? 'eth_signTypedData_v4' : 'personal_sign',
+          txn: message,
           chainId: stateRef.current.network.chainId,
           account: stateRef.current.selectedAccount,
           dapp: currentAppData
@@ -273,7 +281,11 @@ export default function useGnosisSafe({
         )
       }
 
-      connector.current.on(Methods.signMessage, (msg) => handlePersonalSign(msg))
+      connector.current.on(Methods.signMessage, (msg) => handleSignMessage(msg))
+
+      connector.current.on(Methods.signTypedMessage, (msg) => {
+        handleSignMessage(msg, true)
+      })
 
       connector.current.on(Methods.getTxBySafeTxHash, async (msg) => {
         const { safeTxHash } = msg.data.params
