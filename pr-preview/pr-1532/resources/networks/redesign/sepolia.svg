@@ -1,0 +1,12 @@
+<svg id="sepolia" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect id="Rectangle_1109" data-name="Rectangle 1109" width="32" height="32" fill="#627eea" opacity="0"/>
+  <circle id="Ellipse_271" data-name="Ellipse 271" cx="10" cy="10" r="10" transform="translate(6 6)" fill="#627eea"/>
+  <g id="Group_992" data-name="Group 992" transform="translate(1.756 3.611)">
+    <path id="Path_2359" data-name="Path 2359" d="M16.5,4v6.2l5.242,2.342Z" transform="translate(-2.255)" fill="rgba(255,255,255,0.6)"/>
+    <path id="Path_2360" data-name="Path 2360" d="M14.243,4,9,12.545,14.243,10.2Z" fill="#fff"/>
+    <path id="Path_2361" data-name="Path 2361" d="M16.5,20.659v4.214l5.246-7.257Z" transform="translate(-2.255 -4.095)" fill="rgba(255,255,255,0.6)"/>
+    <path id="Path_2362" data-name="Path 2362" d="M14.243,24.873V20.658L9,17.616Z" transform="translate(0 -4.095)" fill="#fff"/>
+    <path id="Path_2363" data-name="Path 2363" d="M16.5,18.257l5.242-3.044L16.5,12.872Z" transform="translate(-2.255 -2.668)" fill="rgba(255,255,255,0.2)"/>
+    <path id="Path_2364" data-name="Path 2364" d="M9,15.213l5.243,3.044V12.872Z" transform="translate(0 -2.668)" fill="rgba(255,255,255,0.6)"/>
+  </g>
+</svg>
