@@ -330,6 +330,9 @@ export default function useGnosisSafe({
           replyData.success = true
           replyData.txId = resolution.result
           replyData.safeTxHash = resolution.result
+          // Some dApps (like Uniswap) expect the signature to be in
+          // .signature instead of .safeTxHash
+          replyData.signature = resolution.result
         }
         if (!connector.current) {
           // soft error handling: sendTransaction has issues
