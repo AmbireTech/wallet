@@ -150,10 +150,8 @@ const UniswapV3Pool = (humanizerInfo) => {
         referralCode
       ] = params
 
-      console.log(orderType)
       switch (orderType) {
         case 4:
-          console.log('ассдасдасдассдасд')
           return !opts.extended
             ? [
                 `Close ${isLong ? 'long' : 'short'} position with ${token(
@@ -196,6 +194,7 @@ const UniswapV3Pool = (humanizerInfo) => {
                   humanizerInfo,
                   addresses[4],
                   -1
+                  // we receive the value with extra zeros
                 )} at price $${numbers[2] / 1000000000000} in ${getName(txn.to)}`
               ]
             : [
@@ -206,24 +205,25 @@ const UniswapV3Pool = (humanizerInfo) => {
                     ...token(
                       humanizerInfo,
                       addresses[4],
+                      // we receive the value with extra zeros
                       numbers[0] / 1000000000000000000000000,
                       true
                     )
                   },
+                  // we receive the value with extra zeros
                   `at price $${numbers[2] / 1000000000000}`,
                   'in',
                   { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
                 ]
               ]
         case 6:
-          console.log(JSON.stringify(numbers.map((n) => parseInt(n))))
-
           return !opts.extended
             ? [
                 `Stop loss ${isLong ? 'long' : 'short'} position ${token(
                   humanizerInfo,
                   addresses[4],
                   -1
+                  // we receive the value with extra zeros
                 )} at price $${numbers[2] / 1000000000000} in ${getName(txn.to)}`
               ]
             : [
@@ -234,10 +234,12 @@ const UniswapV3Pool = (humanizerInfo) => {
                     ...token(
                       humanizerInfo,
                       addresses[4],
+                      // we receive the value with extra zeros
                       numbers[0] / 1000000000000000000000000,
                       true
                     )
                   },
+                  // we receive the value with extra zeros
                   `at price $${numbers[2] / 1000000000000}`,
                   'in',
                   { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
