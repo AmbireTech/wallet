@@ -1,4 +1,4 @@
-import { getSDKVersion, MessageFormatter, Methods } from '@gnosis.pm/safe-apps-sdk'
+import { getSDKVersion, MessageFormatter, Methods } from '@safe-global/safe-apps-sdk'
 
 function GnosisConnector(_iframeRef, _app) {
   this.iframeRef = _iframeRef
