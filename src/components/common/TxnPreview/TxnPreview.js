@@ -46,17 +46,30 @@ export default function TxnPreview({
   } = useConstants()
   const [isExpanded, setExpanded] = useState(false)
   const contractName = getName(humanizerInfo, txn[0])
-  const isUnknown = !isFirstFailing && !mined && !isKnown(humanizerInfo, txn, account)
-  const isNFTApprovalForAll = (txn.length && !!txn[2])
-    ? txn[2].slice(0, 10) === SIG_HASH_NFT_APPROVAL_FOR_ALL
-    : null
-  
+  const isNFTApprovalForAll =
+    txn.length && !!txn[2] ? txn[2].slice(0, 10) === SIG_HASH_NFT_APPROVAL_FOR_ALL : null
+
   const networkDetails = networks.find(({ id }) => id === network)
   const extendedSummary = getTransactionSummary(humanizerInfo, tokenList, txn, network, account, {
     mined,
     extended: true,
     meta
   })
+
+  const hasUnknownAddress = extendedSummary
+    .map((summary) => {
+      return summary
+        .map((item) => {
+          if (['address', 'token'].includes(item.type) && item.address) {
+            return !isKnown(humanizerInfo, item.address, account)
+          }
+          return false
+        })
+        .includes(true)
+    })
+    .includes(true)
+
+  const isUnknown = !mined && (!isKnown(humanizerInfo, txn[0], account) || hasUnknownAddress)
 
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
 
@@ -124,7 +137,10 @@ export default function TxnPreview({
           )}
           {isNFTApprovalForAll && (
             <p className={styles.warning}>
-              Warning: Be careful while approving this permission, as it will allow access to all NFTs on the contract, including those that you may own in the future. The recipient of this permission can transfer NFTs from your wallet without seeking your permission until you withdraw this authorization. Proceed with caution and stay safe!
+              Warning: Be careful while approving this permission, as it will allow access to all
+              NFTs on the contract, including those that you may own in the future. The recipient of
+              this permission can transfer NFTs from your wallet without seeking your permission
+              until you withdraw this authorization. Proceed with caution and stay safe!
             </p>
           )}
         </button>
