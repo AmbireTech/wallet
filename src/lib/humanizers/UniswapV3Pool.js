@@ -64,7 +64,6 @@ const UniswapV3Pool = (humanizerInfo) => {
       const parsed = calls
         .map((data) => {
           const sigHash = data.slice(0, 10)
-          console.log({ sigHash })
           const humanizer = mappingResult[sigHash]
           return humanizer ? humanizer({ ...txn, data }, network) : null
         })
