@@ -149,38 +149,132 @@ const UniswapV3Pool = (humanizerInfo) => {
         shouldUnwrapNativeToken,
         referralCode
       ] = params
-      if (orderType === 4) {
-        return !opts.extended
-          ? [
-              `Close ${isLong ? 'long' : 'short'} position with ${token(
-                humanizerInfo,
-                addresses[4],
-                -1
-              )} in ${getName(txn.to)}`
-            ]
-          : [
-              [
-                `Close ${isLong ? 'long' : 'short'} position`,
-                'with',
-                { type: 'token', ...token(humanizerInfo, addresses[4], 0, true) },
-                'in',
-                { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+
+      switch (orderType) {
+        case 4:
+          return !opts.extended
+            ? [
+                `Close ${isLong ? 'long' : 'short'} position with ${token(
+                  humanizerInfo,
+                  addresses[4],
+                  -1
+                )} in ${getName(txn.to)}`
               ]
-            ]
+            : [
+                [
+                  `Close ${isLong ? 'long' : 'short'} position`,
+                  'with',
+                  { type: 'token', ...token(humanizerInfo, addresses[4], 0, true) },
+                  'in',
+                  { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+                ]
+              ]
+        case 2:
+          return !opts.extended
+            ? [
+                `Open ${isLong ? 'long' : 'short'} position with collateral ${token(
+                  humanizerInfo,
+                  addresses[4],
+                  -1
+                )} in ${getName(txn.to)}`
+              ]
+            : [
+                [
+                  `Open with ${isLong ? 'long' : 'short'} position`,
+                  'with collateral',
+                  { type: 'token', ...token(humanizerInfo, addresses[4], 0, true) },
+                  'in',
+                  { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+                ]
+              ]
+        case 5:
+          return !opts.extended
+            ? [
+                `Take profit ${isLong ? 'long' : 'short'} ${token(
+                  humanizerInfo,
+                  addresses[4],
+                  -1
+                  // we receive the value with extra zeros
+                )} at price $${numbers[2] / 1000000000000} in ${getName(txn.to)}`
+              ]
+            : [
+                [
+                  `Take profit ${isLong ? 'long' : 'short'} position`,
+                  {
+                    type: 'token',
+                    ...token(
+                      humanizerInfo,
+                      addresses[4],
+                      // we receive the value with extra zeros
+                      numbers[0] / 1000000000000000000000000,
+                      true
+                    )
+                  },
+                  // we receive the value with extra zeros
+                  `at price $${numbers[2] / 1000000000000}`,
+                  'in',
+                  { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+                ]
+              ]
+        case 6:
+          return !opts.extended
+            ? [
+                `Stop loss ${isLong ? 'long' : 'short'} position ${token(
+                  humanizerInfo,
+                  addresses[4],
+                  -1
+                  // we receive the value with extra zeros
+                )} at price $${numbers[2] / 1000000000000} in ${getName(txn.to)}`
+              ]
+            : [
+                [
+                  `Stop loss ${isLong ? 'long' : 'short'} position`,
+                  {
+                    type: 'token',
+                    ...token(
+                      humanizerInfo,
+                      addresses[4],
+                      // we receive the value with extra zeros
+                      numbers[0] / 1000000000000000000000000,
+                      true
+                    )
+                  },
+                  // we receive the value with extra zeros
+                  `at price $${numbers[2] / 1000000000000}`,
+                  'in',
+                  { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+                ]
+              ]
+
+        default:
+          return !opts.extended
+            ? [
+                `Unknown interaction ${isLong ? 'long' : 'short'} position with token ${token(
+                  humanizerInfo,
+                  addresses[4],
+                  -1
+                )} in ${getName(txn.to)}`
+              ]
+            : [
+                [
+                  `Unknown interaction ${isLong ? 'long' : 'short'} position`,
+                  'with token',
+                  { type: 'token', ...token(humanizerInfo, addresses[4], 0, true) },
+                  'in',
+                  { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) },
+                  { type: 'token', ...token(humanizerInfo, addresses[4], numbers[0], true) }
+                ]
+              ]
       }
+    },
+    [exchangeRouter.getSighash('cancelOrder')]: (txn, network, opts = { extended: true }) => {
+      const { key } = exchangeRouter.parseTransaction(txn).args
       return !opts.extended
-        ? [
-            `Open ${isLong ? 'long' : 'short'} position with collateral ${token(
-              humanizerInfo,
-              addresses[4],
-              -1
-            )} in ${getName(txn.to)}`
-          ]
+        ? [`Cancel order ${key} in ${getName(txn.to)}`]
         : [
             [
-              `Open ${isLong ? 'long' : 'short'} position`,
-              'with collateral',
-              { type: 'token', ...token(humanizerInfo, addresses[4], 0, true) },
+              'Cancel order',
+              `${key}`,
               'in',
               { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
             ]
