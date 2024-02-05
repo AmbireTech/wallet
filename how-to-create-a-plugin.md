@@ -98,7 +98,7 @@ const  res = await Promise.all(actions)
 
 ```
 
-#### Batching transactions is sequence MATTERS (will work with gnosis and Wallet Connect)
+##### Batching transactions is sequence MATTERS (will work with gnosis and Wallet Connect)
 
 ```
 ...
