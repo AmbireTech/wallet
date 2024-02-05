@@ -85,6 +85,49 @@ const safeTxHash1: string = sdk.txs.send({ txs: tnx1 });
 const safeTxHash2: string = await sdk.txs.send({ txs: tnx2 });
 ```
 
+##### Batching transactions if sequence does NOT matter (will work with Wallet Connect as well)
+
+```
+...
+
+// NOTE: for wallet connect use the way actions are called
+// e.g. const txs1 = async () => contract.approve(address, amount)
+
+const actions = [txs1, txs2]
+const  res = await Promise.all(actions)
+
+```
+
+#### Batching transactions is sequence MATTERS (will work with gnosis and Wallet Connect)
+
+```
+...
+
+async function timeout(ms = 420) {
+	return new Promise(resolve => setTimeout(resolve, ms))
+}
+
+// NOTE: for wallet connect use the way actions are called
+// e.g. const txs1 = async () => contract.approve(address, amount)
+
+const actions = []
+
+actions.push(txs1)
+
+// NOTE: timeout in the range 420-690 should work
+// This is required due to network latency (WC case especially) and the way Ambire Wallet handle the transaction
+// They are executed in the sequence they are received
+
+await timeout(690)
+
+actions.push(txs2)
+
+// and so on if there ar more txns
+
+const  res = await Promise.all(actions)
+
+```
+
 #### Example of gas estimation
 ```
 import { useSafeAppsSDK, BaseTransaction } from '@gnosis.pm/safe-apps-react-sdk'
