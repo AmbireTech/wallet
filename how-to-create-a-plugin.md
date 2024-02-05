@@ -90,8 +90,8 @@ const safeTxHash2: string = await sdk.txs.send({ txs: tnx2 });
 ```
 ...
 
-// NOTE: for wallet connect use the way actions are called
-// e.g. const txs1 = async () => contract.approve(address, amount)
+// NOTE: for wallet connect or the connector used:
+// e.g. const txs1 = contract.approve(address, amount)
 
 const actions = [txs1, txs2]
 const  res = await Promise.all(actions)
@@ -107,22 +107,25 @@ async function timeout(ms = 420) {
 	return new Promise(resolve => setTimeout(resolve, ms))
 }
 
-// NOTE: for wallet connect use the way actions are called
+// NOTE: for wallet connect or the connector used:
+// This way the action is not initiated immediately
+// e.g. const txs1 = async () => sdk.txs.send({ txs: tnx1 })
 // e.g. const txs1 = async () => contract.approve(address, amount)
 
 const actions = []
 
-actions.push(txs1)
+// NOTE the `txs1()` here
+actions.push(txs1())
 
 // NOTE: timeout in the range 420-690 should work
-// This is required due to network latency (WC case especially) and the way Ambire Wallet handle the transaction
-// They are executed in the sequence they are received
+// This is required due to network latency (WC case especially) and the way Ambire Wallet
+// handle the transaction - executed in the sequence they are received
 
 await timeout(690)
 
-actions.push(txs2)
+actions.push(txs2())
 
-// and so on if there ar more txns
+// and so on if there are more actions
 
 const  res = await Promise.all(actions)
 
