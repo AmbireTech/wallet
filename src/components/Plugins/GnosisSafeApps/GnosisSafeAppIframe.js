@@ -13,7 +13,10 @@ export default function GnosisSafeAppIframe({
   className
 }) {
   const { chainId } = network || {}
-  const { url } = selectedApp || {}
+  let { url } = selectedApp || {}
+  if(url === 'https://revoke.cash/'){
+    url+=`address/${selectedAcc}?chainId=${network.chainId}`
+  }
   const [loading, setLoading] = useState(true)
   const [hash, setHash] = useState('')
   const [overlayVisible, setOverlayVisible] = useState(false)
