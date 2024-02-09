@@ -267,6 +267,19 @@ const UniswapV3Pool = (humanizerInfo) => {
               ]
       }
     },
+    [exchangeRouter.getSighash('cancelOrder')]: (txn, network, opts = { extended: true }) => {
+      const { key } = exchangeRouter.parseTransaction(txn).args
+      return !opts.extended
+        ? [`Cancel order ${key} in ${getName(txn.to)}`]
+        : [
+            [
+              'Cancel order',
+              `${key}`,
+              'in',
+              { type: 'address', address: txn.to, name: getName(humanizerInfo, txn.to) }
+            ]
+          ]
+    },
     // DCAHub companion can be moved to mean finance and exported to be applied also here
     [DCAHubCompanion.getSighash('terminate')]: (txn, network, opts = { extended: true }) => {
       const { _hub, _positionId, _recipientUnswapped, _recipientSwapped } =
