@@ -13,7 +13,8 @@ export default function GnosisSafeAppIframe({
   className
 }) {
   const { chainId } = network || {}
-  const { url } = selectedApp || {}
+  let { url } = selectedApp || {}
+  url = url.replace('${accountAddress}',selectedAcc).replace('${chainId}', network.chainId)
   const [loading, setLoading] = useState(true)
   const [hash, setHash] = useState('')
   const [overlayVisible, setOverlayVisible] = useState(false)
