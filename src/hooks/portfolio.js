@@ -2,7 +2,7 @@ import { usePageVisibility } from 'react-page-visibility'
 import usePortfolioCommon from 'ambire-common/src/hooks/usePortfolio'
 
 import { fetchGet } from 'lib/fetch'
-import { ZAPPER_API_ENDPOINT, VELCRO_API_ENDPOINT, COINGECKO_API_URL, COINGECKO_API_DEMO_KEY } from 'config'
+import { ZAPPER_API_ENDPOINT, VELCRO_API_ENDPOINT, COINGECKO_API_URL } from 'config'
 import { useToasts } from 'hooks/toasts'
 import useConstants from './useConstants'
 import useDbCacheStorage from './useCacheStorage'
@@ -27,12 +27,12 @@ const getBalances = (network, address, provider, quickResponse) => {
 }
 
 const getCoingeckoPrices = (addresses) =>
-  fetchGet(`${COINGECKO_API_URL}/simple/price?ids=${addresses}&vs_currencies=usd&x_cg_demo_api_key=${COINGECKO_API_DEMO_KEY}`)
+  fetchGet(`${COINGECKO_API_URL}/simple/price?ids=${addresses}&vs_currencies=usd`)
 
 const getCoingeckoPriceByContract = (id, addresses) =>
-  fetchGet(`${COINGECKO_API_URL}/coins/${id}/contract/${addresses}?x_cg_demo_api_key=${COINGECKO_API_DEMO_KEY}`)
+  fetchGet(`${COINGECKO_API_URL}/coins/${id}/contract/${addresses}`)
 
-const getCoingeckoCoin = (id) => fetchGet(`${COINGECKO_API_URL}/coins/${id}?x_cg_demo_api_key=${COINGECKO_API_DEMO_KEY}`)
+const getCoingeckoCoin = (id) => fetchGet(`${COINGECKO_API_URL}/coins/${id}`)
 
 export default function usePortfolio({
   currentNetwork,
