@@ -2,51 +2,57 @@ describe('dApps', () => {
   before(() => {
     cy.login();
     cy.saveLocalStorage();
-  })
+  });
 
   beforeEach(() => {
     cy.restoreLocalStorage();
 
     // First we get WalletConnect URI and store it at `wcUrl` variable
-    cy.origin('https://example.walletconnect.org/', () => {
+    cy.origin('https://se-sdk-dapp.vercel.app/', () => {
       cy.visit('/', {
         onBeforeLoad(win) {
-          cy.stub(win.console, 'log').as('consoleLog')
-          cy.stub(win, 'prompt').returns(null)
+          cy.stub(win.console, 'log').as('consoleLog');
         }
-      })
+      });
 
-      cy.contains('Connect to WalletConnect').click()
-      cy.contains('Copy to clipboard').click()
-
+      cy.contains('eip155:80001').click();
       // Before adding the wait time here, the WalletConnect uri was expiring in 3/10 cases,
       // and we couldn't establish a connection between the dApp and Wallet.
       // The assumption is that WalletConnect QR modal kills the uri in the case we close the dApp page very quickly.
       cy.wait(1000)
 
+      cy.get('wcm-modal-header')
+        .shadow()
+        .find('[class="wcm-action-btn"]')
+        .click();
+
+      cy.wait(1000);
+
       cy.get('@consoleLog')
-          .invoke('getCalls')
-          .then((calls) => {
-            cy.task('setWcUrl', calls[0].lastArg)
-          })
-    })
-  })
+        .invoke('getCalls')
+        .then((calls) => {
+          cy.task('setWcUrl', calls[1].lastArg);
+        });
+    });
+  });
 
-  it('Connects to a dApp', async() => {
-    const wcUrl = await cy.task('getWcUrl')
+  it('Connects to a dApp', () => {
+    cy.task('getWcUrl').then((wcUrl) => {
+      cy.visit('/wallet/dashboard');
 
-    cy.visit('/wallet/dashboard')
+      cy.url().should('include', '/wallet/dashboard'); // Wait for URL to include '/wallet/dashboard'
 
-    // Wait for the initial wallet load
-    cy.wait(1000)
+      cy.window().then(win => {
+        cy.stub(win, 'prompt').returns(wcUrl);
+      });
 
-    cy.window().then(win => {
-      cy.stub(win, 'prompt').returns(wcUrl)
-    })
+      cy.get('[data-testid="dapp-dropdown"]').click();
+      cy.wait(1000);
 
-    cy.get('[data-testid="dapp-dropdown"]').click()
-    cy.get('[data-testid="connect-btn"]').click()
+      cy.get('[data-testid="connect-btn"]').click();
+      cy.wait(1000);
 
-    cy.contains('Successfully connected to WalletConnect Example').should('be.visible')
-  })
-})
+      cy.contains('React App with ethers').should('be.visible');
+    });
+  });
+});
