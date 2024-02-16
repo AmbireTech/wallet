@@ -76,7 +76,7 @@ export function getTransactionSummary(
       .filter((sig) => sig.length > 10)
       .find((item) => item === `${sigHash}:${to}`)
 
-    const humanizer = sigHashWithAddress
+    const humanizer = !!sigHashWithAddress
       ? humanizers({ humanizerInfo, tokenList })[sigHashWithAddress]
       : humanizers({ humanizerInfo, tokenList })[sigHash]
 
@@ -193,10 +193,10 @@ export function setKnownTokens(tokens) {
   )
 }
 
-export function isKnown(humanizerInfo, address, from) {
-  address = address.toLowerCase()
+export function isKnown(humanizerInfo, txn, from) {
   const { tokens, names } = humanizerInfo
-  if (address === from.toLowerCase()) return true
+  if (txn[0] === from) return true
+  const address = txn[0].toLowerCase()
   return !!(knownAliases[address] || names[address] || tokens[address] || knownTokens[address])
 }
 
