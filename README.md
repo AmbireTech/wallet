@@ -158,7 +158,10 @@ This is used by the WalletConnect and Gnosis Safe Apps hooks for the queue of si
 
 ## Deployment
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+To deploy Ambire Wallet, run the following procedure:
+1. Push/merge the changes in `main` on the private repo
+2. Once it's built, verify on `wallet2.ambire.com`
+3. Afterwards, manually change the CNAME on the private repo `gh-pages` branch to `wallet.ambire.com` and force push to the public repo's `gh-pages` branch
 
 ### `npm run build` fails to minify
 
