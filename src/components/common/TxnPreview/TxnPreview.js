@@ -58,14 +58,16 @@ export default function TxnPreview({
 
   const hasUnknownAddress = extendedSummary
     .map((summary) => {
-      return summary
-        .map((item) => {
-          if (['address', 'token'].includes(item.type) && item.address) {
-            return !isKnown(humanizerInfo, item.address, account)
-          }
-          return false
-        })
-        .includes(true)
+      return !Array.isArray(summary)
+        ? []
+        : summary
+            .map((item) => {
+              if (['address', 'token'].includes(item.type) && item.address) {
+                return !isKnown(humanizerInfo, item.address, account)
+              }
+              return false
+            })
+            .includes(true)
     })
     .includes(true)
 
