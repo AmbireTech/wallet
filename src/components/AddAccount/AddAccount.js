@@ -304,7 +304,13 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     [relayerURL, utmTracking]
   )
 
-  const createFromJSON = async ({ salt, baseIdentityAddr, identityFactoryAddr, signer }) => {
+  const createFromJSON = async ({
+    salt,
+    baseIdentityAddr,
+    identityFactoryAddr,
+    signer,
+    identityAddr: passedIdentityAddr
+  }) => {
     if (!signer.address) throw Error('Importing account with no sugner.address')
 
     const privileges = [
@@ -324,51 +330,44 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       ).toString('hex')}`
     )
 
-    const identityAddr2 = getAddress(
-      `0x${generateAddress2(
-        // Converting to buffer is required in ethereumjs-util version: 7.1.3
-        Buffer.from(identityFactoryAddr.slice(2), 'hex'),
-        Buffer.from(
-          '0x0000000000000000000000000000000000000000000000000000000000000006'.slice(2),
-          'hex'
-        ),
-        Buffer.from(bytecode.slice(2), 'hex')
-      ).toString('hex')}`
-    )
-    console.log({ identityAddr2 })
-    const utm = utmTracking.getLatestUtmData()
-
     if (relayerURL) {
-      const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
-        salt,
-        identityFactoryAddr,
-        baseIdentityAddr,
-        privileges,
-        signer,
-        ...(utm.length && { utm })
-      })
-      if (createResp.success) {
-        utmTracking.resetUtm()
-      }
-      if (createResp.success)
-        addToast(`Created accountt ${identityAddr}`, {
-          error: false
+      if (identityAddr.toLowerCase() === passedIdentityAddr.toLowerCase()) {
+        let createResp = await fetch(`${relayerURL}/identity/${identityAddr}`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            salt,
+            identityFactoryAddr,
+            baseIdentityAddr,
+            privileges,
+            signer
+          })
         })
 
-      if (
-        !createResp.success &&
-        !(createResp.message && createResp.message.includes('already exists'))
-      )
-        throw createResp
-    }
+        if (createResp.status !== 409) {
+          createResp = await createResp.json()
+          if (createResp.success) {
+            utmTracking.resetUtm()
+            addToast(`Created accountt ${identityAddr}`, {
+              error: false
+            })
+          }
+        }
 
-    return {
-      id: identityAddr,
-      salt,
-      identityFactoryAddr,
-      baseIdentityAddr,
-      bytecode,
-      signer
+        return {
+          id: identityAddr,
+          salt,
+          identityFactoryAddr,
+          baseIdentityAddr,
+          bytecode,
+          signer
+        }
+      }
+      addToast(`Calculated address did not match, not creating ${passedIdentityAddr}`, {
+        error: true
+      })
     }
   }
 
@@ -630,17 +629,16 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
               salt: fileContent.salt,
               baseIdentityAddr: fileContent.baseIdentityAddr,
               signer: fileContent.signer,
-              identityFactoryAddr: fileContent.identityFactoryAddr
+              identityFactoryAddr: fileContent.identityFactoryAddr,
+              identityAddr: fileContent.id
             }
 
             try {
               const createdFromJSON = await createFromJSON(identityCreation)
+              if (!createdFromJSON) throw Error('Failed to create from json!')
               onAddAccount(createdFromJSON, { select: true })
-              addToast(`Created account ${createdFromJSON.id}`, {
-                error: false
-              })
             } catch (e) {
-              addToast('Account imported as view only', {
+              addToast(`Account imported as view only ${e.message}`, {
                 error: true
               })
               onAddAccount(fileContent, { select: true })
