@@ -11,7 +11,8 @@ describe('Transfering funds', () => {
   })
 
   it('Sends funds via Quick account', () => {
-    cy.visit('/wallet/transfer')
+    cy.visit('/wallet/dashboards')
+    cy.contains('Transfer').click();
 
     // Wait for the initial wallet load.
     // There are a lot of fetch requests under the hood.
