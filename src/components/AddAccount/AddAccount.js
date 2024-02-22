@@ -311,7 +311,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     signer,
     identityAddr: passedIdentityAddr
   }) => {
-    if (!signer.address) throw Error('Importing account with no sugner.address')
+    if (!signer.address) throw Error('Importing account with no signer.address')
 
     const privileges = [
       [
@@ -332,7 +332,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
 
     if (relayerURL) {
       if (identityAddr.toLowerCase() === passedIdentityAddr.toLowerCase()) {
-        let createResp = await fetch(`${relayerURL}/identity/${identityAddr}`, {
+        const createResp = await fetch(`${relayerURL}/identity/${identityAddr}`, {
           method: 'POST',
           headers: {
             'content-type': 'application/json'
@@ -345,15 +345,12 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             signer
           })
         })
-
-        if (createResp.status !== 409) {
-          createResp = await createResp.json()
-          if (createResp.success) {
-            utmTracking.resetUtm()
-            addToast(`Created accountt ${identityAddr}`, {
-              error: false
-            })
-          }
+        const [status, body] = [createResp.status, await createResp.json()]
+        if (status !== 409 && body.success) {
+          utmTracking.resetUtm()
+          addToast(`Created account ${identityAddr}`, {
+            error: false
+          })
         }
 
         return {
@@ -365,7 +362,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           signer
         }
       }
-      addToast(`Calculated address did not match, not creating ${passedIdentityAddr}`, {
+      addToast('Unable to add this account to the relayer due to having unknown signer keys', {
         error: true
       })
     }
@@ -643,9 +640,9 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
               })
               onAddAccount(fileContent, { select: true })
             }
-          } else {
-            addToast(validatedFile.message, { error: true })
+            return
           }
+          addToast(validatedFile.message, { error: true })
         }
       }
     },
