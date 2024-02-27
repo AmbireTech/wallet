@@ -38,7 +38,7 @@ const Links = () => {
         </a>
       </DropDownItem>
       <DropDownItem className={styles.item}>
-        <a href="https://discord.gg/QQb4xc4ksJ" target="_blank" rel="noreferrer">
+        <a href="https://www.ambire.com/discord" target="_blank" rel="noreferrer">
           <Discord className={styles.itemIcon} /> Discord
         </a>
       </DropDownItem>
