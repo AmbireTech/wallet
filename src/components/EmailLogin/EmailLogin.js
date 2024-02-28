@@ -2,29 +2,155 @@ import { useState, useEffect } from 'react'
 import Lottie from 'lottie-react'
 import cn from 'classnames'
 
-import { fetch, fetchCaught } from 'lib/fetch'
-
+import { fetch, fetchCaught, fetchPost } from 'lib/fetch'
+import { AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
+import accountPresets from 'ambire-common/src/constants/accountPresets'
+import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
+import { generateAddress2 } from 'ethereumjs-util'
 import { useLocalStorage } from 'hooks'
 import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
+import { Button } from 'components/common'
+
+import { Wallet } from 'ethers'
 
 import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
 import { ReactComponent as AmbireLogo } from 'resources/logo.svg'
 import styles from './EmailLogin.module.scss'
 import AnimationData from './assets/confirm-email.json'
 
+const RESEND_EMAIL_TIMER_INITIAL = 60000
+
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
-export default function EmailLogin({ relayerURL, onAddAccount, isRegister }) {
+export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRegister }) {
   const { theme } = useThemeContext()
   const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
   const [err, setErr] = useState('')
   const [inProgress, setInProgress] = useState(false)
+  const [isCreateRespCompleted, setIsCreateRespCompleted] = useState(null)
+  const [resendTimeLeft, setResendTimeLeft] = useState(null)
+  const [addAccErr, setAddAccErr] = useState('')
+
   const [loginSessionKey, setLoginSessionKey, removeLoginSessionKey] = useLocalStorage({
     key: 'loginSessionKey',
     isStringStorage: true
   })
 
+  const wrapProgress = async (fn, type = true) => {
+    setInProgress(type)
+    try {
+      await fn()
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e)
+      setAddAccErr(`Unexpected error: ${e.message || e}`)
+    }
+    setInProgress(false)
+  }
+
+  const createQuickAcc = async (req) => {
+    setErr('')
+
+    // async hack to let React run a tick so it can re-render before the blocking Wallet.createRandom()
+    // eslint-disable-next-line no-promise-executor-return
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    const extraEntropy = id(
+      `${req.email}:${Date.now()}:${Math.random()}:${
+        typeof performance === 'object' && performance.now()
+      }`
+    )
+    const firstKeyWallet = Wallet.createRandom({ extraEntropy })
+    // 6 words is 2048**6
+    const secondKeySecret = `${Wallet.createRandom({ extraEntropy })
+      .mnemonic.phrase.split(' ')
+      .slice(0, 6)
+      .join(' ')} ${req.email}`
+
+    const secondKeyResp = await fetchPost(`${relayerURL}/second-key`, { secondKeySecret })
+    if (!secondKeyResp.address)
+      throw new Error(
+        `second-key returned no address, error: ${secondKeyResp.message || secondKeyResp}`
+      )
+
+    const { salt, baseIdentityAddr, identityFactoryAddr, quickAccManager, quickAccTimelock } =
+      accountPresets
+    const quickAccountTuple = [quickAccTimelock, firstKeyWallet.address, secondKeyResp.address]
+    const signer = {
+      quickAccManager,
+      timelock: quickAccountTuple[0],
+      one: quickAccountTuple[1],
+      two: quickAccountTuple[2]
+    }
+    const abiCoder = new AbiCoder()
+    const accHash = keccak256(
+      abiCoder.encode(['tuple(uint, address, address)'], [quickAccountTuple])
+    )
+    const privileges = [[quickAccManager, accHash]]
+    const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
+    const identityAddr = getAddress(
+      `0x${generateAddress2(
+        // Converting to buffer is required in ethereumjs-util version: 7.1.3
+        Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+        Buffer.from(salt.slice(2), 'hex'),
+        Buffer.from(bytecode.slice(2), 'hex')
+      ).toString('hex')}`
+    )
+    const primaryKeyBackup = JSON.stringify(
+      await firstKeyWallet.encrypt(req.passphrase, accountPresets.encryptionOpts)
+    )
+
+    const utm = utmTracking.getLatestUtmData()
+
+    const createResp = await fetchPost(`${relayerURL}/identity/${identityAddr}`, {
+      email: req.email,
+      primaryKeyBackup: req.backupOptout ? undefined : primaryKeyBackup,
+      secondKeySecret,
+      salt,
+      identityFactoryAddr,
+      baseIdentityAddr,
+      privileges,
+      quickAccSigner: signer,
+      ...(utm.length && { utm })
+    })
+
+    if (createResp.success) {
+      utmTracking.resetUtm()
+    }
+    if (createResp.message === 'EMAIL_ALREADY_USED') {
+      setErr('An account with this email already exists')
+      return
+    }
+    if (!createResp.success) {
+      // eslint-disable-next-line no-console
+      console.log(createResp)
+      setErr(`Unexpected sign up error: ${createResp.message || 'unknown'}`)
+      return
+    }
+
+    setIsCreateRespCompleted([
+      {
+        id: identityAddr,
+        email: req.email,
+        primaryKeyBackup,
+        salt,
+        identityFactoryAddr,
+        baseIdentityAddr,
+        bytecode,
+        signer,
+        cloudBackupOptout: !!req.backupOptout,
+        // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+        backupOptout: !!req.backupOptout,
+        // This makes the modal appear, and will be removed by the modal which will call onAddAccount to update it
+        emailConfRequired: true
+      },
+      { select: true, isNew: true }
+    ])
+
+    setRequiresConfFor(true)
+    setResendTimeLeft(RESEND_EMAIL_TIMER_INITIAL)
+  }
   const EMAIL_VERIFICATION_RECHECK = 6000
 
   const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
