@@ -613,36 +613,35 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         )
       }
 
-      if (acceptedFiles.length) {
-        const file = acceptedFiles[0]
+      if (!acceptedFiles.length) return
+      const file = acceptedFiles[0]
 
-        reader.readAsText(file, 'UTF-8')
-        reader.onload = async (readerEvent) => {
-          const content = readerEvent.target.result
-          const fileContent = JSON.parse(content)
-          const validatedFile = validateImportedAccountProps(fileContent)
-          if (validatedFile.success) {
-            const identityCreation = {
-              salt: fileContent.salt,
-              baseIdentityAddr: fileContent.baseIdentityAddr,
-              signer: fileContent.signer,
-              identityFactoryAddr: fileContent.identityFactoryAddr,
-              identityAddr: fileContent.id
-            }
-
-            try {
-              const createdFromJSON = await createFromJSON(identityCreation)
-              if (!createdFromJSON) throw Error('Failed to create from json!')
-              onAddAccount(createdFromJSON, { select: true })
-            } catch (e) {
-              addToast(`Account imported as view only ${e.message}`, {
-                error: true
-              })
-              onAddAccount(fileContent, { select: true })
-            }
-            return
-          }
+      reader.readAsText(file, 'UTF-8')
+      reader.onload = async (readerEvent) => {
+        const content = readerEvent.target.result
+        const fileContent = JSON.parse(content)
+        const validatedFile = validateImportedAccountProps(fileContent)
+        if (!validatedFile.success) {
           addToast(validatedFile.message, { error: true })
+          return
+        }
+        const identityCreation = {
+          salt: fileContent.salt,
+          baseIdentityAddr: fileContent.baseIdentityAddr,
+          signer: fileContent.signer,
+          identityFactoryAddr: fileContent.identityFactoryAddr,
+          identityAddr: fileContent.id
+        }
+
+        try {
+          const createdFromJSON = await createFromJSON(identityCreation)
+          if (!createdFromJSON) throw Error('Failed to create from json!')
+          onAddAccount(createdFromJSON, { select: true })
+        } catch (e) {
+          addToast(`Account imported as view only ${e.message}`, {
+            error: true
+          })
+          onAddAccount(fileContent, { select: true })
         }
       }
     },
