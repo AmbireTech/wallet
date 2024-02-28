@@ -158,6 +158,23 @@ const Actions = ({
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
 
+    // if user has MM locked and does not unlock it in TIME_TO_UNLOCK ms dont request signature
+    const TIME_TO_UNLOCK = 30 * 1000
+    const isWalletUnlocked = await window.ethereum._metamask.isUnlocked()
+    let tooLateToUnlock = false
+    if (!isWalletUnlocked) {
+      const timeout = setTimeout(() => {
+        tooLateToUnlock = true
+      }, TIME_TO_UNLOCK)
+      // prompts the user to unlock extension
+      await window.ethereum.request({
+        method: 'eth_requestAccounts'
+      })
+
+      if (tooLateToUnlock) throw new Error('Too slow to unlock web3 wallet')
+      clearTimeout(timeout)
+    }
+
     const finalBundle = getFinalBundle()
     const provider = getProvider(network.id)
     const signer = finalBundle.signer
