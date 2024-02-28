@@ -15,7 +15,7 @@ import AnimationData from './assets/confirm-email.json'
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
-export default function EmailLogin({ relayerURL, onAddAccount }) {
+export default function EmailLogin({ relayerURL, onAddAccount, isRegister }) {
   const { theme } = useThemeContext()
   const [requiresEmailConfFor, setRequiresConfFor] = useState(null)
   const [err, setErr] = useState('')
@@ -161,12 +161,30 @@ export default function EmailLogin({ relayerURL, onAddAccount }) {
     </div>
   ) : (
     <div className={styles.loginEmail}>
-      <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress} />
-      <div className={styles.magicLink}>
-        A password will not be required, we will send a magic login link to your email.
-      </div>
+      {isRegister ? (
+        <>
+          <LoginOrSignup
+            inProgress={inProgress === 'email'}
+            onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
+            action="SIGNUP"
+          />
+          <div style={{ textAlign: 'center', fontSize: '1.5rem' }}>
+            Already have an account?{' '}
+            <a style={{ fontSize: '1.75rem' }} href="#/email-login">
+              Login
+            </a>
+          </div>
+        </>
+      ) : (
+        <>
+          <LoginOrSignup onAccRequest={onLoginUserAction} inProgress={inProgress} action="LOGIN" />
+          <div className={styles.magicLink}>
+            A password will not be required, we will send a magic login link to your email.
+          </div>
+        </>
+      )}
       <a className={styles.backButton} href="#/add-account">
-        <ChevronLeftIcon className={styles.backIcon} /> Back to Register
+        <ChevronLeftIcon className={styles.backIcon} /> Back to Add account
       </a>
       {err ? <p className={styles.error}>{err}</p> : null}
 

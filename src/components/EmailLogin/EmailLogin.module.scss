@@ -116,25 +116,16 @@
 }
 
 .emailLoginSection {
-  a {
-    display: block;
-    margin: 1.3125rem auto;
-    text-transform: uppercase;
-    font-weight: 600;
-    font-size: 1.25rem;
-    text-align: center;
-  }
-
   .backButton {
+    width: 100%;
     display: flex;
+    justify-content: center;
     align-items: center;
+    margin-top: 1rem;
+    text-transform: uppercase;
     gap: 0.625rem;
     font-size: 1rem;
     font-weight: 400;
-    position: absolute;
-    bottom: 1.25rem;
-    left: 50%;
-    transform: translateX(-50%);
     color: theme(text-primary);
     opacity: 0.8;
     transition: 0.3s ease-in-out;

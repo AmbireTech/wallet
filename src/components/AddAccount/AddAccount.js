@@ -690,25 +690,14 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
             </div>
           )}
           <section className={styles.addAccount}>
-            <div className={styles.loginEmail}>
-              <h3>Create a new account</h3>
-              <LoginOrSignup
-                inProgress={inProgress === 'email'}
-                onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
-                action="SIGNUP"
-              />
-              {err ? <p className={styles.error}>{err}</p> : null}
-            </div>
-
-            <div className={styles.loginSeparator} />
             <div className={styles.loginOthers}>
-              <h3>Add an account</h3>
+              <h3 style={{ textAlign: 'center' }}>Add an account</h3>
               {inProgress !== 'hwwallet' ? (
                 <>
-                  <Link to="/email-login">
+                  <Link to="/email-register">
                     <button type="button">
                       <EmailIcon className={styles.email} />
-                      Email login
+                      Email register
                     </button>
                   </Link>
                   {addFromSignerButtons}

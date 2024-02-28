@@ -388,6 +388,10 @@ function AppInner() {
             <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount} />
           </Route>
 
+          <Route path="/email-register">
+            <EmailLogin relayerURL={relayerURL} isRegister onAddAccount={onAddAccount} />
+          </Route>
+
           {selectedAcc ? (
             <Route path="/wallet">
               <Wallet

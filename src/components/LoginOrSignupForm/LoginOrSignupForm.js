@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 
 import { useModals } from 'hooks'
 import { WeakPasswordModal } from 'components/Modals'
@@ -7,7 +7,7 @@ import AddAccountForm from 'components/AddAccount/Form/Form'
 import { Button } from 'components/common'
 import useCheckPasswordStrength from 'hooks/useCheckPasswordStrength'
 
-export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inProgress }) {
+export default function LoginOrSignupForm({ action, onAccRequest, inProgress }) {
   const { showModal } = useModals()
 
   const passConfirmInput = useRef(null)
@@ -18,6 +18,15 @@ export default function LoginOrSignupForm({ action = 'LOGIN', onAccRequest, inPr
     passphraseConfirm: '',
     action
   })
+
+  useEffect(() => {
+    setState({
+      email: '',
+      passphrase: '',
+      passphraseConfirm: '',
+      action
+    })
+  }, [action])
   const { passwordStrength, arePasswordsMatching } = useCheckPasswordStrength(state)
 
   const isSignup = state.action === 'SIGNUP'
