@@ -289,17 +289,19 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
     <div className={styles.loginEmail}>
       {isRegister ? (
         <>
+          <div style={{ textAlign: 'center', fontSize: '1.5rem' }}>
+            Already have an account?
+            <a href="#/email-login">
+              <Button href="#/email-login" type="submit" variant="terniaryGradient">
+                Login
+              </Button>
+            </a>
+          </div>
           <LoginOrSignup
             inProgress={inProgress === 'email'}
             onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
             action="SIGNUP"
           />
-          <div style={{ textAlign: 'center', fontSize: '1.5rem' }}>
-            Already have an account?{' '}
-            <a style={{ fontSize: '1.75rem' }} href="#/email-login">
-              Login
-            </a>
-          </div>
         </>
       ) : (
         <>
