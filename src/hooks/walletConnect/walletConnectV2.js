@@ -399,6 +399,16 @@ export default function useWalletConnectV2({
                   error: true
                 }
               )
+              // return err to the dapp so it doesnt infinitely load
+              web3wallet.respondSessionRequest({
+                topic,
+                response: formatJsonRpcError(id, {
+                  message:
+                    'Please, change the approval type to "Transaction" from the dApp, as the currently selected method doesn\'t support Smart Wallets.',
+                  // Internal JSON-RPC error
+                  code: -32603
+                })
+              })
               return
             }
           } else if (
