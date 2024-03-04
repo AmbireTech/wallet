@@ -311,7 +311,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     signer,
     identityAddr: passedIdentityAddr
   }) => {
-    if (!signer.address) throw Error('Importing account with no signer.address')
+    if (!signer.address) throw Error('Importing account with no specified signer in the json')
 
     const privileges = [
       [
@@ -638,7 +638,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           if (!createdFromJSON) throw Error('Failed to create from json!')
           onAddAccount(createdFromJSON, { select: true })
         } catch (e) {
-          addToast(`Account imported as view only ${e.message}`, {
+          addToast(`Account imported as view only Error: ${e.message}`, {
             error: true
           })
           onAddAccount(fileContent, { select: true })
