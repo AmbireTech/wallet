@@ -290,12 +290,12 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
       {isRegister ? (
         <>
           <div style={{ textAlign: 'center', fontSize: '1.5rem' }}>
-            Already have an account?
-            <a href="#/email-login">
-              <Button href="#/email-login" type="submit" variant="terniaryGradient">
-                Login
-              </Button>
-            </a>
+            <div style={{ margin: '0 -50%', whiteSpace: 'nowrap' }}>
+              Already have an account?{' '}
+              <a style={{ textDecoration: 'underline', color: '#27e8a7' }} href="#/email-login">
+                Login with Email
+              </a>
+            </div>
           </div>
           <LoginOrSignup
             inProgress={inProgress === 'email'}
