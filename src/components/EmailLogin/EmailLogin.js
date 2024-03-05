@@ -23,7 +23,7 @@ import styles from './EmailLogin.module.scss'
 import AnimationData from './assets/confirm-email.json'
 
 const RESEND_EMAIL_TIMER_INITIAL = 60000
-const EMAIL_AND_TIMER_REFRESH_TIME = 5000
+const EMAIL_AND_TIMER_REFRESH_TIME = 1000
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
@@ -33,7 +33,7 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
   const [err, setErr] = useState('')
   const [inProgress, setInProgress] = useState(false)
   const [isCreateRespCompleted, setIsCreateRespCompleted] = useState(null)
-  const [resendTimeLeft, setResendTimeLeft] = useState(null)
+  const [resendTimeLeft, setResendTimeLeft] = useState(RESEND_EMAIL_TIMER_INITIAL)
   const [addAccErr, setAddAccErr] = useState('')
   const { addToast } = useToasts()
   const [isEmailConfirmed, setEmailConfirmed] = useState(false)
@@ -218,7 +218,7 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
       { select: true, isNew: true }
     ])
 
-    setRequiresConfFor(true)
+    setRequiresConfFor(req)
     setResendTimeLeft(RESEND_EMAIL_TIMER_INITIAL)
   }
   const EMAIL_VERIFICATION_RECHECK = 6000
@@ -355,7 +355,7 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
       </p>
       {err ? <p className={styles.error}>{err}</p> : null}
       <div className={styles.btnWrapper}>
-        {!isEmailConfirmed && !isEmailResent && (
+        {!isEmailConfirmed && !isEmailResent && isRegister && (
           <div
             style={{
               display: 'flex',
