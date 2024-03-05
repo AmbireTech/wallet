@@ -116,6 +116,38 @@
 }
 
 .emailLoginSection {
+  
+  .backButtonFixed {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+
+
+    display: flex;
+    align-items: center;
+    text-transform: uppercase;
+    gap: 0.625rem;
+    font-size: 1rem;
+    font-weight: 400;
+    color: theme(text-primary);
+    opacity: 0.8;
+    transition: 0.3s ease-in-out;
+
+    .backIcon {
+      width: 1.25rem;
+      height: 0.5rem;
+    }
+
+    img {
+      margin-right: 0.625rem;
+    }
+
+    &:hover {
+      opacity: 1;
+    }
+  }
+
   .backButton {
     width: 100%;
     display: flex;

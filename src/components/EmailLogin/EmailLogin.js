@@ -10,7 +10,6 @@ import { generateAddress2 } from 'ethereumjs-util'
 import { useLocalStorage } from 'hooks'
 import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
-import { Button } from 'components/common'
 
 import { Wallet } from 'ethers'
 
@@ -302,6 +301,9 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
             onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
             action="SIGNUP"
           />
+          <a className={styles.backButton} href="#/add-account">
+            <ChevronLeftIcon className={styles.backIcon} /> Back to Add Account
+          </a>
         </>
       ) : (
         <>
@@ -309,11 +311,12 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
           <div className={styles.magicLink}>
             A password will not be required, we will send a magic login link to your email.
           </div>
+          <a className={styles.backButtonFixed} href="#/email-register">
+            <ChevronLeftIcon className={styles.backIcon} /> Back to Email Register
+          </a>
         </>
       )}
-      <a className={styles.backButton} href="#/add-account">
-        <ChevronLeftIcon className={styles.backIcon} /> Back to Add account
-      </a>
+
       {err ? <p className={styles.error}>{err}</p> : null}
 
       {/* <a href={importJSONHref}>Import JSON</a> */}
