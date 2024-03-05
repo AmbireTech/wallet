@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+/* eslint-disable no-console */
+import { useState, useEffect, useCallback } from 'react'
 import Lottie from 'lottie-react'
 import cn from 'classnames'
 
-import { fetch, fetchCaught, fetchPost } from 'lib/fetch'
+import { fetch, fetchPost, fetchGet, fetchCaught } from 'lib/fetch'
 import { AbiCoder, keccak256, id, getAddress } from 'ethers/lib/utils'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import { getProxyDeployBytecode } from 'adex-protocol-eth/js/IdentityProxyDeploy'
@@ -10,6 +11,9 @@ import { generateAddress2 } from 'ethereumjs-util'
 import { useLocalStorage } from 'hooks'
 import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 import LoginOrSignup from 'components/LoginOrSignupForm/LoginOrSignupForm'
+import { useToasts } from 'hooks/toasts'
+import { AiOutlineReload } from 'react-icons/ai'
+import { Button, ToolTip } from 'components/common'
 
 import { Wallet } from 'ethers'
 
@@ -19,6 +23,7 @@ import styles from './EmailLogin.module.scss'
 import AnimationData from './assets/confirm-email.json'
 
 const RESEND_EMAIL_TIMER_INITIAL = 60000
+const EMAIL_AND_TIMER_REFRESH_TIME = 5000
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
@@ -30,6 +35,72 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
   const [isCreateRespCompleted, setIsCreateRespCompleted] = useState(null)
   const [resendTimeLeft, setResendTimeLeft] = useState(null)
   const [addAccErr, setAddAccErr] = useState('')
+  const { addToast } = useToasts()
+  const [isEmailConfirmed, setEmailConfirmed] = useState(false)
+  const [isEmailResent, setEmailResent] = useState(false)
+
+  useEffect(() => {
+    if (resendTimeLeft) {
+      const resendInterval = setInterval(
+        () => setResendTimeLeft((prev) => (prev > 0 ? prev - EMAIL_AND_TIMER_REFRESH_TIME : 0)),
+        EMAIL_AND_TIMER_REFRESH_TIME
+      )
+      return () => clearTimeout(resendInterval)
+    }
+  })
+
+  const sendConfirmationEmail = async () => {
+    try {
+      const response = await fetchGet(
+        `${relayerURL}/identity/${
+          isCreateRespCompleted.length > 0 && isCreateRespCompleted[0].id
+        }/resend-verification-email`
+      )
+      if (!response.success) throw new Error('Relayer did not return success.')
+
+      addToast('Verification email sent!')
+      setEmailResent(true)
+    } catch (e) {
+      console.error(e)
+      addToast(`Could not resend verification email.${e.message}` || e, { error: true })
+      setEmailResent(false)
+    }
+  }
+
+  const checkEmailConfirmation = useCallback(async () => {
+    if (!isCreateRespCompleted) return
+    const relayerIdentityURL = `${relayerURL}/identity/${isCreateRespCompleted[0].id}`
+    try {
+      const identity = await fetchGet(relayerIdentityURL)
+      if (identity) {
+        const { emailConfirmed } = identity.meta
+        const isConfirmed = !!emailConfirmed
+        setEmailConfirmed(isConfirmed)
+        if (isConfirmed) {
+          setRequiresConfFor(!isConfirmed)
+          onAddAccount(
+            {
+              ...isCreateRespCompleted[0],
+              emailConfRequired: false
+            },
+            isCreateRespCompleted[1]
+          )
+        }
+      }
+    } catch (e) {
+      console.error(e)
+      addToast('Could not check email confirmation.', { error: true })
+    }
+  }, [addToast, isCreateRespCompleted, onAddAccount, relayerURL])
+
+  useEffect(() => {
+    if (requiresEmailConfFor) {
+      const timer = setTimeout(async () => {
+        await checkEmailConfirmation()
+      }, EMAIL_AND_TIMER_REFRESH_TIME)
+      return () => clearTimeout(timer)
+    }
+  })
 
   const [loginSessionKey, setLoginSessionKey, removeLoginSessionKey] = useLocalStorage({
     key: 'loginSessionKey',
@@ -283,6 +354,24 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
         &quot;Authorize New Device&quot;.
       </p>
       {err ? <p className={styles.error}>{err}</p> : null}
+      <div className={styles.btnWrapper}>
+        {!isEmailConfirmed && !isEmailResent && (
+          <ToolTip
+            label={`Will be available in ${resendTimeLeft / 1000} seconds`}
+            disabled={resendTimeLeft === 0}
+          >
+            <Button
+              className={styles.resendBtn}
+              size="xsm"
+              startIcon={<AiOutlineReload />}
+              disabled={resendTimeLeft !== 0}
+              onClick={sendConfirmationEmail}
+            >
+              Resend
+            </Button>
+          </ToolTip>
+        )}
+      </div>
     </div>
   ) : (
     <div className={styles.loginEmail}>
@@ -301,6 +390,7 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
             onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
             action="SIGNUP"
           />
+          {addAccErr ? <p className={styles.error}>{addAccErr}</p> : null}
           <a className={styles.backButton} href="#/add-account">
             <ChevronLeftIcon className={styles.backIcon} /> Back to Add Account
           </a>

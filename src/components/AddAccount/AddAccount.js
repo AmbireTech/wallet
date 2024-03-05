@@ -32,7 +32,6 @@ import { useThemeContext } from 'context/ThemeProvider/ThemeProvider'
 
 // Icons
 import { ReactComponent as AmbireLogo } from 'resources/logo.svg'
-import { AiOutlineReload } from 'react-icons/ai'
 import { ReactComponent as ChevronLeftIcon } from 'resources/icons/chevron-left.svg'
 import { ReactComponent as TrezorIcon } from 'resources/providers/trezor.svg'
 import { ReactComponent as LedgerIcon } from 'resources/providers/ledger.svg'
@@ -47,8 +46,6 @@ TrezorConnect.manifest({
   appUrl: 'https://wallet.ambire.com'
 })
 
-const EMAIL_AND_TIMER_REFRESH_TIME = 5000
-
 export default function AddAccount({ relayerURL, onAddAccount, utmTracking, pluginData }) {
   const { theme } = useThemeContext()
   const [signersToChoose, setChooseSigners] = useState(null)
@@ -59,9 +56,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
   const { showModal } = useModals()
   const [isCreateRespCompleted, setIsCreateRespCompleted] = useState(null)
   const [requiresEmailConfFor, setRequiresConfFor] = useState(false)
-  const [resendTimeLeft, setResendTimeLeft] = useState(null)
-  const [isEmailResent, setEmailResent] = useState(false)
-  const [isEmailConfirmed, setEmailConfirmed] = useState(false)
 
   const wrapProgress = async (fn, type = true) => {
     setInProgress(type)
@@ -88,69 +82,6 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
       setAddAccErr(`Unexpected error: ${e.message || e}`)
     }
   }
-
-  const checkEmailConfirmation = useCallback(async () => {
-    if (!isCreateRespCompleted) return
-    const relayerIdentityURL = `${relayerURL}/identity/${isCreateRespCompleted[0].id}`
-    try {
-      const identity = await fetchGet(relayerIdentityURL)
-      if (identity) {
-        const { emailConfirmed } = identity.meta
-        const isConfirmed = !!emailConfirmed
-        setEmailConfirmed(isConfirmed)
-        if (isConfirmed) {
-          setRequiresConfFor(!isConfirmed)
-          onAddAccount(
-            {
-              ...isCreateRespCompleted[0],
-              emailConfRequired: false
-            },
-            isCreateRespCompleted[1]
-          )
-        }
-      }
-    } catch (e) {
-      console.error(e)
-      addToast('Could not check email confirmation.', { error: true })
-    }
-  }, [addToast, isCreateRespCompleted, onAddAccount, relayerURL])
-
-  useEffect(() => {
-    if (requiresEmailConfFor) {
-      const timer = setTimeout(async () => {
-        await checkEmailConfirmation()
-      }, EMAIL_AND_TIMER_REFRESH_TIME)
-      return () => clearTimeout(timer)
-    }
-  })
-
-  const sendConfirmationEmail = async () => {
-    try {
-      const response = await fetchGet(
-        `${relayerURL}/identity/${
-          isCreateRespCompleted.length > 0 && isCreateRespCompleted[0].id
-        }/resend-verification-email`
-      )
-      if (!response.success) throw new Error('Relayer did not return success.')
-
-      addToast('Verification email sent!')
-      setEmailResent(true)
-    } catch (e) {
-      console.error(e)
-      addToast(`Could not resend verification email.${e.message}` || e, { error: true })
-      setEmailResent(false)
-    }
-  }
-
-  useEffect(() => {
-    if (resendTimeLeft) {
-      const resendInterval = setInterval(
-        () => setResendTimeLeft((prev) => (prev > 0 ? prev - EMAIL_AND_TIMER_REFRESH_TIME : 0)),
-        EMAIL_AND_TIMER_REFRESH_TIME
-      )
-      return () => clearTimeout(resendInterval)
-    }
-  })
 
   // EOA implementations
   // Add or create accounts from Trezor/Ledger/Metamask/etc.
@@ -549,25 +480,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
               <br />
               Ambire Wallet&quot; email and click &quot;Verify&quot;.
             </p>
-            {err ? <p className={styles.error}>{err}</p> : null}
-            <div className={styles.btnWrapper}>
-              {!isEmailConfirmed && !isEmailResent && (
-                <ToolTip
-                  label={`Will be available in ${resendTimeLeft / 1000} seconds`}
-                  disabled={resendTimeLeft === 0}
-                >
-                  <Button
-                    className={styles.resendBtn}
-                    size="xsm"
-                    startIcon={<AiOutlineReload />}
-                    disabled={resendTimeLeft !== 0}
-                    onClick={sendConfirmationEmail}
-                  >
-                    Resend
-                  </Button>
-                </ToolTip>
-              )}
-            </div>
+
             <button type="button" className={styles.backButton} onClick={handleBackBtnClicked}>
               <ChevronLeftIcon /> Back to Register
             </button>
