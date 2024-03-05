@@ -356,20 +356,27 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
       {err ? <p className={styles.error}>{err}</p> : null}
       <div className={styles.btnWrapper}>
         {!isEmailConfirmed && !isEmailResent && (
-          <ToolTip
-            label={`Will be available in ${resendTimeLeft / 1000} seconds`}
-            disabled={resendTimeLeft === 0}
+          <div
+            style={{
+              display: 'flex',
+              justifyContent: 'center'
+            }}
           >
-            <Button
-              className={styles.resendBtn}
-              size="xsm"
-              startIcon={<AiOutlineReload />}
-              disabled={resendTimeLeft !== 0}
-              onClick={sendConfirmationEmail}
+            <ToolTip
+              label={`Will be available in ${resendTimeLeft / 1000} seconds`}
+              disabled={resendTimeLeft === 0}
             >
-              Resend
-            </Button>
-          </ToolTip>
+              <Button
+                className={styles.resendBtn}
+                size="xsm"
+                startIcon={<AiOutlineReload />}
+                disabled={resendTimeLeft !== 0}
+                onClick={sendConfirmationEmail}
+              >
+                Resend
+              </Button>
+            </ToolTip>
+          </div>
         )}
       </div>
     </div>
