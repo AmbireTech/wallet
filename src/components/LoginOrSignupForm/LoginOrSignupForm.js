@@ -85,6 +85,7 @@ export default function LoginOrSignupForm({ action, onAccRequest, inProgress }) 
         placeholder="Email"
         value={state.email}
         onChange={(e) => onUpdate({ email: e.target.value })}
+        style={{ marginTop: '0' }}
       />
       {
         // Trick the password manager into putting in the email

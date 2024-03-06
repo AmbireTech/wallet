@@ -358,7 +358,13 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
     <div className={styles.loginEmail}>
       {isRegister ? (
         <>
-          <div style={{ textAlign: 'center', fontSize: '1.5rem' }}>
+          <LoginOrSignup
+            inProgress={inProgress === 'email'}
+            onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
+            action="SIGNUP"
+          />
+          {addAccErr ? <p className={styles.error}>{addAccErr}</p> : null}
+          <div style={{ textAlign: 'center', fontSize: '1.5rem', marginTop: '5vh' }}>
             <div style={{ margin: '0 -50%', whiteSpace: 'nowrap' }}>
               Already have an account?{' '}
               <a style={{ textDecoration: 'underline', color: '#27e8a7' }} href="#/email-login">
@@ -366,12 +372,6 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
               </a>
             </div>
           </div>
-          <LoginOrSignup
-            inProgress={inProgress === 'email'}
-            onAccRequest={(req) => wrapProgress(() => createQuickAcc(req), 'email')}
-            action="SIGNUP"
-          />
-          {addAccErr ? <p className={styles.error}>{addAccErr}</p> : null}
           <a className={styles.backButton} href="#/add-account">
             <ChevronLeftIcon className={styles.backIcon} /> Back to Add Account
           </a>
