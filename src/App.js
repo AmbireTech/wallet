@@ -385,7 +385,20 @@ function AppInner() {
           </Route>
 
           <Route path="/email-login">
-            <EmailLogin relayerURL={relayerURL} onAddAccount={onAddAccount} />
+            <EmailLogin
+              utmTracking={utmTracking}
+              relayerURL={relayerURL}
+              onAddAccount={onAddAccount}
+            />
+          </Route>
+
+          <Route path="/email-register">
+            <EmailLogin
+              utmTracking={utmTracking}
+              relayerURL={relayerURL}
+              isRegister
+              onAddAccount={onAddAccount}
+            />
           </Route>
 
           {selectedAcc ? (
@@ -451,7 +464,7 @@ export default function App() {
           <ThemeProvider>
             <ToastProvider>
               <ModalProvider>
-                <AppInner/>
+                <AppInner />
               </ModalProvider>
             </ToastProvider>
           </ThemeProvider>

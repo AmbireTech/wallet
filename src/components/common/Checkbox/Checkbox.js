@@ -17,6 +17,7 @@ const Checkbox = forwardRef(
 
     return label ? (
       <label
+        style={{ display: 'flex' }}
         className={cn(styles.checkboxContainer, {
           [styles.disabled]: disabled,
           [className]: className
