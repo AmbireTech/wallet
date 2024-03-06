@@ -24,6 +24,7 @@ import AnimationData from './assets/confirm-email.json'
 
 const RESEND_EMAIL_TIMER_INITIAL = 60000
 const EMAIL_AND_TIMER_REFRESH_TIME = 1000
+const EMAIL_VERIFICATION_RECHECK = 6000
 
 // NOTE: the same polling that we do here with the setEffect should be used for txns
 // that require email confirmation
@@ -33,21 +34,14 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
   const [err, setErr] = useState('')
   const [inProgress, setInProgress] = useState(false)
   const [isCreateRespCompleted, setIsCreateRespCompleted] = useState(null)
-  const [resendTimeLeft, setResendTimeLeft] = useState(RESEND_EMAIL_TIMER_INITIAL)
   const [addAccErr, setAddAccErr] = useState('')
   const { addToast } = useToasts()
   const [isEmailConfirmed, setEmailConfirmed] = useState(false)
   const [isEmailResent, setEmailResent] = useState(false)
 
   useEffect(() => {
-    if (resendTimeLeft) {
-      const resendInterval = setInterval(
-        () => setResendTimeLeft((prev) => (prev > 0 ? prev - EMAIL_AND_TIMER_REFRESH_TIME : 0)),
-        EMAIL_AND_TIMER_REFRESH_TIME
-      )
-      return () => clearTimeout(resendInterval)
-    }
-  })
+    setRequiresConfFor(false)
+  }, [isRegister])
 
   const sendConfirmationEmail = async () => {
     try {
@@ -221,7 +215,6 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
     setRequiresConfFor(req)
     setResendTimeLeft(RESEND_EMAIL_TIMER_INITIAL)
   }
-  const EMAIL_VERIFICATION_RECHECK = 6000
 
   const attemptLogin = async ({ email, passphrase }, ignoreEmailConfirmationRequired) => {
     // try by-email first: if this returns data we can just move on to decrypting
@@ -333,7 +326,8 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
       </section>
     )
   }
-
+  console.log('recalculating')
+  console.log(requiresEmailConfFor)
   const inner = requiresEmailConfFor ? (
     <div className={`${styles.emailConf}`}>
       <Lottie
@@ -356,27 +350,7 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
       {err ? <p className={styles.error}>{err}</p> : null}
       <div className={styles.btnWrapper}>
         {!isEmailConfirmed && !isEmailResent && isRegister && (
-          <div
-            style={{
-              display: 'flex',
-              justifyContent: 'center'
-            }}
-          >
-            <ToolTip
-              label={`Will be available in ${resendTimeLeft / 1000} seconds`}
-              disabled={resendTimeLeft === 0}
-            >
-              <Button
-                className={styles.resendBtn}
-                size="xsm"
-                startIcon={<AiOutlineReload />}
-                disabled={resendTimeLeft !== 0}
-                onClick={sendConfirmationEmail}
-              >
-                Resend
-              </Button>
-            </ToolTip>
-          </div>
+          <CustomTooltip sendConfirmationEmail={sendConfirmationEmail} />
         )}
       </div>
     </div>
@@ -425,5 +399,43 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
       <AmbireLogo className={styles.logo} alt="ambire-logo" />
       {inner}
     </section>
+  )
+}
+
+function CustomTooltip({ sendConfirmationEmail }) {
+  const [resendTimeLeft, setResendTimeLeft] = useState(RESEND_EMAIL_TIMER_INITIAL)
+
+  useEffect(() => {
+    if (resendTimeLeft) {
+      const resendInterval = setInterval(
+        () => setResendTimeLeft((prev) => (prev > 0 ? prev - EMAIL_AND_TIMER_REFRESH_TIME : 0)),
+        EMAIL_AND_TIMER_REFRESH_TIME
+      )
+      return () => clearTimeout(resendInterval)
+    }
+  })
+
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center'
+      }}
+    >
+      <ToolTip
+        label={`Will be available in ${resendTimeLeft / 1000} seconds`}
+        disabled={resendTimeLeft === 0}
+      >
+        <Button
+          className={styles.resendBtn}
+          size="xsm"
+          startIcon={<AiOutlineReload />}
+          disabled={resendTimeLeft !== 0}
+          onClick={sendConfirmationEmail}
+        >
+          Resend
+        </Button>
+      </ToolTip>
+    </div>
   )
 }
