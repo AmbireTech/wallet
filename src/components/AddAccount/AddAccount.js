@@ -362,7 +362,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           signer
         }
       }
-      addToast('Unable to add this account to the relayer due to having unknown signer keys', {
+      addToast(`Provided addresses mismatched, calculated ${identityAddr}`, {
         error: true
       })
     }
