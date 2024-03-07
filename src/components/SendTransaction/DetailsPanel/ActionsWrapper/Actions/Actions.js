@@ -157,8 +157,9 @@ const Actions = ({
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
-    if (!window.ethereum || !window.ethereum._metamask)
-      throw new Error('No ethereum provider: download browser extension wallet')
+    if (!window.ethereum) throw new Error('No ethereum provider: download browser extension wallet')
+    if (!window.ethereum._metamask) throw new Error('No metamask found: download metamask')
+
     // if user has MM locked and does not unlock it in TIME_TO_UNLOCK ms dont request signature
     const TIME_TO_UNLOCK = 30 * 1000
     const isWalletUnlocked = await window.ethereum._metamask.isUnlocked()
