@@ -43,4 +43,7 @@ Cypress.Commands.add('login', () => {
     cy.setLocalStorage('accounts', JSON.stringify(Cypress.env('ACCOUNTS')));
     cy.setLocalStorage('networkId', 'mumbai');
     cy.setLocalStorage('permissionsModalHidden', 'true');
+    cy.setLocalStorage('isDappMode', 'true');
+
+
 });
