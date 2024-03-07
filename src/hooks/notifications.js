@@ -9,7 +9,17 @@ import { useToasts } from './toasts'
 import useConstants from './useConstants'
 
 const REQUEST_TITLE_PREFIX = 'Ambire Wallet: '
-const SUPPORTED_TYPES = ['eth_sendTransaction', 'personal_sign']
+const SUPPORTED_TYPES = [
+  'eth_sendTransaction',
+  'personal_sign',
+  'eth_signTypedData',
+  'eth_sign',
+  'eth_sendRawTransaction',
+  'eth_signTransaction',
+  'eth_signTypedData',
+  'eth_signTypedData_v3',
+  'eth_signTypedData_v4'
+]
 const BALANCE_TRESHOLD = 1.00002
 let currentNotifs = []
 let isLastTotalBalanceInit = false
@@ -84,22 +94,24 @@ export default function useNotifications(
     if (!SUPPORTED_TYPES.includes(request.type)) return
     if (currentNotifs.find((n) => n.id === request.id)) return
     if (!request.txn) return
-    const isSign = request.type === 'personal_sign'
+    const isSendTxn = request.type === 'eth_sendTransaction'
     const network = networks.find((x) => x.chainId === request.chainId)
     const title =
       REQUEST_TITLE_PREFIX +
-      (isSign
-        ? 'you have a new message to sign'
-        : `new transaction request on ${network ? network.name : 'unknown network'}`)
-    const body = isSign
-      ? 'Click to preview'
-      : getTransactionSummary(
+      (isSendTxn
+        ? `new transaction request on ${network ? network.name : 'unknown network'}`
+        : 'you have a new message to sign')
+
+    const body = isSendTxn
+      ? getTransactionSummary(
           humanizerInfo,
           tokenList,
           [request.txn.to, request.txn.value, request.txn.data],
           request.chainId,
           request.account
         )
+      : 'Click to preview'
+
     showNotification({
       id: request.id,
       title,
