@@ -132,6 +132,70 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
     [relayerURL, utmTracking]
   )
 
+  const createFromJSON = async ({
+    salt,
+    baseIdentityAddr,
+    identityFactoryAddr,
+    signer,
+    identityAddr: passedIdentityAddr
+  }) => {
+    if (!signer.address) throw Error('Importing account with no specified signer in the json')
+
+    const privileges = [
+      [
+        getAddress(signer.address),
+        '0x0000000000000000000000000000000000000000000000000000000000000001'
+      ]
+    ]
+
+    const bytecode = getProxyDeployBytecode(baseIdentityAddr, privileges, { privSlot: 0 })
+    const identityAddr = getAddress(
+      `0x${generateAddress2(
+        // Converting to buffer is required in ethereumjs-util version: 7.1.3
+        Buffer.from(identityFactoryAddr.slice(2), 'hex'),
+        Buffer.from(salt.slice(2), 'hex'),
+        Buffer.from(bytecode.slice(2), 'hex')
+      ).toString('hex')}`
+    )
+
+    if (relayerURL) {
+      if (identityAddr.toLowerCase() === passedIdentityAddr.toLowerCase()) {
+        const createResp = await fetch(`${relayerURL}/identity/${identityAddr}`, {
+          method: 'POST',
+          headers: {
+            'content-type': 'application/json'
+          },
+          body: JSON.stringify({
+            salt,
+            identityFactoryAddr,
+            baseIdentityAddr,
+            privileges,
+            signer
+          })
+        })
+        const [status, body] = [createResp.status, await createResp.json()]
+        if (status !== 409 && body.success) {
+          utmTracking.resetUtm()
+          addToast(`Created account ${identityAddr}`, {
+            error: false
+          })
+        }
+
+        return {
+          id: identityAddr,
+          salt,
+          identityFactoryAddr,
+          baseIdentityAddr,
+          bytecode,
+          signer
+        }
+      }
+      addToast(`Provided addresses mismatched, calculated ${identityAddr}`, {
+        error: true
+      })
+    }
+  }
+
   const getAccountByAddr = useCallback(
     async (idAddr, signerAddr) => {
       // In principle, we need these values to be able to operate in relayerless mode,
@@ -377,17 +441,35 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         )
       }
 
-      if (acceptedFiles.length) {
-        const file = acceptedFiles[0]
+      if (!acceptedFiles.length) return
+      const file = acceptedFiles[0]
 
-        reader.readAsText(file, 'UTF-8')
-        reader.onload = (readerEvent) => {
-          const content = readerEvent.target.result
-          const fileContent = JSON.parse(content)
-          const validatedFile = validateImportedAccountProps(fileContent)
+      reader.readAsText(file, 'UTF-8')
+      reader.onload = async (readerEvent) => {
+        const content = readerEvent.target.result
+        const fileContent = JSON.parse(content)
+        const validatedFile = validateImportedAccountProps(fileContent)
+        if (!validatedFile.success) {
+          addToast(validatedFile.message, { error: true })
+          return
+        }
+        const identityCreation = {
+          salt: fileContent.salt,
+          baseIdentityAddr: fileContent.baseIdentityAddr,
+          signer: fileContent.signer,
+          identityFactoryAddr: fileContent.identityFactoryAddr,
+          identityAddr: fileContent.id
+        }
 
-          if (validatedFile.success) onAddAccount(fileContent, { select: true })
-          else addToast(validatedFile.message, { error: true })
+        try {
+          const createdFromJSON = await createFromJSON(identityCreation)
+          if (!createdFromJSON) throw Error('Failed to create from json!')
+          onAddAccount(createdFromJSON, { select: true })
+        } catch (e) {
+          addToast(`Account imported as view only Error: ${e.message}`, {
+            error: true
+          })
+          onAddAccount(fileContent, { select: true })
         }
       }
     },
