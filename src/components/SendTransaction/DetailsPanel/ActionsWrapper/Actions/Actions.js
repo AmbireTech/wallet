@@ -1,3 +1,4 @@
+/* eslint-disable no-underscore-dangle */
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Wallet, ethers } from 'ethers'
 import { AbiCoder, Interface } from 'ethers/lib/utils'
@@ -160,6 +161,16 @@ const Actions = ({
     if (!window.ethereum)
       throw new Error(
         'No browser extension wallet detected - please download a browser extension wallet.'
+      )
+
+    if (
+      window.ethereum._metamask &&
+      window.ethereum._metamask.isUnlocked &&
+      !(await window.ethereum._metamask.isUnlocked())
+    )
+      addToast(
+        'Please unlock or connect your Web3 wallet before proceeding with signing this transaction.',
+        { warning: true }
       )
 
     const TIME_TO_UNLOCK = 30 * 1000
