@@ -522,7 +522,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
         <AmbireLogo className={styles.logo} />
         <section className={styles.addAccount}>
           <div className={styles.loginOthers}>
-            <h3>Add an account</h3>
+            <h3>Proceed with:</h3>
             {addFromSignerButtons}
             <h3>NOTE: You can enable email/password login by connecting to a relayer.</h3>
             {addAccErr ? (
