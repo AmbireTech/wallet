@@ -583,7 +583,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
           )}
           <section className={styles.addAccount}>
             <div className={styles.loginOthers}>
-              <h3 style={{ textAlign: 'center' }}>Add an account</h3>
+              <h3 style={{ textAlign: 'center' }}>Proceed with:</h3>
               {inProgress !== 'hwwallet' ? (
                 <>
                   <Link to="/email-register">

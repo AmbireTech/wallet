@@ -372,7 +372,7 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
             </div>
           </div>
           <a className={styles.backButton} href="#/add-account">
-            <ChevronLeftIcon className={styles.backIcon} /> Back to Add Account
+            <ChevronLeftIcon className={styles.backIcon} /> Account
           </a>
         </>
       ) : (
