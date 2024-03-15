@@ -589,7 +589,7 @@ export default function AddAccount({ relayerURL, onAddAccount, utmTracking, plug
                   <Link to="/email-register">
                     <button type="button">
                       <EmailIcon className={styles.email} />
-                      Email register
+                      Email
                     </button>
                   </Link>
                   {addFromSignerButtons}

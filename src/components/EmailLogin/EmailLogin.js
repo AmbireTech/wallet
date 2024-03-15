@@ -326,8 +326,7 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
       </section>
     )
   }
-  console.log('recalculating')
-  console.log(requiresEmailConfFor)
+  
   const inner = requiresEmailConfFor ? (
     <div className={`${styles.emailConf}`}>
       <Lottie
@@ -383,7 +382,7 @@ export default function EmailLogin({ utmTracking, relayerURL, onAddAccount, isRe
             A password will not be required, we will send a magic login link to your email.
           </div>
           <a className={styles.backButtonFixed} href="#/email-register">
-            <ChevronLeftIcon className={styles.backIcon} /> Back to Email Register
+            <ChevronLeftIcon className={styles.backIcon} /> Back
           </a>
         </>
       )}
