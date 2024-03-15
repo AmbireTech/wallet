@@ -1,6 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20">
-  <g id="Base_-_blue-white_icon" data-name="Base - blue-white icon" transform="translate(-633 -439)">
-    <circle id="Ellipse_275" data-name="Ellipse 275" cx="10" cy="10" r="10" transform="translate(633 439)" fill="#2151f5"/>
-    <path id="Base_-_white_icon" data-name="Base - white icon" d="M6.988,14A7,7,0,1,0,0,6.411H9.269V7.589H0A7.008,7.008,0,0,0,6.988,14Z" transform="translate(636 442)" fill="#fff"/>
-  </g>
+<svg fill="none" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <path d="M15.6 24.6a9 9 0 1 0 0-18 9 9 0 0 0 0 18Z" fill="#2151F5" />
+  <path d="M15.59 21.9a6.3 6.3 0 1 0-6.29-6.83h8.342v1.06H9.3a6.307 6.307 0 0 0 6.29 5.77Z"
+    fill="#fff" />
 </svg>
