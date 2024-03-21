@@ -60,7 +60,7 @@
     "static/media/invisible.a56ad71b.svg": "./static/media/invisible.a56ad71b.svg",
     "static/media/issue.d79f17ab.svg": "./static/media/issue.d79f17ab.svg",
     "static/media/ledger.svg": "./static/media/ledger.cdb38f76.svg",
-    "static/media/log-out.4b7ed97c.svg": "./static/media/log-out.4b7ed97c.svg",
+    "static/media/log-out.svg": "./static/media/log-out.4b7ed97c.svg",
     "static/media/EmailLogin.module.scss": "./static/media/login-bg.d8e7cfbc.png",
     "static/media/ErrorScreen.scss": "./static/media/logo.ab51d124.png",
     "static/media/logo.svg": "./static/media/logo.c962da6a.svg",
@@ -99,8 +99,7 @@
     "static/media/wallet-connect.baafeacf.svg": "./static/media/wallet-connect.baafeacf.svg",
     "static/media/wallet-token-congrats.605883fc.png": "./static/media/wallet-token-congrats.605883fc.png",
     "static/media/warning.3d8c50bf.svg": "./static/media/warning.3d8c50bf.svg",
-    "static/media/x.6c9a4ba7.svg": "./static/media/x.6c9a4ba7.svg",
-    "static/media/yearn.ac5ab573.svg": "./static/media/yearn.ac5ab573.svg"
+    "static/media/x.6c9a4ba7.svg": "./static/media/x.6c9a4ba7.svg"
   },
   "entrypoints": [
     "static/css/main.css",
