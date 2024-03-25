@@ -340,6 +340,11 @@ function getWalletNew({ chainId, signer, signerExtra }, opts) {
       return match
     }
 
+    signerObject.web3eth_requestAccounts = () => window.ethereum.request({
+      method: 'eth_requestAccounts'
+    })
+    signerObject.isUnlocked = window.ethereum._metamask.isUnlocked
+
     return signerObject
   }
   if (signer.one) {
