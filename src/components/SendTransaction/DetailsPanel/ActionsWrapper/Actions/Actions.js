@@ -157,20 +157,6 @@ const Actions = ({
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
-    if (!window.ethereum) throw new Error('No ethereum provider: download browser extension wallet')
-
-    const TIME_TO_UNLOCK = 30 * 1000
-    let tooLateToUnlock = false
-    const timeout = setTimeout(() => {
-      tooLateToUnlock = true
-    }, TIME_TO_UNLOCK)
-    // prompts the user to unlock extension
-    await window.ethereum.request({
-      method: 'eth_requestAccounts'
-    })
-
-    if (tooLateToUnlock) throw new Error('Too slow to unlock web3 wallet')
-    clearTimeout(timeout)
 
     const finalBundle = getFinalBundle()
     const provider = getProvider(network.id)
