@@ -45,16 +45,6 @@
         }
       }
 
-      &.warning {
-        color: $c-titan-white;
-        background-color: $warning-color;
-
-        a {
-          color: #ccc;
-          text-decoration: underline;
-        }
-      }
-
       &.left {
         align-self: flex-start;
         left: 2.1875rem;

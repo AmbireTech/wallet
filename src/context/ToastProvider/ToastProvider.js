@@ -34,8 +34,7 @@ const ToastProvider = ({ children }) => {
         badge: null,
         onClick: null,
         url: null,
-        route: null,
-        warning: false
+        route: null
       }
 
       const toast = {
@@ -115,14 +114,12 @@ const ToastProvider = ({ children }) => {
         <TransitionGroup className="transition-group">
           {!isOffline
             ? toasts.map(
-                // eslint-disable-next-line prettier/prettier
-                ({ id, warning, ref, url, route, error, sticky, badge, position, content, onClick }) => (
+                ({ id, ref, url, route, error, sticky, badge, position, content, onClick }) => (
                   <CSSTransition timeout={200} classNames="slide-fade" key={id} nodeRef={ref}>
                     <div
-                      // eslint-disable-next-line no-nested-ternary
-                      className={`toast ${error ? 'error' : warning ? 'warning' : ''} ${
-                        sticky ? 'sticky' : ''
-                      } ${position || ''}`}
+                      className={`toast ${error ? 'error' : ''} ${sticky ? 'sticky' : ''} ${
+                        position || ''
+                      }`}
                       ref={ref}
                     >
                       <div className="inner" onClick={() => onToastClick(id, onClick, url, route)}>
