@@ -1,4 +1,3 @@
-/* eslint-disable no-underscore-dangle */
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { Wallet, ethers } from 'ethers'
 import { AbiCoder, Interface } from 'ethers/lib/utils'
@@ -158,38 +157,6 @@ const Actions = ({
 
   const approveTxnImpl = async () => {
     if (!estimation) throw new Error('no estimation: should never happen')
-    if (!window.ethereum)
-      throw new Error(
-        'No browser extension wallet detected - please download a browser extension wallet.'
-      )
-
-    if (
-      window.ethereum._metamask &&
-      window.ethereum._metamask.isUnlocked &&
-      !(await window.ethereum._metamask.isUnlocked())
-    )
-      addToast(
-        'Please unlock or connect your Web3 wallet before proceeding with signing this transaction.',
-        { warning: true }
-      )
-
-    const TIME_TO_UNLOCK = 30 * 1000
-    let tooLateToUnlock = false
-    const timeout = setTimeout(() => {
-      tooLateToUnlock = true
-    }, TIME_TO_UNLOCK)
-    // prompts the user to unlock extension
-    await window.ethereum.request({
-      method: 'eth_requestAccounts'
-    })
-
-    if (tooLateToUnlock)
-      throw new Error(
-        `Your browser extension was not unlocked within ${
-          TIME_TO_UNLOCK / 1000
-        } seconds, transaction not submitted for signing.`
-      )
-    clearTimeout(timeout)
 
     const finalBundle = getFinalBundle()
     const provider = getProvider(network.id)
