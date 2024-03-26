@@ -172,6 +172,25 @@ const Actions = ({
       chainId: network.chainId
     })
 
+    if (
+      wallet.isUnlocked && !(await wallet.isUnlocked())
+    )
+      addToast(
+        'Please unlock or connect your Web3 wallet before proceeding with signing this transaction.',
+        { warning: true }
+      )
+    if(wallet.web3eth_requestAccounts){
+      const TIME_TO_UNLOCK = 30 * 1000
+      let tooLateToUnlock = false
+      const timeout = setTimeout(() => {
+        tooLateToUnlock = true
+      }, TIME_TO_UNLOCK)
+      // prompts the user to unlock extension
+      await wallet.web3eth_requestAccounts()
+      if (tooLateToUnlock) throw new Error('Too slow to unlock web3 wallet')
+      clearTimeout(timeout)
+    }
+    
     if (relayerURL) {
       // Temporary way of debugging the fee cost
       // const initialLimit = finalBundle.gasLimit - getFeePaymentConsequences(estimation.selectedFeeToken, estimation).addedGas
