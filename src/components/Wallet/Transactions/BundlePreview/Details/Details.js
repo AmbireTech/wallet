@@ -31,6 +31,7 @@ const Details = ({
 }) => {
   const network = networks.find((x) => x.id === bundle.network)
   const feeToken =
+    (bundle.feeToken && bundle.feeToken.symbol && bundle.feeToken.symbol.toLowerCase()) ||
     bundle.feeToken ||
     (hasFeeMatch &&
       bundle.gasTankFee &&
@@ -61,7 +62,7 @@ const Details = ({
         <DetailsItem title="Error" text={bundle.executed.errorMsg || 'unknown error'} />
       )}
       {bundle.gasTankFee &&
-        cashback &&
+        !!cashback &&
         !bundle.gasTankFee.cashback.value &&
         hasFeeMatch &&
         mined && (
