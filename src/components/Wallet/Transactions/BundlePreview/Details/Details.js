@@ -21,9 +21,24 @@ const getCashback = (bundle, feeTokenDetails) => {
   return 0
 }
 
-const Details = ({ bundle, mined, feeAssets, lastTxnSummary, hasFeeMatch }) => {
+const Details = ({
+  bundle,
+  mined,
+  feeAssets,
+  lastTxnSummary,
+  hasFeeMatch,
+  lastTxnExtendedSummary
+}) => {
   const network = networks.find((x) => x.id === bundle.network)
-  const feeTokenDetails = feeAssets ? feeAssets.find((i) => i.symbol === bundle.feeToken) : null
+  const feeToken =
+    (bundle.feeToken && bundle.feeToken.symbol && bundle.feeToken.symbol.toLowerCase()) ||
+    bundle.feeToken ||
+    (hasFeeMatch &&
+      bundle.gasTankFee &&
+      lastTxnExtendedSummary.flat()[1] &&
+      lastTxnExtendedSummary.flat()[1].symbol.toLowerCase()) ||
+    null
+  const feeTokenDetails = feeAssets ? feeAssets.find((i) => i.symbol === feeToken) : null
   const savedGas = feeTokenDetails ? getAddedGas(feeTokenDetails) : null
   const splittedLastTxnSummary = lastTxnSummary.split(' ')
   const fee = splittedLastTxnSummary.length
@@ -46,7 +61,30 @@ const Details = ({ bundle, mined, feeAssets, lastTxnSummary, hasFeeMatch }) => {
       {bundle.executed && !bundle.executed.success && (
         <DetailsItem title="Error" text={bundle.executed.errorMsg || 'unknown error'} />
       )}
-      {bundle.gasTankFee && feeTokenDetails !== null && mined && (
+      {bundle.gasTankFee &&
+        !!cashback &&
+        !bundle.gasTankFee.cashback.value &&
+        hasFeeMatch &&
+        mined && (
+          <ToolTip
+            label={`
+                You paid: $ ${formatFloatTokenAmount(
+                  bundle.feeInUSDPerGas * bundle.gasLimit + cashback,
+                  true,
+                  6
+                )}
+                ${
+                  cashback > 0
+                    ? `and got back $ ${formatFloatTokenAmount(cashback, true, 6)} as cashback`
+                    : ''
+                }
+              `}
+          >
+            <DetailsItem title="Fee" text={`$ ${formatFloatTokenAmount(cashback, true, 6)}`} />
+          </ToolTip>
+        )}
+
+      {bundle.gasTankFee && bundle.gasTankFee?.value && feeTokenDetails !== null && mined && (
         <>
           {savedGas && (
             <ToolTip
