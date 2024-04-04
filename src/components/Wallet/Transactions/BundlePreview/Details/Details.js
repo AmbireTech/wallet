@@ -66,10 +66,22 @@ const Details = ({
         !bundle.gasTankFee.cashback.value &&
         hasFeeMatch &&
         mined && (
-          <DetailsItem
-            title="Fee (Cashback)"
-            text={`$ ${formatFloatTokenAmount(cashback, true, 6)}`}
-          />
+          <ToolTip
+            label={`
+                You paid: $ ${formatFloatTokenAmount(
+                  bundle.feeInUSDPerGas * bundle.gasLimit + cashback,
+                  true,
+                  6
+                )}
+                ${
+                  cashback > 0
+                    ? `and got back $ ${formatFloatTokenAmount(cashback, true, 6)} as cashback`
+                    : ''
+                }
+              `}
+          >
+            <DetailsItem title="Fee" text={`$ ${formatFloatTokenAmount(cashback, true, 6)}`} />
+          </ToolTip>
         )}
 
       {bundle.gasTankFee && bundle.gasTankFee?.value && feeTokenDetails !== null && mined && (
