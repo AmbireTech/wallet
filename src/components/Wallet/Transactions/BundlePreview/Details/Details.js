@@ -69,7 +69,7 @@ const Details = ({
           <ToolTip
             label={`
                 You paid: $ ${formatFloatTokenAmount(
-                  bundle.feeInUSDPerGas * bundle.gasLimit + cashback,
+                  bundle.feeInUSDPerGas * bundle.gasLimit - cashback,
                   true,
                   6
                 )}
@@ -80,7 +80,14 @@ const Details = ({
                 }
               `}
           >
-            <DetailsItem title="Fee" text={`$ ${formatFloatTokenAmount(cashback, true, 6)}`} />
+            <DetailsItem
+              title="Fee"
+              text={`$ ${formatFloatTokenAmount(
+                bundle.feeInUSDPerGas * bundle.gasLimit - cashback,
+                true,
+                6
+              )}`}
+            />
           </ToolTip>
         )}
 
