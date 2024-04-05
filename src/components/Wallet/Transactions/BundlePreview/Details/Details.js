@@ -80,7 +80,7 @@ const Details = ({
                 }
               `}
           >
-            <DetailsItem title="Fee" text={`$ ${formatFloatTokenAmount(cashback, true, 6)}`} />
+            <DetailsItem title="Fee" text={`$ ${formatFloatTokenAmount(bundle.feeInUSDPerGas * bundle.gasLimit + cashback, true, 6)}`} />
           </ToolTip>
         )}
 
