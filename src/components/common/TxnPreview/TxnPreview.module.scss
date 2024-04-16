@@ -74,9 +74,10 @@ $extended-summary-height: 2.25rem;
         .subSummary{
           align-items: center;
           display: flex;
+          flex-wrap: wrap;
         }
         .subSummary > *{
-         margin-right: 0.625rem;
+          margin-right: 0.625rem;
         }
       }
 
