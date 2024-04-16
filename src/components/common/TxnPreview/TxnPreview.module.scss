@@ -66,13 +66,15 @@ $extended-summary-height: 2.25rem;
 
         .summary {
           width: 100%;
-          display: flex;
-          align-items: center;
           column-gap: 0.625rem;
-          row-gap: 0.5rem;
-          flex-wrap: wrap;
           word-break: break-word;
           font-size: 0.875rem;
+        }
+        .subSummary{
+          display: flex;
+        }
+        .subSummary > *{
+         margin-right: 0.625rem;
         }
       }
 

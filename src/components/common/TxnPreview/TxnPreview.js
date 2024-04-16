@@ -92,21 +92,23 @@ export default function TxnPreview({
             <div className={styles.summary}>
               {extendedSummary.map((entry) => {
                 // If entry is extended summary parse it
-                if (Array.isArray(entry)) {
-                  return entry.map((item, i) => (
-                    <ExtendedSummaryItem
-                      key={`item-${i}`}
-                      item={item}
-                      i={i}
-                      networkDetails={networkDetails}
-                      feeAssets={feeAssets}
-                    />
-                  ))
-                }
-                if (typeof entry !== 'string') {
-                  return `operation with address ${txn[0]} (unable to parse)`
-                }
-                return entry
+                return <div className={styles.subSummary}>
+                   {
+                    Array.isArray(entry) ?
+                        entry.map((item, i) => (
+                          <ExtendedSummaryItem
+                          key={`item-${i}`}
+                          item={item}
+                          i={i}
+                          networkDetails={networkDetails}
+                          feeAssets={feeAssets}
+                          />
+                          ))
+                    : typeof entry !== 'string' ? 
+                      `operation with address ${txn[0]} (unable to parse)`
+                    : entry
+                  }
+                </div>
               })}
             </div>
             {onDismiss ? (
