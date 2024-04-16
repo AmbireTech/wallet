@@ -5,17 +5,22 @@ import { Interface } from 'ethers/lib/utils'
 import { nativeToken, token, getName } from 'lib/humanReadableTransactions'
 import { getInterval } from './MeanFinance'
 
-const recipientText = (humanizerInfo, recipient, txnFrom, extended = false) =>
-  recipient.toLowerCase() === txnFrom.toLowerCase()
-    ? !extended
-      ? ''
-      : []
-    : !extended
-    ? ` and send it to ${recipient}`
-    : [
-        'and send it to',
-        { type: 'address', address: recipient, name: getName(humanizerInfo, recipient) }
-      ]
+const recipientText = (humanizerInfo, recipient, txnFrom, extended = false) => {
+  // address from uni V3's contract code 
+  /// @dev Used as a flag for identifying address(this), saves gas by sending more 0 bytes
+  // address internal constant ADDRESS_THIS = address(2);
+  if([txnFrom.toLowerCase(),"0x0000000000000000000000000000000000000002"].includes(recipient.toLowerCase())){
+    return !extended
+    ? ''
+    : []
+  }
+  return !extended
+  ? ` and send it to ${recipient}`
+  : [
+      'and send it to',
+      { type: 'address', address: recipient, name: getName(humanizerInfo, recipient) }
+    ]
+}
 
 const toExtendedUnwrap = (action, network, amount, recipient = []) => {
   return [
