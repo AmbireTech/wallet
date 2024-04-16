@@ -69,8 +69,10 @@ $extended-summary-height: 2.25rem;
           column-gap: 0.625rem;
           word-break: break-word;
           font-size: 0.875rem;
+          row-gap: 0.5rem;
         }
         .subSummary{
+          align-items: center;
           display: flex;
         }
         .subSummary > *{
