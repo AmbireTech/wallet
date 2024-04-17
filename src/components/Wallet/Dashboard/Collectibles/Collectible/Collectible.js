@@ -13,9 +13,9 @@ const Collectible = ({ href, collectionIcon, collectionName, image, name, price 
         src={image}
         className={styles.artworkWrapper}
         imageClassName={styles.artwork}
-        fallbackImageClassName={styles.fallbackImage}
+        failedClassName={styles.fallbackImage}
         fallbackImage={FallbackImage}
-        size="unset"
+        size="auto"
       />
 
       <div className={styles.info}>
@@ -24,7 +24,7 @@ const Collectible = ({ href, collectionIcon, collectionName, image, name, price 
             alt=""
             src={collectionIcon}
             imageClassName={styles.collectionIcon}
-            fallbackImageClassName={styles.fallbackImage}
+            failedClassName={styles.fallbackImage}
             fallbackImage={FallbackImage}
             size={18}
           />

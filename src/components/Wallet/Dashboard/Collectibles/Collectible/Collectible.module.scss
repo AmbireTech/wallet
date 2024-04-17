@@ -21,13 +21,15 @@ $details-size: 3.75rem;
   .artworkWrapper {
     max-height: $collectible-size;
     height: 100%;
+    align-items: start;
+    background-color: rgba($c-fiord, 0.2);
+
     .artwork {
       width: 100%;
       max-height: $collectible-size;
 
       &.fallbackImage {
-        background-color: $c-mirage;
-        padding: 25%;
+        align-self: center;
       }
     }
   }
