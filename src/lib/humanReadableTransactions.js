@@ -13,34 +13,61 @@ const knownAddressNames = {}
 
 function parseActions(actions){
   const result = []
+  // console.log(actions)
   for(let i=0;i<actions.length;i++){
-    if(i+1<=actions.length-1){
+    
+    const notLast = i < actions.length-1
+    if(!notLast){
+      result.push(actions[i])
+      continue
+    }
+
+    if(
+      // are valid [obj]
+      actions[i].length>=4 &&
+      actions[i+1].length>=2 &&
+      Array.isArray(actions[i]) && 
+      Array.isArray(actions[i+1]) &&
+      // are actual swap and unwrap 
+      actions[i][0] ==='Swap' &&
+      actions[i][3].type==='token' && 
+      // isWrappedAsset(actions[i][3].address) &&
+      actions[i+1][0].startsWith('Unwrap') && 
+      actions[i+1][1].type==='token' &&
+      // have proper values and addresses
+      actions[i][3].amount === actions[i+1][1].amount && 
+      isZeroAddress(actions[i+1][1].address)
+      ){
+        // swap x for at least y
+        result.push(["Swap", actions[i][1], actions[i][2],actions[i+1][1]])
+        // skip next ccall, since two were merged
+        i++
+        continue
+      }
+
       if(
         // are valid [obj]
-        actions[i].length>=4 &&
-        actions[i+1].length>=2 &&
+        actions[i].length>=2 &&
+        actions[i+1].length>=4 &&
         Array.isArray(actions[i]) && 
         Array.isArray(actions[i+1]) &&
-        // are actual swap and unwrap 
-        actions[i][0] ==='Swap' &&
-        actions[i][3].type==='token' && 
-        // isWrappedAsset(actions[i][3].address) &&
-        actions[i+1][0].startsWith('Unwrap') && 
-        actions[i+1][1].type==='token' &&
+        // are actual Wrap and Swap 
+        actions[i][0] ==='Wrap' &&
+        actions[i][1].type==='token' &&
+        actions[i+1][0].startsWith('Swap') && 
+        actions[i+1][3].type==='token' && 
         // have proper values and addresses
-        actions[i][3].amount === actions[i+1][1].amount && 
-        isZeroAddress(actions[i+1][1].address)
+        actions[i+1][1].amount === actions[i][1].amount && 
+        isZeroAddress(actions[i][1].address)
         ){
           // swap x for at least y
-          result.push(["Swap", actions[i][1], actions[i][2],actions[i+1][1]])
+          result.push(["Swap", actions[i][1], actions[i+1][2],actions[i+1][3]])
           // skip next ccall, since two were merged
           i++
-      }else{
-        result.push(actions[i])
-      }
-    }else{
+          continue
+        }
       result.push(actions[i])
-    }
+      continue
   }
   return result
 }
