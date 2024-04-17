@@ -1,9 +1,8 @@
 import './Collectible.scss'
 
 import { useParams } from 'react-router-dom'
-import { ethers } from 'ethers'
 import { Interface } from 'ethers/lib/utils'
-import { useCallback, useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useMemo } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
 import { BsFillImageFill, BsXLg } from 'react-icons/bs'
 import * as blockies from 'blockies-ts'
@@ -18,11 +17,7 @@ import {
   Panel
 } from 'components/common'
 import ERC721Abi from 'ambire-common/src/constants/abis/ERC721Abi'
-import networks from 'consts/networks'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
-import { getProvider } from 'ambire-common/src/services/provider'
-import { VELCRO_API_ENDPOINT } from 'config'
-import { fetchGet } from 'lib/fetch'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useConstants from 'hooks/useConstants'
@@ -45,7 +40,7 @@ const handleUri = (uri) => {
   return uri
 }
 
-const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) => {
+const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
   const {
     constants: { humanizerInfo }
   } = useConstants()
@@ -53,18 +48,6 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
 
   const { addToast } = useToasts()
   const { network, collectionAddr, tokenId } = useParams()
-  const [isLoading, setLoading] = useState(true)
-  const [metadata, setMetadata] = useState({
-    owner: {
-      address: '',
-      icon: ''
-    },
-    name: '',
-    description: '',
-    image: '',
-    collection: '',
-    explorerUrl: ''
-  })
   const [recipientAddress, setRecipientAddress] = useState('')
   const [uDAddress, setUDAddress] = useState('')
   const [ensAddress, setEnsAddress] = useState('')
@@ -76,8 +59,37 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     message: ''
   })
   const timer = useRef(null)
+  const collection =
+    portfolio.collectibles.find(
+      (cn) =>
+        cn.address.toLowerCase() === collectionAddr.toLowerCase() &&
+        cn.assets.find((cb) => cb.tokenId === tokenId)
+    ) || null
+
+  const metadata = useMemo(() => {
+    const collectible = collection?.assets.find((cb) => cb.tokenId === tokenId) || null
+
+    if (!collectible) return null
+
+    const {
+      name,
+      description,
+      data: { image }
+    } = collectible
+
+    return {
+      name,
+      description,
+      image,
+      owner: {
+        address: selectedAcc,
+        icon: blockies.create({ seed: selectedAcc }).toDataURL()
+      }
+    }
+  }, [collection, selectedAcc, tokenId])
 
   const sendTransferTx = () => {
+    if (!metadata) return addToast('Collectible not found', { error: true })
     const recipAddress = uDAddress || ensAddress || recipientAddress
 
     try {
@@ -123,6 +135,7 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
   }
 
   useEffect(() => {
+    if (!metadata) return
     if (recipientAddress.startsWith('0x') && recipientAddress.indexOf('.') === -1) {
       const isAddressValid = validateSendNftAddress(
         recipientAddress,
@@ -205,94 +218,14 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
     humanizerInfo
   ])
 
-  const fetchMetadata = useCallback(async () => {
-    setLoading(true)
-    setMetadata({})
+  if (!metadata && !portfolio.collectibles.length) return <Loading />
 
-    try {
-      const networkDetails = networks.find(({ id }) => id === network)
-      if (!networkDetails) throw new Error('This network is not supported')
-
-      const { explorerUrl } = networkDetails
-      const provider = getProvider(networkDetails.id)
-      const contract = new ethers.Contract(collectionAddr, ERC721Abi, provider)
-
-      const [collection, address, maybeUri1, maybeUri2] = await Promise.all([
-        contract.name(),
-        contract.ownerOf(tokenId),
-        contract
-          .tokenURI(tokenId)
-          .then((uri) => ({ uri }))
-          .catch((err) => ({ err })),
-        contract
-          .uri(tokenId)
-          .then((uri) => ({ uri }))
-          .catch((err) => ({ err }))
-      ])
-      const uri = maybeUri1.uri || maybeUri2.uri
-      if (!uri) throw maybeUri1.err || maybeUri2.err
-
-      let json = {}
-
-      if (uri.startsWith('data:application/json')) {
-        json = JSON.parse(uri.replace('data:application/json;utf8,', ''))
-      } else {
-        const jsonUrl = handleUri(uri)
-        const response = await fetch(jsonUrl)
-        json = await response.json()
-      }
-
-      const image = json ? handleUri(json.image) : null
-      setMetadata((metadata) => ({
-        ...metadata,
-        ...json,
-        image
-      }))
-
-      setMetadata((metadata) => ({
-        ...metadata,
-        collection,
-        owner: {
-          address,
-          icon: blockies.create({ seed: address }).toDataURL()
-        },
-        explorerUrl
-      }))
-
-      setLoading(false)
-    } catch (e) {
-      try {
-        const { success, collection, description, image, name, owner, message } = await fetchGet(
-          `${VELCRO_API_ENDPOINT}/nftmeta/${collectionAddr}/${tokenId}?network=${network}`
-        )
-        if (!success) throw new Error(message)
-
-        const networkDetails = networks.find(({ id }) => id === network)
-        if (!networkDetails) throw new Error('This network is not supported')
-
-        const { explorerUrl } = networkDetails
-        setMetadata((metadata) => ({
-          ...metadata,
-          collection,
-          description,
-          image,
-          name,
-          owner: {
-            address: owner,
-            icon: blockies.create({ seed: owner }).toDataURL()
-          },
-          explorerUrl
-        }))
-
-        setLoading(false)
-      } catch (e) {
-        console.error(e)
-        addToast(`Collectible error: ${e.message || e}`, { error: true })
-      }
-    }
-  }, [addToast, tokenId, collectionAddr, network])
-
-  useEffect(() => fetchMetadata(), [fetchMetadata])
+  if (!metadata && portfolio.collectibles.length)
+    return (
+      <Panel>
+        <p className="error">Collectible not found</p>
+      </Panel>
+    )
 
   return (
     <div id="collectible">
@@ -313,36 +246,34 @@ const Collectible = ({ selectedAcc, selectedNetwork, addRequest, addressBook }) 
             </a>
           </div>
         </div>
-        {isLoading ? (
-          <Loading />
-        ) : (
-          <div className="metadata">
-            <div className="image" style={{ backgroundImage: `url(${handleUri(metadata.image)})` }}>
-              {!metadata.image ? <BsFillImageFill /> : null}
-            </div>
-            <div className="info">
-              <div className="name">{metadata.name}</div>
-              <div className="description">{metadata.description}</div>
-            </div>
-            <div className="owner">
-              Owner:
-              <a
-                className="address"
-                href={`${metadata.explorerUrl}/address/${metadata.owner.address}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                <div className="icon" style={{ backgroundImage: `url(${metadata.owner.icon})` }} />
-                {metadata.owner.address === selectedAcc ? (
-                  <span>You ({metadata.owner.address})</span>
-                ) : (
-                  metadata.owner.address
-                )}
-              </a>
-            </div>
+
+        <div className="metadata">
+          <div className="image" style={{ backgroundImage: `url(${handleUri(metadata.image)})` }}>
+            {!metadata.image ? <BsFillImageFill /> : null}
           </div>
-        )}
+          <div className="info">
+            <div className="name">{metadata.name}</div>
+            <div className="description">{metadata.description}</div>
+          </div>
+          <div className="owner">
+            Owner:
+            <a
+              className="address"
+              href={`${metadata.explorerUrl}/address/${metadata.owner.address}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <div className="icon" style={{ backgroundImage: `url(${metadata.owner.icon})` }} />
+              {metadata.owner.address === selectedAcc ? (
+                <span>You ({metadata.owner.address})</span>
+              ) : (
+                metadata.owner.address
+              )}
+            </a>
+          </div>
+        </div>
       </Panel>
+
       <Panel title="Transfer" className="panel">
         <div className="content">
           <div id="recipient-address">
