@@ -13,7 +13,6 @@ const knownAddressNames = {}
 
 function parseActions(actions){
   const result = []
-  // console.log(actions)
   for(let i=0;i<actions.length;i++){
     
     const notLast = i < actions.length-1
