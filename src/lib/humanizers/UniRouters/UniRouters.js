@@ -4,9 +4,11 @@ import { COMMANDS, COMMANDS_DESCRIPTIONS } from './Commands'
 
 const recipientText = (humanizerInfo, recipient, txnFrom, extended = false) => {
   // address from uni V3's contract code 
+  /// @dev Used as a flag for identifying msg.sender, saves gas by sending more 0 bytes
+  // address internal constant MSG_SENDER = address(1);
   /// @dev Used as a flag for identifying address(this), saves gas by sending more 0 bytes
   // address internal constant ADDRESS_THIS = address(2);
-  if([txnFrom.toLowerCase(),"0x0000000000000000000000000000000000000002"].includes(recipient.toLowerCase())){
+  if([txnFrom.toLowerCase(),"0x0000000000000000000000000000000000000002","0x0000000000000000000000000000000000000001"].includes(recipient.toLowerCase())){
     return !extended
     ? ''
     : []
@@ -773,7 +775,37 @@ const uniUniversalRouter = (humanizerInfo) => {
           ? [`Unwrap at least ${nativeToken(network, params.amountMin)}`]
           : toExtendedUnwrap('Unwrap at least', network, params.amountMin)
         )
-      } else parsed.push(['Unknown Uni V3 interaction'])
+      } else if (command === COMMANDS.TRANSFER) {
+        const { inputsDetails } = COMMANDS_DESCRIPTIONS.TRANSFER
+        const params = extractParams(inputsDetails, inputs[index])
+        parsed.push(!opts.extended 
+          ? [`Send ${token(humanizerInfo, params.token, params.value)}`]
+          : [[
+              'Send',
+              {
+                type:'token',
+                ...token(humanizerInfo, params.token, params.value, true)
+              },
+              'to',
+              {type: 'address', address: params.recipient, name: getName(humanizerInfo, params.recipient)}
+            ]]
+        )
+      } else if (command === COMMANDS.SWEEP) {
+        const { inputsDetails } = COMMANDS_DESCRIPTIONS.TRANSFER
+        const params = extractParams(inputsDetails, inputs[index])
+        parsed.push(!opts.extended 
+          ? [`Sweep ${token(humanizerInfo, params.token, params.amountMin)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
+          : [[
+              'Sweep',
+              {
+                type:'token',
+                ...token(humanizerInfo, params.token, params.amountMin, true)
+              },
+              ...recipientText(humanizerInfo, params.recipient, txn.from, true)
+            ]]
+        )
+      } else {
+        parsed.push(['Unknown Uni V3 interaction'])}
     })
   
     return parsed.flat()
