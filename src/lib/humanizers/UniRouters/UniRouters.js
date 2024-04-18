@@ -791,7 +791,7 @@ const uniUniversalRouter = (humanizerInfo) => {
             ]]
         )
       } else if (command === COMMANDS.SWEEP) {
-        const { inputsDetails } = COMMANDS_DESCRIPTIONS.TRANSFER
+        const { inputsDetails } = COMMANDS_DESCRIPTIONS.SWEEP
         const params = extractParams(inputsDetails, inputs[index])
         parsed.push(!opts.extended 
           ? [`Sweep ${token(humanizerInfo, params.token, params.amountMin)} ${recipientText(humanizerInfo, params.recipient, txn.from)}`]
@@ -804,10 +804,23 @@ const uniUniversalRouter = (humanizerInfo) => {
               ...recipientText(humanizerInfo, params.recipient, txn.from, true)
             ]]
         )
-      } else {
+      } else if (command === COMMANDS.PAY_PORTION) {
+				const { inputsDetails } = COMMANDS_DESCRIPTIONS.PAY_PORTION
+				const params = extractParams(inputsDetails, inputs[index])
+				parsed.push(!opts.extended
+					? [`Pay ${parseInt(params.bips) / 100}% of the ${token(humanizerInfo, params.token, 0)} to ${getName(humanizerInfo, params.recipient)}`]
+					: [[
+						'Pay',
+						`${parseInt(params.bips) / 100}% of the`,
+						{ type: 'token', ...token(humanizerInfo, params.token, 0,true) },
+						'to',
+						{ type: 'address', name: getName(humanizerInfo, params.recipient), address: params.recipient }
+					]]
+				)
+			} else {
         parsed.push(['Unknown Uni V3 interaction'])}
     })
-  
+
     return parsed.flat()
   }
   return {
