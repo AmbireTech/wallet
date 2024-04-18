@@ -33,8 +33,6 @@ import styles from './Send.module.scss'
 
 const ERC20 = new Interface(ERC20_ABI)
 
-const unsupportedSWPlatforms = ['Binance', 'Huobi', 'KuCoin', 'Gate.io', 'FTX']
-
 const Send = ({
   history,
   portfolio,
@@ -420,7 +418,7 @@ const Send = ({
               className={styles.binanceAddressWarning}
               label={
                 <span data-testid="binance-address-warning-label">
-                  I confirm this address is not a {unsupportedSWPlatforms.join(' / ')} address:{' '}
+                  I confirm this address is not Binance, Coinbase or another centralized exchange.
                   <br />
                   These platforms do not support ${selectedAsset?.symbol} deposits from smart
                   wallets
