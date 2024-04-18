@@ -3,7 +3,7 @@ import styles from './DAppIncompatibilityWarningMsg.module.scss'
 
 export default function DAppIncompatibilityWarningMsg({
   title = 'Warning',
-  msg = 'It is highly likely that this dapp does not support smart wallet signatures. This is a highly disruptive practice, as it breaks support for all smart wallets (Ambire, Gnosis Safe and others). We recommend you report this to the dApp ASAP and ask them to fix it.'
+  msg = 'If you have trouble validating this message with the dApp, most likely it does not support smart wallet signatures. Ambire Wallet has no control over those dApps and can not reach out to all of them, and we recommend you report this to the dApp in order to add such support and allow you to use it flawlessly.'
 }) {
   return (
     <div className={styles.wrapper}>
