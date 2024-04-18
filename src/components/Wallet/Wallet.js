@@ -183,6 +183,7 @@ export default function Wallet(props) {
       path: '/nft/:network/:collectionAddr/:tokenId',
       component: (
         <Collectible
+          portfolio={props.portfolio}
           selectedAcc={props.selectedAcc}
           selectedNetwork={{ ...props.network }}
           addRequest={props.addRequest}
