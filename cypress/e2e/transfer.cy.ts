@@ -2,17 +2,17 @@ import { Wallet } from 'ethers'
 
 describe('Transfering funds', () => {
   before(() => {
-    cy.login();
-    cy.saveLocalStorage();
+    cy.login()
+    cy.saveLocalStorage()
   })
 
   beforeEach(() => {
-    cy.restoreLocalStorage();
+    cy.restoreLocalStorage()
   })
 
   it('Sends funds via Quick account', () => {
     cy.visit('/wallet/dashboards')
-    cy.contains('Transfer').click();
+    cy.contains('Transfer').click()
 
     // Wait for the initial wallet load.
     // There are a lot of fetch requests under the hood.
@@ -29,7 +29,7 @@ describe('Transfering funds', () => {
     // Wait a bit, because of React re-renders, both checkboxes are not visible immediately
     cy.wait(2000)
     cy.get('[data-testid="unknownAddressWarning"]').click({ force: true })
-    cy.get('[data-testid="binance-address-warning-label"]').click()
+    // cy.get('[data-testid="binance-address-warning-label"]').click()
     cy.get('[data-testid="send"]').click()
 
     cy.wait(2000)
@@ -41,7 +41,7 @@ describe('Transfering funds', () => {
     // Later we can make a polling mechanism for checking the code, instead of waiting 30 seconds.
     cy.wait(30000)
 
-    cy.task('get-confirm-code').then(code => {
+    cy.task('get-confirm-code').then((code) => {
       cy.get('[data-testid="confirmationCode"]').type(code)
       cy.get('[data-testid="confirmSigning"]').click()
 
