@@ -29,7 +29,7 @@ describe('Transfering funds', () => {
     // Wait a bit, because of React re-renders, both checkboxes are not visible immediately
     cy.wait(2000)
     cy.get('[data-testid="unknownAddressWarning"]').click({ force: true })
-    // cy.get('[data-testid="binance-address-warning-label"]').click()
+    cy.get('[data-testid="binance-address-warning-label"]').click()
     cy.get('[data-testid="send"]').click()
 
     cy.wait(2000)
