@@ -109,7 +109,7 @@ test('can send token', async () => {
   const confirm = screen.getByTestId('unknownAddressWarning')
   await user.click(confirm)
 
-  const confirmBinance = screen.getByText(/I confirm this address is not a/i)
+  const confirmBinance = screen.getByText(/I confirm this address is not /i)
   await user.click(confirmBinance)
 
   const sendButton = screen.getByTestId('send')

@@ -36,14 +36,12 @@
 //   }
 // }
 
-import "cypress-localstorage-commands";
+import 'cypress-localstorage-commands'
 
 Cypress.Commands.add('login', () => {
-    cy.setLocalStorage('selectedAcc', Cypress.env('SELECTED_ACCOUNT'));
-    cy.setLocalStorage('accounts', JSON.stringify(Cypress.env('ACCOUNTS')));
-    cy.setLocalStorage('networkId', 'mumbai');
-    cy.setLocalStorage('permissionsModalHidden', 'true');
-    cy.setLocalStorage('isDappMode', 'true');
-
-
-});
+  cy.setLocalStorage('selectedAcc', Cypress.env('SELECTED_ACCOUNT'))
+  cy.setLocalStorage('accounts', JSON.stringify(Cypress.env('ACCOUNTS')))
+  cy.setLocalStorage('networkId', 'sepolia')
+  cy.setLocalStorage('permissionsModalHidden', 'true')
+  cy.setLocalStorage('isDappMode', 'true')
+})

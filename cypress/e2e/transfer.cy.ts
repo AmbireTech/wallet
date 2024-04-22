@@ -2,17 +2,17 @@ import { Wallet } from 'ethers'
 
 describe('Transfering funds', () => {
   before(() => {
-    cy.login();
-    cy.saveLocalStorage();
+    cy.login()
+    cy.saveLocalStorage()
   })
 
   beforeEach(() => {
-    cy.restoreLocalStorage();
+    cy.restoreLocalStorage()
   })
 
   it('Sends funds via Quick account', () => {
     cy.visit('/wallet/dashboards')
-    cy.contains('Transfer').click();
+    cy.contains('Transfer').click()
 
     // Wait for the initial wallet load.
     // There are a lot of fetch requests under the hood.
@@ -41,7 +41,7 @@ describe('Transfering funds', () => {
     // Later we can make a polling mechanism for checking the code, instead of waiting 30 seconds.
     cy.wait(30000)
 
-    cy.task('get-confirm-code').then(code => {
+    cy.task('get-confirm-code').then((code) => {
       cy.get('[data-testid="confirmationCode"]').type(code)
       cy.get('[data-testid="confirmSigning"]').click()
 
