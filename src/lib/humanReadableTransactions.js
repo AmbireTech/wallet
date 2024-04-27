@@ -28,9 +28,11 @@ function parseActions(actions){
       Array.isArray(actions[i]) && 
       Array.isArray(actions[i+1]) &&
       // are actual swap and unwrap 
+      typeof actions[i][0] === 'string' &&
       actions[i][0].startsWith('Swap') &&
       actions[i][3].type==='token' && 
       // isWrappedAsset(actions[i][3].address) &&
+      typeof actions[i+1][3] === 'string' &&
       actions[i+1][0].startsWith('Unwrap') && 
       actions[i+1][1].type==='token' &&
       // have proper values and addresses
@@ -51,8 +53,10 @@ function parseActions(actions){
         Array.isArray(actions[i]) && 
         Array.isArray(actions[i+1]) &&
         // are actual Wrap and Swap 
+        typeof actions[i][0] === 'string' &&
         actions[i][0].startsWith('Wrap') &&
         actions[i][1].type==='token' &&
+        typeof actions[i+1][0] === 'string' && 
         actions[i+1][0].startsWith('Swap') && 
         actions[i+1][3].type==='token' && 
         // have proper values and addresses
