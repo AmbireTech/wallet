@@ -86,7 +86,7 @@ function parseActions(actions){
           actions[i+1][0].startsWith('Sweep') && 
           actions[i+1][1].type==='token'
           ){
-            result.push(["Remove liquidity and withdraw", actions[i][1], actions[i+1][1]])
+            result.push(["Remove liquidity and withdraw", actions[i][1], "and", actions[i+1][1]])
             // skip next ccall, since two were merged
             i++
             continue
