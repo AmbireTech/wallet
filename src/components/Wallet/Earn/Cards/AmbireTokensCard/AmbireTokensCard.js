@@ -476,8 +476,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             const walletValue = sharesTotalSupply.isZero()
               ? ZERO
               : await stakingTokenContract.unbondingCommitmentWorth(accountId, shares, unlocksAt)
-
-              if (parseInt(walletValue) === 0) return null 
+              if (walletValue._hex === '0x00') return null
 
             return {
               transactionHash: log.transactionHash,
