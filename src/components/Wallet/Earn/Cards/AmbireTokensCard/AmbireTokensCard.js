@@ -476,6 +476,7 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
             const walletValue = sharesTotalSupply.isZero()
               ? ZERO
               : await stakingTokenContract.unbondingCommitmentWorth(accountId, shares, unlocksAt)
+              if (walletValue._hex === '0x00') return null
 
             return {
               transactionHash: log.transactionHash,
@@ -488,7 +489,8 @@ const AmbireTokensCard = ({ networkId, accountId, tokens, rewardsData, addReques
               withdrawTx
             }
           })
-        )
+        ).then(r=>r.filter(x=>x))
+
         const leavesPendingToUnlock = [...userLeaves].filter((event) => event.unlocksAt > now)
 
         const leavesReadyToWithdraw = [...userLeaves].filter(
