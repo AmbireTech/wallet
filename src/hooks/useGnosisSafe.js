@@ -173,6 +173,12 @@ export default function useGnosisSafe({
           result = await provider.getGasPrice().catch((err) => {
             throw err
           })
+        } else if (method === 'eth_getTransactionCount') {
+          result = await provider
+            .getTransactionCount(callTx[0], callTx[1] || 'latest')
+            .catch((err) => {
+              throw err
+            })
         } else {
           throw new Error(`Method not found: ${method}`)
         }
