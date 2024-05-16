@@ -8,6 +8,7 @@ import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCol
 import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
 import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
+import { rpcUrls } from 'config/providers'
 
 const handleUri = (uri) => {
   if (!uri) return ''
@@ -74,10 +75,10 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => 
           <Collectible
             key={tokenId}
             href={`/wallet/nft/${selectedNetwork.id}/${address}/${tokenId}`}
-            collectionIcon={data && data.image}
+            collectionIcon={`https://nftcdn.ambire.com/proxy?rpc=${rpcUrls[network]}&contract=${address}&id=${tokenId}`}
             collectionName={collectionName}
             name={(data && data.name) || name || collectionName}
-            image={handleUri(data && data.image)}
+            image={`https://nftcdn.ambire.com/proxy?rpc=${rpcUrls[network]}&contract=${address}&id=${tokenId}`}
             price={balanceUSD.toFixed(2)}
           />
         ))
