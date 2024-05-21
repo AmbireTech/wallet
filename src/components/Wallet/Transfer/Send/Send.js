@@ -359,6 +359,7 @@ const Send = ({
       <div className={styles.content}>
         <Select
           searchable
+          preventDefaultFirst={asset!==null}
           defaultValue={asset}
           items={sortedAssetsItems}
           onChange={({ value }) => setAsset(value)}
