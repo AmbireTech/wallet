@@ -6,8 +6,11 @@ import { MdVisibilityOff as VisibleIcon, MdRemoveRedEye as HiddenIcon } from 're
 import Collectible from './Collectible/Collectible'
 
 import styles from './HideCollectibleModal.module.scss'
+import { rpcUrls } from 'config/providers'
 
-const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handleUri }) => {
+const NFT_CDN_URL = process.NFT_CDN_URL || 'https://nftcdn.ambire.com'
+
+const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen }) => {
   const { hideModal, setOnClose } = useModals()
   const { hiddenCollectibles, onAddHiddenCollectible, onRemoveHiddenCollectible, collectibles } =
     portfolio
@@ -55,6 +58,7 @@ const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handl
           <Collectible
             key={collectible.address}
             asset={asset}
+            imageUrl={`${NFT_CDN_URL}/proxy?rpc=${rpcUrls[collectible.network]}&contract=${collectible.address}&id=${asset.tokenId}`}
             button={
               !asset.isHidden ? (
                 <HiddenIcon
@@ -70,7 +74,6 @@ const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handl
                 />
               )
             }
-            handleUri={handleUri}
           />
         ))
       )}

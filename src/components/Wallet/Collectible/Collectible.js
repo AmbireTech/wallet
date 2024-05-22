@@ -1,5 +1,6 @@
 import './Collectible.scss'
 
+import { rpcUrls } from 'config/providers'
 import { useParams } from 'react-router-dom'
 import { Interface } from 'ethers/lib/utils'
 import { useEffect, useState, useRef, useMemo } from 'react'
@@ -21,24 +22,9 @@ import { validateSendNftAddress } from 'lib/validations/formValidations'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useConstants from 'hooks/useConstants'
-
 const ERC721 = new Interface(ERC721Abi)
 
-const handleUri = (uri) => {
-  if (!uri) return ''
-  uri = uri.startsWith('data:application/json')
-    ? uri.replace('data:application/json;utf8,', '')
-    : uri
-
-  if (uri.split('/').length === 1) return `https://ipfs.io/ipfs/${uri}`
-  if (uri.split('/')[0] === 'data:image') return uri
-  if (uri.startsWith('ipfs://'))
-    return uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/')
-  if (uri.split('/')[2] && uri.split('/')[2].endsWith('mypinata.cloud'))
-    return `https://ipfs.io/ipfs/${uri.split('/').slice(4).join('/')}`
-
-  return uri
-}
+const NFT_CDN_URL = process.NFT_CDN_URL || 'https://nftcdn.ambire.com'
 
 const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
   const {
@@ -74,13 +60,12 @@ const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addr
     const {
       name,
       description,
-      data: { image }
     } = collectible
 
     return {
       name,
       description,
-      image,
+      image : `${NFT_CDN_URL}/proxy?rpc=${rpcUrls[collection.network]}&contract=${collection.address}&id=${collectible.tokenId}`,
       owner: {
         address: selectedAcc,
         icon: blockies.create({ seed: selectedAcc }).toDataURL()
