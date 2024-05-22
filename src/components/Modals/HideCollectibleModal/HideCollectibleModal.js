@@ -7,8 +7,8 @@ import Collectible from './Collectible/Collectible'
 
 import styles from './HideCollectibleModal.module.scss'
 import { rpcUrls } from 'config/providers'
+import { NFT_CDN_URL } from 'config'
 
-const NFT_CDN_URL = process.NFT_CDN_URL || 'https://nftcdn.ambire.com'
 
 const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen }) => {
   const { hideModal, setOnClose } = useModals()

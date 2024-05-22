@@ -9,8 +9,7 @@ import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlace
 import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
 import { rpcUrls } from 'config/providers'
-
-const NFT_CDN_URL = process.NFT_CDN_URL || 'https://nftcdn.ambire.com'
+import { NFT_CDN_URL } from 'config'
 
 
 const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => {

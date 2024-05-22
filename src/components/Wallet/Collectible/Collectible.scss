@@ -3,7 +3,17 @@
 #collectible {
   display: flex;
   gap: 1.875rem;
+  .artworkWrapper {
+    // max-height: $collectible-size;
+    height: 100%;
+    align-items: center;
+    background-color: rgba($c-fiord, 0.2);
 
+    .artwork {
+      width: 100%;
+      // max-height: $collectible-size;
+    }
+  }
   .address {
     font-family: 'Ubuntu Mono';
   }

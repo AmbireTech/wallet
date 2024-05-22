@@ -5,7 +5,8 @@ import { useParams } from 'react-router-dom'
 import { Interface } from 'ethers/lib/utils'
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
-import { BsFillImageFill, BsXLg } from 'react-icons/bs'
+import {  BsXLg } from 'react-icons/bs'
+import FallbackImage from 'resources/icons/fallback.svg'
 import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
 import {
@@ -15,16 +16,17 @@ import {
   AddressBook,
   AddressWarning,
   ToolTip,
-  Panel
+  Panel,
+  Image
 } from 'components/common'
 import ERC721Abi from 'ambire-common/src/constants/abis/ERC721Abi'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useConstants from 'hooks/useConstants'
-const ERC721 = new Interface(ERC721Abi)
+import { NFT_CDN_URL } from 'config'
 
-const NFT_CDN_URL = process.NFT_CDN_URL || 'https://nftcdn.ambire.com'
+const ERC721 = new Interface(ERC721Abi)
 
 const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
   const {
@@ -233,8 +235,14 @@ const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addr
         </div>
 
         <div className="metadata">
-          <div className="image" style={{ backgroundImage: `url(${handleUri(metadata.image)})` }}>
-            {!metadata.image ? <BsFillImageFill /> : null}
+          <div className="image" >
+            <Image
+              alt=""
+             style={{width:"100%"}}
+              src={`${NFT_CDN_URL}/aproxy?rpc=${rpcUrls[collection.network]}&contract=${collectionAddr}&id=${tokenId}`}
+              fallbackImage={FallbackImage}
+              size={"100%"}
+            />
           </div>
           <div className="info">
             <div className="name">{metadata.name}</div>
@@ -302,7 +310,7 @@ const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addr
               <BsXLg size={12} />
               &nbsp;{validationFormMgs.message}
             </div>
-          )}
+          )}  
           <div className="separator" />
           <AddressWarning
             address={uDAddress || ensAddress || recipientAddress}
