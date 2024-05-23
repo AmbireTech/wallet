@@ -29,7 +29,8 @@ const Select = ({
   dragTarget,
   drop,
   draggableHeader,
-  displayDraggableHeader
+  displayDraggableHeader,
+  preventDefaultFirst
 }) => {
   const ref = useRef()
   const hiddenTextInput = useRef()
@@ -67,8 +68,8 @@ const Select = ({
   )
 
   useEffect(() => {
-    const item = items.find((item) => item.value === defaultValue) || items[0]
-    if (item && selectedItem.value !== item.value) selectItem(item)
+    const item = items.find((item) => item.value === defaultValue) || (preventDefaultFirst ? {} : items[0])
+    if (item && (selectedItem.value !== item.value || selectedItem.label !== item.label)) selectItem(item)
   }, [items, defaultValue, selectedItem, selectItem])
 
   useEffect(() => {
