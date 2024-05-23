@@ -238,8 +238,8 @@ const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addr
           <div className="image" >
             <Image
               alt=""
-             style={{width:"100%"}}
-              src={`${NFT_CDN_URL}/aproxy?rpc=${rpcUrls[collection.network]}&contract=${collectionAddr}&id=${tokenId}`}
+              style={{width:"100%"}}
+              src={`${NFT_CDN_URL}/proxy?rpc=${rpcUrls[collection.network]}&contract=${collectionAddr}&id=${tokenId}`}
               fallbackImage={FallbackImage}
               size={"100%"}
             />
