@@ -42,7 +42,6 @@ export const NETWORK_ID_TO_COINGECKO_PLATFORM_ID = {
   moonriver: 'moonriver',
   arbitrum: 'arbitrum-one',
   gnosis: 'xdai',
-  xdai: 'gnosis',
   kucoin: 'kucoin-community-chain',
   andromeda: 'metis-andromeda',
   cronos: 'cronos',
