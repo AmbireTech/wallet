@@ -58,7 +58,6 @@ const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen }) => 
           <Collectible
             key={collectible.address}
             asset={asset}
-            imageUrl={`${NFT_CDN_URL}/proxy?rpc=${rpcUrls[collectible.network]}&contract=${collectible.address}&id=${asset.tokenId}`}
             button={
               !asset.isHidden ? (
                 <HiddenIcon

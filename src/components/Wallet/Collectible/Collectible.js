@@ -62,12 +62,13 @@ const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addr
     const {
       name,
       description,
+      data: { image }
     } = collectible
 
     return {
       name,
       description,
-      image : `${NFT_CDN_URL}/proxy?rpc=${rpcUrls[collection.network]}&contract=${collection.address}&id=${collectible.tokenId}`,
+      image,
       owner: {
         address: selectedAcc,
         icon: blockies.create({ seed: selectedAcc }).toDataURL()
@@ -239,7 +240,7 @@ const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addr
             <Image
               alt=""
               style={{width:"100%"}}
-              src={`${NFT_CDN_URL}/proxy?rpc=${rpcUrls[collection.network]}&contract=${collectionAddr}&id=${tokenId}`}
+              src={metadata.image}
               fallbackImage={FallbackImage}
               size={"100%"}
             />
@@ -310,7 +311,7 @@ const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addr
               <BsXLg size={12} />
               &nbsp;{validationFormMgs.message}
             </div>
-          )}  
+          )}
           <div className="separator" />
           <AddressWarning
             address={uDAddress || ensAddress || recipientAddress}
