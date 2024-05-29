@@ -510,3 +510,6 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 - Update humanizer with more dapps
 - New ambire-common version 1.0.3
 - Changed the RPCs endpoints to Ambire RPC proxy
+
+### v0.7.8
+- Scroll Chain support added.
