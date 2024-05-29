@@ -1,4 +1,4 @@
-import { NETWORK_ID_TO_COINGECKO_PLATFORM_ID } from 'consts/networks'
+import { coingeckoNets } from 'ambire-common/src/constants/networks'
 
 const customIcons = {
   '0xb468a1e5596cfbcdf561f21a10490d99b4bb7b68':
@@ -25,7 +25,7 @@ export function getTokenIcon(networkId = '', address = '') {
 
   if (customIcon) return customIcon
 
-  const coingeckoPlatformId = NETWORK_ID_TO_COINGECKO_PLATFORM_ID[networkId]
+  const coingeckoPlatformId = coingeckoNets[networkId]
 
   return `https://cena.ambire.com/iconProxy/${coingeckoPlatformId}/${addr}`
 }

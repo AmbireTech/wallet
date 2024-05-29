@@ -32,25 +32,6 @@ export const networkIconsById = {
   sepolia: '/resources/networks/redesign/sepolia.svg'
 }
 
-export const NETWORK_ID_TO_COINGECKO_PLATFORM_ID = {
-  ethereum: 'ethereum',
-  polygon: 'polygon-pos',
-  'binance-smart-chain': 'binance-smart-chain',
-  avalanche: 'avalanche',
-  fantom: 'fantom',
-  moonbeam: 'moonbeam',
-  moonriver: 'moonriver',
-  arbitrum: 'arbitrum-one',
-  gnosis: 'xdai',
-  kucoin: 'kucoin-community-chain',
-  andromeda: 'metis-andromeda',
-  cronos: 'cronos',
-  aurora: 'aurora',
-  optimism: 'optimistic-ethereum',
-  base: 'base',
-  scroll: 'scroll'
-}
-
 export default networks
   .map((network) => ({ ...network, icon: networkIconsById[network.id] }))
   .filter((network) => isRelayerless || !network.relayerlessOnly)
