@@ -1,6 +1,5 @@
 import './Collectible.scss'
 
-import { rpcUrls } from 'config/providers'
 import { useParams } from 'react-router-dom'
 import { Interface } from 'ethers/lib/utils'
 import { useEffect, useState, useRef, useMemo } from 'react'
@@ -24,7 +23,6 @@ import { validateSendNftAddress } from 'lib/validations/formValidations'
 import { resolveUDomain } from 'lib/unstoppableDomains'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useConstants from 'hooks/useConstants'
-import { NFT_CDN_URL } from 'config'
 
 const ERC721 = new Interface(ERC721Abi)
 

@@ -8,8 +8,6 @@ import HideCollectibleModal from 'components/Modals/HideCollectibleModal/HideCol
 import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlaceholder'
 import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
-import { rpcUrls } from 'config/providers'
-import { NFT_CDN_URL } from 'config'
 
 
 const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => {

@@ -5,7 +5,7 @@ const Collectible = ({ button, asset}) =>{
   <div className={styles.wrapper}>
     <div className={styles.info}>
       <div className={styles.iconWrapper}>
-        <img src={asset.data.imageUrl} alt="" className={styles.icon} />
+        <img src={asset.data.image} alt="" className={styles.icon} />
       </div>
       <h3 className={styles.name}>{asset.name}</h3>
     </div>
