@@ -1,3 +1,5 @@
+import { NETWORK_ID_TO_COINGECKO_PLATFORM_ID } from 'consts/networks'
+
 const customIcons = {
   '0xb468a1e5596cfbcdf561f21a10490d99b4bb7b68':
     'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Jeff_Sessions_with_Elmo_and_Rosita_%28cropped%29.jpg/220px-Jeff_Sessions_with_Elmo_and_Rosita_%28cropped%29.jpg', // TEST Polygon ELMO token,
@@ -17,10 +19,13 @@ const customIcons = {
     'https://raw.githubusercontent.com/AmbireTech/ambire-brand/main/official-logos/Ambire-AdEx/Ambire_AdEx_Symbol_color_white_bg.png' // ADX-TOKEN
 }
 
-const zapperStorageTokenIcons = 'https://storage.googleapis.com/zapper-fi-assets/tokens'
-
 export function getTokenIcon(networkId = '', address = '') {
   const addr = address.toLowerCase()
-  const net = networkId.toLowerCase()
-  return customIcons[addr] || `${zapperStorageTokenIcons}/${net}/${addr}.png`
+  const customIcon = customIcons[addr]
+
+  if (customIcon) return customIcon
+
+  const coingeckoPlatformId = NETWORK_ID_TO_COINGECKO_PLATFORM_ID[networkId]
+
+  return `https://cena.ambire.com/iconProxy/${coingeckoPlatformId}/${addr}`
 }
