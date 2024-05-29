@@ -31,6 +31,7 @@ export const networkIconsById = {
   mumbai: '/resources/networks/redesign/polygon.svg',
   sepolia: '/resources/networks/redesign/sepolia.svg'
 }
+
 export default networks
   .map((network) => ({ ...network, icon: networkIconsById[network.id] }))
   .filter((network) => isRelayerless || !network.relayerlessOnly)
