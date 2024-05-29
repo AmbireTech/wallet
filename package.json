@@ -1,6 +1,6 @@
 {
   "name": "ambire-wallet",
-  "version": "0.7.7",
+  "version": "0.7.8",
   "private": true,
   "homepage": "./",
   "dependencies": {
@@ -25,8 +25,8 @@
     "@walletconnect/web3wallet": "^1.8.6",
     "@web3-react/abstract-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
-    "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#4ddebac4109e9709c4cc862ee0708f208dac9ee2",
-    "ambire-common": "npm:@ambire/common@^1.0.14",
+    "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#2606263234a7e01ece1af9826e6084fd800dae8f",
+    "ambire-common": "npm:@ambire/common@1.0.15",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "chart.js": "^3.9.1",

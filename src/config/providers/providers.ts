@@ -14,6 +14,7 @@ export const rpcUrls = {
   gnosis: 'https://invictus.ambire.com/gnosis',
   optimism: 'https://invictus.ambire.com/optimism',
   base: 'https://invictus.ambire.com/base',
+  scroll: 'https://invictus.ambire.com/scroll',
   // 'mumbai': 'https://invictus.ambire.com/mumbai',
   sepolia: 'https://invictus.ambire.com/sepolia',
   moonriver: 'https://rpc.api.moonriver.moonbeam.network',
