@@ -343,7 +343,7 @@ export default function useWalletConnectV2({
 
         if (connection) {
           const dappName = connection.peer?.metadata.name || ''
-          console.log({ dappName, method })
+
           if (method === 'personal_sign' || wcRequest.method === 'eth_sign') {
             txn = wcRequest.params[wcRequest.method === 'personal_sign' ? 0 : 1]
             requestAccount = wcRequest.params[wcRequest.method === 'personal_sign' ? 1 : 0]
@@ -394,7 +394,7 @@ export default function useWalletConnectV2({
               )
               return
             }
-            
+
           } else if (
             method === 'wallet_switchEthereumChain' ||
             method === 'wallet_addEthereumChain'
