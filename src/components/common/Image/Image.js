@@ -20,7 +20,6 @@ function Image({
   // because the `src` prop is not being attached at all to the <img> tag (I guess JSX omits falsy props for the `src` prop).
   // That's the reason why we set `failed` value initially, based on the `src` value.
   const [failed, setFailed] = useState(isFailed(src))
-console.log({src})
   useEffect(() => {
     setFailed(isFailed(src))
   }, [src])
