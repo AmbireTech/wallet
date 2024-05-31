@@ -389,7 +389,7 @@ export default function useWalletConnectV2({
                   addToast(err.message, { error: true })
                 })
               addToast(
-                'The typed message from this dapp is deemed unsafe as it is vulnerable to replay attacks.',
+                'We\'re not yet able to sign this message. Please use the Ambire Extension.',
                 { warning: true }
               )
               return
