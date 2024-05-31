@@ -377,8 +377,9 @@ export default function useWalletConnectV2({
               _txn.message.spender.toLowerCase() === UNISWAP_UNIVERSAL_ROUTERS[requestChainId].toLowerCase() &&
               _txn.domain && _txn.domain.verifyingContract &&
               _txn.domain.verifyingContract.toLowerCase() === PERMIT_2_ADDRESS.toLowerCase()
+            const isSigTool = (_connection) => _connection && _connection.peer && _connection.peer.metadata && _connection.peer.metadata.url === 'https://sigtool.ambire.com/'
 
-            if (!isSnapshot(dappName, txn) && !isOkPermit2(txn)) {
+            if (!isSigTool(connection) && !isSnapshot(dappName, txn) && !isOkPermit2(txn)) {
               const response = formatJsonRpcError(id, {
                 message: `Signing this eip-712 message is disallowed as it does not contain the smart account address and therefore deemed unsafe: ${method}`,
                 code: -32003
