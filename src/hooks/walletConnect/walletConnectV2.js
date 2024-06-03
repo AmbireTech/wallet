@@ -8,9 +8,10 @@ import { Web3Wallet } from '@walletconnect/web3wallet'
 import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
 
 import {
-  UNISWAP_PERMIT_EXCEPTIONS,
   DEFAULT_EIP155_EVENTS,
-  WC2_SUPPORTED_METHODS
+  WC2_SUPPORTED_METHODS,
+  PERMIT_2_ADDRESS,
+  UNISWAP_UNIVERSAL_ROUTERS
 } from 'hooks/walletConnect/wcConsts'
 import networks from 'consts/networks'
 import { ethers } from 'ethers'
@@ -367,50 +368,33 @@ export default function useWalletConnectV2({
           } else if (method === 'eth_signTypedData_v4') {
             requestAccount = wcRequest.params[0]
             txn = JSON.parse(wcRequest.params[1])
+            const isSnapshot = (_dappName, _txn) => _dappName && _dappName.toLowerCase().includes('snapshot') && _txn.domain && _txn.domain.name === 'snapshot'
+            const isOkPermit2 = (_txn) =>
+              _txn.primaryType &&
+              _txn.primaryType.toLowerCase().includes('permit') &&
+              _txn.message && _txn.message.spender &&
+              _txn.message.spender.toLowerCase() === UNISWAP_UNIVERSAL_ROUTERS[requestChainId].toLowerCase() &&
+              _txn.domain && _txn.domain.verifyingContract &&
+              _txn.domain.verifyingContract.toLowerCase() === PERMIT_2_ADDRESS.toLowerCase()
+            const isSigTool = (_connection) => _connection && _connection.peer && _connection.peer.metadata && _connection.peer.metadata.url === 'https://sigtool.ambire.com/'
 
-            // Dealing with Erc20 Permits
-            if (txn.primaryType === 'Permit') {
-              // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
-              if (
-                UNISWAP_PERMIT_EXCEPTIONS.some((ex) =>
-                  dappName.toLowerCase().includes(ex.toLowerCase())
-                )
-              ) {
-                const response = formatJsonRpcError(id, {
-                  message: `Method not found: ${method}`,
-                  code: -32601
-                })
-                web3wallet
-                  .respondSessionRequest({
-                    topic,
-                    response
-                  })
-                  .catch((err) => {
-                    addToast(err.message, { error: true })
-                  })
-
-                return
-              }
-              // Regular Permit (EIP-2612) is not supported by SCWs, because it requires a signature from the wallet
-              // and ERC-20 token contracts don't implement EIP-1271.
-              addToast(
-                'Please, change the approval type to "Transaction" from the dApp, as the currently selected method doesn\'t support Smart Wallets.',
-                {
-                  error: true
-                }
-              )
-              // return err to the dapp so it doesnt infinitely load
-              web3wallet.respondSessionRequest({
-                topic,
-                response: formatJsonRpcError(id, {
-                  message:
-                    'Please, change the approval type to "Transaction" from the dApp, as the currently selected method doesn\'t support Smart Wallets.',
-                  // Internal JSON-RPC error
-                  code: -32603
-                })
+            if (!isSigTool(connection) && !isSnapshot(dappName, txn) && !isOkPermit2(txn)) {
+              const response = formatJsonRpcError(id, {
+                message: `Signing this eip-712 message is disallowed as it does not contain the smart account address and therefore deemed unsafe: ${method}`,
+                code: -32003
               })
+              web3wallet
+                .respondSessionRequest({ topic, response })
+                .catch((err) => {
+                  addToast(err.message, { error: true })
+                })
+              addToast(
+                'We\'re not yet able to sign this message. Please use the Ambire Extension.',
+                { warning: true }
+              )
               return
             }
+
           } else if (
             method === 'wallet_switchEthereumChain' ||
             method === 'wallet_addEthereumChain'
@@ -461,11 +445,11 @@ export default function useWalletConnectV2({
               notification: true,
               dapp: connection.peer.metadata
                 ? {
-                    name: connection.peer.metadata.name,
-                    description: connection.peer.metadata.description,
-                    icons: connection.peer.metadata.icons,
-                    url: connection.peer.metadata.url
-                  }
+                  name: connection.peer.metadata.name,
+                  description: connection.peer.metadata.description,
+                  icons: connection.peer.metadata.icons,
+                  url: connection.peer.metadata.url
+                }
                 : null
             }
             setWalletRequests((prev) => [...prev, request])
