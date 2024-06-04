@@ -7,7 +7,7 @@ import Collectible from './Collectible/Collectible'
 
 import styles from './HideCollectibleModal.module.scss'
 
-const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handleUri }) => {
+const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen }) => {
   const { hideModal, setOnClose } = useModals()
   const { hiddenCollectibles, onAddHiddenCollectible, onRemoveHiddenCollectible, collectibles } =
     portfolio
@@ -70,7 +70,6 @@ const HideCollectibleModal = ({ portfolio, setIsHideCollectiblesModalOpen, handl
                 />
               )
             }
-            handleUri={handleUri}
           />
         ))
       )}

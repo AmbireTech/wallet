@@ -13,3 +13,4 @@ export const SUSHI_SWAP_FRAME_EXCEPTIONS = process.env.REACT_APP_SUSHI_SWAP_FRAM
 export const SIGNATURE_VERIFIER_DEBUGGER =
   (process.env.REACT_APP_SIGNATURE_VERIFIER_DEBUGGER * 1 && true) || false
 export const COINGECKO_API_URL = process.env.COINGECKO_API_URL || 'https://cena.ambire.com/api/v3'
+export const NFT_CDN_URL = process.env.REACT_APP_NFT_CDN_URL || 'https://nftcdn.ambire.com'

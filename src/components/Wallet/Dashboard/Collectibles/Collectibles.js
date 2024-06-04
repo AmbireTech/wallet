@@ -9,21 +9,6 @@ import CollectiblesPlaceholder from './CollectiblesPlaceholder/CollectiblesPlace
 import CollectiblesWrapper from './CollectiblesWrapper/CollectiblesWrapper'
 import Collectible from './Collectible/Collectible'
 
-const handleUri = (uri) => {
-  if (!uri) return ''
-  uri = uri.startsWith('data:application/json')
-    ? uri.replace('data:application/json;utf8,', '')
-    : uri
-
-  if (uri.split('/').length === 1) return `https://ipfs.io/ipfs/${uri}`
-  if (uri.split('/')[0] === 'data:image') return uri
-  if (uri.startsWith('ipfs://'))
-    return uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/')
-  if (uri.split('/')[2] && uri.split('/')[2].endsWith('mypinata.cloud'))
-    return `https://ipfs.io/ipfs/${uri.split('/').slice(4).join('/')}`
-
-  return uri
-}
 
 const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => {
   const { showModal } = useModals()
@@ -41,7 +26,6 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => 
         <HideCollectibleModal
           portfolio={portfolio}
           setIsHideCollectiblesModalOpen={setIsHideCollectiblesModalOpen}
-          handleUri={handleUri}
         />
       )
     }
@@ -77,7 +61,7 @@ const Collectibles = ({ portfolio, isPrivateMode, selectedNetwork, footer }) => 
             collectionIcon={data && data.image}
             collectionName={collectionName}
             name={(data && data.name) || name || collectionName}
-            image={handleUri(data && data.image)}
+            image={data && data.image}
             price={balanceUSD.toFixed(2)}
           />
         ))

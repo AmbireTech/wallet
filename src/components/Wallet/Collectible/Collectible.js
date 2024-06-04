@@ -4,7 +4,8 @@ import { useParams } from 'react-router-dom'
 import { Interface } from 'ethers/lib/utils'
 import { useEffect, useState, useRef, useMemo } from 'react'
 import { AiOutlineSend } from 'react-icons/ai'
-import { BsFillImageFill, BsXLg } from 'react-icons/bs'
+import {  BsXLg } from 'react-icons/bs'
+import FallbackImage from 'resources/icons/fallback.svg'
 import * as blockies from 'blockies-ts'
 import { useToasts } from 'hooks/toasts'
 import {
@@ -14,7 +15,8 @@ import {
   AddressBook,
   AddressWarning,
   ToolTip,
-  Panel
+  Panel,
+  Image
 } from 'components/common'
 import ERC721Abi from 'ambire-common/src/constants/abis/ERC721Abi'
 import { validateSendNftAddress } from 'lib/validations/formValidations'
@@ -23,22 +25,6 @@ import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useConstants from 'hooks/useConstants'
 
 const ERC721 = new Interface(ERC721Abi)
-
-const handleUri = (uri) => {
-  if (!uri) return ''
-  uri = uri.startsWith('data:application/json')
-    ? uri.replace('data:application/json;utf8,', '')
-    : uri
-
-  if (uri.split('/').length === 1) return `https://ipfs.io/ipfs/${uri}`
-  if (uri.split('/')[0] === 'data:image') return uri
-  if (uri.startsWith('ipfs://'))
-    return uri.replace(/ipfs:\/\/ipfs\/|ipfs:\/\//g, 'https://ipfs.io/ipfs/')
-  if (uri.split('/')[2] && uri.split('/')[2].endsWith('mypinata.cloud'))
-    return `https://ipfs.io/ipfs/${uri.split('/').slice(4).join('/')}`
-
-  return uri
-}
 
 const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addressBook }) => {
   const {
@@ -248,8 +234,14 @@ const Collectible = ({ portfolio, selectedAcc, selectedNetwork, addRequest, addr
         </div>
 
         <div className="metadata">
-          <div className="image" style={{ backgroundImage: `url(${handleUri(metadata.image)})` }}>
-            {!metadata.image ? <BsFillImageFill /> : null}
+          <div className="image" >
+            <Image
+              alt=""
+              style={{width:"100%"}}
+              src={metadata.image}
+              fallbackImage={FallbackImage}
+              size={"100%"}
+            />
           </div>
           <div className="info">
             <div className="name">{metadata.name}</div>
