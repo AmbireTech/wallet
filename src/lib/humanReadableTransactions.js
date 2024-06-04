@@ -2,6 +2,7 @@ import { formatUnits } from 'ethers/lib/utils'
 import { constants } from 'ethers'
 import networks from 'consts/networks'
 import humanizers from './humanizers'
+import { isZeroAddress } from 'ethereumjs-util'
 
 // address (lowercase) => name
 let knownAliases = {}
@@ -9,6 +10,93 @@ let knownAliases = {}
 const knownTokens = {}
 // address (lowercase) => name
 const knownAddressNames = {}
+
+function parseActions(actions){
+  const result = []
+  for(let i=0;i<actions.length;i++){
+    
+    const notLast = i < actions.length-1
+    if(!notLast){
+      result.push(actions[i])
+      continue
+    }
+
+    if(
+      // are valid [obj]
+      actions[i].length>=4 &&
+      actions[i+1].length>=2 &&
+      Array.isArray(actions[i]) && 
+      Array.isArray(actions[i+1]) &&
+      // are actual swap and unwrap 
+      typeof actions[i][0] === 'string' &&
+      actions[i][0].startsWith('Swap') &&
+      actions[i][3].type==='token' && 
+      // isWrappedAsset(actions[i][3].address) &&
+      typeof actions[i+1][3] === 'string' &&
+      actions[i+1][0].startsWith('Unwrap') && 
+      actions[i+1][1].type==='token' &&
+      // have proper values and addresses
+      actions[i][3].amount === actions[i+1][1].amount && 
+      isZeroAddress(actions[i+1][1].address)
+      ){
+        // swap x for at least y
+        result.push(["Swap", actions[i][1], actions[i][2],actions[i+1][1]])
+        // skip next ccall, since two were merged
+        i++
+        continue
+      }
+
+      if(
+        // are valid [obj]
+        actions[i].length>=2 &&
+        actions[i+1].length>=4 &&
+        Array.isArray(actions[i]) && 
+        Array.isArray(actions[i+1]) &&
+        // are actual Wrap and Swap 
+        typeof actions[i][0] === 'string' &&
+        actions[i][0].startsWith('Wrap') &&
+        actions[i][1].type==='token' &&
+        typeof actions[i+1][0] === 'string' && 
+        actions[i+1][0].startsWith('Swap') && 
+        actions[i+1][3].type==='token' && 
+        // have proper values and addresses
+        actions[i+1][1].amount === actions[i][1].amount && 
+        isZeroAddress(actions[i][1].address)
+        ){
+          // swap x for at least y
+          result.push(["Swap", actions[i][1], actions[i+1][2],actions[i+1][3]])
+          // skip next ccall, since two were merged
+          i++
+          continue
+        }
+
+
+
+        if(
+          // are valid [obj]
+          actions[i].length==2 &&
+          actions[i+1].length==2 &&
+          Array.isArray(actions[i]) && 
+          Array.isArray(actions[i+1]) &&
+          // are actual Unwrap and Sweep 
+          typeof actions[i][0] === 'string' &&
+          actions[i][0].startsWith('Unwrap') &&
+          actions[i][1].type==='token' &&
+          typeof actions[i+1][0] === 'string' && 
+          actions[i+1][0].startsWith('Sweep') && 
+          actions[i+1][1].type==='token'
+          ){
+            result.push(["Remove liquidity and withdraw", actions[i][1], "and", actions[i+1][1]])
+            // skip next ccall, since two were merged
+            i++
+            continue
+          }
+
+      result.push(actions[i])
+      continue
+  }
+  return result
+}
 
 export const formatNativeTokenAddress = (address) =>
   address.toLowerCase() === `0x${'e'.repeat(40)}` ? `0x${'0'.repeat(40)}` : address.toLowerCase()
@@ -82,7 +170,8 @@ export function getTransactionSummary(
 
     if (humanizer) {
       try {
-        const actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
+        let actions = humanizer({ to, value, data, from: accountAddr }, network, opts)
+        actions = parseActions(actions)
         return opts.extended === true ? actions : actions.join(', ')
       } catch (e) {
         callSummary = opts.extended
