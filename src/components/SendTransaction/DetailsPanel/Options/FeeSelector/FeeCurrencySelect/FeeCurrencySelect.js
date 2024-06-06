@@ -8,7 +8,7 @@ const FeeCurrencySelect = ({ estimation, disabled, currenciesItems, onFeeCurrenc
       <p className={styles.title}>Fee Currency</p>
       <Select
         disabled={disabled}
-        defaultValue={estimation.selectedFeeToken?.address || estimation.selectedFeeToken?.symbol}
+        defaultValue={`${estimation.selectedFeeToken?.address}:${estimation.selectedFeeToken?.symbol}`}
         items={currenciesItems}
         onChange={onFeeCurrencyChange}
       />

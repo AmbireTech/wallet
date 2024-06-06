@@ -105,8 +105,8 @@ export function FeeSelector({
           }
         ]
 
-  const onFeeCurrencyChange = ({ value, label }) => {
-    const token = tokens.find(({ address, symbol }) => address === value && symbol === label)
+  const onFeeCurrencyChange = ({ value }) => {
+    const token = tokens.find(({ address, symbol }) => `${address}:${symbol}` === value)
     setEstimation({ ...estimation, selectedFeeToken: token })
   }
 
@@ -133,7 +133,7 @@ export function FeeSelector({
         icon ||
         (address ? getTokenIcon(isGasTankEnabled ? tokenNetwork : network.id, address) : null),
       label: symbol,
-      value: address || symbol,
+      value: `${address}:${symbol}`,
       ...(discount
         ? {
             extra: (
