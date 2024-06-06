@@ -128,6 +128,7 @@ const Send = ({
   )
 
   const onAmountChange = (value) => {
+    if(!selectedAsset) return
     if (value) {
       const { decimals } = selectedAsset
       const bigNumberAmount = ethers.utils.parseUnits(value, decimals).toHexString()
