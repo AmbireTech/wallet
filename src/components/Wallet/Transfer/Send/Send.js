@@ -362,7 +362,7 @@ const Send = ({
           preventDefaultFirst={asset!==null}
           defaultValue={asset}
           items={sortedAssetsItems}
-          onChange={({ value }) => setAsset(value)}
+          onChange={({ value }) => value && setAsset(value)}
         />
         {feeBaseTokenWarning ? (
           <p className={styles.gasTankConvertMsg}>
