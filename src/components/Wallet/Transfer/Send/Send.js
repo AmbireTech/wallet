@@ -365,7 +365,7 @@ const Send = ({
           defaultValue={asset}
           items={sortedAssetsItems}
           onChange={({ value }) => value && setAsset(value)}
-          placeholder={{label:'Select a token', icon:fallbackCoin}}
+          placeholder={{label:'Select an asset', icon:fallbackCoin}}
         />
         {feeBaseTokenWarning ? (
           <p className={styles.gasTankConvertMsg}>
