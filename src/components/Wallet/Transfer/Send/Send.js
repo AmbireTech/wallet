@@ -25,6 +25,7 @@ import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 import { useRelayerData } from 'hooks'
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
+import fallbackCoin from 'resources/icons/mutedCoin.png'
 import { MdInfo } from 'react-icons/md'
 import useConstants from 'hooks/useConstants'
 import RecipientInput from './RecipientInput/RecipientInput'
@@ -364,6 +365,7 @@ const Send = ({
           defaultValue={asset}
           items={sortedAssetsItems}
           onChange={({ value }) => value && setAsset(value)}
+          placeholder={{label:'Pick token', icon:fallbackCoin}}
         />
         {feeBaseTokenWarning ? (
           <p className={styles.gasTankConvertMsg}>

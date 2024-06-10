@@ -4,7 +4,7 @@ import useOnClickOutside from 'hooks/onClickOutside'
 import { Icon, Image, TextInput } from 'components/common'
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md'
 import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
-
+import { coin } from 'resources/icons/coin.png'
 import cn from 'classnames'
 import styles from './Select.module.scss'
 
@@ -30,7 +30,8 @@ const Select = ({
   drop,
   draggableHeader,
   displayDraggableHeader,
-  preventDefaultFirst
+  preventDefaultFirst,
+  placeholder="Pick option",
 }) => {
   const ref = useRef()
   const hiddenTextInput = useRef()
@@ -96,9 +97,9 @@ const Select = ({
       {selectedItem ? (
         <div className={styles.selectContainer}>
           <div className={`${styles.selectInput} ${selectInputClassName}`} onClick={handleOpen}>
-            <Image src={selectedItem.icon} alt="" className={cn(styles.icon, iconClassName)} />
+            <Image src={selectedItem.icon || placeholder.icon} alt="" className={cn(styles.icon, iconClassName)} />
             <div className={`${styles.label} ${labelClassName}`}>
-              {selectedItem.label || selectedItem.value}
+              {selectedItem.label || selectedItem.value || placeholder.label}
             </div>
             {selectedItem.extra && <div className={styles.extra}>{selectedItem.extra}</div>}
             {/* <div className="separator"></div> */}
