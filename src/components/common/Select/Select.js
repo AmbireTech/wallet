@@ -4,7 +4,6 @@ import useOnClickOutside from 'hooks/onClickOutside'
 import { Icon, Image, TextInput } from 'components/common'
 import { MdOutlineClose, MdDragIndicator } from 'react-icons/md'
 import { ReactComponent as ChevronDownIcon } from 'resources/icons/chevron-down.svg'
-import { coin } from 'resources/icons/coin.png'
 import cn from 'classnames'
 import styles from './Select.module.scss'
 
