@@ -25,6 +25,7 @@ import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
 import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 import { useRelayerData } from 'hooks'
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
+import fallbackCoin from 'resources/icons/mutedCoin.png'
 import { MdInfo } from 'react-icons/md'
 import useConstants from 'hooks/useConstants'
 import RecipientInput from './RecipientInput/RecipientInput'
@@ -128,6 +129,7 @@ const Send = ({
   )
 
   const onAmountChange = (value) => {
+    if(!selectedAsset) return
     if (value) {
       const { decimals } = selectedAsset
       const bigNumberAmount = ethers.utils.parseUnits(value, decimals).toHexString()
@@ -362,7 +364,8 @@ const Send = ({
           preventDefaultFirst={asset!==null}
           defaultValue={asset}
           items={sortedAssetsItems}
-          onChange={({ value }) => setAsset(value)}
+          onChange={({ value }) => value && setAsset(value)}
+          placeholder={{label:'Select an asset', icon:fallbackCoin}}
         />
         {feeBaseTokenWarning ? (
           <p className={styles.gasTankConvertMsg}>
