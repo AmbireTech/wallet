@@ -30,7 +30,7 @@ const Select = ({
   draggableHeader,
   displayDraggableHeader,
   preventDefaultFirst,
-  placeholder="Pick option",
+  placeholder = { label: 'Pick an option' }
 }) => {
   const ref = useRef()
   const hiddenTextInput = useRef()

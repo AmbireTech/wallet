@@ -1,7 +1,6 @@
 import { BsXLg } from 'react-icons/bs'
 import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
-import { ethers } from 'ethers'
-import { Interface } from 'ethers/lib/utils'
+import { Interface, formatUnits, parseUnits, isValidAddress } from 'ethers/lib/utils'
 import ERC20_ABI from 'adex-protocol-eth/abi/ERC20'
 import { useToasts } from 'hooks/toasts'
 import {
@@ -31,6 +30,7 @@ import useConstants from 'hooks/useConstants'
 import RecipientInput from './RecipientInput/RecipientInput'
 
 import styles from './Send.module.scss'
+import { ZERO_ADDRESS } from 'consts/specialAddresses'
 
 const ERC20 = new Interface(ERC20_ABI)
 
@@ -47,7 +47,6 @@ const Send = ({
   gasTankDetails,
   asset,
   setAsset,
-  tokenAddress,
   selectedAsset,
   title
 }) => {
@@ -102,7 +101,7 @@ const Send = ({
   const assetsItems = eligibleFeeTokens.map(
     ({ label, symbol, address: assetAddress, img, tokenImageUrl, network }) => ({
       label: label || symbol,
-      value: assetAddress,
+      value: `${assetAddress}:${symbol}`,
       icon: img || tokenImageUrl,
       fallbackIcon: getTokenIcon(network, assetAddress)
     })
@@ -112,7 +111,7 @@ const Send = ({
     if (!selectedAsset) return { maxAmount: '0', maxAmountFormatted: '0.00' }
     const { balanceRaw, decimals, balance } = selectedAsset
     return {
-      maxAmount: ethers.utils.formatUnits(balanceRaw, decimals),
+      maxAmount: formatUnits(balanceRaw, decimals),
       maxAmountFormatted: formatFloatTokenAmount(balance, true, decimals)
     }
   }, [selectedAsset])
@@ -120,19 +119,19 @@ const Send = ({
   const showSWAddressWarning = useMemo(
     () =>
       !gasTankDetails &&
-      Number(tokenAddress) === 0 &&
+      selectedAsset?.address === ZERO_ADDRESS &&
       networks
         .map(({ id }) => id)
         .filter((id) => id !== 'ethereum')
         .includes(selectedNetwork.id),
-    [gasTankDetails, tokenAddress, selectedNetwork.id]
+    [gasTankDetails, selectedAsset?.address, selectedNetwork.id]
   )
 
   const onAmountChange = (value) => {
     if(!selectedAsset) return
     if (value) {
       const { decimals } = selectedAsset
-      const bigNumberAmount = ethers.utils.parseUnits(value, decimals).toHexString()
+      const bigNumberAmount = parseUnits(value, decimals).toHexString()
       setBigNumberHexAmount(bigNumberAmount)
     }
 
@@ -224,9 +223,11 @@ const Send = ({
   useEffect(() => {
     if (!selectedAsset) return
     history.replace({
-      pathname: `/wallet/transfer/${Number(asset) !== 0 ? asset : selectedAsset.symbol}`
+      pathname: `/wallet/transfer/${
+        selectedAsset?.address !== ZERO_ADDRESS ? selectedAsset?.address : selectedAsset?.symbol
+      }`
     })
-  }, [asset, history, selectedAsset])
+  }, [history, selectedAsset])
 
   useEffect(() => {
     const isValidSendTransferAmount = validateSendTransferAmount(amount, selectedAsset)
@@ -361,11 +362,11 @@ const Send = ({
       <div className={styles.content}>
         <Select
           searchable
-          preventDefaultFirst={asset!==null}
+          preventDefaultFirst={asset !== null}
           defaultValue={asset}
           items={sortedAssetsItems}
           onChange={({ value }) => value && setAsset(value)}
-          placeholder={{label:'Select an asset', icon:fallbackCoin}}
+          placeholder={{ label: 'Select an asset', icon: fallbackCoin }}
         />
         {feeBaseTokenWarning ? (
           <p className={styles.gasTankConvertMsg}>

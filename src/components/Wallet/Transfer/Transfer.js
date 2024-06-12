@@ -1,7 +1,6 @@
 import { useLocation, withRouter, useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
-import { isValidAddress } from 'ambire-common/src/services/address'
 import cn from 'classnames'
 
 import { Panel, Tabs } from 'components/common'
@@ -18,15 +17,29 @@ const Transfer = (props) => {
   const { state } = useLocation()
   const { tokenAddressOrSymbol } = useParams()
 
-  const tokenAddress = isValidAddress(tokenAddressOrSymbol)
-    ? tokenAddressOrSymbol
-    : portfolio.tokens.find(({ symbol }) => symbol === tokenAddressOrSymbol)?.address || null
-
-  const [asset, setAsset] = useState(tokenAddress)
+  const [selectedAsset, setSelectedAsset] = useState(null)
+  const [asset, setAsset] = useState(
+    selectedAsset && `${selectedAsset.address}:${selectedAsset.symbol}`
+  )
   const [gasTankDetails] = useState(state || null)
   const [address, setAddress] = useState(gasTankDetails ? accountPresets.feeCollector : '')
 
-  const selectedAsset = portfolio?.tokens.find(({ address: tAddress }) => tAddress === asset)
+  // useEffect(()=>{
+  //   if(!portfolio.tokens.find(({ address: itemAddress, symbol }) => itemAddress === `${itemAddress}:${symbol}` === asset))
+  //     setAsset(null)
+  // }, [selectedNetwork])
+
+  useEffect(() => {
+    let setTo
+    if (asset) {
+      setTo = portfolio.tokens.find(({ address:itemAddress, symbol }) => `${itemAddress}:${symbol}` === asset)
+    } else {
+      setTo = portfolio.tokens.find(({ address: itemAddress, symbol }) =>
+        [itemAddress, symbol].includes(tokenAddressOrSymbol)
+      )
+    }
+    setSelectedAsset(setTo)
+  }, [asset, selectedNetwork])
 
   return (
     <div className={styles.wrapper}>
@@ -42,8 +55,8 @@ const Transfer = (props) => {
               setAddress={setAddress}
               gasTankDetails={gasTankDetails}
               asset={asset}
-              setAsset={setAsset}
-              tokenAddress={tokenAddress}
+              setAsset={(i)=>{console.log(i)
+                setAsset(i)}}
               selectedAsset={selectedAsset}
             />
           }
@@ -71,7 +84,6 @@ const Transfer = (props) => {
             gasTankDetails={gasTankDetails}
             asset={asset}
             setAsset={setAsset}
-            tokenAddress={tokenAddress}
             selectedAsset={selectedAsset}
           />
         </Panel>
