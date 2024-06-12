@@ -1,6 +1,6 @@
 import { BsXLg } from 'react-icons/bs'
-import { useEffect, useMemo, useState, useRef, useCallback } from 'react'
-import { Interface, formatUnits, parseUnits, isValidAddress } from 'ethers/lib/utils'
+import { useEffect, useMemo, useState, useRef } from 'react'
+import { Interface, formatUnits, parseUnits } from 'ethers/lib/utils'
 import ERC20_ABI from 'adex-protocol-eth/abi/ERC20'
 import { useToasts } from 'hooks/toasts'
 import {
@@ -21,6 +21,7 @@ import networks from 'consts/networks'
 import { getTokenIcon } from 'lib/icons'
 import { formatFloatTokenAmount } from 'lib/formatters'
 import { resolveENSDomain, getBip44Items } from 'lib/ensDomains'
+import { ZERO_ADDRESS } from 'consts/specialAddresses'
 import useGasTankData from 'ambire-common/src/hooks/useGasTankData'
 import { useRelayerData } from 'hooks'
 import { ReactComponent as AlertIcon } from 'resources/icons/alert.svg'
@@ -30,7 +31,7 @@ import useConstants from 'hooks/useConstants'
 import RecipientInput from './RecipientInput/RecipientInput'
 
 import styles from './Send.module.scss'
-import { ZERO_ADDRESS } from 'consts/specialAddresses'
+
 
 const ERC20 = new Interface(ERC20_ABI)
 
