@@ -72,6 +72,9 @@ export default function TxnPreview({
     .includes(true)
 
   const isUnknown = !mined && (!isKnown(humanizerInfo, txn[0], account) || hasUnknownAddress)
+  const isChangePrivs = Array.isArray(extendedSummary) &&
+    Array.isArray(extendedSummary[0]) &&
+    extendedSummary[0][0] === 'Authorize signer'
 
   useEffect(() => !!addressLabel && setKnownAddressNames(addressLabel), [addressLabel])
 
@@ -134,7 +137,7 @@ export default function TxnPreview({
           {isFirstFailing && (
             <p className={styles.warning}>This is the first failing transaction.</p>
           )}
-          {isUnknown && (
+          {!isChangePrivs && isUnknown && (
             <p className={styles.warning}>
               Warning: interacting with an unknown contract or address.
             </p>
