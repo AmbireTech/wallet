@@ -18,28 +18,24 @@ const Transfer = (props) => {
   const { tokenAddressOrSymbol } = useParams()
 
   const [selectedAsset, setSelectedAsset] = useState(null)
-  const [asset, setAsset] = useState(
+  const [assetAddrWithSymbol, setAsset] = useState(
     selectedAsset && `${selectedAsset.address}:${selectedAsset.symbol}`
   )
   const [gasTankDetails] = useState(state || null)
   const [address, setAddress] = useState(gasTankDetails ? accountPresets.feeCollector : '')
 
-  // useEffect(()=>{
-  //   if(!portfolio.tokens.find(({ address: itemAddress, symbol }) => itemAddress === `${itemAddress}:${symbol}` === asset))
-  //     setAsset(null)
-  // }, [selectedNetwork])
-
   useEffect(() => {
     let setTo
-    if (asset) {
-      setTo = portfolio.tokens.find(({ address:itemAddress, symbol }) => `${itemAddress}:${symbol}` === asset)
+    if (assetAddrWithSymbol) {
+      setTo = portfolio.tokens.find(
+        ({ address: itemAddress, symbol }) => `${itemAddress}:${symbol}` === assetAddrWithSymbol )
     } else {
       setTo = portfolio.tokens.find(({ address: itemAddress, symbol }) =>
         [itemAddress, symbol].includes(tokenAddressOrSymbol)
       )
     }
     setSelectedAsset(setTo)
-  }, [asset, selectedNetwork])
+  }, [assetAddrWithSymbol, selectedNetwork, portfolio.tokens, tokenAddressOrSymbol])
 
   return (
     <div className={styles.wrapper}>
@@ -54,9 +50,8 @@ const Transfer = (props) => {
               address={address}
               setAddress={setAddress}
               gasTankDetails={gasTankDetails}
-              asset={asset}
-              setAsset={(i)=>{console.log(i)
-                setAsset(i)}}
+              asset={assetAddrWithSymbol}
+              setAsset={setAsset}
               selectedAsset={selectedAsset}
             />
           }
@@ -82,7 +77,7 @@ const Transfer = (props) => {
             address={address}
             setAddress={setAddress}
             gasTankDetails={gasTankDetails}
-            asset={asset}
+            asset={assetAddrWithSymbol}
             setAsset={setAsset}
             selectedAsset={selectedAsset}
           />
