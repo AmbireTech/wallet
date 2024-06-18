@@ -1,7 +1,6 @@
 import { useLocation, withRouter, useParams } from 'react-router-dom'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
-import { isValidAddress } from 'ambire-common/src/services/address'
 import cn from 'classnames'
 
 import { Panel, Tabs } from 'components/common'
@@ -18,15 +17,25 @@ const Transfer = (props) => {
   const { state } = useLocation()
   const { tokenAddressOrSymbol } = useParams()
 
-  const tokenAddress = isValidAddress(tokenAddressOrSymbol)
-    ? tokenAddressOrSymbol
-    : portfolio.tokens.find(({ symbol }) => symbol === tokenAddressOrSymbol)?.address || null
-
-  const [asset, setAsset] = useState(tokenAddress)
+  const [selectedAsset, setSelectedAsset] = useState(null)
+  const [assetAddrWithSymbol, setAsset] = useState(
+    selectedAsset && `${selectedAsset.address}:${selectedAsset.symbol}`
+  )
   const [gasTankDetails] = useState(state || null)
   const [address, setAddress] = useState(gasTankDetails ? accountPresets.feeCollector : '')
 
-  const selectedAsset = portfolio?.tokens.find(({ address: tAddress }) => tAddress === asset)
+  useEffect(() => {
+    let setTo
+    if (assetAddrWithSymbol) {
+      setTo = portfolio.tokens.find(
+        ({ address: itemAddress, symbol }) => `${itemAddress}:${symbol}` === assetAddrWithSymbol )
+    } else {
+      setTo = portfolio.tokens.find(({ address: itemAddress, symbol }) =>
+        [itemAddress, symbol].includes(tokenAddressOrSymbol)
+      )
+    }
+    setSelectedAsset(setTo)
+  }, [assetAddrWithSymbol, selectedNetwork, portfolio.tokens, tokenAddressOrSymbol])
 
   return (
     <div className={styles.wrapper}>
@@ -41,9 +50,8 @@ const Transfer = (props) => {
               address={address}
               setAddress={setAddress}
               gasTankDetails={gasTankDetails}
-              asset={asset}
+              asset={assetAddrWithSymbol}
               setAsset={setAsset}
-              tokenAddress={tokenAddress}
               selectedAsset={selectedAsset}
             />
           }
@@ -69,9 +77,8 @@ const Transfer = (props) => {
             address={address}
             setAddress={setAddress}
             gasTankDetails={gasTankDetails}
-            asset={asset}
+            asset={assetAddrWithSymbol}
             setAsset={setAsset}
-            tokenAddress={tokenAddress}
             selectedAsset={selectedAsset}
           />
         </Panel>
