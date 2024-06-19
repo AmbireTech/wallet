@@ -17,7 +17,11 @@ const Transfer = (props) => {
   const { state } = useLocation()
   const { tokenAddressOrSymbol } = useParams()
 
-  const [selectedAsset, setSelectedAsset] = useState(null)
+  const initialSelectedAsset = portfolio.tokens.find(({ address: itemAddress, symbol }) =>
+    [itemAddress, symbol].includes(tokenAddressOrSymbol))
+
+  const [selectedAsset, setSelectedAsset] = useState(initialSelectedAsset)
+  
   const [assetAddrWithSymbol, setAsset] = useState(
     selectedAsset && `${selectedAsset.address}:${selectedAsset.symbol}`
   )
