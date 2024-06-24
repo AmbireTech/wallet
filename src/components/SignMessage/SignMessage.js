@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import * as blockies from 'blockies-ts'
 import { toUtf8String, isHexString } from 'ethers/lib/utils'
-import supportedDApps from 'ambire-common/src/constants/supportedDApps'
 import cn from 'classnames'
+import { UNISWAP_UNIVERSAL_ROUTERS, PERMIT_2_ADDRESS } from 'consts/specialAddresses'
 
 import { useSignMessage } from 'hooks'
 import {
@@ -68,9 +68,18 @@ export default function SignMessage({
     onConfirmationCodeRequired,
     useStorage
   })
+  
+  const isSnapshot = (_dappName, _txn) => _dappName && _dappName.toLowerCase().includes('snapshot') && _txn.domain && _txn.domain.name === 'snapshot'
+  const isOkPermit2 = (_txn, _chainId) =>
+    _txn.primaryType &&
+    _txn.primaryType.toLowerCase().includes('permit') &&
+    _txn.message && _txn.message.spender &&
+    _txn.message.spender.toLowerCase() === UNISWAP_UNIVERSAL_ROUTERS[_chainId].toLowerCase() &&
+    _txn.domain && _txn.domain.verifyingContract &&
+    _txn.domain.verifyingContract.toLowerCase() === PERMIT_2_ADDRESS.toLowerCase()
+  const isSigTool = (_dappUrl) => _dappUrl === 'https://sigtool.ambire.com/'
 
-  const isDAppSupported =
-    dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
+  const isDAppSupported = !isTypedData || (dApp && dataV4 && isSnapshot(dApp.url, dataV4)) || isOkPermit2(dataV4, requestedChainId) || (dApp && isSigTool(dApp.url))
 
   const onScroll = (textArea) => {
     if (textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1) {
