@@ -74,6 +74,7 @@ export default function SignMessage({
     _txn.primaryType &&
     _txn.primaryType.toLowerCase().includes('permit') &&
     _txn.message && _txn.message.spender &&
+    UNISWAP_UNIVERSAL_ROUTERS[_chainId] && 
     _txn.message.spender.toLowerCase() === UNISWAP_UNIVERSAL_ROUTERS[_chainId].toLowerCase() &&
     _txn.domain && _txn.domain.verifyingContract &&
     _txn.domain.verifyingContract.toLowerCase() === PERMIT_2_ADDRESS.toLowerCase()
