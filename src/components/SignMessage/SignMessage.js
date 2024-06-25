@@ -271,7 +271,7 @@ export default function SignMessage({
                   variant="primaryGradient"
                   className={styles.button}
                   loading={isLoading}
-                  disabled={!hasScrolledToBottom || typeDataErr}
+                  disabled={ !isDAppSupported || !hasScrolledToBottom || typeDataErr}
                   loadingText="Signing..."
                 >
                   Sign
