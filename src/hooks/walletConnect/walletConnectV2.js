@@ -8,7 +8,6 @@ import { Web3Wallet } from '@walletconnect/web3wallet'
 import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
 
 import {
-  UNISWAP_PERMIT_EXCEPTIONS,
   DEFAULT_EIP155_EVENTS,
   WC2_SUPPORTED_METHODS
 } from 'hooks/walletConnect/wcConsts'
