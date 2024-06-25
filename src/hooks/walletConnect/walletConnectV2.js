@@ -340,8 +340,6 @@ export default function useWalletConnectV2({
         const connection = getConnectionFromSessionTopic(topic)
 
         if (connection) {
-          const dappName = connection.peer?.metadata.name || ''
-
           if (method === 'personal_sign' || wcRequest.method === 'eth_sign') {
             txn = wcRequest.params[wcRequest.method === 'personal_sign' ? 0 : 1]
             requestAccount = wcRequest.params[wcRequest.method === 'personal_sign' ? 1 : 0]
@@ -367,50 +365,6 @@ export default function useWalletConnectV2({
           } else if (method === 'eth_signTypedData_v4') {
             requestAccount = wcRequest.params[0]
             txn = JSON.parse(wcRequest.params[1])
-
-            // Dealing with Erc20 Permits
-            if (txn.primaryType === 'Permit') {
-              // If Uniswap, reject the permit and expect a graceful fallback (receiving approve eth_sendTransaction afterwards)
-              if (
-                UNISWAP_PERMIT_EXCEPTIONS.some((ex) =>
-                  dappName.toLowerCase().includes(ex.toLowerCase())
-                )
-              ) {
-                const response = formatJsonRpcError(id, {
-                  message: `Method not found: ${method}`,
-                  code: -32601
-                })
-                web3wallet
-                  .respondSessionRequest({
-                    topic,
-                    response
-                  })
-                  .catch((err) => {
-                    addToast(err.message, { error: true })
-                  })
-
-                return
-              }
-              // Regular Permit (EIP-2612) is not supported by SCWs, because it requires a signature from the wallet
-              // and ERC-20 token contracts don't implement EIP-1271.
-              addToast(
-                'Please, change the approval type to "Transaction" from the dApp, as the currently selected method doesn\'t support Smart Wallets.',
-                {
-                  error: true
-                }
-              )
-              // return err to the dapp so it doesnt infinitely load
-              web3wallet.respondSessionRequest({
-                topic,
-                response: formatJsonRpcError(id, {
-                  message:
-                    'Please, change the approval type to "Transaction" from the dApp, as the currently selected method doesn\'t support Smart Wallets.',
-                  // Internal JSON-RPC error
-                  code: -32603
-                })
-              })
-              return
-            }
           } else if (
             method === 'wallet_switchEthereumChain' ||
             method === 'wallet_addEthereumChain'
