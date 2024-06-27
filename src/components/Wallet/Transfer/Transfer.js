@@ -1,4 +1,4 @@
-import { useLocation, withRouter, useParams, useMemo } from 'react-router-dom'
+import { useLocation, withRouter, useParams } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import accountPresets from 'ambire-common/src/constants/accountPresets'
 import cn from 'classnames'
