@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import * as blockies from 'blockies-ts'
 import { toUtf8String, isHexString } from 'ethers/lib/utils'
 import cn from 'classnames'
@@ -35,6 +36,9 @@ export default function SignMessage({
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
   const textAreaRef = useRef(null)
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const isTomek = queryParams.get('isTomek');
 
   const onConfirmationCodeRequired = async (confCodeRequired, approveQuickAcc) => {
     const confCode = await new Promise((resolve) => {
@@ -80,7 +84,7 @@ export default function SignMessage({
     _txn.domain.verifyingContract.toLowerCase() === PERMIT_2_ADDRESS.toLowerCase()
   const isSigTool = (_dappUrl) => _dappUrl === 'https://sigtool.ambire.com/'
 
-  const isDAppSupported = !isTypedData || (dApp && dataV4 && isSnapshot(dApp.url, dataV4)) || isOkPermit2(dataV4, requestedChainId) || (dApp && isSigTool(dApp.url))
+  const isDAppSupported = !isTypedData ||  isTomek==='true' || (dApp && dataV4 && isSnapshot(dApp.url, dataV4)) || isOkPermit2(dataV4, requestedChainId) || (dApp && isSigTool(dApp.url))
 
   const onScroll = (textArea) => {
     if (textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1) {
