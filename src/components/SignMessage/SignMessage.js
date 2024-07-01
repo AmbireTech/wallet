@@ -73,7 +73,7 @@ export default function SignMessage({
     useStorage
   })
   
-  const isSnapshot = (_dappName, _txn) => _dappName && _dappName.toLowerCase().includes('snapshot') && _txn.domain && _txn.domain.name === 'snapshot'
+  const isSnapshot = (_dappName, _txn) => _dappName && _dappName.startsWith('https://snapshot.org') && _txn.domain && _txn.domain.name === 'snapshot'
   const isOkPermit2 = (_txn, _chainId) =>
     _txn.primaryType &&
     _txn.primaryType.toLowerCase().includes('permit') &&
