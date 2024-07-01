@@ -1,0 +1,6 @@
+<svg id="Burger_menu_icon" data-name="Burger menu icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24">
+  <rect id="Boundary" width="24" height="24" fill="none"/>
+  <rect id="Rectangle_botton" data-name="Rectangle botton" width="18" height="2" rx="1" transform="translate(3 16)" fill="#ebecff"/>
+  <rect id="Rectangle_middle" data-name="Rectangle middle" width="14" height="2" rx="1" transform="translate(5 11)" fill="#ebecff"/>
+  <rect id="Rectangle_top" data-name="Rectangle top" width="18" height="2" rx="1" transform="translate(3 6)" fill="#ebecff"/>
+</svg>

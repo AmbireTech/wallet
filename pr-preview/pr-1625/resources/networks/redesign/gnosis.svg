@@ -1,0 +1,9 @@
+<svg id="Gnosis" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect id="Boundary" width="32" height="32" rx="12" transform="translate(0 32) rotate(-90)" fill="transparent" />
+  <g id="gnosis-gno-gno-logo" transform="translate(7 7)">
+    <path id="Path_547" data-name="Path 547" d="M72.521,157.868a2.342,2.342,0,0,0,1.43-.488l-3.28-3.28a2.343,2.343,0,0,0,.421,3.285,2.374,2.374,0,0,0,1.43.484Z" transform="translate(-67.231 -147.62)" fill="#00a6c4"/>
+    <path id="Path_548" data-name="Path 548" d="M271.968,155.43a2.342,2.342,0,0,0-.488-1.43l-3.28,3.28a2.338,2.338,0,0,0,3.768-1.851Z" transform="translate(-256.92 -147.524)" fill="#00a6c4"/>
+    <path id="Path_549" data-name="Path 549" d="M16.7,103.1l-1.451,1.451a3.305,3.305,0,0,1-4.656,4.656L9,110.8l-1.59-1.59a3.305,3.305,0,0,1-4.656-4.656l-.744-.744L1.3,103.1a9,9,0,1,0,15.4,0Z" transform="translate(0 -98.764)" fill="#00a6c4"/>
+    <path id="Path_550" data-name="Path 550" d="M57.852,2.8a9,9,0,0,0-12.718-.3q-.158.151-.3.3a9.544,9.544,0,0,0-.631.736l7.141,7.146,7.141-7.146A8.7,8.7,0,0,0,57.852,2.8Zm-6.51-1.611a7.736,7.736,0,0,1,5.535,2.292L51.341,9.018,45.807,3.483A7.736,7.736,0,0,1,51.341,1.191Z" transform="translate(-42.341 -0.014)" fill="#00a6c4"/>
+  </g>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="43.593" height="23.838" viewBox="0 0 43.593 23.838">
+  <g id="Group_186" data-name="Group 186" transform="translate(-6089.291 -1170.436)">
+    <g id="Group_184" data-name="Group 184" transform="translate(6090.705 1177.141)">
+      <line id="Line_80" data-name="Line 80" x1="4.491" y2="4.491" transform="translate(0 0)" fill="none" stroke="#707070" stroke-linecap="round" stroke-width="2"/>
+      <line id="Line_81" data-name="Line 81" x1="4.491" y1="4.491" transform="translate(0 4.491)" fill="none" stroke="#707070" stroke-linecap="round" stroke-width="2"/>
+    </g>
+    <g id="Group_183" data-name="Group 183" transform="translate(6125.978 1177.141)">
+      <line id="Line_83" data-name="Line 83" x2="4.491" y2="4.491" transform="translate(1 0)" fill="none" stroke="#707070" stroke-linecap="round" stroke-width="2"/>
+      <line id="Line_82" data-name="Line 82" y1="4.491" x2="4.491" transform="translate(1 4.491)" fill="none" stroke="#707070" stroke-linecap="round" stroke-width="2"/>
+    </g>
+    <g id="Group_185" data-name="Group 185" transform="translate(6099.168 1170.436)">
+      <rect id="Rectangle_278" data-name="Rectangle 278" width="11.218" height="11.218" rx="3" transform="translate(0 0)" fill="#f4327f"/>
+      <rect id="Rectangle_281" data-name="Rectangle 281" width="11.218" height="11.218" rx="3" transform="translate(0 12.62)" fill="#fdda20"/>
+      <rect id="Rectangle_279" data-name="Rectangle 279" width="11.218" height="11.218" rx="3" transform="translate(12.62 0)" fill="#7734db"/>
+      <rect id="Rectangle_280" data-name="Rectangle 280" width="11.218" height="11.218" rx="3" transform="translate(12.62 12.62)" fill="#8eddfa"/>
+    </g>
+  </g>
+</svg>
