@@ -9,9 +9,7 @@ import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
 
 import {
   DEFAULT_EIP155_EVENTS,
-  WC2_SUPPORTED_METHODS,
-  PERMIT_2_ADDRESS,
-  UNISWAP_UNIVERSAL_ROUTERS
+  WC2_SUPPORTED_METHODS
 } from 'hooks/walletConnect/wcConsts'
 import networks from 'consts/networks'
 import { ethers } from 'ethers'
@@ -341,8 +339,6 @@ export default function useWalletConnectV2({
         const connection = getConnectionFromSessionTopic(topic)
 
         if (connection) {
-          const dappName = connection.peer?.metadata.name || ''
-
           if (method === 'personal_sign' || wcRequest.method === 'eth_sign') {
             txn = wcRequest.params[wcRequest.method === 'personal_sign' ? 0 : 1]
             requestAccount = wcRequest.params[wcRequest.method === 'personal_sign' ? 1 : 0]
@@ -368,33 +364,6 @@ export default function useWalletConnectV2({
           } else if (method === 'eth_signTypedData_v4') {
             requestAccount = wcRequest.params[0]
             txn = JSON.parse(wcRequest.params[1])
-            const isSnapshot = (_dappName, _txn) => _dappName && _dappName.toLowerCase().includes('snapshot') && _txn.domain && _txn.domain.name === 'snapshot'
-            const isOkPermit2 = (_txn) =>
-              _txn.primaryType &&
-              _txn.primaryType.toLowerCase().includes('permit') &&
-              _txn.message && _txn.message.spender &&
-              _txn.message.spender.toLowerCase() === UNISWAP_UNIVERSAL_ROUTERS[requestChainId].toLowerCase() &&
-              _txn.domain && _txn.domain.verifyingContract &&
-              _txn.domain.verifyingContract.toLowerCase() === PERMIT_2_ADDRESS.toLowerCase()
-            const isSigTool = (_connection) => _connection && _connection.peer && _connection.peer.metadata && _connection.peer.metadata.url === 'https://sigtool.ambire.com/'
-
-            if (!isSigTool(connection) && !isSnapshot(dappName, txn) && !isOkPermit2(txn)) {
-              const response = formatJsonRpcError(id, {
-                message: `Signing this eip-712 message is disallowed as it does not contain the smart account address and therefore deemed unsafe: ${method}`,
-                code: -32003
-              })
-              web3wallet
-                .respondSessionRequest({ topic, response })
-                .catch((err) => {
-                  addToast(err.message, { error: true })
-                })
-              addToast(
-                'We\'re not yet able to sign this message. Please use the Ambire Extension.',
-                { warning: true }
-              )
-              return
-            }
-
           } else if (
             method === 'wallet_switchEthereumChain' ||
             method === 'wallet_addEthereumChain'
@@ -445,11 +414,11 @@ export default function useWalletConnectV2({
               notification: true,
               dapp: connection.peer.metadata
                 ? {
-                  name: connection.peer.metadata.name,
-                  description: connection.peer.metadata.description,
-                  icons: connection.peer.metadata.icons,
-                  url: connection.peer.metadata.url
-                }
+                    name: connection.peer.metadata.name,
+                    description: connection.peer.metadata.description,
+                    icons: connection.peer.metadata.icons,
+                    url: connection.peer.metadata.url
+                  }
                 : null
             }
             setWalletRequests((prev) => [...prev, request])

@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
 import * as blockies from 'blockies-ts'
 import { toUtf8String, isHexString } from 'ethers/lib/utils'
-import supportedDApps from 'ambire-common/src/constants/supportedDApps'
 import cn from 'classnames'
+import { UNISWAP_UNIVERSAL_ROUTERS, PERMIT_2_ADDRESS } from 'consts/specialAddresses'
 
 import { useSignMessage } from 'hooks'
 import {
@@ -35,6 +36,9 @@ export default function SignMessage({
   const [promiseResolve, setPromiseResolve] = useState(null)
   const inputSecretRef = useRef(null)
   const textAreaRef = useRef(null)
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const isTomek = queryParams.get('isTomek');
 
   const onConfirmationCodeRequired = async (confCodeRequired, approveQuickAcc) => {
     const confCode = await new Promise((resolve) => {
@@ -68,9 +72,19 @@ export default function SignMessage({
     onConfirmationCodeRequired,
     useStorage
   })
+  
+  const isSnapshot = (_dappName, _txn) => _dappName && _dappName.startsWith('https://snapshot.org') && _txn.domain && _txn.domain.name === 'snapshot'
+  const isOkPermit2 = (_txn, _chainId) =>
+    _txn.primaryType &&
+    _txn.primaryType.toLowerCase().includes('permit') &&
+    _txn.message && _txn.message.spender &&
+    UNISWAP_UNIVERSAL_ROUTERS[_chainId] && 
+    _txn.message.spender.toLowerCase() === UNISWAP_UNIVERSAL_ROUTERS[_chainId].toLowerCase() &&
+    _txn.domain && _txn.domain.verifyingContract &&
+    _txn.domain.verifyingContract.toLowerCase() === PERMIT_2_ADDRESS.toLowerCase()
+  const isSigTool = (_dappUrl) => _dappUrl === 'https://sigtool.ambire.com/'
 
-  const isDAppSupported =
-    dApp && (supportedDApps.includes(dApp.url) || supportedDApps.includes(`${dApp.url}/`))
+  const isDAppSupported = !isTypedData ||  isTomek==='true' || (dApp && dataV4 && isSnapshot(dApp.url, dataV4)) || isOkPermit2(dataV4, requestedChainId) || (dApp && isSigTool(dApp.url))
 
   const onScroll = (textArea) => {
     if (textArea.scrollHeight - textArea.scrollTop - textArea.clientHeight < 1) {
@@ -262,7 +276,7 @@ export default function SignMessage({
                   variant="primaryGradient"
                   className={styles.button}
                   loading={isLoading}
-                  disabled={!hasScrolledToBottom || typeDataErr}
+                  disabled={ !isDAppSupported || !hasScrolledToBottom || typeDataErr}
                   loadingText="Signing..."
                 >
                   Sign
