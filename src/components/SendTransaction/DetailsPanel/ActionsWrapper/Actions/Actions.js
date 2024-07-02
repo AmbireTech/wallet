@@ -136,7 +136,7 @@ const Actions = ({
       })
       .catch((e) => {
         if (isMounted.current) setSigningStatus(null)
-          console.error(e)
+        console.error(e)
         if(!e || !e.message) {
           addToast(`Signing error: Unknown error`, { error: true })
         } else if (
