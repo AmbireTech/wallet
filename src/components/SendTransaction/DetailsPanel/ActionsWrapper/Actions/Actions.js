@@ -137,7 +137,7 @@ const Actions = ({
       .catch((e) => {
         if (isMounted.current) setSigningStatus(null)
         console.error(e)
-        if(!e || !e.message) {
+        if(!e || !e.message || typeof e.message !== 'string') {
           addToast(`Signing error: Unknown error`, { error: true })
         } else if (
           e.message.includes('must provide an Ethereum address') ||
