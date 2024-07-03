@@ -137,12 +137,12 @@ const Actions = ({
       .catch((e) => {
         if (isMounted.current) setSigningStatus(null)
         console.error(e)
-        if(!e || !e.message) {
+        if(!e || !e.message || typeof e.message !== 'string') {
           addToast(`Signing error: Unknown error`, { error: true })
         } else if (
           e.message.includes('must provide an Ethereum address') ||
           // used for ambire extension
-          e.message.includes('must use the current user address to sign')
+          e.message.includes('the dApp is trying to sign using an address different from the currently selected account')
         ){
           addToast(
             `Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`,
