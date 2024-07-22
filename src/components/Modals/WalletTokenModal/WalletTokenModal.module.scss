@@ -30,6 +30,15 @@
       vertical-align: middle;
       font-weight: 500;
       line-height: 1.25rem;
+
+      a {
+        color: $ambire-purple;
+        transition: $basic-transition;
+
+        &:hover {
+          opacity: .6;
+        }
+      }
     }
     .rewardsDisabledLink {
       display: block;
