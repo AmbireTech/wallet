@@ -11,100 +11,39 @@
     padding-bottom: 0.625rem;
   }
 
-  .rewardsProgressPath {
-    display: flex;
-    align-items: center;
-    gap: 0.625rem;
+  .rewardsDisabled {
+    padding: 0.75rem;
+    border: 1px solid $ambire-purple;
+    border-radius: $border-radius;
 
-    .rewardsWalletIcon {
-      width: 5rem;
-      height: 5rem;
-      background-position: 50% 50%;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-image: url('../../../resources/rewards/icon-rewards-inactive.svg');
+    .rewardsDisabledIcon {
+      width: 1.25rem;
+      height: 1.25rem;
+      color: $ambire-purple;
+      display: inline;
+      line-height: 1.75rem;
+      vertical-align: middle;
     }
-
-    .rewardsWalletIconAnimated {
-      width: 5rem;
-      height: 5rem;
+    .rewardsDisabledText {
+      font-size: .875rem;
+      display: inline;
+      vertical-align: middle;
+      font-weight: 500;
+      line-height: 1.25rem;
     }
+    .rewardsDisabledLink {
+      display: block;
+      width: fit-content;
+      margin-left: auto;
+      color: $ambire-purple;
+      font-size: .875rem;
+      font-weight: 600;
+      text-decoration: underline;
+      transition: $basic-transition;
 
-    .rewardsProgressHoldingIcon {
-      width: 3.125rem;
-      height: 3.125rem;
-      background-position: 50% 50%;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-image: url('../../../resources/rewards/icon-hold.svg');
-    }
-
-    .rewardsProgressClaimIcon {
-      width: 3.125rem;
-      height: 3.125rem;
-      background-position: 50% 50%;
-      background-size: contain;
-      background-repeat: no-repeat;
-      background-image: url('../../../resources/rewards/icon-wallet-inactive.svg');
-    }
-
-    .rewardsProgressClaimIconActive {
-      background-image: url('../../../resources/rewards/icon-wallet-active.svg');
-    }
-
-    .rewardsProgressBar {
-      height: 0.25rem;
-      border-bottom: 1px dotted $c-scampi;
-      flex-grow: 1;
-      position: relative;
-
-      .rewardsProgressBarFiller {
-        position: absolute;
-        height: 0.3125rem;
-        border-radius: 0.25rem;
-        background: $c-scampi;
-        top: 0.0625rem;
+      &:hover {
+        opacity: .6;
       }
-
-      .rewardsProgressBarFillerActive {
-        background: $c-turquoise;
-      }
-
-      span {
-        position: absolute;
-        bottom: 0.625rem;
-        width: 100%;
-        text-align: center;
-        font-size: 0.75rem;
-        color: $c-scampi;
-
-        b {
-          font-size: 0.75rem;
-        }
-      }
-    }
-  }
-
-  .rewardsProgressLabels {
-    margin-top: 0.5rem;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-
-    span {
-      font-size: 0.75rem;
-      color: $c-scampi;
-      text-align: center;
-    }
-
-    span:first-child {
-      flex-basis: 20%;
-      text-align: left;
-    }
-
-    span:last-child {
-      flex-basis: 20%;
-      text-align: right;
     }
   }
 
@@ -298,21 +237,10 @@
   }
 }
 
-// Mobile
 @include lg-breakpoint {
-  .wrapper {
-    .rewardsProgressPath {
-      .rewardsProgressBar {
-        .rewardsWalletIcon {
-          width: 4.375rem;
-          height: 4.375rem;
-        }
-        span {
-          white-space: nowrap;
-          bottom: 2.5rem;
-          left: -1.875rem;
-        }
-      }
+  .wrapper .rewardsDisabled {
+    .rewardsDisabledLink {
+      margin-top: .5rem;
     }
   }
 }
