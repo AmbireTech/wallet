@@ -5,15 +5,12 @@ import { rpcProviders } from 'config/providers'
 
 import { formatFloatTokenAmount } from 'lib/formatters'
 
-import { Button, Modal, ToolTip, RemoteLottie, Loading } from 'components/common'
+import { Button, Modal, ToolTip, Loading } from 'components/common'
 import { useModals } from 'hooks'
-import MultiplierBadges from './MultiplierBadges/MultiplierBadges'
+import { ReactComponent as InfoIcon } from 'resources/icons/information.svg'
 import UnbondModal from './UnbondModal/UnbondModal'
 
 import styles from './WalletTokenModal.module.scss'
-
-const MIN_ELIGIBLE_USD = 1000
-const MIN_CLAIMABLE_WALLET = 1000
 
 const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network }) => {
   const [isUnbondModalVisible, setIsUnbondModalVisible] = useState(false)
@@ -38,7 +35,7 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
     shouldDisplayMintableVesting
   } = claimableWalletToken
 
-  const { walletTokenAPYPercentage, adxTokenAPYPercentage, xWALLETAPYPercentage } = rewards
+  const { walletTokenAPYPercentage, xWALLETAPYPercentage } = rewards
 
   const claimWithBurn = () => {
     claimEarlyRewards(false)
@@ -54,18 +51,6 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
   const claimWithVesting = () => {
     claimVesting()
     hideModal()
-  }
-
-  const eligibilityLeft = MIN_ELIGIBLE_USD - rewards.balance.balanceInUSD
-  const isEligible = eligibilityLeft <= 0
-  const accumulatedWallets = rewards['balance-rewards'] + rewards['adx-rewards']
-  const canClaimWallet = accumulatedWallets >= MIN_CLAIMABLE_WALLET
-
-  const apys = {
-    adxStakingApy: {
-      unlocked: rewards['adx-rewards'] > 0,
-      apy: adxTokenAPYPercentage
-    }
   }
 
   const formatAmount = (amount) => (amount ? amount.toFixed(6) : 0)
@@ -84,100 +69,23 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
                 Are you sure?"
         onClick={claimWithBurn}
       />
-
-      <div>
-        <div className={styles.rewardsProgressPath}>
-          <div>
-            <div className={styles.rewardsProgressHoldingIcon} />
-          </div>
-          <div className={styles.rewardsProgressBar}>
-            <div
-              className={cn(styles.rewardsProgressBarFiller, styles.rewardsProgressBarFillerActive)}
-              style={{
-                width: `${Math.min(rewards.balance.balanceInUSD / MIN_ELIGIBLE_USD, 1) * 100}%`
-              }}
-            />
-            <span>
-              <b>
-                ${Math.floor(Math.min(rewards.balance.balanceInUSD, MIN_ELIGIBLE_USD))}
-                {rewards.balance.balanceInUSD > MIN_ELIGIBLE_USD && '+'}
-              </b>
-              /${MIN_ELIGIBLE_USD}
-            </span>
-          </div>
-
-          <div>
-            {isEligible ? (
-              <ToolTip label="You are earning $WALLET rewards">
-                <RemoteLottie
-                  remoteJson="/resources/rewards/rewards-active.mp4.lottie.json"
-                  className={styles.rewardsWalletIconAnimated}
-                  background="transparent"
-                  speed="1"
-                  loop
-                  autoplay
-                />
-              </ToolTip>
-            ) : (
-              <ToolTip
-                label={`You need a balance worth more than $${MIN_ELIGIBLE_USD} worth of tokens to start accumulating $WALLET rewards`}
-              >
-                <div className={styles.rewardsWalletIcon} />
-              </ToolTip>
-            )}
-          </div>
-
-          <div className={styles.rewardsProgressBar}>
-            <div
-              className={cn(styles.rewardsProgressBarFiller, {
-                [styles.rewardsProgressBarFillerActive]: isEligible
-              })}
-              style={{ width: `${Math.min(accumulatedWallets / MIN_CLAIMABLE_WALLET, 1) * 100}%` }}
-            />
-            <span>
-              <b>
-                $WALLET {Math.floor(Math.min(accumulatedWallets, MIN_CLAIMABLE_WALLET))}
-                {accumulatedWallets > MIN_CLAIMABLE_WALLET && '+'}
-              </b>
-              /{MIN_CLAIMABLE_WALLET}
-            </span>
-          </div>
-          <ToolTip
-            label={
-              canClaimWallet
-                ? 'You can claim accumulated $WALLET rewards'
-                : `You need to accumulate ${MIN_CLAIMABLE_WALLET} $WALLET to claim`
-            }
-          >
-            <div>
-              <div
-                className={cn(styles.rewardsProgressClaimIcon, {
-                  [styles.rewardsProgressClaimIconActive]: canClaimWallet
-                })}
-              />
-            </div>
-          </ToolTip>
-        </div>
-        <div className={styles.rewardsProgressLabels}>
-          <span>Balance</span>
-          <span>My Ambire Rewards</span>
-          <span>Unlock Claim</span>
-        </div>
-      </div>
-
-      <MultiplierBadges rewards={rewards} apys={apys} />
-
-      <div className={styles.info}>
-        You are receiving $WALLETs for holding funds on your Ambire wallet as an early user.{' '}
+      <div className={styles.rewardsDisabled}>
+        <InfoIcon className={styles.rewardsDisabledIcon} />
+        <p className={styles.rewardsDisabledText}>
+          {' '}
+          We are preparing for the public launch of our browser extension. Following a recent
+          governance vote, early users $WALLET rewards are no longer available in the Web and Mobile
+          versions of Ambire Wallet.
+        </p>
         <a
-          href="https://blog.ambire.com/announcing-the-wallet-token/"
+          className={styles.rewardsDisabledLink}
+          href="https://blog.ambire.com/stop-early-user-incentives/"
           target="_blank"
           rel="noreferrer"
         >
           Read More
         </a>
       </div>
-
       <div className={styles.item}>
         <div className={styles.details}>
           <label>Claimable now</label>
@@ -212,7 +120,6 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
           </ToolTip>
         </div>
       </div>
-
       <div className={styles.item}>
         <div className={styles.details}>
           <label>Early users Incentive total (Early users + ADX Staking bonus)</label>
@@ -226,7 +133,6 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
           </div>
         </div>
       </div>
-
       {shouldDisplayMintableVesting && (
         <div className={styles.item}>
           <div className={styles.details}>
