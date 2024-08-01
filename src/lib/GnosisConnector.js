@@ -26,9 +26,10 @@ function GnosisConnector(_iframeRef, _app) {
 
   this.send = (data, requestId, error) => {
     const sdkVersion = getSDKVersion()
+    const withOrigin = { ...data, origin: 'app.ambire.wallet' }
     const msg = error
       ? MessageFormatter.makeErrorResponse(requestId, error, sdkVersion)
-      : MessageFormatter.makeResponse(requestId, data, sdkVersion)
+      : MessageFormatter.makeResponse(requestId, withOrigin, sdkVersion)
 
     if (this.iframeRef) {
       // console.log("Posting to child")
