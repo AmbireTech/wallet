@@ -12,6 +12,7 @@ describe('Transfering funds', () => {
 
   it('Sends funds via Quick account', () => {
     cy.visit('/wallet/dashboards')
+    // Send button for  first token in dashboard
     cy.contains('Send').click()
 
     // Wait for the initial wallet load.
