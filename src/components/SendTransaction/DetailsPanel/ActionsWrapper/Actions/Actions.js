@@ -137,12 +137,18 @@ const Actions = ({
       .catch((e) => {
         if (isMounted.current) setSigningStatus(null)
         console.error(e)
-        if (e && e.message.includes('must provide an Ethereum address')) {
+        if(!e || !e.message || typeof e.message !== 'string') {
+          addToast(`Signing error: Unknown error`, { error: true })
+        } else if (
+          e.message.includes('must provide an Ethereum address') ||
+          // used for ambire extension
+          e.message.includes('the dApp is trying to sign using an address different from the currently selected account')
+        ){
           addToast(
             `Signing error: not connected with the correct address. Make sure you're connected with ${bundle.signer.address}.`,
             { error: true }
           )
-        } else if (e && e.message.includes('0x6b0c')) {
+        } else if (e.message.includes('0x6b0c')) {
           // not sure if that's actually the case with this hellish error, but after unlocking the device it no longer appeared
           // however, it stopped appearing after that even if the device is locked, so I'm not sure it's related...
           addToast(
