@@ -10,8 +10,15 @@
     padding-left: 1rem;
     padding-right: 1.375rem;
     background-color: $c-mirage;
+    
+    button {
+      outline: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+    }
 
-    a {
+    a, button {
       display: flex;
       align-items: center;
       gap: 0.625rem;

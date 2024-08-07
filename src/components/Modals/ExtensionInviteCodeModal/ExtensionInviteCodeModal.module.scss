@@ -1,0 +1,241 @@
+@import 'variables.scss';
+
+$max-modal-height: 55.375rem;
+$min-modal-height: 34.375rem;
+
+.wrapper {
+  z-index: 52;
+  position: relative;
+  max-height: $max-modal-height;
+  min-height: $min-modal-height;
+  max-width: 37.75rem;
+  width: 100%;
+  border-radius: 1.125rem;
+  border: 1px #3e436b;
+  background: #24263d;
+}
+
+// Reset
+.wrapper p,
+.wrapper span {
+  margin: 0;
+}
+
+.header {
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background: linear-gradient(82deg, #6000ff, #353d6e);
+  border-radius: 0.75rem 0.75rem 0 0;
+
+  .headerPrimaryGradient {
+    position: absolute;
+    left: -20%;
+    top: -35%;
+    z-index: 2;
+    width: 20rem;
+    height: 13.75rem;
+    background-color: #8b3dff;
+    opacity: 0.66;
+    filter: blur(4.375rem);
+  }
+
+  .headerSecondaryGradient {
+    position: absolute;
+    left: 60%;
+    bottom: 30%;
+    z-index: 2;
+    width: 26.25rem;
+    height: 18.5rem;
+    background-color: #56f6c1;
+    opacity: 0.48;
+    filter: blur(6.25rem);
+  }
+
+  .closeIcon {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 4;
+    cursor: pointer;
+
+    :global(#background) {
+      display: none;
+    }
+
+    &:not(.closeIconEnabled) {
+      opacity: .4;
+      cursor: not-allowed;
+    }
+  }
+
+  .headerLogo {
+    position: relative;
+    z-index: 3;
+    margin-bottom: 1.5rem;
+  }
+  .headerText {
+    position: relative;
+    z-index: 3;
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.6);
+    text-align: center;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 2.5rem;
+}
+
+.textWrapper {
+  .text {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .text:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.codeWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .codeTitle {
+    display: block;
+    color: #bbbde4;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .code {
+    display: block;
+    margin-bottom: 2rem;
+    border: none;
+    width: 18ch;
+    background: repeating-linear-gradient(
+        90deg,
+        #6770b3 0,
+        #6770b3 1ch,
+        transparent 0,
+        transparent 1.5ch
+      )
+      0 100%/98% 1px no-repeat;
+    color: #27e8a7; // font: 36px monospace;
+    font-size: 2.5rem;
+    font-family: monospace;
+    letter-spacing: 0.5ch;
+  }
+  .copyButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    background: rgba(235, 236, 255, 0.08);
+    border-radius: 1.5rem;
+    cursor: pointer;
+
+    svg,
+    span {
+      color: #bbbde4;
+      transition: $basic-transition;
+    }
+
+    svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    &:hover {
+      background: rgba(235, 236, 255, 0.15);
+
+      svg,
+      span {
+        color: #fff;
+      }
+    }
+  }
+}
+
+.storeWrapper {
+  .storeText {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+  }
+  .storeLink {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    gap: 0.5rem;
+    padding: 1rem 3rem;
+    margin: 0 auto;
+    border-radius: 4rem;
+    border: 1px solid #6770b3;
+    background: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+
+    svg {
+      width: 9.25rem;
+      height: 2rem;
+    }
+
+    &:hover {
+      background-color: #0e0e0e;
+    }
+  }
+}
+
+@mixin SmallScreen {
+  .header {
+    padding: 1.5rem;
+
+    .headerLogo {
+      margin-bottom: 1rem;
+    }
+
+    .headerText {
+      font-size: .75rem;
+    }
+  }
+  .content {
+    gap: 1.5rem;
+  }
+  .storeWrapper .storeText, .textWrapper .text {
+    font-size: 0.875rem;
+  }
+  .storeWrapper .storeText {
+    margin-bottom: 1rem;
+  }
+  .codeWrapper {
+    .codeTitle {
+      font-size: 0.875rem;
+      margin-bottom: .5rem;
+    }
+    .code {
+      margin-bottom: 1.5rem;
+    }
+  }
+}
+
+@media screen and (max-height: calc(#{$max-modal-height} + 100px)) {
+  @include SmallScreen;
+}
+
+@include sm-breakpoint {
+  @include SmallScreen;
+  .header, .content {
+    padding: 1.5rem;
+  }
+  .codeWrapper {
+    .code {
+      font-size: 2rem;
+    }
+  }
+}
