@@ -23,14 +23,15 @@ const ExtensionInviteCodeModal = ({
   const { addToast } = useToasts()
   const [canClose, setCanClose] = useState(!waitForClose)
 
-  const onCloseModal = useCallback(() => {
+  const handleCloseModal = useCallback(() => {
+    if (!canClose) return
     onHideModal()
     setExtensionInviteCodeModalSeenBy((prev) => {
       if (prev.includes(accountId)) return prev
 
       return [...prev, accountId]
     })
-  }, [accountId, onHideModal, setExtensionInviteCodeModalSeenBy])
+  }, [accountId, canClose, onHideModal, setExtensionInviteCodeModalSeenBy])
 
   useEffect(() => {
     const startingTime = Date.now()
@@ -66,7 +67,7 @@ const ExtensionInviteCodeModal = ({
           className={cn(styles.closeIcon, {
             [styles.closeIconEnabled]: canClose
           })}
-          onClick={onCloseModal}
+          onClick={handleCloseModal}
         />
       </div>
       <div className={styles.content}>
