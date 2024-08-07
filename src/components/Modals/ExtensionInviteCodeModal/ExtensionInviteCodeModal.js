@@ -25,7 +25,11 @@ const ExtensionInviteCodeModal = ({
 
   const onCloseModal = useCallback(() => {
     onHideModal()
-    setExtensionInviteCodeModalSeenBy((prev) => [...prev, accountId])
+    setExtensionInviteCodeModalSeenBy((prev) => {
+      if (prev.includes(accountId)) return prev
+
+      return [...prev, accountId]
+    })
   }, [accountId, onHideModal, setExtensionInviteCodeModalSeenBy])
 
   useEffect(() => {
