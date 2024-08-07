@@ -233,9 +233,43 @@ $min-modal-height: 34.375rem;
   .header, .content {
     padding: 1.5rem;
   }
+
   .codeWrapper {
     .code {
       font-size: 2rem;
     }
+  }
+}
+
+@include xs-breakpoint {
+  .header, .content {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: row;
+    align-items: center;
+    gap: 1rem;
+
+    .headerLogo {
+      width: 3.75rem;
+      width: 4rem;
+      height: auto;
+      margin-bottom: 0;
+    }
+    .headerText {
+      text-align: left;
+      padding-right: 2rem;
+    }
+    .closeIcon {
+      top: .5rem;
+      right: .5rem;
+    }
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .codeWrapper .code {
+    font-size: 1.5rem;
   }
 }
