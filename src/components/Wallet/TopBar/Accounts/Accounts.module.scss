@@ -97,6 +97,22 @@ $account-height: 3.75rem;
             gap: 0.125rem;
             overflow: hidden;
 
+            .addressAndBadge {
+              display: flex;
+              align-items: center;
+            }
+
+            .badge {
+              font-size: 0.625rem;
+              padding: 0.125rem 0.625rem;
+              background: #c185ff14;
+              border: 1px solid #c185ff;
+              color: #c185ff;
+              font-weight: 600;
+              border-radius: 0.75rem;
+              white-space: nowrap;
+            }
+
             .address,
             label {
               overflow: hidden;
@@ -107,6 +123,7 @@ $account-height: 3.75rem;
             .address {
               font-size: 0.875rem;
               font-weight: 400;
+              margin-right: 0.5rem;
             }
 
             label {
@@ -212,6 +229,19 @@ $account-height: 3.75rem;
         .message {
           font-size: 0.875rem;
           word-wrap: break-word;
+        }
+      }
+
+      .list .account {
+        .inner {
+          margin-right: 0;
+          gap: 0.5rem;
+        }
+        .buttons {
+          .button {
+            width: 2.5rem;
+            height: 2.5rem;
+          }
         }
       }
     }
