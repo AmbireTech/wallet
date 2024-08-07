@@ -62,7 +62,6 @@ const ExtensionInviteCodeModal = ({
         <div className={styles.headerPrimaryGradient} />
         <div className={styles.headerSecondaryGradient} />
         <AmbireLogo className={styles.headerLogo} width={92} height={96} />
-        <p className={styles.headerText}>Easy and secure self-custody for the Ethereum ecosystem</p>
         <CloseIcon
           className={cn(styles.closeIcon, {
             [styles.closeIconEnabled]: canClose
@@ -74,8 +73,8 @@ const ExtensionInviteCodeModal = ({
         <div className={styles.textWrapper}>
           <p className={styles.text}>Hey!</p>
           <p className={styles.text}>
-            We are onboarding only selected Ambire Wallet users to our newest product - the Ambire
-            browser extension.
+            We are onboarding the existing Ambire community first to our newest product - the Ambire
+            <strong> browser extension</strong>.
           </p>
           <p className={styles.text}>
             Claim this exclusive invitation code to get early access and start collecting XP for our
