@@ -257,8 +257,10 @@ export default function Wallet(props) {
     }
     const key = props.rewardsData?.rewards.extensionKey?.key
     const used = props.rewardsData?.rewards.extensionKey?.used
+    const rewardsAccountAddr = props.rewardsData?.rewards.accountAddr
 
-    if (!key || used) return
+    if (!key || used || rewardsAccountAddr !== account.id) return
+
     const isSeen = extensionInviteCodeModalSeenBy.includes(account.id)
 
     if (isSeen) return
