@@ -11,8 +11,8 @@ $min-modal-height: 34.375rem;
   max-width: 37.75rem;
   width: 100%;
   border-radius: 1.125rem;
-  border: 1px #3e436b;
-  background: #24263d;
+  border: 1px $c-fiord;
+  background: $c-ebony-clay;
 }
 
 // Reset
@@ -27,7 +27,7 @@ $min-modal-height: 34.375rem;
   display: flex;
   justify-content: center;
   padding: 2rem;
-  background: linear-gradient(82deg, #6000ff, #353d6e);
+  background: linear-gradient(82deg, $c-electric-violet, #353d6e);
   border-radius: 0.75rem 0.75rem 0 0;
 
   .headerPrimaryGradient {
@@ -66,7 +66,7 @@ $min-modal-height: 34.375rem;
     }
 
     &:not(.closeIconEnabled) {
-      opacity: .4;
+      opacity: 0.4;
       cursor: not-allowed;
     }
   }
@@ -112,13 +112,13 @@ $min-modal-height: 34.375rem;
     width: 18ch;
     background: repeating-linear-gradient(
         90deg,
-        #6770b3 0,
-        #6770b3 1ch,
+        $c-scampi 0,
+        $c-scampi 1ch,
         transparent 0,
         transparent 1.5ch
       )
       0 100%/98% 1px no-repeat;
-    color: #27e8a7; // font: 36px monospace;
+    color: $c-turquoise; // font: 36px monospace;
     font-size: 2.5rem;
     font-family: monospace;
     letter-spacing: 0.5ch;
@@ -168,7 +168,7 @@ $min-modal-height: 34.375rem;
     padding: 1rem 3rem;
     margin: 0 auto;
     border-radius: 4rem;
-    border: 1px solid #6770b3;
+    border: 1px solid $c-scampi;
     background: rgba(0, 0, 0, 0.3);
     cursor: pointer;
 
@@ -190,7 +190,8 @@ $min-modal-height: 34.375rem;
   .content {
     gap: 1.5rem;
   }
-  .storeWrapper .storeText, .textWrapper .text {
+  .storeWrapper .storeText,
+  .textWrapper .text {
     font-size: 0.875rem;
   }
   .storeWrapper .storeText {
@@ -199,7 +200,7 @@ $min-modal-height: 34.375rem;
   .codeWrapper {
     .codeTitle {
       font-size: 0.875rem;
-      margin-bottom: .5rem;
+      margin-bottom: 0.5rem;
     }
     .code {
       margin-bottom: 1.5rem;
@@ -213,7 +214,8 @@ $min-modal-height: 34.375rem;
 
 @include sm-breakpoint {
   @include SmallScreen;
-  .header, .content {
+  .header,
+  .content {
     padding: 1.5rem;
   }
 
@@ -225,7 +227,8 @@ $min-modal-height: 34.375rem;
 }
 
 @include xs-breakpoint {
-  .header, .content {
+  .header,
+  .content {
     padding: 1rem;
   }
 
@@ -236,8 +239,8 @@ $min-modal-height: 34.375rem;
       height: auto;
     }
     .closeIcon {
-      top: .5rem;
-      right: .5rem;
+      top: 0.5rem;
+      right: 0.5rem;
     }
   }
 }
