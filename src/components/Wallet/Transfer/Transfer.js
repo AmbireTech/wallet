@@ -25,6 +25,11 @@ const Transfer = (props) => {
   const [assetAddrWithSymbol, setAsset] = useState(
     selectedAsset && `${selectedAsset.address}:${selectedAsset.symbol}`
   )
+  
+  useEffect(()=>{
+    setAsset(selectedAsset && `${selectedAsset.address}:${selectedAsset.symbol}`)
+  }, [portfolio])
+
   const [gasTankDetails] = useState(state || null)
   const [address, setAddress] = useState(gasTankDetails ? accountPresets.feeCollector : '')
 
