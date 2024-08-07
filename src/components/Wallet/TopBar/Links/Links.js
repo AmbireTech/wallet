@@ -77,7 +77,7 @@ const Links = ({ extensionInviteCodeUsed, inviteCode, accountId }) => {
       </DropDownItem>
       <DropDownItem className={styles.item}>
         <a href="https://twitter.com/AmbireWallet" target="_blank" rel="noreferrer">
-          <Twitter className={styles.itemIcon} /> Twitter
+          <Twitter className={styles.itemIcon} /> X
         </a>
       </DropDownItem>
       <DropDownItem className={styles.item}>
