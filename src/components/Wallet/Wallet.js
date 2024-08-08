@@ -43,6 +43,10 @@ export default function Wallet(props) {
     key: 'dAppsAdvancedMode',
     defaultValue: []
   })
+  const [extensionInviteCodeModalSeenBy, setExtensionInviteCodeModalSeenBy] = useLocalStorage({
+    key: 'extensionInviteCodeModalSeenBy',
+    defaultValue: []
+  })
 
   const routes = [
     {
@@ -257,7 +261,16 @@ export default function Wallet(props) {
 
     if (!key || used || rewardsAccountAddr !== account.id) return
 
-    showModal(<ExtensionInviteCodeModal inviteCode={key} />, { disableClose: true })
+    const isSeen = extensionInviteCodeModalSeenBy.includes(account.id)
+
+    if (!isSeen) {
+      setExtensionInviteCodeModalSeenBy((prev) => [...prev, account.id])
+    }
+
+    showModal(<ExtensionInviteCodeModal inviteCode={key} waitForClose={!isSeen} />, {
+      disableClose: !isSeen
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props.accounts,
     props.relayerURL,
@@ -271,7 +284,8 @@ export default function Wallet(props) {
     isClipboardGranted,
     isNoticationsGranted,
     modalHidden,
-    showModal
+    showModal,
+    setExtensionInviteCodeModalSeenBy
   ])
 
   useEffect(() => handleDisplayInitialModal(), [handleDisplayInitialModal])

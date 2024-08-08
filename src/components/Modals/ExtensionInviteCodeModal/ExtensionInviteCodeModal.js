@@ -14,15 +14,16 @@ import styles from './ExtensionInviteCodeModal.module.scss'
 const CAN_CLOSE_AFTER_MS = 5400
 
 const ExtensionInviteCodeModal = ({ inviteCode, waitForClose = true }) => {
-  const { onHideModal } = useModals()
+  const { hideModal } = useModals()
   const { addToast } = useToasts()
   const [remainingTime, setRemainingTime] = useState(CAN_CLOSE_AFTER_MS)
   const [canClose, setCanClose] = useState(!waitForClose)
 
   const handleCloseModal = useCallback(() => {
     if (!canClose) return
-    onHideModal()
-  }, [canClose, onHideModal])
+
+    hideModal()
+  }, [canClose, hideModal])
 
   useEffect(() => {
     const startingTime = Date.now()
