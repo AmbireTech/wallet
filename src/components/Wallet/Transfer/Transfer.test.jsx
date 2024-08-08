@@ -100,6 +100,9 @@ test('can send token', async () => {
     />
   )
 
+  await user.click(screen.getByText('Select an asset'))
+  await user.click(screen.getByText('MATIC'))
+
   const maxButton = screen.getByText('MAX')
   await user.click(maxButton)
 
