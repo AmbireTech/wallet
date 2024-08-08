@@ -16,26 +16,15 @@ import { ReactComponent as Twitter } from './images/twitter.svg'
 import { ReactComponent as Telegram } from './images/telegram.svg'
 import { ReactComponent as Tos } from './images/tos.svg'
 
-const Links = ({ extensionInviteCodeUsed, inviteCode, accountId }) => {
+const Links = ({ extensionInviteCodeUsed, inviteCode }) => {
   const { showModal } = useModals()
-  const [, setExtensionInviteCodeModalSeenBy] = useLocalStorage({
-    key: 'extensionInviteCodeModalSeenBy',
-    defaultValue: []
-  })
   const [linksViewed, setLinksViewed] = useLocalStorage({ key: 'linksViewed', defaultValue: false })
 
   const onOpen = useCallback(() => setLinksViewed(true), [setLinksViewed])
 
   const openExtensionInviteCodeModal = useCallback(() => {
-    showModal(
-      <ExtensionInviteCodeModal
-        inviteCode={inviteCode}
-        setExtensionInviteCodeModalSeenBy={setExtensionInviteCodeModalSeenBy}
-        accountId={accountId}
-        waitForClose={false}
-      />
-    )
-  }, [accountId, inviteCode, setExtensionInviteCodeModalSeenBy, showModal])
+    showModal(<ExtensionInviteCodeModal inviteCode={inviteCode} waitForClose={false} />)
+  }, [inviteCode, showModal])
 
   return (
     <DropDown

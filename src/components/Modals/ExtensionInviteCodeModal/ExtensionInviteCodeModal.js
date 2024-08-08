@@ -13,12 +13,7 @@ import styles from './ExtensionInviteCodeModal.module.scss'
 
 const CAN_CLOSE_AFTER_MS = 5000
 
-const ExtensionInviteCodeModal = ({
-  inviteCode,
-  setExtensionInviteCodeModalSeenBy,
-  accountId,
-  waitForClose = true
-}) => {
+const ExtensionInviteCodeModal = ({ inviteCode, waitForClose = true }) => {
   const { onHideModal } = useModals()
   const { addToast } = useToasts()
   const [canClose, setCanClose] = useState(!waitForClose)
@@ -26,12 +21,7 @@ const ExtensionInviteCodeModal = ({
   const handleCloseModal = useCallback(() => {
     if (!canClose) return
     onHideModal()
-    setExtensionInviteCodeModalSeenBy((prev) => {
-      if (prev.includes(accountId)) return prev
-
-      return [...prev, accountId]
-    })
-  }, [accountId, canClose, onHideModal, setExtensionInviteCodeModalSeenBy])
+  }, [canClose, onHideModal])
 
   useEffect(() => {
     const startingTime = Date.now()
@@ -45,7 +35,7 @@ const ExtensionInviteCodeModal = ({
     return () => {
       clearTimeout(timeout)
     }
-  })
+  }, [])
 
   const handleCopy = useCallback(async () => {
     try {
