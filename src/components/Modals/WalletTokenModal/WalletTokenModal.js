@@ -77,8 +77,8 @@ const WalletTokenModal = ({ accountId, claimableWalletToken, rewards, network })
           <a href="https://www.ambire.com/" target="_blank" rel="noreferrer">
             our browser extension
           </a>
-          . Following a recent governance vote, early users $WALLET rewards are no longer available
-          in the Web and Mobile versions of Ambire Wallet.
+          . Following a recent governance vote, early users $WALLET rewards are no longer awarded in
+          the Web and Mobile versions of Ambire Wallet.
         </p>
         <a
           className={styles.rewardsDisabledLink}
