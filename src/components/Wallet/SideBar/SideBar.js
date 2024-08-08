@@ -6,6 +6,7 @@ import { Loading, Button } from 'components/common'
 import GasIndicator from 'components/Wallet/SideBar/GasIndicator/GasIndicator'
 
 import { MdClose } from 'react-icons/md'
+import { ReactComponent as AmbireV1Logo } from 'resources/logo-v1.svg'
 import { ReactComponent as DashboardIcon } from './images/dashboard.svg'
 import { ReactComponent as DepositIcon } from './images/deposit.svg'
 import { ReactComponent as TransferIcon } from './images/transfer.svg'
@@ -100,7 +101,7 @@ const SideBar = ({
 
       {!dappModeSidebar && (
         <NavLink to="/wallet/dashboard" className={styles.sidebarLogo}>
-          <img src="/resources/logo-v1.svg" alt="ambire-logo" />
+          <AmbireV1Logo />
         </NavLink>
       )}
       <div className={styles.balance}>
