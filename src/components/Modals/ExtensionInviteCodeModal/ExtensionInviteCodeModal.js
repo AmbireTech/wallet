@@ -11,11 +11,12 @@ import { ReactComponent as ChromeWebStore } from 'resources/chrome-web-store.svg
 import { useToasts } from 'hooks/toasts'
 import styles from './ExtensionInviteCodeModal.module.scss'
 
-const CAN_CLOSE_AFTER_MS = 5000
+const CAN_CLOSE_AFTER_MS = 5400
 
 const ExtensionInviteCodeModal = ({ inviteCode, waitForClose = true }) => {
   const { onHideModal } = useModals()
   const { addToast } = useToasts()
+  const [remainingTime, setRemainingTime] = useState(CAN_CLOSE_AFTER_MS)
   const [canClose, setCanClose] = useState(!waitForClose)
 
   const handleCloseModal = useCallback(() => {
@@ -26,14 +27,19 @@ const ExtensionInviteCodeModal = ({ inviteCode, waitForClose = true }) => {
   useEffect(() => {
     const startingTime = Date.now()
 
-    const timeout = setTimeout(() => {
-      if (Date.now() - startingTime < CAN_CLOSE_AFTER_MS) return
+    const interval = setInterval(() => {
+      const elapsedTime = Date.now() - startingTime
+      const newRemainingTime = CAN_CLOSE_AFTER_MS - elapsedTime
+      setRemainingTime(newRemainingTime)
 
-      setCanClose(true)
-    }, CAN_CLOSE_AFTER_MS)
+      if (newRemainingTime <= 0) {
+        setCanClose(true)
+        clearInterval(interval)
+      }
+    }, 500)
 
     return () => {
-      clearTimeout(timeout)
+      clearInterval(interval)
     }
   }, [])
 
@@ -52,12 +58,19 @@ const ExtensionInviteCodeModal = ({ inviteCode, waitForClose = true }) => {
         <div className={styles.headerPrimaryGradient} />
         <div className={styles.headerSecondaryGradient} />
         <AmbireLogo className={styles.headerLogo} width={92} height={96} />
-        <CloseIcon
-          className={cn(styles.closeIcon, {
+        <div
+          className={cn(styles.closeWrapper, {
             [styles.closeIconEnabled]: canClose
           })}
-          onClick={handleCloseModal}
-        />
+        >
+          {!canClose ? (
+            <span className={styles.remainingTime}>
+              {remainingTime > 500 ? Math.round(remainingTime / 1000) : 1}
+            </span>
+          ) : (
+            <CloseIcon className={styles.closeIcon} onClick={handleCloseModal} />
+          )}
+        </div>
       </div>
       <div className={styles.content}>
         <div className={styles.textWrapper}>

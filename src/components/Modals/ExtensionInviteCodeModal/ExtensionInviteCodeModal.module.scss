@@ -54,20 +54,35 @@ $min-modal-height: 34.375rem;
     filter: blur(6.25rem);
   }
 
-  .closeIcon {
+  .closeWrapper {
     position: absolute;
     right: 1rem;
     top: 1rem;
     z-index: 4;
-    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
 
-    :global(#background) {
-      display: none;
+    .remainingTime {
+      color: #fff;
+      font-size: 0.875rem;
+      opacity: 0.6;
+    }
+    .closeIcon {
+      cursor: pointer;
+
+      :global(#background) {
+        display: none;
+      }
     }
 
     &:not(.closeIconEnabled) {
-      opacity: 0.4;
-      cursor: not-allowed;
+      .closeIcon {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
     }
   }
 
@@ -238,9 +253,9 @@ $min-modal-height: 34.375rem;
       width: 4rem;
       height: auto;
     }
-    .closeIcon {
-      top: 0.5rem;
-      right: 0.5rem;
+    .closeWrapper {
+      top: 0.25rem;
+      right: 0.25rem;
     }
   }
 }
