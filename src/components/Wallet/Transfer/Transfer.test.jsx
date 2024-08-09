@@ -97,7 +97,8 @@ test('can send token', async () => {
       addressBook={addressBook}
       selectedAcc={userAddress}
       addRequest={addRequest}
-    />)
+    />
+  )
   const selectAnAsset = screen.getByText('Select an asset')
   await user.click(selectAnAsset)
   const selectMatic = screen.getByText('MATIC')

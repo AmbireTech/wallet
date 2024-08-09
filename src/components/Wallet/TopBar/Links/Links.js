@@ -1,10 +1,14 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { DropDown } from 'components/common'
 import useLocalStorage from 'hooks/useLocalStorage'
 import DropDownItem from 'components/common/DropDown/DropDownItem/DropDownItem'
-import { ReactComponent as QuestionMark } from 'resources/icons/question-mark.svg'
+import { useModals } from 'hooks'
+import ExtensionInviteCodeModal from 'components/Modals/ExtensionInviteCodeModal/ExtensionInviteCodeModal'
 import styles from './Links.module.scss'
 
+import { ReactComponent as QuestionMark } from './images/help.svg'
+import { ReactComponent as ExtensionInviteCode } from './images/extension-invite-code.svg'
+import { ReactComponent as QuestionMarkWithNotification } from './images/help-with-notification.svg'
 import { ReactComponent as HelpCenter } from './images/help-center.svg'
 import { ReactComponent as Issue } from './images/issue.svg'
 import { ReactComponent as Discord } from './images/discord.svg'
@@ -12,17 +16,35 @@ import { ReactComponent as Twitter } from './images/twitter.svg'
 import { ReactComponent as Telegram } from './images/telegram.svg'
 import { ReactComponent as Tos } from './images/tos.svg'
 
-const Links = () => {
+const Links = ({ extensionInviteCodeUsed, inviteCode }) => {
+  const { showModal } = useModals()
   const [linksViewed, setLinksViewed] = useLocalStorage({ key: 'linksViewed', defaultValue: false })
 
-  const onOpen = () => setLinksViewed(true)
+  const onOpen = useCallback(() => setLinksViewed(true), [setLinksViewed])
+
+  const openExtensionInviteCodeModal = useCallback(() => {
+    showModal(<ExtensionInviteCodeModal inviteCode={inviteCode} waitForClose={false} />)
+  }, [inviteCode, showModal])
 
   return (
     <DropDown
       className={`${styles.wrapper} ${linksViewed ? styles.viewed : ''}`}
-      title={<QuestionMark className={styles.titleIcon} />}
+      title={
+        extensionInviteCodeUsed ? (
+          <QuestionMark className={styles.titleIcon} />
+        ) : (
+          <QuestionMarkWithNotification className={styles.titleIcon} />
+        )
+      }
       onOpen={onOpen}
     >
+      {!extensionInviteCodeUsed && (
+        <DropDownItem className={styles.item}>
+          <button type="button" onClick={openExtensionInviteCodeModal} target="_blank">
+            <ExtensionInviteCode className={styles.itemIcon} /> Extension invitation code
+          </button>
+        </DropDownItem>
+      )}
       <DropDownItem className={styles.item}>
         <a
           href="https://help.ambire.com/hc/en-us/categories/4404980091538-Ambire-Wallet"
@@ -44,7 +66,7 @@ const Links = () => {
       </DropDownItem>
       <DropDownItem className={styles.item}>
         <a href="https://twitter.com/AmbireWallet" target="_blank" rel="noreferrer">
-          <Twitter className={styles.itemIcon} /> Twitter
+          <Twitter className={styles.itemIcon} /> X
         </a>
       </DropDownItem>
       <DropDownItem className={styles.item}>

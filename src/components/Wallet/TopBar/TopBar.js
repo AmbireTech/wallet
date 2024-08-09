@@ -165,7 +165,10 @@ const TopBar = ({
             dappsCatalog={dappsCatalog}
             dapModeTopBar={dappModeTopBar}
           />
-          <Links />
+          <Links
+            inviteCode={rewardsData?.rewards?.extensionKey?.key}
+            extensionInviteCodeUsed={rewardsData?.rewards?.extensionKey?.used}
+          />
         </div>
       </div>
     </>

@@ -10,6 +10,7 @@ import unsupportedDApps from 'ambire-common/src/constants/unsupportedDApps'
 import PermissionsModal from 'components/Modals/PermissionsModal/PermissionsModal'
 import UnsupportedDAppsModal from 'components/Modals/UnsupportedDAppsModal/UnsupportedDAppsModal'
 import { Loading } from 'components/common'
+import ExtensionInviteCodeModal from 'components/Modals/ExtensionInviteCodeModal/ExtensionInviteCodeModal'
 import SideBar from './SideBar/SideBar'
 import TopBar from './TopBar/TopBar'
 import DappsCatalog from './DappsCatalog/DappsCatalog'
@@ -40,6 +41,10 @@ export default function Wallet(props) {
   const isLoggedIn = useMemo(() => props.accounts.length > 0, [props.accounts])
   const [advancedModeList, setAdvancedModeList] = useLocalStorage({
     key: 'dAppsAdvancedMode',
+    defaultValue: []
+  })
+  const [extensionInviteCodeModalSeenBy, setExtensionInviteCodeModalSeenBy] = useLocalStorage({
+    key: 'extensionInviteCodeModalSeenBy',
     defaultValue: []
   })
 
@@ -220,9 +225,9 @@ export default function Wallet(props) {
 
   const LoggedInGuard = () => (!isLoggedIn ? <Redirect to="/add-account" /> : null)
 
-  const handlePermissionsModal = useCallback(async () => {
+  const handleDisplayInitialModal = useCallback(async () => {
     const account = props.accounts.find(({ id }) => id === props.selectedAcc)
-    if (!account) return
+    if (!account || !arePermissionsLoaded) return
 
     const relayerIdentityURL = `${props.relayerURL}/identity/${account.id}`
 
@@ -243,23 +248,47 @@ export default function Wallet(props) {
       />
     )
 
-    const isMobile = navigator.platform.includes('Android') || navigator.platform.includes('iOS')
-    if ((showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) && !isMobile)
+    if (showCauseOfEmail || showCauseOfPermissions || showCauseOfBackupOptout) {
+      const isMobile = navigator.platform.includes('Android') || navigator.platform.includes('iOS')
+      if (isMobile) return
+
       showModal(permissionsModal, { disableClose: true })
+      return
+    }
+    const key = props.rewardsData?.rewards.extensionKey?.key
+    const used = props.rewardsData?.rewards.extensionKey?.used
+    const rewardsAccountAddr = props.rewardsData?.rewards.accountAddr
+
+    if (!key || used || rewardsAccountAddr !== account.id) return
+
+    const isSeen = extensionInviteCodeModalSeenBy.includes(account.id)
+
+    if (!isSeen) {
+      setExtensionInviteCodeModalSeenBy((prev) => [...prev, account.id])
+    }
+
+    showModal(<ExtensionInviteCodeModal inviteCode={key} waitForClose={!isSeen} />, {
+      disableClose: !isSeen
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     props.accounts,
     props.relayerURL,
     props.onAddAccount,
     props.showThankYouPage,
+    props.rewardsData?.rewards.extensionKey?.key,
+    props.rewardsData?.rewards.extensionKey?.used,
+    props.rewardsData?.rewards.accountAddr,
     props.selectedAcc,
     arePermissionsLoaded,
     isClipboardGranted,
     isNoticationsGranted,
     modalHidden,
-    showModal
+    showModal,
+    setExtensionInviteCodeModalSeenBy
   ])
 
-  useEffect(() => handlePermissionsModal(), [handlePermissionsModal])
+  useEffect(() => handleDisplayInitialModal(), [handleDisplayInitialModal])
 
   // On pathname change (i.e. navigating to different page), always scroll to top
   useEffect(() => {

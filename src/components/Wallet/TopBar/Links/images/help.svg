@@ -1,8 +1,8 @@
-<svg id="help_icon" data-name="help icon" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
-  <g id="Rectangle_305" data-name="Rectangle 305" fill="none" stroke="#707070" stroke-width="1" opacity="0">
-    <rect width="32" height="32" rx="2" stroke="none"/>
-    <rect x="0.5" y="0.5" width="31" height="31" rx="1.5" fill="none"/>
-  </g>
-  <rect id="Rectangle_295" data-name="Rectangle 295" width="21" height="21" rx="10.5" transform="translate(5 6)" fill="none" stroke="#ebecff" stroke-width="2"/>
-  <path id="Path_1610" data-name="Path 1610" d="M.666-9.09H2.214a2.15,2.15,0,0,1,2.394-2.25A2.207,2.207,0,0,1,7-9C7-6.822,5.256-6.426,3.2-6.426H2.682l.072,2.844H4.176l.054-1.71c2.52,0,4.338-1.08,4.338-3.708,0-2.286-1.62-3.708-3.978-3.708S.648-11.268.666-9.09Zm3.87,8.082a1.091,1.091,0,0,0-1.08-1.116A1.1,1.1,0,0,0,2.34-1.008,1.1,1.1,0,0,0,3.456.108,1.091,1.091,0,0,0,4.536-1.008Z" transform="translate(11 23)" fill="#ebecff"/>
+<svg viewBox="0 0 33 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path
+    d="M26.5 16.5C26.5 10.701 21.799 6 16 6S5.5 10.701 5.5 16.5 10.201 27 16 27s10.5-4.701 10.5-10.5Z"
+    stroke="#EBECFF" stroke-width="2" />
+  <path
+    d="M12.166 13.91h1.548a2.15 2.15 0 0 1 2.394-2.25A2.207 2.207 0 0 1 18.5 14c0 2.178-1.744 2.574-3.8 2.574h-.518l.072 2.844h1.422l.054-1.71c2.52 0 4.338-1.08 4.338-3.708 0-2.286-1.62-3.708-3.978-3.708s-3.942 1.44-3.924 3.618Zm3.87 8.082a1.09 1.09 0 0 0-1.08-1.116 1.1 1.1 0 0 0-1.116 1.116 1.102 1.102 0 0 0 1.89.784 1.09 1.09 0 0 0 .306-.784Z"
+    fill="#EBECFF" />
 </svg>

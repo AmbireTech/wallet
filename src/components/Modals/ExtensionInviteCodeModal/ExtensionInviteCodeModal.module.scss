@@ -1,0 +1,268 @@
+@import 'variables.scss';
+
+$max-modal-height: 55.375rem;
+$min-modal-height: 34.375rem;
+
+.wrapper {
+  z-index: 52;
+  position: relative;
+  max-height: $max-modal-height;
+  min-height: $min-modal-height;
+  max-width: 37.75rem;
+  width: 100%;
+  border-radius: 1.125rem;
+  border: 1px $c-fiord;
+  background: $c-ebony-clay;
+}
+
+// Reset
+.wrapper p,
+.wrapper span {
+  margin: 0;
+}
+
+.header {
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  background: linear-gradient(82deg, $c-electric-violet, #353d6e);
+  border-radius: 0.75rem 0.75rem 0 0;
+
+  .headerPrimaryGradient {
+    position: absolute;
+    left: -20%;
+    top: -35%;
+    z-index: 2;
+    width: 20rem;
+    height: 13.75rem;
+    background-color: #8b3dff;
+    opacity: 0.66;
+    filter: blur(4.375rem);
+  }
+
+  .headerSecondaryGradient {
+    position: absolute;
+    left: 60%;
+    bottom: 30%;
+    z-index: 2;
+    width: 26.25rem;
+    height: 18.5rem;
+    background-color: #56f6c1;
+    opacity: 0.48;
+    filter: blur(6.25rem);
+  }
+
+  .closeWrapper {
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+
+    .remainingTime {
+      color: #fff;
+      font-size: 0.875rem;
+      opacity: 0.6;
+      user-select: none;
+    }
+    .closeIcon {
+      cursor: pointer;
+
+      :global(#background) {
+        display: none;
+      }
+    }
+
+    &:not(.closeIconEnabled) {
+      .closeIcon {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+    }
+  }
+
+  .headerLogo {
+    position: relative;
+    z-index: 3;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  gap: 2.5rem;
+}
+
+.textWrapper {
+  .text {
+    font-size: 1.125rem;
+    line-height: 1.7;
+    margin-bottom: 1rem;
+  }
+  .text:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.codeWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .codeTitle {
+    display: block;
+    color: #bbbde4;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+  }
+  .code {
+    display: block;
+    margin-bottom: 2rem;
+    border: none;
+    width: 18ch;
+    background: repeating-linear-gradient(
+        90deg,
+        $c-scampi 0,
+        $c-scampi 1ch,
+        transparent 0,
+        transparent 1.5ch
+      )
+      0 100%/98% 1px no-repeat;
+    color: $c-turquoise; // font: 36px monospace;
+    font-size: 2.5rem;
+    font-family: monospace;
+    letter-spacing: 0.5ch;
+  }
+  .copyButton {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.5rem;
+    background: rgba(235, 236, 255, 0.08);
+    border-radius: 1.5rem;
+    cursor: pointer;
+
+    svg,
+    span {
+      color: #bbbde4;
+      transition: $basic-transition;
+    }
+
+    svg {
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+
+    &:hover {
+      background: rgba(235, 236, 255, 0.15);
+
+      svg,
+      span {
+        color: #fff;
+      }
+    }
+  }
+}
+
+.storeWrapper {
+  .storeText {
+    font-size: 1.125rem;
+    margin-bottom: 2rem;
+  }
+  .storeLink {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: fit-content;
+    gap: 0.5rem;
+    padding: 1rem 3rem;
+    margin: 0 auto;
+    border-radius: 4rem;
+    border: 1px solid $c-scampi;
+    background: rgba(0, 0, 0, 0.3);
+    cursor: pointer;
+
+    svg {
+      width: 9.25rem;
+      height: 2rem;
+    }
+
+    &:hover {
+      background-color: #0e0e0e;
+    }
+  }
+}
+
+@mixin SmallScreen {
+  .header {
+    padding: 1.5rem;
+  }
+  .content {
+    gap: 1.5rem;
+  }
+  .storeWrapper .storeText,
+  .textWrapper .text {
+    font-size: 0.875rem;
+  }
+  .storeWrapper .storeText {
+    margin-bottom: 1rem;
+  }
+  .codeWrapper {
+    .codeTitle {
+      font-size: 0.875rem;
+      margin-bottom: 0.5rem;
+    }
+    .code {
+      margin-bottom: 1.5rem;
+    }
+  }
+}
+
+@media screen and (max-height: calc(#{$max-modal-height} + 100px)) {
+  @include SmallScreen;
+}
+
+@include sm-breakpoint {
+  @include SmallScreen;
+  .header,
+  .content {
+    padding: 1.5rem;
+  }
+
+  .codeWrapper {
+    .code {
+      font-size: 2rem;
+    }
+  }
+}
+
+@include xs-breakpoint {
+  .header,
+  .content {
+    padding: 1rem;
+  }
+
+  .header {
+    .headerLogo {
+      width: 3.75rem;
+      width: 4rem;
+      height: auto;
+    }
+    .closeWrapper {
+      top: 0.25rem;
+      right: 0.25rem;
+    }
+  }
+}
+
+@media screen and (max-width: 350px) {
+  .codeWrapper .code {
+    font-size: 1.5rem;
+  }
+}

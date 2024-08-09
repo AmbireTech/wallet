@@ -26,7 +26,7 @@
     "@web3-react/abstract-connector": "^6.0.7",
     "@web3-react/types": "^6.0.7",
     "adex-protocol-eth": "git+https://git@github.com/AmbireTech/adex-protocol-eth.git#2606263234a7e01ece1af9826e6084fd800dae8f",
-    "ambire-common": "npm:@ambire/common@1.0.17",
+    "ambire-common": "npm:@ambire/common@1.0.19",
     "bip44-constants": "^128.0.0",
     "blockies-ts": "^1.0.0",
     "chart.js": "^3.9.1",

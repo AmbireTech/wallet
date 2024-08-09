@@ -173,7 +173,10 @@ const Accounts = ({
                 )}
                 <div className={styles.icon} style={toIconBackgroundImage(id)} />
                 <div className={styles.details}>
-                  <div className={styles.address}>{id}</div>
+                  <div className={styles.addressAndBadge}>
+                    <div className={styles.address}>{id}</div>
+                    <div className={styles.badge}>Ambire v1</div>
+                  </div>
                   <label>
                     {email
                       ? `Email/Password account (${email})`
