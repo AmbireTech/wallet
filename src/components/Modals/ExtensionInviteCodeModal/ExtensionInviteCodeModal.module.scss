@@ -119,11 +119,11 @@ $min-modal-height: 34.375rem;
     display: block;
     color: #bbbde4;
     font-size: 1rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
   }
   .code {
     display: block;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     border: none;
     width: 18ch;
     background: repeating-linear-gradient(
@@ -134,8 +134,8 @@ $min-modal-height: 34.375rem;
         transparent 1.5ch
       )
       0 100%/98% 1px no-repeat;
-    color: $c-turquoise; // font: 36px monospace;
-    font-size: 2.5rem;
+    color: #bbbde4;
+    font-size: 1.5rem;
     font-family: monospace;
     letter-spacing: 0.5ch;
   }
@@ -150,7 +150,7 @@ $min-modal-height: 34.375rem;
 
     svg,
     span {
-      color: #bbbde4;
+      color: $c-turquoise;
       transition: $basic-transition;
     }
 
@@ -208,18 +208,16 @@ $min-modal-height: 34.375rem;
   }
   .storeWrapper .storeText,
   .textWrapper .text {
-    font-size: 0.875rem;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
   }
   .storeWrapper .storeText {
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
   }
   .codeWrapper {
     .codeTitle {
       font-size: 0.875rem;
-      margin-bottom: 0.5rem;
-    }
-    .code {
-      margin-bottom: 1.5rem;
+      margin-bottom: 0.25rem;
     }
   }
 }
@@ -233,12 +231,6 @@ $min-modal-height: 34.375rem;
   .header,
   .content {
     padding: 1.5rem;
-  }
-
-  .codeWrapper {
-    .code {
-      font-size: 2rem;
-    }
   }
 }
 
@@ -259,10 +251,46 @@ $min-modal-height: 34.375rem;
       right: 0.25rem;
     }
   }
-}
 
-@media screen and (max-width: 350px) {
-  .codeWrapper .code {
-    font-size: 1.5rem;
+  .wrapper {
+    min-height: 30rem;
+  }
+
+  .content {
+    gap: 1rem;
+  }
+  .storeWrapper .storeText,
+  .textWrapper .text {
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  .codeWrapper {
+    margin-bottom: 0.5rem;
+
+    .codeTitle {
+      font-size: 0.75rem;
+    }
+    .code {
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+    .copyButton {
+      padding: 0.5rem 1rem;
+      font-size: 0.75rem;
+      gap: 0.25rem;
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+      }
+    }
+  }
+  .storeWrapper {
+    .storeText {
+      margin-bottom: 1rem;
+    }
+    .storeLink {
+      padding: 0.75rem 2.5rem;
+    }
   }
 }
