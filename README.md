@@ -24,7 +24,7 @@ It's built on smart contract wallet technology, enabling powerful features such 
 
 **NOTE: make sure that you use the `wallet-v2` branch of the relayer.**
 
-**NOTE 2: we test on Polygon,** because it's cheap enough and it's a real environment with all the supported protocols - Sushiswap, Uniswap, Aave, and others. Ping #dev-wallet channel on Slack so we can send you some MATIC tokens.
+**NOTE 2: we test on Polygon,** because it's cheap enough and it's a real environment with all the supported protocols - Sushiswap, Uniswap, Aave, and others. Ping #dev-wallet channel on Slack so we can send you some POL tokens.
 
 ### Running the relayer
 **IMPORTANT: if you are running from public repositories, and do not have access to the relayer, please skip this step and run in relayerless mode!**
@@ -513,3 +513,6 @@ Those contracts (except Ethereum-specific WALLET, xWALLET and SupplyController) 
 
 ### v0.7.8
 - Scroll Chain support added.
+
+### v0.7.9
+- Changed Polygon native asset to POL

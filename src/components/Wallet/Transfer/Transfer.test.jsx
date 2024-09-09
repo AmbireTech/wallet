@@ -50,7 +50,7 @@ const portfolio = {
       isHidden: false,
       network: 'polygon',
       price: 0.865552,
-      symbol: 'MATIC',
+      symbol: 'POL',
       tokenImageUrl:
         'https://assets.coingecko.com/coins/images/4713/large/matic-token-icon.png?1624446912',
       type: 'base',
