@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 24 24">
-  <g id="Export" transform="translate(-862 -742)">
-    <rect id="Boundary" width="24" height="24" transform="translate(862 742)" fill="none"/>
-    <g id="Group_304" data-name="Group 304" transform="translate(0 -1.281)">
-      <path id="Path_1511" data-name="Path 1511" d="M19431.842,20119.051a2.85,2.85,0,0,1-2.842-2.848v-4.256a.949.949,0,0,1,1.9,0v4.256a.948.948,0,0,0,.949.955h12.311a.953.953,0,0,0,.949-.955v-4.256a.946.946,0,1,1,1.893,0v3.6h.006v.656a2.851,2.851,0,0,1-2.848,2.848Z" transform="translate(-18564.008 -19354.727)" fill="#ebecff"/>
-      <path id="Path_1510" data-name="Path 1510" d="M2619.316,12.683a.948.948,0,0,1,0-1.339l6.45-6.449h-3.4a.947.947,0,1,1,0-1.894h5.685a.947.947,0,0,1,.947.947V9.632a.947.947,0,0,1-1.895,0v-3.4l-6.449,6.449a.947.947,0,0,1-1.34,0Z" transform="translate(-987.105 2603.1) rotate(-45)" fill="#ebecff"/>
-    </g>
-  </g>
-</svg>
