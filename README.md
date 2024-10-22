@@ -5,6 +5,11 @@ Ambire Wallet is a self-custodial crypto wallet designed with power and ease of 
 
 It's built on smart contract wallet technology, enabling powerful features such as transaction batching, account recovery, multisigs, key rotation and paying for transactions in stablecoins (account abstraction & ERC-4337).
 
+### Download Ambire Wallet
+* Chrome/Edge/Opera/Brave/Arc: https://chromewebstore.google.com/detail/ambire-wallet/ehgjhhccekdedpbkifaojjaefeohnoea
+* Android: https://play.google.com/store/apps/details?id=com.ambire.wallet&hl=en
+* iOS (iPhone): https://apps.apple.com/us/app/ambire-smart-crypto-wallet/id6444863857
+
 ### WARNING
 #### This repo is in maintenance mode while we're working on Ambire v2 (browser extension)
 
