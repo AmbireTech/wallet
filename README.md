@@ -63,7 +63,7 @@ To see how to build plugins for Ambire, please [read our plugin docs](/how-to-cr
 ## Code style and recommendations
 
 * No semicolons
-* 2 spaces for identation
+* 2 spaces for indentation
 * Single quote (') instead of double (")
 * Error handling: make sure to catch all errors that may originate in external IO (expected errors) and display them in a human friendly way with `addToast`; also, at a top-level, every time you spawn an async operation, make sure you `.catch` the entire thing to catch unexpected errors
 * Camel case
