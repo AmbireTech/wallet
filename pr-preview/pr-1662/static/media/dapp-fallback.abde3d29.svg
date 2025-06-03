@@ -1,0 +1,12 @@
+<svg id="Fallback_dapp_icon" data-name="Fallback dapp icon" xmlns="http://www.w3.org/2000/svg" width="auto" height="auto" viewBox="0 0 23.999 23.999">
+  <g id="Group_860" data-name="Group 860" transform="translate(-1389 -709.965)">
+    <g id="Group_185" data-name="Group 185" transform="translate(1389 709.965)">
+      <rect id="Rectangle_278" data-name="Rectangle 278" width="11.218" height="11.218" rx="3" transform="translate(0 0)" fill="#ebecff"/>
+      <rect id="Rectangle_948" data-name="Rectangle 948" width="11.218" height="11.218" rx="3" transform="translate(0 12.781)" fill="#ebecff"/>
+      <rect id="Rectangle_946" data-name="Rectangle 946" width="11.218" height="11.218" rx="3" transform="translate(12.781 0)" fill="#ebecff"/>
+      <rect id="Rectangle_947" data-name="Rectangle 947" width="11.218" height="11.218" rx="3" transform="translate(12.781 12.781)" fill="#ebecff"/>
+    </g>
+    <path id="Path_163" data-name="Path 163" d="M141.8,45.5a6,6,0,1,0-6-6A5.985,5.985,0,0,0,141.8,45.5Z" transform="translate(1259.195 682.496)" fill="#fff"/>
+    <path id="Path_2051" data-name="Path 2051" d="M.444-6.06H1.476a1.433,1.433,0,0,1,1.6-1.5A1.472,1.472,0,0,1,4.668-6c0,1.452-1.164,1.716-2.532,1.716H1.788l.048,1.9h.948l.036-1.14c1.68,0,2.892-.72,2.892-2.472A2.413,2.413,0,0,0,3.06-8.472,2.371,2.371,0,0,0,.444-6.06ZM3.024-.672a.728.728,0,0,0-.72-.744.733.733,0,0,0-.744.744A.733.733,0,0,0,2.3.072.728.728,0,0,0,3.024-.672Z" transform="translate(1397.922 726.164)" fill="#2d314d"/>
+  </g>
+</svg>
