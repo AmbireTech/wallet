@@ -1,0 +1,9 @@
+<svg id="Confirmed_transactions" data-name="Confirmed transactions" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <rect id="Boundary" width="32" height="32" fill="none"/>
+  <g id="Group_743" data-name="Group 743" transform="translate(0 6.205)">
+    <path id="Subtraction_42" data-name="Subtraction 42" d="M5784.325,16548.8a1.019,1.019,0,0,1-.71-.295l-8.614-8.682h6.479a8.9,8.9,0,0,0,.464,2H5779.8l5.233,5.275a1,1,0,0,1,0,1.412A.986.986,0,0,1,5784.325,16548.8Zm19.076-6.979h-4.542a8.929,8.929,0,0,0,.464-2h4.078a1,1,0,1,1,0,2Zm2.4-4.045h-6.479a8.951,8.951,0,0,0-.464-2H5801l-5.233-5.27a1,1,0,1,1,1.42-1.408l8.612,8.678Zm-24.322,0H5777.4a1,1,0,1,1,0-2h4.542a8.967,8.967,0,0,0-.464,2Z" transform="translate(-5774.447 -16529.045)" fill="#ebecff"/>
+    <g id="Group_741" data-name="Group 741" transform="translate(8.954 2.748)">
+      <path id="Subtraction_43" data-name="Subtraction 43" d="M21216.045,19799.051a7,7,0,1,1,7-7A7.01,7.01,0,0,1,21216.045,19799.051Zm-3.32-7.816a1,1,0,0,0-.705,1.707l2.258,2.26a.989.989,0,0,0,.7.3,1.014,1.014,0,0,0,.713-.3l4.891-4.891a1.006,1.006,0,0,0,0-1.416,1,1,0,0,0-1.412,0l-4.191,4.191-1.551-1.555A.986.986,0,0,0,21212.725,19791.234Z" transform="translate(-21209.045 -19785.045)" fill="#27e8a7"/>
+    </g>
+  </g>
+</svg>

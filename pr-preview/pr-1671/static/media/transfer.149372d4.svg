@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <g id="Transfer_icon" data-name="Transfer icon" opacity="0.5">
+    <rect id="Boundary" width="32" height="32" transform="translate(0 32) rotate(-90)" fill="none"/>
+    <path id="Path_93" data-name="Path 93" d="M13.859,20.226,5.233,11.614H23.092a1.31,1.31,0,0,1,0,2.621H11.561l4.145,4.139a1.309,1.309,0,1,1-1.847,1.854ZM0,8.994,8.626.382a1.309,1.309,0,0,1,1.848,1.853s0,0,0,0L6.329,6.375H17.86a1.31,1.31,0,0,1,0,2.619Z" transform="translate(31.963 14.573) rotate(135)" fill="currentColor"/>
+  </g>
+</svg>
