@@ -100,8 +100,8 @@ const estimatedTransferGas = await sdk.eth.getEstimateGas({
 ```
 
 #### Useful links 
-- [Safe App SDK](https://github.com/gnosis/safe-apps-sdk)
-- [Safe App documentation](https://docs.gnosis-safe.io/build/sdks/safe-apps)
+- [Safe App SDK](https://github.com/safe-global/safe-apps-sdk)
+- [Safe App documentation](https://docs.safe.global/safe-mobile/safe-apps/safe-apps-overview)
 
 ### Testing the application
 You can run your dApp at this address: https://wallet.ambire.com/#/wallet/dapps
